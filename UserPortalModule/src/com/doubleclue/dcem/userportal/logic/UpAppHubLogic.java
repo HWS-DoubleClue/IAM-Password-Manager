@@ -209,7 +209,7 @@ public class UpAppHubLogic implements ReloadClassInterface {
 			conn.setHostnameVerifier(hostnameVerifier);
 			conn.setRequestProperty(UserPortalConstants.USER_AGENT, UserPortalConstants.CHROME_AGENT);
 			conn.setConnectTimeout(10000);
-			conn.setReadTimeout(20000);
+			conn.setReadTimeout(10000);
 			conn.connect();
 			inputStream = conn.getInputStream();
 		} catch (Exception e) {
