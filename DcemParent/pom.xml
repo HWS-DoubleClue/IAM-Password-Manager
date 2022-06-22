@@ -71,7 +71,7 @@
 		<thrift.version>0.13.0</thrift.version>
 		<jersey.version>2.25</jersey.version>
 		<tomcat.version>9.0.44</tomcat.version>
-		<jackson.version>2.9.10</jackson.version>
+		<jackson.version>2.12.6.1</jackson.version>
 		<swagger-core-version>1.5.18</swagger-core-version>
 
 	</properties>
