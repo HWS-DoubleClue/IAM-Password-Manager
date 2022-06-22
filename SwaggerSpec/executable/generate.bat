@@ -1,0 +1,1 @@
+java -jar ${workspace_loc}/Swagger/executable/swagger-codegen-cli-2.2.1.jar help

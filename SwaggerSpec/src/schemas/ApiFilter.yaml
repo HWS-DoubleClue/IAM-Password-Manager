@@ -1,0 +1,12 @@
+      type: object
+      properties:
+        offset:
+          type: integer
+          default: 0
+        maxResults:
+          type: integer
+          default: 1000
+        filters:
+          type: array
+          items:
+            $ref: './ApiFilterItem.yaml'    

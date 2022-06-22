@@ -1,0 +1,101 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.doubleclue</groupId>
+		<artifactId>DcemParent</artifactId>
+		<version>2.8.0-SNAPSHOT</version>
+		<relativePath>../DcemParent</relativePath>
+	</parent>
+	<artifactId>DcemLinuxDistribution</artifactId>
+	<packaging>pom</packaging>
+	<name>Packageing Distribution</name>
+
+	<dependencies>
+		<!-- <dependency> <groupId>com.doubleclue.lib</groupId> <artifactId>LibRestDcClient</artifactId> 
+			<type>jar</type> </dependency> <dependency> <groupId>com.doubleclue.lib</groupId> 
+			<artifactId>LibRestDcClient</artifactId> <type>jar</type> <version>${project.version}</version> 
+			<classifier>sources</classifier> </dependency> -->
+
+	</dependencies>
+
+	<build>
+
+		<finalName>DcemDistribution</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-appCtx</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}\artifacts\yajsw\doc</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>../Manuals/PDF</directory>
+									<includes>
+										<include>*</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>sh-rights</id>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>grantAll.sh</executable>
+					<arguments>
+					</arguments>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<finalName>DCEM</finalName>
+					<descriptors>
+						<descriptor>assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-bundles</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- <modules> <module>../LibAsThrift</module> <module>../LibKaraUtils</module> 
+		<module>../LibRestDcClient</module> <module>../DcemApplication</module> <module>../DcemCore</module> 
+		<module>../AppSecureModule</module> <module>../RadiusModule</module> <module>../DcemSetup</module> 
+		<module>../PortalDemo</module> <module>../DemoAppFx</module> </modules> -->
+
+</project>

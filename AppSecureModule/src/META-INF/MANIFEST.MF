@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Archiver-Version: Eclipse
+DbVersion = 4
+Version = 1.6.1
+
+

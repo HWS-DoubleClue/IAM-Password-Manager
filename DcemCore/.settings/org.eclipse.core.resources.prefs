@@ -1,0 +1,17 @@
+eclipse.preferences.version=1
+encoding//etc/doubleclue/dcem/text/system/TextResouces_de.properties=UTF-8
+encoding//etc/doubleclue/dcem/text/system/TextResouces_en.properties=UTF-8
+encoding//resources/com/doubleclue/dcem/text/system/TextResouces_de.properties=UTF-8
+encoding//resources/com/doubleclue/dcem/text/system/TextResouces_en.properties=UTF-8
+encoding//src/ValidationMessages.properties=UTF-8
+encoding//src/ValidationMessages_de.properties=UTF-8
+encoding//src/com/doubleclue/dcem/admin/resources/Messages.properties=UTF-8
+encoding//src/com/doubleclue/dcem/admin/resources/Messages_de.properties=UTF-8
+encoding//src/com/doubleclue/dcem/admin/resources/Messages_it.properties=UTF-8
+encoding//src/com/doubleclue/dcem/core/resources/Messages.properties=UTF-8
+encoding//src/com/doubleclue/dcem/core/resources/Messages_de.properties=UTF-8
+encoding//src/com/doubleclue/dcem/core/resources/Messages_it.properties=UTF-8
+encoding/<project>=UTF-8
+encoding/resources=UTF-8
+encoding/src=UTF-8
+encoding/testsrc=UTF-8

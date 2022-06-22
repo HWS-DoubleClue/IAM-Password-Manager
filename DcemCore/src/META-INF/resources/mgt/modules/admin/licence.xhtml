@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 	
+//#excludeif COMMUNITY_EDITION == true
+ -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<div>
+		<h:form id="licenceform">
+			<p />
+			<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
+				<p:commandLink value="#{autoAction.actionText}" rendered="#{autoAction.link}" ajax="false"
+					action="#{viewNavigator.setActiveDialog(autoAction)}" styleClass="icon_#{viewNavigator.getActionIcon(autoAction)}">
+				</p:commandLink>
+				<p:commandButton styleClass="actionButton" value="#{autoAction.actionText}" rendered="#{autoAction.link == false}"
+					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false"
+					onclick="startAjaxStatus()">
+					<p:ajax event="dialogReturn" update="licenceGroup" />
+				</p:commandButton>
+				<p:spacer width="12" />
+			</c:forEach>
+
+			<p></p>
+			 <h:panelGrid columns="4" cellpadding="4" cellspacing="4">
+				<p:outputLabel for="tenantOptions" value="#{AdminMsg['adminLicenceView.dropdown.tenant']}"
+					rendered="#{dcemApplication.multiTenant and adminLicenceView.currentMaster}" />
+				<p:selectOneMenu id="tenantOptions" value="#{adminLicenceView.tenantOption}"
+					rendered="#{dcemApplication.multiTenant and adminLicenceView.currentMaster}">
+					<p:ajax />
+					<f:selectItem itemLabel="Master" itemValue="0" />
+					<f:selectItems value="#{adminLicenceView.tenantOptions}" />
+				</p:selectOneMenu>
+				<!-- <p:outputLabel for="quarterOptions" value="#{AdminMsg['adminLicenceView.dropdown.period']}" />
+				<p:selectOneMenu id="quarterOptions" value="#{adminLicenceView.quarterOption}">
+					<p:ajax />
+					<f:selectItem itemLabel="#{AdminMsg['adminLicenceView.dropdown.currentQuarter']}" itemValue="0" />
+					<f:selectItem itemLabel="#{AdminMsg['adminLicenceView.dropdown.previousYear']}" itemValue="-1" />
+					<f:selectItems value="#{adminLicenceView.quarterOptions}" />
+				</p:selectOneMenu> -->
+			</h:panelGrid>
+			<p></p>
+
+
+			<h:panelGrid id="licenceGroup" columns="2" cellpadding="4" cellspacing="4">
+				<p:outputLabel for="customer" value="Company " />
+				<p:outputLabel id="customer" value="#{adminLicenceView.licenceKeyContent.customerName}" />
+
+				<p:outputLabel value="Cluster" for="clusterSelect" />
+				<p:outputLabel id="clusterSelect" value="#{adminLicenceView.licenceKeyContent.clusterId}" />
+
+
+				<p:outputLabel for="tenantId" value="Tenant ID " />
+				<p:outputLabel id="tenantId" value="#{adminLicenceView.licenceKeyContent.tenantId}" />
+
+				<p:outputLabel for="expireDate" value="Expires on" />
+				<p:outputLabel id="expireDate" value="#{adminLicenceView.licenceKeyContent.expiresOn}" locale="#{operatorSession.locale}" />
+
+				<p:outputLabel for="maxUsers" value="Maximum Users" />
+				<p:outputLabel id="maxUsers" value="#{adminLicenceView.licenceKeyContent.maxUsers} / Consumed #{adminLicenceView.licenceKeyContentUsage.maxUsers}"  />
+				
+				<p:outputLabel for="trial" value="Trial Version" />
+				<p:outputLabel id="trial" value="#{adminLicenceView.licenceKeyContent.trialVersion}"  />
+
+				<p:outputLabel for="maxCloudStorage" value="Maximum CloudStorage MBytes" />
+				<p:outputLabel id="maxCloudStorage" value="#{adminLicenceView.licenceKeyContent.cloudSafeStoageMb} / Consumed: #{adminLicenceView.licenceKeyContentUsage.cloudSafeStoageMb}" />
+
+				<p:outputLabel for="disabledModules" value="Disabled Modules" />
+				<p:outputLabel id="disabledModules" value="#{adminLicenceView.licenceKeyContent.disabledModules}" />
+
+				<p:outputLabel for="passwordSafe" value="PasswordSafe" />
+				<p:outputLabel id="passwordSafe" value="#{adminLicenceView.licenceKeyContent.passwordSafe}" />
+
+			</h:panelGrid>
+
+
+
+		</h:form>
+	</div>
+</ui:composition>

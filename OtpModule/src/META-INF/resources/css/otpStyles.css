@@ -1,0 +1,19 @@
+@CHARSET "ISO-8859-1";
+
+.otpTokenView {
+    background: url("#{resource['pictures/icons/16x16/otpToken2.png']}") no-repeat !important;
+    height: 16px;
+    width: 38px;
+    padding-right: 4px;
+}
+
+.preferencesView {
+    background: url("#{resource['pictures/icons/16x16/preferences_edit.png']}") no-repeat !important;
+    height: 16px;
+    width: 16px;
+    padding-right: 4px;
+}
+
+.roleViewTableStyle {
+    width: 60%;
+}

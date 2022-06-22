@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<title>#{viewNavigator.dialogTitle}</title>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+		<h:outputStylesheet name="css/#{item.id}Styles.css" />
+	</c:forEach>
+</h:head>
+
+<f:view locale="#{operatorSession.locale}">
+	<h:body class="dialogBody">
+		<span id="customheader"> <h:outputLabel class="#{autoView.icon} dialogTitle"></h:outputLabel> <h:outputLabel value="#{viewNavigator.dialogTitle}"
+				styleClass="dialogTitle"></h:outputLabel>
+		</span>
+		<p:messages showDetail="false" closable="true">
+			<p:autoUpdate />
+		</p:messages>
+		<h:form id="regForm" style="padding-left:10px;height:35em;">
+
+			<p />
+			<p:tabView id="tabView">
+				<p:tab title="#{radiusMsg['RadiusClient.properties']}">
+					<h:panelGrid id="prop" columns="2" cellpadding="4" cellspacing="4">
+						<p:outputLabel value="#{radiusMsg['RadiusReport.nasClientName']}" />
+						<p:inputText value="#{radiusClientDialog.actionObject.name}" required="true" requiredMessage="#{radiusMsg['RadiusReport.ChecknasClientName']}"/>
+
+						<p:outputLabel value="#{radiusMsg['RadiusClient.ipNumber']}" />
+						<p:inputText value="#{radiusClientDialog.actionObject.ipNumber}" required="true" requiredMessage="#{radiusMsg['RadiusReport.CheckIpNummer']}"/>
+
+						<p:outputLabel value="#{radiusMsg['RadiusClient.sharedSecret']}" />
+						<p:inputText value="#{radiusClientDialog.actionObject.sharedSecret}" size="32" required="true" requiredMessage="#{radiusMsg['RadiusReport.CheckSecertKey']}"/>
+
+						<p:outputLabel value="#{radiusMsg['RadiusClient.supportedCharsets']}" />
+						<p:selectOneMenu id="supportedCharset" value="#{radiusClientDialog.supportedCharset}">
+							<f:selectItems value="#{radiusClientDialog.supportedCharsets}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="#{radiusMsg['RadiusClient.useChallenge']}" />
+						<p:selectBooleanCheckbox value="#{radiusClientDialog.actionObject.useChallenge}" />
+
+						<p:outputLabel value="#{radiusMsg['RadiusClient.ignoreUsersPassword']}" />
+						<p:selectBooleanCheckbox value="#{radiusClientDialog.actionObject.ignoreUsersPassword}" />
+
+					</h:panelGrid>
+				</p:tab>
+
+				<p:tab id="attributeTab" title="#{AdminMsg['attributesDialog.title']}">
+					<p:outputLabel value="Vendor ID: #{radiusClientDialog.vendorId}" />
+					<p />
+					<p:commandButton value="#{AdminMsg['button.add']}" action="#{radiusClientDialog.addNewAttribute}" icon="fa fa-plus" style="color: white !important;" />
+						&nbsp;
+						<p:commandButton value="#{AdminMsg['button.edit']}" actionListener="#{radiusClientDialog.editAttribute}" update="" icon="fa fa-edit"
+						style="color: white !important;" />
+						&nbsp;
+						<p:commandButton value="#{AdminMsg['button.delete']}" actionListener="#{radiusClientDialog.clearAttribute}" update="attributesTable" icon="fa fa-minus"
+						style="color: white !important;">
+						<p:confirm header="#{AdminMsg['dialog.title.confirm']}" message="#{AdminMsg['attributesDialog.deleteSelectedAttribute']}" />
+					</p:commandButton>
+					<p />
+					<p:dataTable id="attributesTable" var="attribute" value="#{radiusClientDialog.radiusClientSettings.claimAttributes}" widgetVar="attributesTable"
+						selectionMode="single" selection="#{radiusClientDialog.selectedAttribute}" rowKey="#{attribute.name}" emptyMessage="#{CoreMsg['emptyTable']}">
+						<p:column selectionMode="single" style="width:16px; text-align:center" />
+						<p:ajax event="rowSelect" update="attributesTable" />
+						<p:column headerText="#{AdminMsg['attributesDialog.attributeId']}" sortBy="#{attribute.name}">
+							<h:outputText value="#{attribute.name}" />
+						</p:column>
+						<p:column headerText="#{AdminMsg['attributesDialog.attributeType']}" sortBy="#{attribute.type}">
+							<h:outputText value="#{attribute.attributeTypeEnum.name()}" />
+						</p:column>
+						<p:column headerText="#{AdminMsg['attributesDialog.attributeValue']}" sortBy="#{attribute.value}">
+							<h:outputText value="#{attribute.value}" />
+						</p:column>
+					</p:dataTable>
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
+						<p:commandButton value="#{AdminMsg['button.yes']}" style="width: 6em" icon="fa fa-check" styleClass="ui-confirmdialog-yes" />
+						<p:commandButton value="#{AdminMsg['button.no']}" style="margin-left: 2em; width: 6em" icon="fa fa-close" styleClass="ui-confirmdialog-no" />
+					</p:confirmDialog>
+				</p:tab>
+
+			</p:tabView>
+			<p />
+			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}"  />
+			<p:spacer width="12" />
+			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" immediate="true" action="#{viewNavigator.actionCloseDialog}" style="width: 8em"
+				icon="fa fa-close" />
+			<p style="height: 20px;" />
+		</h:form>
+
+		<h:form id="attributeForm">
+			<!-- Passcode Dialog -->
+			<p:dialog id="attributeDialog" widgetVar="attributeDialog" modal="true" resizable="false">
+				<span id="customheader"> <h:outputLabel value="#{AdminMsg['attributesDialog.add']}" class="dialogTitle" style="font-size: 1.4em;"
+						rendered="#{radiusClientDialog.editingAttribute eq false}" /> <h:outputLabel value="#{AdminMsg['attributesDialog.edit']}" class="dialogTitle"
+						style="font-size: 1.4em;" rendered="#{radiusClientDialog.editingAttribute eq true}" />
+				</span>
+				<p />
+				<p:messages showDetail="false">
+					<p:autoUpdate />
+				</p:messages>
+				<p />
+				<p:focus context="attributeDialog" />
+				<h:panelGrid id="editPanel" columns="2" cellspacing="4" cellpadding="4">
+					<h:outputLabel for="name" value="#{AdminMsg['attributesDialog.attributeId']}" />
+					<p:selectOneMenu id="radiusAttributes" value="#{radiusClientDialog.selectedAttributeName}">
+						<f:selectItems value="#{radiusClientDialog.radiusAttributes}" />
+						<p:ajax event="change" update="editPanel" process="@form" listener="#{radiusClientDialog.listenerChangeAttributeType}" />
+					</p:selectOneMenu>
+
+					<h:outputLabel for="subType" value="Vendor-ID" rendered="#{radiusClientDialog.vendorSpecific}" />
+					<p:selectOneMenu id="subType" value="#{radiusClientDialog.selectedAttributeSubName}" rendered="#{radiusClientDialog.vendorSpecific}">
+						<f:selectItems value="#{radiusClientDialog.radiusSubAttributes}" />
+					</p:selectOneMenu>
+
+					<h:outputLabel for="attrType" value="#{AdminMsg['attributesDialog.attributeType']}" />
+					<p:selectOneMenu id="attrType" value="#{radiusClientDialog.selectedAttributeType}">
+						<f:selectItems value="#{radiusClientDialog.attributeTypes}" />
+						<p:ajax event="change" update="editPanel" process="@form" listener="#{radiusClientDialog.listenerChangeAttributeType}" />
+					</p:selectOneMenu>
+
+					<h:outputLabel for="attrValue" value="#{AdminMsg['attributesDialog.attributeValue']}" rendered="#{radiusClientDialog.isAttributeWithValue()}" />
+					<p:inputText id="attrValue" value="#{radiusClientDialog.selectedAttribute.value}" style="width: 30em"
+						rendered="#{radiusClientDialog.isAttributeWithValue()}" />
+				</h:panelGrid>
+				<br />
+				<p:commandButton id="attributeOkBtn" style="width: 8em; margin-left:auto; margin-right:auto; margin-top:10px; margin-bottom:5px; display:table;" ajax="true"
+					value="OK" action="#{radiusClientDialog.actionAttribute}" async="true" />
+				<p></p>
+				<p:commandLink id="closeDialog" value="#{AdminMsg['close']}" onclick="PF('attributeDialog').hide();"
+					style="float: right; margin-right: 1em; display: block " immediate="true" />
+				<p />
+				<br></br>
+				<p:spacer height="2" />
+
+			</p:dialog>
+			<p:defaultCommand target="attributeOkBtn" scope="attributeDialog" />
+		</h:form>
+
+
+
+	</h:body>
+</f:view>
+</html>

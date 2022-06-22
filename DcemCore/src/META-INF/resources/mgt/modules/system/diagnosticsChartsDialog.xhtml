@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<!-- 	
+//#excludeif COMMUNITY_EDITION == true
+ -->
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+		<h:outputStylesheet name="css/#{item.id}Styles.css" />
+	</c:forEach>
+	<title>#{viewNavigator.dialogTitle}</title>
+</h:head>
+
+<f:view locale="#{operatorSession.locale}">
+	<h:body class="dialogBody">
+	
+		<ui:include src="../../ajaxStatus.xhtml" />
+		<span id="customheader" >
+			<h:outputLabel class="#{autoView.icon} dialogTitle"></h:outputLabel>
+			<h:outputLabel value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle"></h:outputLabel>
+		</span>
+		<h:form id="chartForm">
+
+			<h:inputHidden id="timeFromNum" value="#{diagnosticsChartsDialog.timeFromNum}" />
+			<h:inputHidden id="timeToNum" value="#{diagnosticsChartsDialog.timeToNum}" />
+			<h:outputText id="displayRange" value="Time Between: #{diagnosticsChartsDialog.timeFrom} and #{diagnosticsChartsDialog.timeTo}" />
+			<p:spacer width="10px" />
+			<h:outputText id="maxRecords" value="Records: #{diagnosticsChartsDialog.maxValue}" />
+			<p:slider for="timeFromNum,timeToNum"  minValue="1" maxValue="#{diagnosticsChartsDialog.maxValue}" style="width: 90%" range="true">
+				<p:ajax event="slideEnd" process="timeFromNum timeToNum" update="displayRange scrollPanel"/>
+			</p:slider>
+			<p></p>
+			
+
+			<p:scrollPanel id="scrollPanel" mode="native" style="width:100%; height: 800px"	>
+				<c:forEach items="#{diagnosticsChartsDialog.lineChartModelsList}" var="charItem">
+					<p:chart type="line" model="#{charItem}" style="height:400px;" />
+				</c:forEach>
+			</p:scrollPanel>
+		</h:form>
+	</h:body>
+</f:view>
+</html>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+		<h:outputStylesheet name="css/#{item.id}Styles.css" />
+	</c:forEach>
+	<title>#{viewNavigator.dialogTitle}</title>
+</h:head>
+
+<f:view locale="#{operatorSession.locale}">
+
+	<h:body class="dialogBody">
+		<span id="customheader"> 
+			<p:avatar style=" vertical-align: middle;" styleClass="p-mr-2" size="xlarge" shape="circle">
+				<p:graphicImage value="#{userDialog.photo}" stream="false" />
+			</p:avatar> 
+			<h:outputLabel value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle" />
+		</span>
+
+		<h:form id="userForm" style="padding-bottom: 100px">
+
+			<p:messages showSummary="true" showDetail="false" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<h:panelGrid columns="2" cellpadding="2" cellspacing="2">
+
+				<p:outputLabel value="#{AdminMsg['type.localDomain']} " />
+				<p:selectOneRadio id="console" value="#{userDialog.userType}" disabled="#{viewNavigator.editAction}">
+					<f:selectItem itemLabel="#{AdminMsg['userDialog.local']} " itemValue="local" />
+					<f:selectItem itemLabel="#{AdminMsg['userDialog.domain']} " itemValue="domain" />
+					<p:ajax event="change" listener="#{userDialog.changeType}" update="@form"></p:ajax>
+				</p:selectOneRadio>
+
+				<p:outputLabel value="#{AdminMsg['userDialog.displayName']} " />
+				<p:inputText id="displayName" value="#{userDialog.actionObject.displayName}" required="#{userDialog.getUserType() eq 'local'}" size="50"
+					disabled="#{userDialog.userOutranksOperator()}" requiredMessage="#{AdminMsg['error.displayNameCheck']}" maxlength="60" />
+
+				<p:outputLabel value="#{CoreMsg['loginId']} " />
+				<h:panelGroup rendered="#{userDialog.getUserType() eq 'domain'}">
+					<p:selectOneMenu id="domain" value="#{userDialog.domainName}" style="vertical-align: middle;" disabled="#{viewNavigator.editAction}">
+						<f:selectItems value="#{userDialog.domainNames}" />
+						<p:ajax event="change" update="@form"></p:ajax>
+					</p:selectOneMenu>
+					<p:autoComplete id="domainLoginId" value="#{userDialog.loginId}" completeMethod="#{userDialog.completeUser}" size="50"
+						disabled="#{viewNavigator.editAction}" />
+				</h:panelGroup>
+				<h:panelGroup rendered="#{userDialog.getUserType() eq 'local'}">
+					<p:inputText id="name" value="#{userDialog.loginId}" required="true" disabled="#{userDialog.userOutranksOperator()}" size="50" maxlength="60"
+						requiredMessage="#{AdminMsg['error.userNameCheck']}" />
+				</h:panelGroup>
+
+				<p:outputLabel for="password" value="#{AdminMsg['userDialog.initialPassword']} "
+					rendered="#{(userDialog.userType eq 'local') and !viewNavigator.editAction}" />
+				<p:inputText id="password" value="#{userDialog.actionObject.initialPassword}" rendered="#{(userDialog.userType eq 'local') and !viewNavigator.editAction}"
+					required="true" requiredMessage="#{AdminMsg['error.passwordCheck']}">
+					<f:validateLength minimum="4"></f:validateLength>
+				</p:inputText>
+
+				<p:outputLabel value="#{AdminMsg['userDialog.userDn']} " rendered="#{viewNavigator.editAction and ! empty userDialog.domainName}" />
+				<p:outputLabel id="userDn" style="font-size: xx-small" value="#{userDialog.actionObject.userDn}"
+					rendered="#{viewNavigator.editAction and ! empty userDialog.domainName}" />
+
+				<p:outputLabel value="#{AdminMsg['userDialog.email']} " />
+				<p:inputText id="email" value="#{userDialog.actionObject.email}" size="50" disabled="#{userDialog.userOutranksOperator()}" />
+
+				<p:outputLabel value="#{AdminMsg['userDialog.privateEmail']} " />
+				<p:inputText id="privateEmail" value="#{userDialog.actionObject.privateEmail}" size="50" disabled="#{userDialog.userOutranksOperator()}" />
+
+				<p:outputLabel for="telNumber" value="#{AdminMsg['userDialog.phoneNumber']} " />
+				<p:inputText id="telNumber" value="#{userDialog.actionObject.telephoneNumber}" disabled="#{userDialog.userOutranksOperator()}" />
+
+				<p:outputLabel for="mobileNumber" value="#{AdminMsg['userDialog.mobileNumber']} " />
+				<p:inputText id="mobileNumber" value="#{userDialog.actionObject.mobileNumber}" disabled="#{userDialog.userOutranksOperator()}" />
+
+				<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} " rendered="#{viewNavigator.editAction}" />
+				<p:outputLabel value="#{userDialog.actionObject.partMobileNumber}" rendered="#{viewNavigator.editAction}" />
+
+
+				<p:outputLabel value="#{AdminMsg['userDialog.disable']} " />
+				<p:selectBooleanCheckbox value="#{userDialog.actionObject.disabled}" disabled="#{userDialog.userOutranksOperator()}" />
+
+				<p:outputLabel value="#{AdminMsg['userDialog.langauge']} " />
+				<p:selectOneMenu id="languages" value="#{userDialog.actionObject.language}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}">
+					<f:selectItems value="#{viewNavigator.supportedLanguages}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="#{AdminMsg['userDialog.role']} " />
+				<p:selectOneMenu id="roles" value="#{userDialog.selectedRole}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}">
+					<f:selectItems value="#{userDialog.availableRoles}" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel for="country" value="#{AdminMsg['userDialog.country']} "  />
+				<p:selectOneMenu id="country" value="#{userDialog.country}"  >
+					<f:selectItems value="#{userDialog.availableCountries}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="#{AdminMsg['userDialog.passCounter']} " rendered="#{viewNavigator.editAction }" />
+				<p:inputText id="passcounter" value="#{userDialog.actionObject.passCounter}" rendered="#{viewNavigator.editAction}"
+					disabled="#{userDialog.userOutranksOperator()}" />
+					
+				
+					
+					
+					
+			</h:panelGrid>
+			<p />
+			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}" update="@form"
+				disabled="#{userDialog.userOutranksOperator()}" />
+			<p:spacer width="12" />
+			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" icon="fa fa-close" style="width: 8em" immediate="true"
+				action="#{viewNavigator.actionCloseDialog}" />
+		</h:form>
+	</h:body>
+</f:view>
+</html>

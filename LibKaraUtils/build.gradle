@@ -1,0 +1,47 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+//apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+
+def clientLibVersion = "1.0.0-SNAPSHOT"
+def clientLibName = "LibKaraUtils"
+
+repositories {
+    maven {
+        url "${repositoryUrl}"
+        credentials {
+            username = "deployment"
+            password = ""
+        }
+    }
+    mavenCentral()
+}
+dependencies {
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.10.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.1'
+    implementation project(':LibDcThrift')
+}
+
+publishing {
+    repositories {
+        maven {
+            url "${repositoryUrl}"
+            credentials {
+                username = "deployment"
+                password = ""
+            }
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            groupId 'com.doubleclue.utils'
+            artifactId "${clientLibName}"
+            version "${clientLibVersion}"
+            from components.java
+        }
+    }
+}

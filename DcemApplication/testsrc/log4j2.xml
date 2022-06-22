@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="dcem"
+	packages="com.doubleclue.dcem.core.logging">
+	<Properties>
+		<Property name="log-filename">dcem</Property>
+		<Property name="log-JDBC">log4jdbc</Property>
+		<Property name="log-path">${sys:DCEM_LOGS}</Property>
+
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{DEFAULT} %-5p [%t] %X{tenant} [%C{2}.%M:%L]: %m%n" />
+		</Console>
+		<RollingFile name="RollingFile"
+			fileName="${log-path}/${log-filename}.log"
+			filePattern="${log-path}/${log-filename}-%i.log">
+			<PatternLayout
+				pattern="%d{DEFAULT} %-5p [%t] %X{tenant} [%C{2}.%M:%L]: %m%n" />
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy min="1" max="4"
+				fileIndex="min" />
+		</RollingFile>
+		<RollingFile name="Log4JDBC"
+			fileName="${log-path}/${log-JDBC}.log"
+			filePattern="${log-path}/${log-JDBC}-%i.log">
+			<PatternLayout pattern="\n=== %-5p [%d{DATE} %c]: %m%n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy min="1" max="4"
+				fileIndex="min" />
+		</RollingFile>
+		<!-- To enable syslog, remove the comments of next element and configure 
+			the host and port -->
+
+		<!-- <Syslog name="syslog" format="RFC5424" host="localhost" port="514" 
+			protocol="TCP" appName="DoubleClue" includeMDC="true" enterpriseNumber="35705" 
+			newLine="true" messageId="Audit" id="App" mdcId="mdc" /> -->
+
+	</Appenders>
+	<Loggers>
+		<Logger name="com.doubleclue" level="info"
+			additivity="false">
+			<AppenderRef ref="RollingFile" />
+			<AppenderRef ref="Console" />
+
+			<!-- To enable syslog, just remove the comments of next element -->
+			<!-- <AppenderRef ref="syslog" /> -->
+		</Logger>
+		<Logger name="org.jboss.logging" level="warning"
+			additivity="false">
+			<AppenderRef ref="RollingFile" />
+			<AppenderRef ref="Console" />
+		</Logger>
+
+		<!-- logging JDBC - must be enabled by system property '-Dlog4jdbc=true' -->
+		<Logger name="log4jdbc.log4j2" level="debug" additivity="false">
+			<!-- <MarkerFilter marker="LOG4JDBC_SQL" onMatch="ACCEPT" onMismatch="NEUTRAL" 
+				/> -->
+			<MarkerFilter marker="LOG4JDBC_NON_STATEMENT"
+				onMatch="DENY" onMismatch="NEUTRAL" />
+			<AppenderRef ref="Log4JDBC" />
+		</Logger>
+		<!-- <Logger name="log4jdbc.log4j2" level="fatal" additivity="false"> <MarkerFilter 
+			marker="LOG4JDBC_CONNECTION" onMatch="ACCEPT" onMismatch="NEUTRAL" /> <AppenderRef 
+			ref="Log4JDBC" /> </Logger> -->
+
+		<Root level="info">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="RollingFile" />
+		</Root>
+	</Loggers>
+</Configuration>

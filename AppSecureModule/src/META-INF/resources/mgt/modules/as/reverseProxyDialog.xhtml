@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+		<h:outputStylesheet name="css/#{item.id}Styles.css" />
+	</c:forEach>
+
+	<title>#{viewNavigator.dialogTitle}</title>
+</h:head>
+
+
+<f:view locale="#{operatorSession.locale}">
+
+	<h:body class="dialogBody">
+		<span id="customheader"> <h:outputLabel class="#{autoView.icon} dialogTitle"></h:outputLabel> <h:outputLabel value="#{viewNavigator.dialogTitle}"
+				styleClass="dialogTitle"></h:outputLabel>
+		</span>
+		<p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()"
+			oncomplete="PF('statusDialog').hide()" />
+
+		<h:form id="form" enctype="multipart/form-data">
+
+			<h:panelGroup style="padding: 100px;">
+
+				<p:messages showDetail="false" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+
+
+				<h:panelGrid columns="2" cellspacing="4" cellpadding="4">
+
+					<p:outputLabel for="enableRp" value="#{asMsg['rpDialog.enable']}: " />
+					<p:selectBooleanCheckbox id="enableRp" value="#{reverseProxyDialog.rpConfig.enableRp}">
+						<p:ajax event="change" process="@this" update="@form" />
+					</p:selectBooleanCheckbox>
+
+					<p:outputLabel for="domainName" value="#{asMsg['rpDialog.domainName']}: " />
+					<p:outputLabel id="domainName" value="#{reverseProxyDialog.rpConfig.domainName}" />
+
+					<p:outputLabel for="pwd" value="#{asMsg['rpDialog.password']}: " />
+					<p:password id="pwd" value="#{reverseProxyDialog.rpConfig.password}" toggleMask="true" disabled="#{reverseProxyDialog.rpConfig.enableRp == false}" redisplay="true" />
+
+					<p:outputLabel for="reconnect" value="#{asMsg['rpDialog.reconnect']}: " />
+					<p:inputText id="reconnect" value="#{reverseProxyDialog.rpConfig.reconnect}" disabled="#{reverseProxyDialog.rpConfig.enableRp == false}" />
+
+
+					<p:outputLabel value="#{asMsg['rpDialog.upload']}: " />
+					<p:fileUpload id="sdkConfigFile" label="#{CoreMsg['choose']}" disabled="#{reverseProxyDialog.rpConfig.enableRp == false}"
+						value="#{reverseProxyDialog.reverseProxyFile}" mode="simple" skinSimple="true" required="false">
+					</p:fileUpload>
+
+
+				</h:panelGrid>
+
+				<p></p>
+
+				<p:commandButton id="ok" style="width: 8em" ajax="true" icon="fa fa-check" value="OK" type="submit" action="#{reverseProxyDialog.validateOk}" />
+				<p:spacer width="14" />
+				<p:commandButton id="close" value="#{CoreMsg['close']}" style="width: 8em" type="submit" icon="fa fa-close" immediate="true"
+					action="#{viewNavigator.actionCloseDialog}" />
+				<p></p>
+
+			</h:panelGroup>
+
+			<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="true" resizable="false" showHeader="false"
+				style="border: 4; border-style: solid; border-color: #980808">
+				<p></p>
+				<h:outputText style="font-size: medium" value="Please wait...." />
+				<h:graphicImage library="pictures" name="icons/24x24/test.gif" style="border: 0; padding-left: 8px" />
+				<p></p>
+
+
+			</p:dialog>
+			<p:dialog widgetVar="confirm" modal="true">
+
+				<f:facet name="header">
+					<h:graphicImage library="pictures" style="border: 0; vertical-align: middle" name="icons/32x32/sign_warning.png" />
+		        #{CoreMsg['restartHeader']}
+					</f:facet>
+
+				<p></p>
+				<p:outputLabel style="color: blue" value="If you 'Save' these changes, all current app connections will be disconnected! Do you wish to continue?" />
+
+				<p></p>
+
+				<p:commandButton id="okConfirm" style="width: 8em" icon="fa fa-check" value="OK" type="submit" action="#{autoDialog.actionOk}" ajax="true" />
+				<p:spacer width="12" />
+				<p:commandButton id="closeDialog" value="#{CoreMsg['close']}" type="submit" ajax="true" style="width: 8em" icon="fa fa-close" immediate="true"
+					onclick="PF('confirm').close();" />
+				<p></p>
+
+				<!-- <p:commandButton id="msgOk" value="OK" style="width: 6em" onclick="PF('restart').close();" ajax="false" />
+
+			<p:commandButton id="msgOk" immediate="true" value="OK" style="width: 6em" ajax="false" /> -->
+				<p></p>
+
+			</p:dialog>
+
+
+		</h:form>
+
+
+	</h:body>
+</f:view>
+</html>

@@ -1,0 +1,12 @@
+{
+	"modelPackage": "com.doubleclue.dcem.shifts.restapi.model",
+	"apiPackage": "com.doubleclue.dcem.shifts.restapi",
+	"invokerPackage": "com.doubleclue.dcem.shifts.restapi",
+	"groupId": "com.doubleclue.dcem.shifts.rest",
+	"artifactId": "com.doubleclue.dcem.shifts.rest",
+	"artifactVersion": "1.0.0",
+	"serializableModel": "true",
+	"hideGenerationTimestamp": "true",
+	"dateLibrary": "legacy",
+	"library": "jersey2"
+}

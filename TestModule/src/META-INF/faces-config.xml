@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+	version="2.2">
+
+	<application>
+	
+		<resource-bundle>
+			<base-name>com.doubleclue.dcem.core.resources.Messages</base-name>
+			<var>coreMsg</var>
+		</resource-bundle>
+		<resource-bundle>
+			<base-name>com.doubleclue.dcem.admin.resources.Messages</base-name>
+			<var>adminMsg</var>
+		</resource-bundle>
+	</application>
+	<navigation-rule>
+		<display-name>SAMLLOGIN</display-name>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>testSamlLogin</from-outcome>
+			<to-view-id>/testservice/saml/login_.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<display-name>OPENIDLOGIN</display-name>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>testOpenIdLogin</from-outcome>
+			<to-view-id>/testservice/openid/login_.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+
+</faces-config>

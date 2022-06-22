@@ -1,0 +1,105 @@
+@CHARSET "ISO-8859-1";
+
+/* General Settings */
+body {
+	background: #ffffff;
+	font-family: "Segoe UI", sans-serif;
+	font-size: 14px;
+	margin: 0;
+}
+
+.ui-dialog-title {
+	color: black;
+	font-weight: bold;
+}
+
+.ui-panel {
+	margin: 20px;
+	margin-top: 40px;
+}
+
+
+.ui-button:hover.cloudSafe-icon {
+	background-size: 32px;
+	background-repeat: no-repeat;
+} 
+
+.scrollBody {
+	height: 100px;
+	overflow: auto;
+}
+
+.viewTitle {
+	font-size: 1.5em;
+	color: #005078;
+	vertical-align: middle;
+	margin-left: 5px;
+	text-decoration: none;
+}
+
+.dialogTitle {
+	color: white;
+	font-size: 1.4em;
+	vertical-align: middle;
+	margin-left: 5px;
+	text-decoration: none;
+}
+
+/* Header Bar */
+#headerbar {
+	background-color: #005078;
+	padding-left: 10px;
+	height: 6vH;
+}
+
+.headTitle {
+	font-size: large;
+	color: #ffffff;
+	vertical-align: middle;
+	margin: 10px !important;
+}
+
+.autoDialogTabe {
+	margin: 10px;
+}
+
+.columnHeaderClass {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.columnClasses {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.shortInput {
+	width: 60px;
+}
+
+.mediumInput {
+	width: 150px;
+}
+
+.longInput {
+	width: 250px;
+}
+
+.columnLabel {
+	white-space: nowrap;
+	vertical-align: top;
+}
+
+.columnValue {
+	vertical-align: top;
+}
+
+.autoTableStyle {
+	word-wrap: break-word;
+}
+
+.cloudSafe-icon {
+	background-image: url("#{resource['pictures/cloudSafe_small.png']}") !important;
+	background-repeat: no-repeat;
+	background-size: 32px;
+}

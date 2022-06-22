@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</f:facet>
+	<title>DoubleClue UserPortal Tutorial</title>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<h:outputStylesheet name="css/primeflex.css" />
+	<h:outputStylesheet library="css" name="portalStyles.css" />
+	<h:outputStylesheet library="css" name="media.css" />
+	<script defer="defer" type="text/javascript">
+		function setLocalStorageValue() {
+			localStorage.setItem('hideTutorial', true);
+		}
+	</script>
+	<style>
+	.ui-g{
+	background-color: #0E5077 !important;
+	}
+	</style>
+</h:head>
+
+<f:view locale="#{portalSessionBean.locale}">
+	<h:body style="background-color:#0E5077">
+		<ui:include src="titleLogin.xhtml" />
+		<p />
+		<br />
+
+
+		<h:form id="tutorialForm">
+
+			<p:panelGrid  flex="true" columns="3"
+				layout="grid" styleClass="customPanelGrid">
+
+				<h:panelGroup>
+					<div style="width: 15em !important">
+						<img src="#{resource['pictures/keepass_illustration.png']}" width="100em" height="100em" style="margin-left: 2em;"> </img>
+						<p></p>
+						<p:outputLabel value="#{DcupMsg['tutorial.passwordSafe']}" class="tutorialTitle" />
+						<br></br>
+						<p:outputLabel value="#{DcupMsg['tutorial.passwordSafeunderTitle']}" />
+						<p></p>
+						<p:outputLabel value="#{DcupMsg['tutorial.passwordSafeTxt']}" class="toturialOfTitle" />
+					</div>
+				</h:panelGroup>
+
+				<h:panelGroup>
+					<div style="width: 15em !important">
+						<img src="#{resource['pictures/device_manager_illustration.png']}" width="100em" height="110em" style="margin-left: 2em;"> </img> <br></br>
+						<p:outputLabel value="#{DcupMsg['tutorial.deviceManager']}" class="tutorialTitle" />
+						<br></br>
+						<p:outputLabel value="#{DcupMsg['tutorial.deviceManagerUndertitle']}" />
+						<p></p>
+						<p:outputLabel value="#{DcupMsg['tutorial.deviceManagerTxt']}" class="toturialOfTitle" />
+					</div>
+				</h:panelGroup>
+
+				<h:panelGroup>
+					<div style="width: 15em !important;">
+						<img src="#{resource['pictures/cloud_safe_illustration.png']}" width="100em" height="110em"> </img> <br></br>
+						<p:outputLabel value="#{DcupMsg['tutorial.cloudSafe']}" class="tutorialTitle" />
+						<br></br>
+						<p:outputLabel value="#{DcupMsg['tutorial.cloudSafeUnderTitle']}" />
+						<p></p>
+						<p:outputLabel value="#{DcupMsg['tutorial.cloudSafeTxt']}" class="toturialOfTitle" />
+					</div>
+				</h:panelGroup>
+
+			</p:panelGrid>
+
+
+			<div class="btnLoginTutorial">
+				<div style="margin:0 auto; width:12em">
+					<p:commandButton style="width: 15em;" ajax="true" actionListener="#{upLoginView.actionGotoLoginAjax}" value="#{DcupMsg['button.backToLogin']}" />
+					<p:selectBooleanCheckbox id="showTutorialCheckBox" value="#{upLoginView.hideTutorial}" onchange="setLocalStorageValue()"
+						itemLabel="#{DcupMsg['tutorial.showAgainTutorial']}" style="padding-top:5em;" />
+				</div>
+			</div>
+
+		</h:form>
+
+	</h:body>
+</f:view>
+</html>

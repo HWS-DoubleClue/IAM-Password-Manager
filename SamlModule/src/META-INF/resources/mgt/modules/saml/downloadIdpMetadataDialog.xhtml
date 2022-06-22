@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<title>#{viewNavigator.dialogTitle}</title>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+		<h:outputStylesheet name="css/#{item.id}Styles.css" />
+	</c:forEach>
+	<style>
+p.output {
+	width: 100%;
+	padding: 1em;
+	border: 1px solid #000000;
+	word-wrap: break-word;
+	font-family: "Courier New", Courier, monospace;
+}
+</style>
+</h:head>
+
+<f:view locale="#{operatorSession.locale}">
+	<h:body class="dialogBody">
+		<span id="customheader" >
+			<h:outputLabel class="#{autoView.icon} dialogTitle"></h:outputLabel>
+			<h:outputLabel value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle"></h:outputLabel>
+		</span>
+		<h:panelGroup style="margin: 10px;">
+			<h:form id="regForm">
+				<p:outputLabel value="#{samlMsg['downloadIdPMetadataDialog.preview']}" />
+				<div style="overflow-y: scroll; height:480px;">		
+					<p class="output">#{downloadIdpMetadataDialog.metadata}</p>
+				</div>
+				<p></p>
+				<br></br>
+				<p:commandButton id="downloadCert" style="width: 15em" icon="fa fa-download"
+					value="#{samlMsg['idpMetadataDialog.downloadCertificate']}" ajax="false" actionListener="#{downloadIdpMetadataDialog.downloadCertificate}" />
+				&nbsp;
+				<p:commandButton id="downloadMetadata" style="width: 15em" icon="fa fa-download" value="#{samlMsg['idpMetadataDialog.downloadMetadata']}"
+					ajax="false" actionListener="#{downloadIdpMetadataDialog.downloadMetadata}" />
+				&nbsp;
+				<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" style="width: 8em" icon="fa fa-close" immediate="true"
+					action="#{viewNavigator.actionCloseDialog}" />
+				<p:growl id="msgs" showDetail="false" closable="true" sticky="true">
+					<p:autoUpdate />
+				</p:growl>
+			</h:form>
+		</h:panelGroup>
+	</h:body>
+</f:view>
+</html>

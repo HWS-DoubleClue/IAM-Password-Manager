@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+	<div>
+	<p></p>
+		<h:form id="policyForm">
+
+			<p:tabView id="tabs">
+				<p:tab id="policyTab" title="Policies">
+					<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
+						<p:commandButton style="color: white !important" styleClass="actionButton" value="#{autoAction.actionText}" 
+						rendered="#{autoAction.rawAction.name != 'assign' and autoAction.rawAction.name != 'testUserPolicy'}"
+							action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false"
+							onclick="startAjaxStatus()">
+							<p:ajax event="dialogReturn" update="tabs:pTable tabs:treeTable" listener="#{policyView.reload()}" />
+						</p:commandButton>
+						<p:spacer width="12" />
+					</c:forEach>
+					
+					<p></p>
+					
+					<p:dataTable styleClass="borderless" id="pTable" var="policy" value="#{policyView.policies}" selectionMode="multiple" selection="#{autoView.selectedItems}"
+						rowKey="#{policy.id}" emptyMessage="#{CoreMsg['emptyTable']}">
+						<p:column headerText="Name" style="white-space: nowrap;">
+							<h:outputText value="#{policy.name}" />
+						</p:column>
+
+						<p:column headerText="#{asMsg['policyDialog.assignedTo']}" width="30%">
+							<p:dataList styleClass="policyList" itemStyleClass="policyList"  value="#{policy.assignedTo}" var="assign" emptyMessage="#{CoreMsg['emptyTable']}">
+								<h:outputText  value="#{assign}" />
+							</p:dataList>
+						</p:column>
+
+						<p:column headerText="#{asMsg['policyDialog.content']}" style="white-space: normal">
+							<h:outputText style="font-size: xx-small" value="#{policy.jsonPolicy}" />
+						</p:column>
+
+
+
+					</p:dataTable>
+
+				</p:tab>
+				<p:tab title="#{asMsg['policyDialog.applications']}">
+					<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
+
+						<p:commandButton styleClass="actionButton" value="#{autoAction.actionText}" style="margin-right: 12px !important"
+							rendered="#{autoAction.rawAction.name == 'assign' or autoAction.rawAction.name == 'testUserPolicy'}"
+							action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false"
+							onclick="startAjaxStatus()">
+							<p:ajax event="dialogReturn" update="tabs:pTable tabs:treeTable" listener="#{policyView.reload()}" />
+						</p:commandButton>
+					</c:forEach>
+					<p></p>
+					<p:treeTable styleClass="borderless" id="treeTable" value="#{policyView.rootNode}" var="appNode" selectionMode="single"
+						selection="#{policyView.selectedTreeNode}" resizableColumns="true">
+
+						<p:column headerText="Name" width="25%">
+							<h:outputText style="display: inline; padding-right: 6px" styleClass="ui-icon fa fa-users" rendered="#{appNode.isGroup()}"  />
+							<h:outputText  value="#{appNode.name}" />
+							
+						</p:column>
+
+						<p:column headerText="Policy">
+							<h:outputLink id="policyTip" value="#">
+								<h:outputText value="#{appNode.policyName}" />
+							</h:outputLink>
+							<p:tooltip id="toolTipTrack" for="policyTip" style="font-size: xx-small; white-space: normal" value="#{appNode.policyContent}"
+								position="bottom" />
+						</p:column>
+
+
+					</p:treeTable>
+
+				</p:tab>
+			</p:tabView>
+
+		</h:form>
+
+	</div>
+
+
+</ui:composition>

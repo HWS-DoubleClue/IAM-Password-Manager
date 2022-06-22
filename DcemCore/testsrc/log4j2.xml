@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="sem" packages="com.doubleclue.dcem.core.logging">
+	<Properties>
+		<Property name="log-filename">sem</Property>
+		<Property name="log-JDBC">log4jdbc</Property>
+		<Property name="log-path">testLogs</Property> 
+	
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{DEFAULT} %-5p [%t]  [%X{MDC_SESSIONID}] [%C{2}.%M:%L]: %m%n" />
+		</Console>
+		<RollingFile name="RollingFile" fileName="${log-path}/${log-filename}.log" filePattern="${log-path}/${log-filename}-%d{yyyy-MM-dd}.log">
+			<PatternLayout pattern="%d{DEFAULT} %-5p [%t]  [%X{MDC_SESSIONID}] [%C{2}.%M:%L]: %m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+			</Policies>
+			<DeleteMaxAgeFilesStrategy maxAge="2" />
+		</RollingFile>
+		<RollingFile name="Log4JDBC" fileName="${log-path}/${log-JDBC}.log" filePattern="${log-path}/${log-JDBC}-%d{yyyy-MM-dd}.log">
+			<PatternLayout pattern="\n=== %-5p [%d{DATE} %c]: %m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+			</Policies>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="com.doubleclue" level="debug" additivity="false">
+			<AppenderRef ref="RollingFile" />
+			<AppenderRef ref="Console" /> 
+		</Logger>
+		<Logger name="org.jboss.logging" level="warning" additivity="false">
+			<AppenderRef ref="RollingFile" />
+			<AppenderRef ref="Console" /> 
+		</Logger>
+		<Logger name="org.apache.catalina.core.ContainerBase.[Catalina].[localhost]" level="info" additivity="false">
+			<AppenderRef ref="RollingFile" />
+			<AppenderRef ref="Console" /> 
+		</Logger>
+
+		<!-- logging JDBC - must be enabled by system property '-Dlog4jdbc=true' -->
+		<Logger name="log4jdbc.log4j2" level="debug" additivity="false">
+			<!-- <MarkerFilter marker="LOG4JDBC_SQL" onMatch="ACCEPT" onMismatch="NEUTRAL" /> -->
+			 <MarkerFilter marker="LOG4JDBC_NON_STATEMENT" onMatch="DENY" onMismatch="NEUTRAL"/>
+			<AppenderRef ref="Log4JDBC" />
+		</Logger>
+		<!-- <Logger name="log4jdbc.log4j2" level="fatal" additivity="false"> <MarkerFilter marker="LOG4JDBC_CONNECTION" onMatch="ACCEPT" 
+			onMismatch="NEUTRAL" /> <AppenderRef ref="Log4JDBC" /> </Logger> -->
+
+		<Root level="warn">
+			<AppenderRef ref="RollingFile" />
+		</Root>
+	</Loggers>
+</Configuration>
+

@@ -1,0 +1,12 @@
+{
+	"modelPackage": "com.doubleclue.dcem.as.restapi.model",
+	"apiPackage": "com.doubleclue.dcem.as.restapi",
+	"invokerPackage": "com.doubleclue.dcem.as.restapi",
+	"groupId": "com.doubleclue.dcem.as.rest",
+	"artifactId": "com.doubleclue.dcem.as.rest",
+	"artifactVersion": "1.0.0",
+	"serializableModel": "true",
+	"hideGenerationTimestamp": "true",
+	"dateLibrary": "legacy",
+	"library": "jersey2"
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet"> 
+    <title>RADIUS-Login</title>
+    <style>
+        .vertical-center {
+ 	         margin: 0;
+	         position: absolute;
+	         top: 50%;
+	         right: 0;
+	         left:0;
+	         -ms-transform: translateY(-50%);
+	         transform: translateY(-50%);
+	         text-align: center;
+	         font-size: medium;
+	         color:white;
+	         font-family: "Josefin Sans", Arial, sans-serif;
+         }
+
+         button {
+	         width: 8em;
+	         height: 2.5em;
+	         color: #212121;
+	         border: none;
+	         font-size: medium;
+	         margin: 1em 1em;
+	         cursor: pointer;
+	         border-radius: 0.1em;
+	         font-family: "Josefin Sans", Arial, sans-serif;
+         }
+
+        #ok {
+            background-color: #BCE7F2;
+        }
+
+        #deny {
+            background-color: #ea5079;
+        }
+
+    </style>
+</head>
+
+<body style="background-color: #0A2A3C;">
+
+    <div class="vertical-center">
+        <div style="margin: 0% 2% 5%">
+            Please confirm your login attempt to <span style="color: #BCE7F2; font-weight: bold;">{{source}}</span>
+        </div>
+        <button id="ok">Confirm</button>
+        <button id="deny">Deny</button>
+
+    </div>
+
+</body>
+
+</html>

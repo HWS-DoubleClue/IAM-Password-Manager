@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<title>#{adminModule.title}</title>
+</h:head>
+
+<h:body>
+
+	<ui:include src="/title.xhtml" />
+	<p:toolbar style="height: 26px" />
+
+
+	<h:outputStylesheet library="css" name="systemStyles.css" />
+	<h:form>
+
+<p></p>
+		<h2 style="color: red">INITIALIZATION FATAL ERROR</h2>
+
+		<p></p>
+		<p:dataList value="#{dcemApplication.initMessages}" var="message" type="ordered">
+			<f:facet name="header">
+            Basic
+        </f:facet>
+        #{message.errorCode} - #{message.message} - #{message.cause}
+    </p:dataList>
+
+		
+		<p></p>
+
+
+		<p />
+
+
+
+	</h:form>
+</h:body>
+
+</html>

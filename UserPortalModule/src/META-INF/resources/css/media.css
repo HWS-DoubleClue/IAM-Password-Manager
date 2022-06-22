@@ -1,0 +1,130 @@
+@CHARSET "ISO-8859-1";
+/* this file for responsive mode like mobile screen */
+@media screen and (max-width: 480px) {
+	.panelLoginChild .ui-panel-content,.panelLoginChildCheckBoxes {
+		padding: 0px !important;
+		margin: 0px !important;
+	}
+	.panelLoginChild.ui-panel {
+		padding: 0px !important;
+		margin: 0px !important;
+	}
+	.panelLoginChild {
+		padding: 0 !important;
+		margin-left: 0.5em;
+	}
+	.loginPanelContainer, .panelLoginChild {
+		width: 97% !important;
+	}
+	.inputTextLgoin {
+		font-size: 1em !important;
+		width: 80% !important;
+	}
+	.btnOfLogin {
+		font-size: 1em !important;
+		width: 84% !important;
+	}
+	.textChild {
+		display: inline-block;
+		float: left;
+		height: 6vh;
+		line-height: 6vh;
+		margin-left: 2%;
+		font-size: 0.6em !important;
+	}
+	.loginLinkExpired {
+		font-size: 0.8em !important;
+		margin: 0 auto !important;
+	}
+	.LogoffLink {
+		font-size: 0.8em !important;
+		margin-left: 40% !important;
+	}
+	.LogoffTxt {
+		font-size: 0.7em !important;
+	}
+	.columnToBeHidden {
+		display: none !important;
+		visibility: hidden !important;
+	}
+	.ui-datatable.borderlessCloudSafe .ui-column-title {
+		visibility: hidden !important;
+		display: none !important;
+	}
+	.ui-datatable.borderlessCloudSafe tbody td {
+		float: revert !important;
+		display: inline-block !important;
+		width: auto !important;
+	}
+	.ui-datatable.borderlessCloudSafe .ui-datatable-reflow td, .ui-datatable.borderlessCloudSafe .ui-datatable-data td
+		{
+		display: inline-block !important;
+		float: none;
+	}
+	.ui-reflow-label {
+		width: auto !important;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.logoChild, .companyLogoStyle, .signInText {
+		display: none;
+		visibility: hidden;
+	}
+	.containerBanner {
+		border: solid 0px;
+		display: grid;
+		grid-template-columns: 10% 70% auto !important;
+		height: 6vh;
+	}
+	.containerBannerLogin {
+		border: solid 0px;
+		display: grid;
+		grid-template-columns: auto auto !important;
+		height: 6vh;
+	}
+	.dataGridWelcome.ui-datagrid {
+		margin: 0 auto;
+		width: 20em;
+	}
+	.welcomeTableImage {
+		width: 5em;
+		height: 5em;
+	}
+	.elemntWelcome {
+		width: 12em !important;
+		height: 12em !important;
+		margin: 0;
+	}
+	.loginPanelContainer {
+		margin-top: 0 !important;
+		padding-top: 0;
+		position: static;
+	}
+	.dialogTitle {
+		font-size: 1.2em !important;
+	}
+	.labelLogin {
+		font-size: 1em !important;
+	}
+	.btnOfLogin {
+		font-size: 1em;
+		width: 89%;
+	}
+	.refresh {
+		font-size: small;
+	}
+	.customPanelGrid .ui-panelgrid-content {
+		margin-top: 0 !important;
+	}
+	.headerImg {
+		width: 3em !important;
+	}
+	.viewTitleLabel {
+		font-size: large;
+	}
+		.btnLoginTutorial {
+		margin-top: 2em;
+		margin-bottom: 2em;
+	}
+}

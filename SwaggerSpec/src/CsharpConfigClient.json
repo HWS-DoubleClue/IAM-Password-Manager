@@ -1,0 +1,12 @@
+{
+	"modelPackage": "com.doubleclue.as.restapi.model",
+	"apiPackage": "com.doubleclue.as.restapi",
+	"invokerPackage": "com.doubleclue.as.restapi",
+	"groupId": "com.doubleclue.as.rest",
+	"artifactId": "com.doubleclue.as.rest",
+	"artifactVersion": "1.0.0",
+	"serializableModel": "true",
+	"hideGenerationTimestamp": "true",
+	"dateLibrary": "legacy"
+
+}

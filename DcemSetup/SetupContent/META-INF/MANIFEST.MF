@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: 
+SCM-Revision: Trunk
+Implementation-Version: 1.0.0-SNAPSHOT
+
+

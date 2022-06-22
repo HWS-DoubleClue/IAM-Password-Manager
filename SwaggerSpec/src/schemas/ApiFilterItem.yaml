@@ -1,0 +1,30 @@
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: This muss be the exact name of the column variable
+        value:
+          type: string
+          description: Ths value have to be deserialzed
+        valueTo:
+          type: string
+          description: In case of BETWEEN this is the value to.
+        sortOrder:
+          type: string
+          enum:
+          - NONE
+          - ASCENDING
+          - DESCENDING
+        operator:
+          type: string
+          enum:
+          - EQUALS
+          - LIKE
+          - GREATER
+          - LESSER
+          - NOT_EQUALS
+          - BETWEEN
+          - NONE
+  

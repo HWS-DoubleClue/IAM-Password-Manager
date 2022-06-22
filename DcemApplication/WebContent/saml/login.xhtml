@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<f:metadata>
+	<f:event type="preRenderView" listener="#{samlLoginView.onPreRenderView}" />
+</f:metadata>
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</f:facet>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<h:outputStylesheet library="css" name="saml.css" />
+	<h:outputStylesheet library="css" name="media.css" />
+	<h:outputScript library="js" name="webauthn.js" />
+	<h:outputScript library="js" name="bdcclient.js" />
+	<title>#{DbMsg['sso.saml.title']}</title>
+	<script defer="defer" type="text/javascript">
+		$(document).ready(function() {
+			$('#loginForm\\:rpId').val(window.location.hostname);
+			bdcLoc();
+		});
+
+		function startFidoAuthentication(requestJson) {
+			if (checkFidoCompatibility()) {
+				var request = JSON.parse(requestJson);
+				webAuthnGet(request, fidoAuthCallback, fidoErrorCallback);
+			}
+		}
+
+		function checkFidoCompatibility() {
+			if (!isBrowserWebAuthnCompatible() || !isWebAuthnApiAccessible()) {
+				fidoErrorCallback(new Error(
+						"#{DbMsg['sso.error.fido.notSupported']}"));
+				return false;
+			}
+			return true;
+		}
+
+		function fidoAuthCallback(response) {
+			$('#loginForm\\:fidoResponse').val(response);
+			finishFidoAuthentication();
+		}
+
+		function fidoErrorCallback(err) {
+			$('#loginForm\\:fidoError').val(err.message);
+			showFidoError();
+		}
+
+		// workaround for Chrome auto-submitting on autofill
+		$.extend($.ui.keyCode, {
+			NUMPAD_ENTER : 108
+		});
+	</script>
+</h:head>
+
+<f:view>
+	<h:body>
+		<ui:include src="title.xhtml" />
+		<div id="container" class="ImgContainer" style="width: auto; height: 93vh; position: relative;">
+			<div class="ImgBox" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+				<p:graphicImage cache="false" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.backgroundImg != null}" />
+			</div>
+
+			<div class="box" style="width: 100%; height: 100%;position: absolute;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
+
+				<p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()"
+					oncomplete="PF('statusDialog').hide()" />
+
+				<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="true" resizable="false" showHeader="false"
+					style="border: 4; border-style: solid; border-color: #980808;">
+					<p />
+					<h:outputText style="font-size: medium" value="Please wait...." />
+					<h:graphicImage library="pictures" name="icons/24x24/test.gif" style="border: 0; padding-left: 8px" />
+					<p />
+				</p:dialog>
+
+				<h:form id="locForm">
+					<h:inputHidden id="locationType" value="#{adminModule.locationType}" />
+					<h:inputHidden id="locationApi" value="#{adminModule.locationApi}" />
+				</h:form>
+				<div class="signInText" style="padding-left: 5em; padding-top: 2em; text-align: left; height: 2em; font-size: 27px;">
+					<h:outputText style="#{adminModule.signInTextStyle};" value="#{adminModule.signInText}" />
+				</div>
+				<h:form id="loginForm">
+
+					<p:focus context="basic" />
+
+					<p:panel id="basic" styleClass="samlloginPanel" style="width: 35em; margin: 0 auto;">
+						<p />
+						<br />
+						<h:panelGroup style="font-size:1.4em" rendered="#{samlLoginView.loginPanelRendered}">
+							<h:outputLabel value="#{DbMsg['sso.login.panel.header']}" class="dialogTitle"></h:outputLabel>
+						</h:panelGroup>
+
+						<h:panelGroup id="customheaderPasswordChange" style="vertical-align: middle; position: relative;" rendered="#{samlLoginView.passwordPanelRendered}">
+							<h:outputLabel value="#{DcupMsg['title.changePasswordView']}" class="dialogTitle" style="margin-left: 8px; font-size: 1.4em;"></h:outputLabel>
+						</h:panelGroup>
+
+						<!-- Messages -->
+						<p:outputLabel value="#{samlSsoLogic.sessionError}" />
+						<p:messages id="msgs" showDetail="false" rendered="#{samlLoginView.deviceWizard == false}">
+							<p:autoUpdate />
+						</p:messages>
+						<p />
+						<p:panel rendered="#{samlLoginView.deviceWizard}">
+
+							<h:outputLabel style="font-size: x-large; color: red" class="fa fa-warning" value="" />
+							<h:outputLabel value=" #{DbMsg['sso.login.panel.deviceWizard']}" />
+							<p:link href="#{dcemApplication.userPortalUrl}" value="#{DbMsg['sso.login.panel.userPortalLink']}" target="_blank" />
+						</p:panel>
+
+						<!-- Remote Commands -->
+						<p:remoteCommand name="finishFidoAuthentication" update="@form" action="#{samlLoginView.actionFinishFidoAuthentication}" />
+						<p:remoteCommand name="showFidoError" update="@form" action="#{samlLoginView.actionShowFidoError}" />
+
+						<!-- Hidden Inputs -->
+						<h:inputHidden id="fidoResponse" value="#{samlLoginView.fidoResponse}" />
+						<h:inputHidden id="fidoError" value="#{samlLoginView.fidoError}" />
+						<h:inputHidden id="rpId" value="#{samlLoginView.rpId}" />
+						<h:inputHidden id="location" value="#{samlLoginView.location}" />
+						<p:focus for="password" rendered="#{samlLoginView.userNameDisable == true}" />
+						<p:focus for="username" rendered="#{samlLoginView.userNameDisable == false}" />
+
+						<!-- Login Form -->
+						<p:panel id="loginPanel" styleClass="loginPanelStyle" widgetVar="loginPanel" style="border: none;">
+							<p:panel style="border: none;width:100%;" rendered="#{samlLoginView.loginPanelRendered}">
+								<h:panelGroup rendered="#{samlSsoLogic.authnRequest == null}">
+									<h:outputLabel for="spDropdown" value="#{DbMsg['sso.idpInitiated.sp']} " />
+									<br></br>
+									<p:selectOneMenu id="spDropdown" value="#{samlSsoLogic.selectedSp}" style="width:70%; margin:auto;">
+										<f:selectItem itemLabel="#{DbMsg['sso.idpInitiated.selectSp']}" itemValue="" noSelectionOption="true" />
+										<f:selectItems value="#{samlLoginView.spList}" />
+										<p:ajax event="change" listener="#{samlLoginView.onSpChange}" update="spDropdown" />
+									</p:selectOneMenu>
+									<p />
+								</h:panelGroup>
+								<h:panelGroup rendered="#{samlLoginView.tenants}">
+									<h:outputLabel for="tenant" value="#{DbMsg['sso.login.panel.tenant']} "  style="font-size:1.2em;" />
+									<br></br>
+									<p:inputText id="tenant" value="#{samlLoginView.tenant}" redisplay="true" label="#{DbMsg['sso.login.panel.tenant']}" style="width: 85%;" maxlength="32">
+										<p:ajax event="blur" listener="#{samlLoginView.onTenantChange}" update="spDropdown requestQrCode" />
+									</p:inputText>
+									<p />
+								</h:panelGroup>
+								<h:outputLabel for="username" value="#{DbMsg['sso.login.panel.username']} " style="font-size:1.2em;" />
+								<br></br>
+								<p:inputText id="username" value="#{samlLoginView.userName}" redisplay="true" label="#{DbMsg['sso.login.panel.username']}" style="width: 85%"
+									maxlength="64" autocomplete="off" />
+								<p></p>
+								<h:outputLabel for="password" value="#{DbMsg['sso.login.panel.password']} " rendered="#{samlLoginView.passwordRequired}" style="font-size:1.2em;" />
+								<br></br>
+								<h:panelGroup>
+									<p:password id="password" autocomplete="off" value="#{samlLoginView.password}" label="#{DbMsg['sso.login.panel.password']}"
+										rendered="#{samlLoginView.passwordRequired}" style="width: 85%" maxlength="64" toggleMask="true" />
+
+								</h:panelGroup>
+
+								<br />
+								<br></br>
+								<p:commandButton id="login" ajax="true" async="true" style="width: 88%;font-size:1.2em;" value="#{DbMsg['sso.login.panel.button.login']}"
+									icon="fa fa-sign-in" action="#{samlLoginView.actionLogin}" rendered="#{samlLoginView.loginPanelRendered}">
+								</p:commandButton>
+								<br />
+								<br></br>
+								<p:commandButton id="requestQrCode" style="width: 88%;font-size:1.2em;" value="#{DcupMsg['button.requestNewQrCode']}"
+									rendered="#{samlLoginView.stopQrCode}" action="#{samlLoginView.requestNewQrCode()}" icon="fa fa-qrcode" update="qrcodePanel" />
+
+							</p:panel>
+
+
+
+							<p:panel id="changePasswordPanel" widgetVar="changePasswordPanel" style="width: 100%;border: none;margin: 0 auto;"
+								rendered="#{samlLoginView.passwordPanelRendered}">
+
+								<h:outputLabel value="#{DcupMsg['label.username']}" style="font-size:1.2em;" />
+								<br />
+								<p:inputText id="userName" value="#{samlLoginView.userName}" size="40" disabled="true" style="width: 85%" />
+								<p />
+								<h:outputLabel value="#{DcupMsg['label.passwordOld']}" style="font-size:1.2em;" />
+								<br />
+								<p:password id="passwordOld" size="40" value="#{samlLoginView.passwordOld}" redisplay="true" maxlength="64" style="width: 85%" toggleMask="true" />
+
+								<p />
+								<h:outputLabel value="#{DcupMsg['label.passwordNew']}" style="font-size:1.2em;" />
+								<br />
+								<p:password id="passwordNew" size="40" value="#{samlLoginView.passwordNew}" redisplay="true" maxlength="64" style="width: 85%" toggleMask="true" />
+
+								<p />
+								<h:outputLabel value="#{DcupMsg['label.passwordNewRepeat']}" style="font-size:1.2em;" />
+								<br />
+								<p:password id="passwordRepeat" size="40" value="#{samlLoginView.passwordRepeat}" redisplay="true" maxlength="64" style="width: 85%" toggleMask="true" />
+
+								<p />
+								<p:commandButton id="changePassword" value="#{DcupMsg['button.changePassword']}" action="#{samlLoginView.actionChangePassword}"
+									style="width: 88%;font-size:1.2em;" update="@form" ajax="true" async="true">
+								</p:commandButton>
+								<p />
+
+							</p:panel>
+
+							<!-- QR Code -->
+							<p:outputPanel id="qrcodePanel" style="display: block; margin: 0 auto;" rendered="#{samlLoginView.qrCodeEnabled}">
+								<p />
+								<p:graphicImage id="qrCodeImage" value="#{samlLoginView.qrCodeImage}" stream="false" />
+								<br />
+								<h:panelGroup id="counterMsg" rendered="#{samlLoginView.stopQrCode eq false}">
+									<p:outputLabel value="#{DcupMsg['message.qrValidForPt1']}" />
+									<p:outputLabel style="display: inline;" id="counter">#{samlLoginView.qrCodeTimeToLive}</p:outputLabel>
+									<p:outputLabel value="#{DcupMsg['message.qrValidForPt2']}" />
+								</h:panelGroup>
+								<p:poll id="poller" widgetVar="poller" autoStart="false" immediate="true" interval="#{dcemApplication.pollInterval}"
+									listener="#{samlLoginView.checkQrCode()}" global="false" process="@this" />
+								<p />
+
+								<p:remoteCommand name="stopQrCode" action="#{samlLoginView.stopQrCode}" global="false" />
+							</p:outputPanel>
+						</p:panel>
+						<p:selectBooleanCheckbox id="useAlternative" value="#{samlLoginView.useAlternativeAuthMethods}" />
+						<h:outputLabel for="useAlternative" value=" #{AdminMsg['label.useAlternativeAuthMethods']}" />
+						<h:outputText id="useAlternativeInfo" style="padding-left: 0.2em; font-size: 1.5em" class="fa fa-info-circle" />
+						<br />
+						<p:tooltip for="useAlternativeInfo" showEvent="click" position="top" value="#{AdminMsg['label.useAlternativeAuthMethodsInfo']}" />
+						<p:selectBooleanCheckbox id="staySignedIn" value="#{samlLoginView.stayLoggedIn}" itemLabel="#{AdminMsg['label.staySignedIn']}" />
+					</p:panel>
+
+					<p:defaultCommand target="login" scope="basic" />
+				</h:form>
+
+				<!-- Auth Method Dialog -->
+				<h:form id="authMethodForm">
+					<p:dialog id="authMethodDialog" widgetVar="authMethodDialog" modal="true" resizable="false" style="border: none !important;" styleClass="samlDialogMfa">
+
+						<span id="customheader"> <h:outputLabel value="#{DbMsg['sso.login.authChoice.header']} " class="dialogTitle" />
+						</span>
+						<p />
+						<h:panelGroup>
+							<p:dataTable value="#{samlLoginView.authMethodGuis}" var="amethod" style="margin:auto; padding: 20px 0px 10px 0px; width: 80%;" styleClass="borderless">
+								<p:column style="text-align: center;">
+									<p:commandLink action="#{samlLoginView.actionAuthMethodChosen(amethod.method)}" ajax="true" async="true">
+										<h:graphicImage style="vertical-align: middle; padding-right:4px; text-align: center;" width="" height="" library="pictures" name="#{amethod.image}" />
+									</p:commandLink>
+								</p:column>
+								<p:column>
+									<p:commandButton style="width: 12em;" value="#{amethod.name}" action="#{samlLoginView.actionAuthMethodChosen(amethod.method)}" />
+								</p:column>
+							</p:dataTable>
+						</h:panelGroup>
+						<p />
+						<p:commandLink id="closeDialog" value="#{DcupMsg['close']}" onclick="PF('authMethodDialog').hide();" style="float: right; margin-right: 1em;"
+							immediate="true" />
+						<p />
+						<br />
+					</p:dialog>
+				</h:form>
+
+				<!-- Progress Dialog -->
+				<h:form id="progressForm">
+					<p:dialog id="progressDlg" widgetVar="progressDlg" modal="true" resizable="false" styleClass="samlDialogMfa">
+						<span id="customheader"> <h:outputLabel value="#{DbMsg['sso.login.progress.header']}" class="dialogTitle"
+								style="font-size: 1.4em; margin-left: -2px;"></h:outputLabel>
+						</span>
+						<br />
+						<h:outputText value="#{DbMsg['sso.login.progress.instruction']}: " />
+						<p:outputLabel id="randomCode" style="font-weight: bold" value="#{samlLoginView.randomCode}" />
+						<p />
+						<p:progressBar interval="#{dcemApplication.pollIntervalMilli}" widgetVar="pbAjax" ajax="true" value="#{samlLoginView.progress}" labelTemplate="{value}%"
+							styleClass="animated" global="false" render="status timeLeft">
+							<p:ajax event="complete" listener="#{samlLoginView.onComplete}" update="status timeLeft" />
+						</p:progressBar>
+						<p />
+						<h:panelGrid columns="2" cellpadding="0">
+							<p:outputLabel for="status" value="#{DbMsg['sso.login.progress.status']}: " />
+							<p:outputLabel id="status" value="#{samlLoginView.msgStatus} " />
+							<p:outputLabel for="timeLeft" value="#{DbMsg['sso.login.progress.timeLeft']}: " />
+							<p:outputLabel id="timeLeft" value="#{samlLoginView.timeLeft}" />
+							<p:outputLabel id="timeLeftUnit" value="#{DbMsg['sso.timeUnitSeconds']}" />
+						</h:panelGrid>
+						<p />
+						<p:commandButton id="cancel" value="#{DbMsg['sso.login.progress.button.cancel']}" action="#{samlLoginView.cancel}" />
+						<p />
+					</p:dialog>
+				</h:form>
+
+
+
+				<h:form id="passcodeForm">
+					<!-- Passcode Dialog -->
+					<p:dialog id="passcodeDialog" widgetVar="pcDlg" modal="true" resizable="false" width="500px" styleClass="samlDialogMfa">
+						<span id="customheader"> <h:outputLabel value="#{DbMsg['sso.login.passcode.header']}" class="dialogTitle"
+								style="font-size: 1.4em; margin-left: -2px;"></h:outputLabel>
+						</span>
+						<p />
+						<p:messages showDetail="false">
+							<p:autoUpdate />
+						</p:messages>
+						<p />
+						<p:focus context="passcodeDialog" />
+						<h:outputLabel value="#{samlLoginView.authInstruction}" />
+						<p />
+						<h:outputLabel for="passcode" value="#{DbMsg['sso.login.passcode.passcode']}: " />
+						<p:inputText id="passcode" value="#{samlLoginView.passcode}" style="margin:auto; width:200px;" />
+						<br />
+						<p:commandButton id="passCodeBtn" style="width: 8em; margin-left:auto; margin-right:auto; margin-top:10px; margin-bottom:5px; display:table;" ajax="true"
+							value="OK" action="#{samlLoginView.actionPasscodeEntered}" async="true" />
+					</p:dialog>
+					<p:defaultCommand target="passCodeBtn" scope="passcodeDialog" />
+				</h:form>
+			</div>
+		</div>
+		<ui:include src="footer.xhtml" />
+		<h:outputScript>
+		var x = setInterval(function() {
+			var counterElement = document.getElementById("loginForm:counter");
+			if (counterElement !== null) {
+				var counter = counterElement.innerHTML;
+				counter = counter - 2; 
+				// Display the result in the element with id="demo"
+				counterElement.innerHTML = counter;
+				// If the count down is finished, write some text
+				if (counter &lt; 0) {
+					clearInterval(x);
+					counterElement.innerHTML = " EXPIRED ";
+					qrCodeExpired();
+				}
+			}
+		}, 2000);
+	</h:outputScript>
+	</h:body>
+</f:view>
+</html>

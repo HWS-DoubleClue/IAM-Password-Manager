@@ -1,0 +1,8 @@
+/bin/
+/testbin/
+/target/
+/work/
+/*.log
+/*.classpath
+*.project
+/*.settings

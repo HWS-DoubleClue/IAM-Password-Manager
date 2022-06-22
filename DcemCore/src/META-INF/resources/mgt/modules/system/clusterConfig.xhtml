@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<div>
+		<h:form id="clusterConfigForm">
+			<p:fieldset legend="Cluster" style="margin-bottom:10px">
+				<h:panelGrid columns="2">
+					<p:outputLabel value="#{CoreMsg['clusterConfig.clusterId']} " />
+					<p:outputLabel value="#{clusterConfigView.config.name}" />
+					<h:outputText id="output" value="#{CoreMsg['clusterConfig.scaleFactor']}#{clusterConfigView.config.scaleFactor}" />
+					<h:panelGroup>
+						<h:inputHidden id="scaleFactor" value="#{clusterConfigView.config.scaleFactor}" />
+						<p:slider for="scaleFactor" display="output" style="width: 200px;" minValue="1" maxValue="100" displayTemplate="Scale Factor %{value}" />
+					</h:panelGroup>
+					<p:outputLabel for="givenName" value="#{CoreMsg['clusterConfig.givenName']}" />
+					<p:inputText id="givenName" value="#{clusterConfigView.config.givenName}" size="32"
+						validatorMessage="#{CoreMsg['clusterConfig.error.invalidName']}" />
+					<p:outputLabel for="domainName" value="DoubleClue Server URL" />
+					<p:inputText id="domainName" value="#{clusterConfigView.config.dcemHostDomainName}" size="70" />
+					
+					<p:outputLabel for="redirect" value="Redirect Port 80 to Port" />
+					<p:inputText id="redirect" value="#{clusterConfigView.config.redirectPort80}" size="5" maxlength="5" />
+				</h:panelGrid>
+			</p:fieldset>
+			<p />
+			<p:commandButton value="#{CoreMsg['clusterConfig.editRow']}" action="#{clusterConfigView.actionEdit}"
+				rendered="#{clusterConfigView.permissionSave}" update="serviceConnectionDialog" icon="fa fa-edit" />
+			<p:dataTable styleClass="borderless" id="tableServices" var="item" value="#{clusterConfigView.connectionServices}" rowKey="#{item.name}"
+				selection="#{clusterConfigView.selectedService}" emptyMessage="#{CoreMsg['emptyTable']}">
+				<f:facet name="header">#{CoreMsg['clusterConfig.connectionServices']}</f:facet>
+				<p:column selectionMode="single" style="width:16px; text-align:center" />
+				<p:ajax event="rowSelect" update="tableServices" />
+				<p:column headerText="#{CoreMsg['clusterConfig.serviceName']}" sortBy="#{item.name}">
+					<h:outputText value="#{item.name}" style="color: #{item.portInUse ? 'red' : 'black'}"/>
+				</p:column>
+				<p:column headerText="Port" sortBy="#{item.port}">
+					<h:outputText value="#{item.portText}" style="color: #{item.portInUse ? 'red' : 'black'}" />
+				</p:column>
+				<p:column headerText="#{CoreMsg['clusterConfig.secureSSL']}" sortBy="#{item.secureInherit}">
+					<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{item.secureInherit}" />
+					<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{item.secureInherit == false}" />
+				</p:column>
+				<p:column headerText="#{CoreMsg['clusterConfig.enabled']}" sortBy="#{item.enabledInherit}">
+					<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{item.enabledInherit}" />
+					<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{item.enabledInherit == false}" />
+				</p:column>
+				<p:column headerText="Path" sortBy="#{item.path}">
+					<h:outputText value="#{item.connectionServicesType.path}" />
+				</p:column>
+				<p:column headerText="Ext. Port" sortBy="#{item.path}">
+					<h:outputText value="#{item.externalPort}" />
+				</p:column>
+			</p:dataTable>
+			<p />
+			<p:commandButton value="#{CoreMsg['AUTO_ACTION.save']}" action="#{clusterConfigView.actionSave}" style="width: 10em"
+				rendered="#{clusterConfigView.permissionSave}" icon="fa fa-save" />
+			<p />
+			<p:growl showDetail="false" closable="true" life="60000">
+				<p:autoUpdate />
+			</p:growl>
+			<p:dialog id="serviceConnectionDialog" widgetVar="serviceConnectionDialog" modal="true">
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{CoreMsg['clusterConfig.editServiceConnection']} " />
+				</f:facet>
+				<p />
+				<h:panelGroup id="editSelectedService" style="padding: 80" rendered="#{clusterConfigView.editSelectedService ne null}">
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+						<p:outputLabel value="#{CoreMsg['clusterConfig.sameAsService']}" />
+						<p:selectOneMenu id="sameAs" value="#{clusterConfigView.sameAs}">
+							<f:selectItem itemLabel="#{CoreMsg['clusterConfig.selectOne']}" noSelectionOption="true" />
+							<f:selectItems value="#{clusterConfigView.sameAsServices}" />
+							<p:ajax process="@this" update="editSelectedService" />
+						</p:selectOneMenu>
+						<p:outputLabel value="#{CoreMsg['clusterConfig.serviceName']}" />
+						<p:outputLabel value="#{clusterConfigView.editSelectedService.name}" style="font-weight: bold" />
+						<p:outputLabel value="#{CoreMsg['clusterConfig.port']}" />
+						<p:inputNumber value="#{clusterConfigView.editSelectedService.port}" thousandSeparator="" decimalPlaces="0" size="6"
+							disabled="#{clusterConfigView.sameAs ne null}" />
+						<p:outputLabel value="#{CoreMsg['clusterConfig.secureSSL']}" />
+						<p:selectBooleanCheckbox value="#{clusterConfigView.editSelectedService.secure}" disabled="#{clusterConfigView.sameAs ne null}" />
+						<p:outputLabel value="#{CoreMsg['clusterConfig.enabled']}" />
+						<p:selectBooleanCheckbox value="#{clusterConfigView.editSelectedService.enabled}" disabled="#{clusterConfigView.sameAs ne null}" />
+						
+						<p:outputLabel value="#{CoreMsg['clusterConfig.externalPort']}" />
+						<p:inputNumber value="#{clusterConfigView.editSelectedService.externalPort}" thousandSeparator="" decimalPlaces="0" size="6"
+							disabled="#{clusterConfigView.sameAs ne null}" />
+					</h:panelGrid>
+					<p />
+					<br />
+					<p:commandButton id="editButton" value="OK" action="#{clusterConfigView.actionEditOk}" update="tableServices" style="width: 8em;"
+						icon="fa fa-check" />
+					<p:commandButton id="closeButton" value="#{CoreMsg['close']}" style="margin-left: 2em; width: 8em;"
+						onclick="PF('serviceConnectionDialog').close();" ajax="false" icon="fa fa-close" />
+					<p />
+				</h:panelGroup>
+			</p:dialog>
+			<p:dialog widgetVar="restart" modal="true">
+				<f:facet name="header">
+					<h:outputText class="fa fa-exclamation-triangle" style="vertical-align: middle; font-size: 1.8em; padding-right: 6px; color: #850000" />
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{CoreMsg['clusterConfig.restartDcem']} " />
+				</f:facet>
+				<p />
+				<p:outputLabel style="font-size: 1.1em;" value="#{CoreMsg['restartMsg']}" />
+				<p />
+				<br />
+				<p:commandButton id="okButton" value="OK" style="width: 8em; color: white;" onclick="PF('restart').close();" ajax="false" icon="fa fa-check" />
+				<p />
+			</p:dialog>
+		</h:form>
+	</div>
+</ui:composition>

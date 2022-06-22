@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+	version="2.2">
+
+	<application>
+	<resource-bundle>
+			<base-name>com.doubleclue.portaldemo.resources.Messages</base-name>
+			<var>DcpmRes</var>
+		</resource-bundle>
+		<locale-config>
+			<default-locale>de</default-locale>
+			<supported-locale>en</supported-locale>
+		</locale-config>
+		<!-- <resource-bundle>
+			<base-name>eu.kara.sem.core.resources.Messages</base-name>
+			<var>coreMsg</var>
+		</resource-bundle>
+		<message-bundle>eu.kara.sem.core.resources.Messages</message-bundle> -->
+	</application>
+
+	<application>
+		<action-listener>org.primefaces.application.DialogActionListener</action-listener>
+		<navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
+		<view-handler>org.primefaces.application.DialogViewHandler</view-handler>
+	</application>
+
+	
+
+	<navigation-rule>
+		<display-name>LOGIN</display-name>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>login</from-outcome>
+			<to-view-id>/login.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<display-name>LOGIN</display-name>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>logoff</from-outcome>
+			<to-view-id>/open/logoff.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+
+</faces-config>

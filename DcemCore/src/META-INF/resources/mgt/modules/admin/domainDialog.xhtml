@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+		<h:outputStylesheet name="css/#{item.id}Styles.css" />
+	</c:forEach>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<title>#{viewNavigator.dialogTitle}</title>
+</h:head>
+
+<f:view locale="#{operatorSession.locale}">
+	<h:body class="dialogBody">
+		<span id="customheader"> <h:outputLabel class="#{autoView.icon} dialogTitle" /> <h:outputLabel value="#{viewNavigator.dialogTitle}"
+				styleClass="dialogTitle" />
+		</span>
+
+		<h:panelGroup layout="block" style="height:700px">
+			<p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()"
+				oncomplete="PF('statusDialog').hide()" />
+			<h:form id="domainForm">
+
+				<p:messages showSummary="true" showDetail="false" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<h:panelGroup rendered="#{!domainDialog.renderAzureAuthPanel}">
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="4" style="border: solid">
+						<p:outputLabel style="padding-right: 4em; font-weight: bold" value="#{AdminMsg['Domain.type']}: " />
+						<p:selectOneRadio id="domainType" value="#{domainDialog.domainType}" disabled="#{viewNavigator.editAction}">
+							<f:selectItems value="#{domainDialog.domainTypes}" />
+							<p:ajax event="change" listener="#{domainDialog.changeType}" update="@form"></p:ajax>
+						</p:selectOneRadio>
+					</h:panelGrid>
+					<p />
+					<h:panelGrid id="ldapTable" columns="2" cellpadding="2" cellspacing="2" rendered="#{domainDialog.domainType != 'Azure_AD'}">
+						<p:outputLabel for="name" value="#{AdminMsg['Domain.name']} ">
+							<p:keyFilter regEx="/[a-z0-9_]/i" />
+						</p:outputLabel>
+						<p:inputText id="name" value="#{domainDialog.actionObject.name}" />
+
+						<p:outputLabel for="url" value="URL" />
+						<p:inputText id="url" value="#{domainDialog.actionObject.host}" style="width: 500px" />
+
+						<p:outputLabel for="baseDn" value="#{AdminMsg['Domain.baseDN']} " />
+						<p:inputText id="baseDn" value="#{domainDialog.actionObject.baseDN}" style="width: 500px" />
+
+						<p:outputLabel for="searchAccount" value="#{AdminMsg['Domain.searchAccount']} " />
+						<p:inputText id="searchAccount" value="#{domainDialog.actionObject.searchAccount}" style="width: 500px" />
+
+						<p:outputLabel for="searchAccountPassword" value="#{AdminMsg['Domain.inputPassword']} " />
+						<h:panelGroup>
+							<p:password id="searchAccountPassword" value="#{domainDialog.actionObject.password}" redisplay="true" toggleMask="true"/>
+
+						</h:panelGroup>
+
+
+						<p:outputLabel for="filter" value="Filter" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+						<p:inputText id="filter" value="#{domainDialog.actionObject.filter}" style="width: 500px;" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+
+						<p:outputLabel for="loginAttribute" value="#{AdminMsg['Domain.loginAttribute']}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+						<p:inputText id="loginAttribute" value="#{domainDialog.actionObject.loginAttribute}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+
+						<p:outputLabel for="firstNameAttribute" value="#{AdminMsg['Domain.firstNameAttribute']}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+						<p:inputText id="firstNameAttribute" value="#{domainDialog.actionObject.lastNameAttribute}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+
+						<p:outputLabel for="lastNameAttribute" value="#{AdminMsg['Domain.lastNameAttribute']}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+						<p:inputText id="lastNameAttribute" value="#{domainDialog.actionObject.lastNameAttribute}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+
+						<p:outputLabel for="emailAttribute" value="#{AdminMsg['Domain.mailAttribute']}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+						<p:inputText id="emailAttribute" value="#{domainDialog.actionObject.mailAttribute}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+
+						<p:outputLabel for="telephoneAttribute" value="#{AdminMsg['Domain.telephoneAttribute']}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+						<p:inputText id="telephoneAttribute" value="#{domainDialog.actionObject.telephoneAttribute}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+
+						<p:outputLabel for="mobileAttribute" value="#{AdminMsg['Domain.mobileAttribute']}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+						<p:inputText id="mobileAttribute" value="#{domainDialog.actionObject.mobileAttribute}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+
+						<p:outputLabel for="emailDomains" value="#{AdminMsg['Domain.mapEmailDomains']}" />
+						<h:panelGroup>
+							<p:inputText id="emailDomains" style="width: 36em" value="#{domainDialog.actionObject.mapEmailDomains}" />
+							<p:tooltip id="toolTipTrack" for="emailDomains" style="font-size: x-small; white-space: normal"
+								value="Assign user's e-mails suffixes to this domain. Separated by a semi-colon (;)" position="bottom" />
+						</h:panelGroup>
+
+						<p:outputLabel for="verifyCertificate" value="#{AdminMsg['Domain.verifyCertificate']}" />
+						<h:panelGroup>
+							<p:selectBooleanCheckbox id="verifyCertificate" value="#{domainDialog.actionObject.domainConfig.verifyCertificate}" />
+							<p:tooltip id="toolTipVerifyCertificate" for="verifyCertificate" style="font-size: x-small; white-space: normal"
+								value="Check this box if you want DCEM or Active Diretory Connector to verify the certificate of the active directory." position="bottom" />
+						</h:panelGroup>
+
+						<p:outputLabel for="remoteConnector" value="#{AdminMsg['Domain.remoteConnector']}" />
+						<h:panelGroup>
+							<p:selectBooleanCheckbox id="remoteConnector" value="#{domainDialog.actionObject.domainConfig.remote}">
+								<p:ajax event="change" update="ldapTable" />
+							</p:selectBooleanCheckbox>
+							<p:tooltip id="toolTipRemoteConnector" for="remoteConnector" style="font-size: x-small; white-space: normal"
+								value="Check this box if you want to connect an active directory on premises with a DCEM running in the cloud via Active Directory Connector."
+								position="bottom" />
+						</h:panelGroup>
+
+						<p:outputLabel for="authConnector" value="#{AdminMsg['Domain.authConnector']}" rendered="#{domainDialog.actionObject.domainConfig.remote}" />
+						<h:panelGroup rendered="#{domainDialog.actionObject.domainConfig.remote}">
+							<p:selectOneMenu id="authConnector" value="#{domainDialog.actionObject.domainConfig.authConnectorName}">
+								<f:selectItems value="#{domainDialog.authConnectors}" />
+							</p:selectOneMenu>
+							<p:tooltip for="authConnector" style="font-size: x-small; white-space: normal"
+								value="Choose the name of the Auth Connector you want to use to configure this domain with Active Directory Connector. You can create an Auth Connector at Identity Management > Auth Connector"
+								position="bottom" />
+						</h:panelGroup>
+
+						<p:outputLabel style="white-space: nowrap;" value="#{AdminMsg['Domain.rank']}" />
+						<p:selectOneMenu value="#{domainDialog.actionObject.rank}">
+							<f:selectItem itemLabel="#{AdminMsg['Domain.priorityHigh']}" itemValue="0" />
+							<f:selectItem itemLabel="1" itemValue="1" />
+							<f:selectItem itemLabel="2" itemValue="2" />
+							<f:selectItem itemLabel="3" itemValue="3" />
+							<f:selectItem itemLabel="4" itemValue="4" />
+							<f:selectItem itemLabel="5" itemValue="5" />
+							<f:selectItem itemLabel="6" itemValue="6" />
+							<f:selectItem itemLabel="7" itemValue="7" />
+							<f:selectItem itemLabel="8" itemValue="8" />
+							<f:selectItem itemLabel="9" itemValue="9" />
+							<f:selectItem itemLabel="#{AdminMsg['Domain.priorityLow']}" itemValue="10" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="enable" value="#{AdminMsg['Domain.enable']} " />
+						<p:selectBooleanCheckbox id="enable" value="#{domainDialog.actionObject.enable}" />
+					</h:panelGrid>
+					<h:panelGrid columns="2" cellpadding="2" cellspacing="2" rendered="#{domainDialog.domainType == 'Azure_AD'}">
+						<p:outputLabel for="azureName" value="#{AdminMsg['Domain.name']} " />
+						<p:inputText id="azureName" value="#{domainDialog.actionObject.name}" style="width: 300px">
+							<p:keyFilter regEx="/[a-z0-9_]/i" preventPaste="false" />
+						</p:inputText>
+
+						<p:outputLabel for="azureAuthority" value="#{AdminMsg['Domain.tenantId']}" />
+						<p:inputText id="azureAuthority" value="#{domainDialog.actionObject.host}" style="width: 300px" />
+
+						<p:outputLabel for="clientId" value="#{AdminMsg['Domain.clientId']} " />
+						<p:inputText id="clientId" value="#{domainDialog.actionObject.searchAccount}" style="width: 300px" />
+
+						<p:outputLabel for="clientSecret" value="#{AdminMsg['Domain.clientSecret']} " />
+						<p:password id="clientSecret" value="#{domainDialog.actionObject.password}" toggleMask="true" redisplay="true" style="width: 300px" />
+							
+						<p:outputLabel for="emailDomainsAzure" value="#{AdminMsg['Domain.mapEmailDomains']}" />
+						<h:panelGroup>
+							<p:inputText id="emailDomainsAzure" style="width: 36em" value="#{domainDialog.actionObject.mapEmailDomains}" />
+							<p:tooltip for="emailDomainsAzure" style="font-size: x-small; white-space: normal"
+								value="Assign user's e-mails suffixes to this domain. Separated by a semi-colon (;)" position="bottom" />
+						</h:panelGroup>
+						<p:outputLabel style="white-space: nowrap;" value="#{AdminMsg['Domain.rank']}" />
+						<p:selectOneMenu value="#{domainDialog.actionObject.rank}">
+							<f:selectItem itemLabel="#{AdminMsg['Domain.priorityHigh']}" itemValue="0" />
+							<f:selectItem itemLabel="1" itemValue="1" />
+							<f:selectItem itemLabel="2" itemValue="2" />
+							<f:selectItem itemLabel="3" itemValue="3" />
+							<f:selectItem itemLabel="4" itemValue="4" />
+							<f:selectItem itemLabel="5" itemValue="5" />
+							<f:selectItem itemLabel="6" itemValue="6" />
+							<f:selectItem itemLabel="7" itemValue="7" />
+							<f:selectItem itemLabel="8" itemValue="8" />
+							<f:selectItem itemLabel="9" itemValue="9" />
+							<f:selectItem itemLabel="#{AdminMsg['Domain.priorityLow']}" itemValue="10" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="azureEnable" value="#{AdminMsg['Domain.enable']} " />
+						<p:selectBooleanCheckbox id="azureEnable" value="#{domainDialog.actionObject.enable}" />
+					</h:panelGrid>
+					<p />
+					<br />
+					<p:commandButton id="ok" style="width: 8em;" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}" icon="fa fa-check" update="@form" />
+				</h:panelGroup>
+				<h:panelGroup rendered="#{domainDialog.renderAzureAuthPanel}">
+					<h:outputText value="#{AdminMsg['Domain.azureInstruction']}" />
+					<p />
+					<br />
+					<p:button value="#{AdminMsg['Domain.authoriseAzure']}" href="#{domainDialog.azureRedirectUrl}" target="_parent" />
+				</h:panelGroup>
+				<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" style="margin-left: 3em; width: 9em;" immediate="true"
+					action="#{viewNavigator.actionCloseDialog}" icon="fa fa-close" />
+
+			</h:form>
+		</h:panelGroup>
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="true" resizable="false" showHeader="false"
+			style="border: 4px; border-style: solid; border-color: #980808">
+			<p />
+			<h:outputText style="font-size: medium" value="Please wait...." />
+			<h:graphicImage library="pictures" name="icons/24x24/test.gif" style="border: 0; padding-left: 8px" />
+			<p />
+		</p:dialog>
+
+	</h:body>
+</f:view>
+</html>

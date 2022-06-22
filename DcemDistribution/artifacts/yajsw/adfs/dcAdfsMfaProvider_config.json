@@ -1,0 +1,8 @@
+{
+	"restApiUrl": "https://dcem_server:8001/dcem/restApi/as",
+	"restOperatorName": "RestServicesOperator",
+	"restPassword": "test",
+	"restConnectionTimeout": 5000,
+	"messageResponseTryDuration": 1,
+	"messageResponseMaxTries": 120
+}

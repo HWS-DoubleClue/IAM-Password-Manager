@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+	version="2.2">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.doubleclue.dcem.userportal.resources.DcupMsg</base-name>
+			<var>DcupMsg</var>
+		</resource-bundle>
+	</application>
+	<navigation-rule>
+		<display-name>UPLOGIN</display-name>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>uplogin</from-outcome>
+			<to-view-id>/userportal/preLogin_.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		
+		<!-- <navigation-case>
+			<from-outcome>welcome</from-outcome>
+			<to-view-id>/userportal/welcome.xhtml</to-view-id>
+		</navigation-case> -->
+	</navigation-rule>
+</faces-config>

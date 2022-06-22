@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" >
+
+	<p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide()"
+			onerror="PF('statusDialog').hide()"
+			oncomplete="PF('statusDialog').hide()" />
+			
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+			closable="false" resizable="false" showHeader="false"
+			style="border: 2; border-style: solid; border-color: #f0f0f0;">
+			<p></p>
+			<h:outputText style="font-size: medium" value="Please wait...." />
+			<h:graphicImage library="pictures" name="icons/24x24/test.gif"
+				style="border: 0; padding-left: 8px" />
+			<p></p>
+		</p:dialog>
+
+</ui:composition>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast
+	xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.12.xsd"
+	xmlns="http://www.hazelcast.com/schema/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<network>
+		<port auto-increment="false" port-count="100">5701</port>
+		<outbound-ports>
+			<ports>0</ports>
+		</outbound-ports>
+		<join>
+			<multicast enabled="true">
+				<multicast-group>224.2.2.3</multicast-group>
+				<multicast-port>54327</multicast-port>
+			</multicast>
+			<tcp-ip enabled="false">
+                <member>machine3:5799</member>
+                <member>192.168.1.0-7</member>
+            </tcp-ip>
+		</join>
+		<interfaces enabled="false">
+			<interface>10.10.1.*</interface>
+		</interfaces>
+		<ssl enabled="false" />
+		<socket-interceptor enabled="false" />
+		<symmetric-encryption enabled="false">
+			<algorithm>PBEWithMD5AndDES</algorithm>
+			<salt>thesalt</salt>
+			<password>thepass</password>
+			<iteration-count>19</iteration-count>
+		</symmetric-encryption>
+	</network>
+	<partition-group enabled="false" />
+	<executor-service name="default">
+		<pool-size>16</pool-size>
+		<queue-capacity>0</queue-capacity>
+	</executor-service>
+	<queue name="default">
+		<max-size>0</max-size>
+		<backup-count>1</backup-count>
+		<async-backup-count>0</async-backup-count>
+		<empty-queue-ttl>-1</empty-queue-ttl>
+	</queue>
+	<map name="com.doubleclue.*">
+		<backup-count>1</backup-count>
+		<time-to-live-seconds>3600</time-to-live-seconds> <!--  one hour -->
+		<max-idle-seconds>600</max-idle-seconds>
+		<eviction-policy>LRU</eviction-policy>
+		<max-size policy="PER_NODE">200</max-size>
+		<eviction-percentage>25</eviction-percentage>
+		<near-cache>
+			<!-- <max-size>5000</max-size> -->
+			<time-to-live-seconds>3600</time-to-live-seconds>
+			<max-idle-seconds>600</max-idle-seconds>
+			<in-memory-format>BINARY</in-memory-format>
+			<invalidate-on-change>true</invalidate-on-change>
+			<eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
+		</near-cache>
+	</map>
+	<map name="default">
+		<in-memory-format>BINARY</in-memory-format>
+		<backup-count>1</backup-count>
+		<async-backup-count>0</async-backup-count>
+		<time-to-live-seconds>0</time-to-live-seconds>
+		<max-idle-seconds>0</max-idle-seconds>
+		<eviction-policy>NONE</eviction-policy>
+		<max-size policy="PER_NODE">0</max-size>
+		<eviction-percentage>25</eviction-percentage>
+		<min-eviction-check-millis>100</min-eviction-check-millis>
+		<merge-policy>com.hazelcast.map.merge.PutIfAbsentMapMergePolicy</merge-policy>
+		<cache-deserialized-values>INDEX-ONLY</cache-deserialized-values>
+	</map>
+
+	<multimap name="default">
+		<backup-count>1</backup-count>
+		<value-collection-type>SET</value-collection-type>
+	</multimap>
+
+	<list name="default">
+		<backup-count>1</backup-count>
+	</list>
+
+	<set name="default">
+		<backup-count>1</backup-count>
+	</set>
+
+	<jobtracker name="default">
+		<max-thread-size>0</max-thread-size>
+		<!-- Queue size 0 means number of partitions * 2 -->
+		<queue-size>0</queue-size>
+		<retry-count>0</retry-count>
+		<chunk-size>1000</chunk-size>
+		<communicate-stats>true</communicate-stats>
+		<topology-changed-strategy>CANCEL_RUNNING_OPERATION</topology-changed-strategy>
+	</jobtracker>
+
+	<semaphore name="default">
+		<initial-permits>0</initial-permits>
+		<backup-count>1</backup-count>
+		<async-backup-count>0</async-backup-count>
+	</semaphore>
+
+	<reliable-topic name="default">
+		<read-batch-size>10</read-batch-size>
+		<topic-overload-policy>BLOCK</topic-overload-policy>
+		<statistics-enabled>true</statistics-enabled>
+	</reliable-topic>
+
+	<ringbuffer name="default">
+		<capacity>10000</capacity>
+		<backup-count>1</backup-count>
+		<async-backup-count>0</async-backup-count>
+		<time-to-live-seconds>30</time-to-live-seconds>
+		<in-memory-format>BINARY</in-memory-format>
+	</ringbuffer>
+
+	<serialization>
+		<portable-version>0</portable-version>
+	</serialization>
+
+	<services enable-defaults="true" />
+	<lite-member enabled="false" />
+</hazelcast>

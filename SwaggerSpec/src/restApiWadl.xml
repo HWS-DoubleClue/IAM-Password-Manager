@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<application xmlns="http://wadl.dev.java.net/2009/02">
+    <doc xmlns:jersey="http://jersey.java.net/" jersey:generatedBy="Jersey: 2.25 2016-12-08 12:54:48"/>
+    <doc xmlns:jersey="http://jersey.java.net/" jersey:hint="This is simplified WADL with user and core resources only. To get full WADL with extended resources use the query parameter detail. Link: http://localhost:7443/sem/restApi/application.wadl?detail=true"/>
+    <grammars/>
+    <resources base="http://localhost:7443/sem/restApi/">
+        <resource path="/swagger">
+            <method id="getListingJson" name="GET">
+                <response>
+                    <representation mediaType="application/json"/>
+                </response>
+            </method>
+            <method id="getListingYaml" name="GET">
+                <response>
+                    <representation mediaType="application/yaml"/>
+                </response>
+            </method>
+        </resource>
+        <resource path="/echo">
+            <method id="echo" name="GET">
+                <request>
+                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="text" style="query" type="xs:string"/>
+                </request>
+                <response>
+                    <representation mediaType="application/json"/>
+                    <representation mediaType="text/xml"/>
+                    <representation mediaType="text/html"/>
+                </response>
+            </method>
+        </resource>
+        <resource path="/swagger.{type:json|yaml}">
+            <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="type" style="template" type="xs:string"/>
+            <method id="getListing" name="GET">
+                <response>
+                    <representation mediaType="application/json"/>
+                    <representation mediaType="application/yaml"/>
+                </response>
+            </method>
+        </resource>
+        <resource path="/message">
+            <method id="addMessage" name="POST">
+                <request>
+                    <representation mediaType="application/json"/>
+                </request>
+                <response>
+                    <representation mediaType="application/json"/>
+                </response>
+            </method>
+            <method id="getMessageResponse" name="GET">
+                <request>
+                    <param xmlns:xs="http://www.w3.org/2001/XMLSchema" name="msgId" style="query" type="xs:long"/>
+                </request>
+                <response>
+                    <representation mediaType="application/json"/>
+                </response>
+            </method>
+        </resource>
+    </resources>
+</application>

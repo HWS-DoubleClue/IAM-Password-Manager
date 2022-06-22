@@ -1,0 +1,162 @@
+---
+openapi: 3.0.0
+info:
+  title: DoubleClue Shifts Module API
+  description: DoubleClue Shifts Module API
+  contact:
+    email: support@doubleclue.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/DoubleClue.com/Shifts/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://virtserver.swaggerhub.com/DoubleClue.com/shifts/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://doubleclue.online/dcem/restApi/shifts
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+  
+paths:
+  /shifts/misc/echo:
+    get:
+      description: This is used for testing purposes
+      operationId: echo
+      parameters:
+      - name: text
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: the echo textDcemApiException
+          content:
+            text/plain:
+              schema:
+                type: string
+        "599":
+          description: Server Logic Exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DcemApiException'
+  /shifts/absenses/query:
+    post:
+      description: Queries
+      operationId: query
+      requestBody:
+        $ref: '#/components/requestBodies/FilterBody'
+      responses:
+        "200":
+          description: Array of Absenses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/shiftsApiAbsense'
+        "599":
+          description: Server Logic Exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DcemApiException'
+components:
+  schemas:
+    DcemApiException:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          default: 0
+        message:
+          type: string
+        details:
+          type: string
+    shiftsApiAbsense:
+      type: object
+      properties:
+        currentDate:
+          type: string
+          description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+          format: date-time
+        userName:
+          type: string
+        startDate:
+          type: string
+          description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+          format: date-time
+        endDate:
+          type: string
+          description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+          format: date-time
+        absenseType:
+          type: string
+          enum:
+          - HomeOffice
+          - Vacation
+          - Sick
+          - Others
+        comments:
+          type: string
+    ApiFilter:
+      type: object
+      properties:
+        offset:
+          type: integer
+          default: 0
+        maxResults:
+          type: integer
+          default: 1000
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiFilterItem'
+    ApiFilterItem:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: This muss be the exact name of the column variable
+        value:
+          type: string
+          description: Ths value have to be deserialzed
+        valueTo:
+          type: string
+          description: In case of BETWEEN this is the value to.
+        sortOrder:
+          type: string
+          enum:
+          - NONE
+          - ASCENDING
+          - DESCENDING
+        operator:
+          type: string
+          enum:
+          - EQUALS
+          - LIKE
+          - GREATER
+          - LESSER
+          - NOT_EQUALS
+          - BETWEEN
+          - NONE
+  requestBodies:
+    FilterBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiFilter'
+      required: true

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+	<div>
+		
+
+		<h:form id="form">
+		
+			<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
+				<!-- <p:commandLink value="#{autoAction.actionText}" rendered="#{autoAction.link}" ajax="false"
+					action="#{viewNavigator.setActiveDialog(autoAction)}" styleClass="icon_#{viewNavigator.getActionIcon(autoAction)}">
+				</p:commandLink> -->
+				
+								
+				<p:commandButton styleClass="actionButton" value="#{autoAction.actionText}" rendered="#{autoAction.link == false}"
+					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false"
+					onclick="startAjaxStatus()">
+					<p:ajax event="dialogReturn" update="status pTable" />
+				</p:commandButton>
+				<p:spacer width="12" />
+			</c:forEach>
+
+
+			
+
+			<p:outputPanel id="status">
+				<p:outputLabel value="#{asMsg['rpTable.state']}: " />
+				<p:outputLabel value="#{reverseProxyView.state}" />
+				<p:spacer width="40px" />
+				<p:outputLabel value="#{asMsg['rpTable.connections']}" />
+				<p:outputLabel value="#{reverseProxyView.connections}" />
+			</p:outputPanel>
+
+
+			<p></p>
+
+			<p:panel>
+			<span id="customheader" >
+			<h:outputLabel value="Log" class="dialogTitle" style="margin-left: 0; font-size: 1.4em;"></h:outputLabel>
+					</span>
+					<p></p>
+				<p:dataTable styleClass="borderless" id="pTable" value="#{reverseProxyView.reports}" var="report" emptyMessage="#{CoreMsg['emptyTable']}">
+
+					<p:column headerText="#{asMsg['rpTable.timestamp']}" sortBy="#{report.date}" sortOrder="descending">
+						<h:outputText value="#{report.date}" />
+					</p:column>
+
+					<p:column headerText="#{asMsg['rpTable.state']}">
+						<h:outputText value="#{report.action}" />
+					</p:column>
+
+					<p:column headerText="#{asMsg['rpTable.success']}">
+						<h:outputText value="#{report.success}" />
+					</p:column>
+
+					<p:column headerText="Information">
+						<h:outputText value="#{report.info}" />
+					</p:column>
+
+
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+
+
+
+
+	</div>
+
+
+</ui:composition>

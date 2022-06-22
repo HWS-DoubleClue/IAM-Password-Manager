@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<title>DoubleClue PortalDemo</title>
+	<h:outputStylesheet library="css" name="portalStyles.css" />
+
+</h:head>
+
+
+<f:view>
+
+	<h:body>
+		<ui:include src="title.xhtml" />
+		<div>
+		<p></p>
+		<br></br>
+
+			<h:form style="margin-left: 10px;">
+
+			<p:tabMenu>
+				<p:menuitem value="Welcome" action="#{portalSessionBean.gotoView('welcomeTabView')}" icon="fa fa-star" update="viewPart" style="padding: 10px;">
+					<f:param name="ind" value="0" />
+				</p:menuitem>
+				<p:menuitem value="  Money Transfer" action="#{portalSessionBean.gotoView('messageTabView.xhtml')}" icon="fa fa-credit-card" update="viewPart" style="padding: 10px;">
+					<f:param name="ind" value="1" />
+				</p:menuitem>
+				<p:menuitem value="Logoff" action="#{portalSessionBean.logoff()}" icon="fa fa-sign-out" update="viewPart" style="padding: 10px;">
+					<f:param name="ind" value="2" />
+				</p:menuitem>
+			</p:tabMenu>
+			</h:form>
+			 	
+		<h:panelGroup id="viewPart">
+			<p:messages id="mainMessages" layout="table" globalOnly="false" showSummary="true" >
+				<p:autoUpdate />
+			</p:messages>
+		 	<ui:include src="#{portalSessionBean.getViewPath()}" /> 
+		</h:panelGroup> 
+
+		</div>
+	</h:body>
+</f:view>
+</html>

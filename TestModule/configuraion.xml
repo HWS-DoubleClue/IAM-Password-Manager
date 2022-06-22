@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <database>
+        <adminName>root</adminName>
+        <databaseConfigured>true</databaseConfigured>
+        <databaseName>sem_db</databaseName>
+        <databaseType>miriaDB</databaseType>
+        <ipAddress>localhost</ipAddress>
+        <jdbcURLDirect>false</jdbcURLDirect>
+        <mgtUserName>root</mgtUserName>
+        <port>3306</port>
+        <svcUserName>root</svcUserName>
+    </database>
+    <dbPoolConfig>
+        <acquireIncrement>4</acquireIncrement>
+        <acquireRetryAttempts>30</acquireRetryAttempts>
+        <acquireRetryDelay>1000</acquireRetryDelay>
+        <checkoutTimeout>10000</checkoutTimeout>
+        <databasePoolCheckConnectionInterval>300</databasePoolCheckConnectionInterval>
+        <databasePoolMinimum>20</databasePoolMinimum>
+        <databasePoolTimeout>21600</databasePoolTimeout>
+        <maxIdleTimeExcessConnections>1200</maxIdleTimeExcessConnections>
+        <maxStatements>50</maxStatements>
+        <numHelperThreads>50</numHelperThreads>
+    </dbPoolConfig>
+    <fileFormatVersion>0</fileFormatVersion>
+    <maximumMemoryJvm>0</maximumMemoryJvm>
+    <node>
+        <nodeId>A</nodeId>
+    </node>
+    <scalabilityFactor>4</scalabilityFactor>
+</configuration>

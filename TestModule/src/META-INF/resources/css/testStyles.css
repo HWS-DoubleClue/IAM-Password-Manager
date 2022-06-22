@@ -1,0 +1,39 @@
+@CHARSET "ISO-8859-1";
+
+.rowColorClassBlue {
+	background-color: rgb(221, 235, 247) !important;
+}	
+.rowColorClassRed {
+	background-color: rgb(247, 221, 221) !important;
+}	
+.rowColorClassGreen {
+	background-color: rgb(221, 247, 222) !important;
+}
+.rowColorClassGrey {
+	background-color: rgb(245, 245, 245) !important;
+}
+.rowColorClassGrey:hover {
+	background-color: #bae2f5 !important;
+}
+	
+.ui-button.infoButton {
+	background-color: #ad0000 !important;
+}
+.ui-button.infoButton:hover {
+	background-color: #f00000 !important;
+}
+.ui-button.infoButton:active {
+	background-color: #ff0000 !important;
+}
+
+.testUnitsClass .ui-panelgrid-cell {
+	border-style: none !important;
+	width: 33.3%;
+	background-color: #e5e5e5;
+}
+
+.testUnitsClass .runningTestUnitClass .ui-panelgrid-cell {
+	border-style: solid !important;
+	background-color: white;
+	text-align: center;
+}

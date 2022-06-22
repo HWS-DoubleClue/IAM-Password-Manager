@@ -1,0 +1,12 @@
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          default: 0
+        message:
+          type: string
+        details:
+          type: string    

@@ -1,0 +1,277 @@
+@CHARSET "ISO-8859-1";
+
+/* General Settings */
+body {
+	background: #f0f8ff;
+	font-family: "Segoe UI", sans-serif;
+	font-size: 14px;
+	margin: 0;
+	overflow: hidden;
+}
+
+.header1 {
+	font-size: x-large;
+	color: #005078;
+	padding: 10px !important;
+}
+
+.header3 {
+	font-size: large;
+	color: #005078;
+	padding: 10px;
+}
+
+.header6 {
+	font-size: x-small;
+	color: #ffffff;
+	padding: 10px;
+}
+
+.viewTitle {
+	font-size: 1.6em;
+	color: #005078;
+	vertical-align: middle;
+	margin-left: 5px;
+	text-decoration: none;
+}
+
+.dialogTitle {
+	color: #005078 !important;
+	vertical-align: middle;
+	margin-left: 8px;
+	font-size: large;
+	text-decoration: none;
+	background-color: none !important;
+}
+
+.first-column {
+	width: 40%;
+}
+
+.second-column {
+	width: 55%;
+}
+
+.tenantBrandingTitle {
+	color: #005078 !important;
+	margin-left: 0;
+	font-size: 1.4em;
+}
+
+.ui-accordion-header {
+	color: #005078 !important;
+}
+
+.ui-accordion-content.ui-helper-reset.ui-widget-content {
+	border: 1px solid lightgrey;
+	font-size: 2em;
+}
+
+.companyLogoStyle {
+	width: 100%;
+	height: 100%;
+	border: none;
+	vertical-align: middle;
+}
+
+.ui-fileupload {
+	border: none;
+	display: inline;
+}
+
+.ui-fileupload-buttonbar {
+	background: transparent none;
+	border: none;
+	display: inline-flex;
+}
+
+.ui-fileupload-content {
+	border: none;
+	display: inline-flex;
+}
+
+.ui-fileupload-buttonbar .ui-fileupload-choose {
+	background-color: rgba(142, 103, 64, 0.98);
+	display: inline-flex;
+}
+
+.titleFrame {
+	height: 60px; /* equals max image height */
+	width: 200px;
+	border: 1px solid red;
+	white-space: nowrap;
+	background-color: #005078;
+	text-align: center;
+	margin: 1em 0;
+}
+
+.dialogBody {
+	background: #ffffff;
+}
+
+/* Header Bar */
+#headerbar {
+	background-color: #005078;
+	padding-left: 0px;
+	margin: 0;
+	border-spacing: 0px;
+	height: 6em;
+}
+
+.headTitle {
+	font-size: large;
+	color: #ffffff;
+	vertical-align: middle !important;
+	margin: 10px !important;
+}
+
+.headLoginTitle {
+	font-size: large;
+	color: #ffffff;
+	vertical-align: middle !important;
+}
+
+#headerbutton {
+	background-color: #ffffff !important;
+}
+
+/* Menu */
+#sidemenu {
+	background-color: #303030;
+}
+
+.selectMenu {
+	display: inline-block;
+	vertical-align: center;
+}
+
+.ui-menubar {
+	border: none;
+	margin: 10px 0;
+}
+
+.menuActive {
+	/* color: yellow;*/
+	color: #94c8d5 !important;
+	/* font-weight: bold; */
+	text-decoration: underline;
+}
+
+.menuDisabled {
+	color: darkgrey;
+}
+
+.menuEnabled {
+	color: white;
+	text-decoration: underline;
+}
+
+/* Tab View */
+.ui-tabs-nav {
+	background-color: #ffffff !important;
+}
+
+.wideButton20 {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.ui-widget-content .midButton {
+	margin-left: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 5px;
+	width: 180px !Important;
+}
+
+.scrollBody {
+	height: 100px;
+	overflow: auto;
+}
+
+.selectedRowClassName {
+	/* background-color: yellow; */
+	background-color: #94c8d5 !important;
+}
+
+.unSelectedRowClassName {
+	background-color: lightred;
+}
+
+.autoDialogTabe {
+	margin: 10px;
+}
+
+.columnHeaderClass {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.columnClasses {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.menuCaption {
+	background-color: white;
+}
+
+.activeMenuCaption {
+	color: #eeee00;
+}
+
+.ui-paginator {
+	background-color: #d8d8d8 !important;
+	color: #555555 !important;
+}
+
+.columnLabel {
+	white-space: nowrap;
+	vertical-align: top;
+}
+
+.columnValue {
+	vertical-align: top;
+}
+
+.autoTableStyle {
+	word-wrap: break-word;
+}
+
+ul.ui-menu-child {
+	white-space: nowrap;
+	width: 200px !important;
+}
+
+
+.labelLogin{
+	font-size: 1em !important;
+}  
+
+.closebtn {
+	font-size:2em !important;
+	color:#fff;
+}
+
+.rowErrorClass {
+	color: #FF0000 !important;
+}
+
+.rowWarningClass {
+	color: #F85300 !important;
+}
+
+.rowFailureClass {
+	color: #8f0000 !important;
+}
+
+.ui-datagrid.applicationGridAdmin .ui-datagrid-header {
+	background:none !important;
+}
+
+.ui-password.ui-password-masked .ui-password-icon, .ui-password.ui-password-unmasked .ui-password-icon:before{
+	margin-left: 0.2em;
+}
+
+
+        

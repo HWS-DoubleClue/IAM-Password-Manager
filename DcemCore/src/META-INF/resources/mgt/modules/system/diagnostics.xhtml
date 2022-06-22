@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<h:form id="diagnosticsForm">
+
+		<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
+			<p:commandLink value="#{autoAction.actionText}" rendered="#{autoAction.link}" ajax="false"
+				action="#{viewNavigator.setActiveDialog(autoAction)}" styleClass="icon_#{viewNavigator.getActionIcon(autoAction)}">
+			</p:commandLink>
+
+			<p:commandButton styleClass="actionButton" value="#{autoAction.actionText}" rendered="#{autoAction.link == false}"
+				action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false"
+				onclick="startAjaxStatus()">
+				<p:ajax event="dialogReturn" update="staticValue" />
+			</p:commandButton>
+			<p:spacer width="12" />
+		</c:forEach>
+		<p:spacer width="20" />
+<!--
+ // #if COMMUNITY_EDITION == false
+-->
+		<p:outputLabel value="#{asMsg['diagnosticsView.diagnosticTime']}" />
+		<p:selectOneMenu id="diagTime" value="#{diagnosticsView.diagnosticTime}">
+			<f:selectItems value="#{diagnosticsView.getDiagnosticTimes()}" />
+			<p:ajax event="valueChange" process="@this" update="valueTable counterTable" async="true" listener="#{diagnosticsView.reload()}" />
+		</p:selectOneMenu>
+<!-- 
+// #endif 
+-->
+		<p></p>
+		<p:panel id="toggleable" toggleable="true" collapsed="false" toggleSpeed="1000" widgetVar="panelStatic" style="margin-bottom:20px">
+			<span id="customheader"> <h:outputLabel value="#{asMsg['diagnosticsView.staticValues']}" class="dialogTitle"
+					style="margin-left: 0; font-size: 1.4em;"></h:outputLabel>
+			</span>
+			<p></p>
+			<p:dataTable styleClass="borderless" id="staticValue" var="item" value="#{diagnosticsView.staticValues}" emptyMessage="#{CoreMsg['emptyTable']}">
+				<p:column headerText="#{asMsg['diagnosticsView.node']}" filterBy="#{item.node}" sortBy="#{item.node}" filterMatchMode="contains">
+					<h:outputText value="#{item.node}" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.module']}" filterBy="#{item.module}" sortBy="#{item.module}" filterMatchMode="contains">
+					<h:outputText value="#{item.module}" />
+				</p:column>
+
+				<p:column headerText="Name" filterBy="#{item.name}" sortBy="#{item.name}" filterMatchMode="contains">
+					<h:outputText value="#{item.name}" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.value']}">
+					<h:outputText value="#{item.value}" style="float:right" />
+				</p:column>
+
+			</p:dataTable>
+		</p:panel>
+
+		<p:panel id="toggleableValues" toggleable="true" toggleSpeed="1000" widgetVar="toggleableValues" style="margin-bottom:20px">
+			<span id="customheader"> <h:outputLabel value="#{asMsg['diagnosticsView.systemValues']}" class="dialogTitle"
+					style="margin-left: 0; font-size: 1.4em;"></h:outputLabel>
+			</span>
+			<p></p>
+			<p:dataTable styleClass="borderless" id="valueTable" var="item" value="#{diagnosticsView.values}" emptyMessage="#{CoreMsg['emptyTable']}">
+
+				<f:facet name="{Exporters}">
+					<h:commandLink>
+						<p:graphicImage name="/demo/images/excel.png" width="24" />
+						<p:dataExporter type="xls" target="tbl" fileName="dcemValues" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage name="/demo/images/pdf.png" width="24" />
+						<p:dataExporter type="pdf" target="tbl" fileName="dcemValues" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage name="/demo/images/csv.png" width="24" />
+						<p:dataExporter type="csv" target="tbl" fileName="dcemValues" />
+					</h:commandLink>
+
+					<h:commandLink>
+						<p:graphicImage name="/demo/images/xml.png" width="24" />
+						<p:dataExporter type="xml" target="tbl" fileName="dcemValues" />
+					</h:commandLink>
+				</f:facet>
+
+				<p:column headerText="#{asMsg['diagnosticsView.timestamp']}" sortBy="#{item.timestamp}">
+					<h:outputText value="#{item.timestamp}">
+						<f:convertDateTime type="both" dateType="short" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.node']}" filterBy="#{item.node}" sortBy="#{item.node}" filterMatchMode="contains">
+					<h:outputText value="#{item.node}" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.module']}" filterBy="#{item.module}" sortBy="#{item.module}" filterMatchMode="contains">
+					<h:outputText value="#{item.module}" />
+				</p:column>
+
+				<p:column headerText="Name" filterBy="#{item.name}" sortBy="#{item.name}" filterMatchMode="contains">
+					<h:outputText value="#{item.name}" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.value']}">
+					<h:outputText value="#{item.value}" style="float:right" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.showChart']}">
+					<h:selectBooleanCheckbox value="#{item.checked}" style="float: right" />
+				</p:column>
+
+			</p:dataTable>
+		</p:panel>
+
+		<p:panel id="toggleableCounters" toggleable="true" toggleSpeed="1000" widgetVar="toggleableCounters" style="margin-bottom:20px">
+			<span id="customheader"> <h:outputLabel value="#{asMsg['diagnosticsView.counters']}" class="dialogTitle"
+					style="margin-left: 0; font-size: 1.4em;"></h:outputLabel>
+			</span>
+			<p></p>
+			<p:dataTable styleClass="borderless" id="counterTable" var="item" value="#{diagnosticsView.counters}" emptyMessage="no counters">
+				<p:column headerText="#{asMsg['diagnosticsView.timestamp']}" sortBy="#{item.timestamp}">
+					<h:outputText value="#{item.timestamp}">
+						<f:convertDateTime type="both" dateType="short" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.node']}" filterBy="#{item.node}" sortBy="#{item.node}" filterMatchMode="contains">
+					<h:outputText value="#{item.node}" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.module']}" filterBy="#{item.module}" field="module" sortBy="#{item.module}">
+					<h:outputText value="#{item.module}" />
+				</p:column>
+
+				<p:column headerText="Name" filterBy="#{item.name}" sortBy="#{item.name}" filterMatchMode="contains">
+					<h:outputText value="#{item.name}" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.count']}">
+					<h:outputText value="#{item.counter.count}" style="float:right" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.averageTime']}">
+					<h:outputText value="#{item.counter.aveTime}" style="float:right" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.longestTime']}">
+					<h:outputText value="#{item.counter.longestTime}" style="float:right" />
+				</p:column>
+
+				<p:column headerText="#{asMsg['diagnosticsView.showChart']}">
+					<h:selectBooleanCheckbox value="#{item.checked}" style="float: right" />
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+</ui:composition>

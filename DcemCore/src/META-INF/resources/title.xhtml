@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+	<link id="favicon" rel="icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
+	<link rel="shortcut icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
+	<h:outputStylesheet library="primefaces-dcemtheme" name="theme.css" />
+
+	<h:form>
+		<table width="100%;" style="#{adminModule.titleStyle}; height: 6vh;" id="headerbar">
+			<tr>
+				<td id="closeButton" style="text-align: left; padding-left: 0.5em"><a href="javascript:void(0)" onclick="closeNav()"
+					style="paddin-left: 0; margin-left: 0;"><i class="closebtn fa fa-caret-left"
+						onclick="setLocalStorageValue('sideMenuClose',true);removeLocalStorage('sideMenuOpen')"></i></a></td>
+
+				<td id="sidebarbtn" style="text-align: left; padding-left: 0.5em"><span class="fa fa-bars" style="cursor: pointer; font-size: 1.8em;"
+					onclick="openNav()" onmousedown="setLocalStorageValue('sideMenuOpen',true);removeLocalStorage('sideMenuClose')"></span></td>
+
+				<td><h:outputText value="#{adminModule.titleEnterpriseManagment} " /> <h:outputText class="fa fa-shuffle" style="color: white; font-size: 1.6em" rendered="#{operatorSession.masterAdminGuest}" /></td>
+				<td><p:ajaxStatus id="ajaxStatus">
+						<f:facet name="start">
+							<h:graphicImage library="pictures" name="waiting-icon.gif" style="border: 0; height: 32px" />
+						</f:facet>
+						<f:facet name="complete">
+						</f:facet>
+					</p:ajaxStatus></td>
+				<td style="width: 20%; text-align: right;">
+					<div style="display: block; vertical-align: middle;">
+						<h:panelGroup>
+							<div style="display: inline-block; vertical-align: middle;">
+								<p:commandLink action="#{adminModule.actionRedirectionToUserPortal}" title="#{DcupMsg['title.switchToUserportal']}">
+									<i class="fa fa-exchange" style="color: white; font-size: 1.2em" />
+								</p:commandLink>
+							</div>
+							<p:spacer width="10" />
+							<div style="display: inline-block; vertical-align: middle;">
+								<p:commandLink action="#{viewNavigator.reload}" update="viewPart" style="text-decoration: none">
+									<i class="fa fa-refresh" style="color: white; font-size: 1.2em"></i>
+								</p:commandLink>
+							</div>
+							<p:spacer width="10" />
+							<div style="display: inline-block; vertical-align: middle;">
+								<p:commandLink id="profile" rendered="#{operatorSession.loggedIn}" style="margin-right:1em;">
+									<p:overlayPanel for="profile" style="width:135px;margin-right:1em;" dynamic="true">
+										<p:commandLink action="#{mfaLoginView.logoff}">
+											<i class="fa fa-sign-out" style="color: black; font-size: 1.2em; margin-right: 1em;"></i>
+											<h:outputText value="#{CoreMsg['menu.logoff']}" icon="fa fa-sign-out" />
+										</p:commandLink>
+									</p:overlayPanel>
+									<p:avatar dynamicColor="true" styleClass="p-mr-2" size="xlarge"
+										shape="circle">
+										<p:graphicImage value="#{operatorSession.getFotoProfileUser()}" stream="false" title="#{operatorSession.dcemUser.displayName} at #{dcemApplication.nodeName}" />
+									</p:avatar>
+								</p:commandLink>
+							</div>
+							<!-- <p:menuButton rendered="#{operatorSession.loggedIn}" value="" title="Node: #{dcemApplication.nodeName}" icon="fa fa-user">
+							<p:menuitem immediate="true" value="#{CoreMsg['menu.logoff']}" action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" ajax="true" />
+						</p:menuButton> -->
+						</h:panelGroup>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</h:form>
+
+</ui:composition>

@@ -1,0 +1,128 @@
+@CHARSET "ISO-8859-1";
+/* this file for responsive mode like mobile screen */
+
+
+@media screen and (max-width: 800px) {
+	.logoChild, .companyLogoStyle, .signInText , .ImgBox ,.spcaeHeader{
+		display: none;
+		visibility: hidden;
+	}
+	.box{
+	position:absolute;
+	
+	}
+	
+	.eyeBtnStyle{
+	padding: 0 !important;
+	}
+	.headTitle{
+		font-size: 1em !important;
+	}
+	
+	.samlloginPanel{
+		width: 24em !important;
+		margin-top: 0 !important;
+		padding-left: 0px !important;
+		
+	}
+	.loginPanelStyle{
+	padding-left: 0px !important;
+	}
+	
+	.loginPanelContainer {
+		margin-top: 0 !important;
+		padding-top: 0;
+		position: static;
+	}
+	.dialogTitle {
+		font-size: 1.2em !important;
+	}
+	.labelLogin {
+		font-size: 1em !important;
+	}
+	.panelLogOff{
+		width: 70% !important;
+	}
+	.samllogOffTxt{font-size: 1em !important}
+
+}
+
+@media screen and (max-width: 480px) {
+	.panelLoginChild .ui-panel-content,.panelLoginChildCheckBoxes {
+		padding: 0px !important;
+		margin: 0px !important;
+	}
+	.panelLoginChild.ui-panel {
+		padding: 0px !important;
+		margin: 0px !important;
+	}
+	.panelLoginChild {
+		padding: 0 !important;
+		margin-left: 0.5em;
+	}
+	.loginPanelContainer, .panelLoginChild {
+		width: 97% !important;
+	}
+	.inputTextLgoin {
+		font-size: 1em !important;
+		width: 80% !important;
+	}
+	.btnOfLogin {
+		font-size: 1em !important;
+		width: 84% !important;
+	}
+	.textChild {
+		display: inline-block;
+		float: left;
+		height: 6vh;
+		line-height: 6vh;
+		margin-left: 2%;
+		font-size: 0.6em !important;
+	}
+	.loginLinkExpired {
+		font-size: 0.8em !important;
+		margin: 0 auto !important;
+	}
+	.LogoffLink {
+		font-size: 0.8em !important;
+		margin-left: 40% !important;
+	}
+	.LogoffTxt {
+		font-size: 0.7em !important;
+	}
+	.columnToBeHidden {
+		display: none !important;
+		visibility: hidden !important;
+	}
+	.ui-datatable.borderlessCloudSafe .ui-column-title {
+		visibility: hidden !important;
+		display: none !important;
+	}
+	.ui-datatable.borderlessCloudSafe tbody td {
+		float: revert !important;
+		display: inline-block ! important;
+		width: auto !important;
+	}
+	.ui-datatable.borderlessCloudSafe .ui-datatable-reflow td, .ui-datatable.borderlessCloudSafe .ui-datatable-data td
+		{
+		display: inline-block !important;
+		float: none;
+	}
+	.ui-reflow-label {
+		width: auto !important;
+	}
+	
+	.panelLogOff {
+		width: 95% !important;
+	}
+	
+	.samlExpiredTxt{
+		font-size: 0.8em !important;	
+	}
+	
+	.samlDialogMfa{
+	position: fixed !important;;
+	top:45px !important;;
+	}
+	
+}

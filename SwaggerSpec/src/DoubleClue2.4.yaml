@@ -1,0 +1,1341 @@
+swagger: '2.0'
+info:
+  version: '1.5.0'
+  title: DoubleClue REST API
+  description: DoubleClue URL http://yourhost:8001/dcem/restApi/as
+  termsOfService: _
+  contact:
+    name: HWS Informationssysteme GmbH
+    email: emanuel.galea@hws-gruppe.de
+    url: http://www.hws-gruppe.de
+
+host: localhost
+basePath: /restApi
+schemes:
+- http
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /misc/echo:
+    get:
+      description: This is used for testing purposes
+      operationId: echo
+      produces:
+      - application/json
+      - text/xml
+      - text/html
+      parameters:
+      - name: text
+        in: query
+        type: string
+      responses:
+        '200':
+          description: the echo text
+          schema:
+            type: string
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  /message:
+    get:
+      description: Get the message response
+      operationId: getMessageResponse
+      produces:
+      - application/json
+      parameters:
+      - name: msgId
+        in: query
+        description: The message Id returned by post Message
+        required: true
+        type: integer
+        format: int64
+      - name: waitTimeSeconds
+        in: query
+        required: false
+        type: integer
+        format: int32
+        default: 0
+        description: This is the time in seconds this method will wait till it gets a final-state message. Zero means don't wait at all. The value maybe between 0 and up to 60 seconds.
+      responses:
+        '200':
+          description: message response
+          schema:
+            $ref: '#/definitions/asApiMessageResponse'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/asApiException'
+  /message/add:
+    post:
+      description: Creates a new message to user
+      operationId: addMessage
+      produces:
+      - application/json
+      parameters:
+      - name: apiMessage
+        in: body
+        description: Message to user - device
+        required: true
+        schema:
+          $ref: '#/definitions/asApiMessage'
+      responses:
+        '200':
+          description: the message Id
+          schema:
+            $ref: '#/definitions/addMessageResponse'
+        '100':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  /message/cancel:
+    post:
+      description: Cancel a pending mesage
+      operationId: cancelMessage
+      produces:
+      - application/json
+      parameters:
+      - name: msgId
+        in: query
+        description: message unique id
+        required: true
+        type: integer
+        format: int64
+      responses:
+        '200':
+          description: nothing to return
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ###########################################
+  /message/cancelUserMessages:
+    post:
+      description: Cancal all user's pending messages
+      operationId: cancelUserMessages
+      produces:
+      - application/json
+      parameters:
+      - name: loginUserId
+        in: query
+        required: true
+        type: string
+      responses:
+        '200':
+          description: nothing to return
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ###########################################
+  /login/authenticate:
+    get:
+      description: |
+        Authenenticate a user using different authentication methods.
+        The authetntication method can be preselected or it can be returned as a list of possible authentication methods.
+      operationId: authenticate
+      produces:
+      - application/json
+      parameters:
+      - name: userLoginId
+        in: query
+        description: This is the unique user Login ID
+        required: true
+        type: string
+      - name: authMethod
+        description: |
+          Authentictaion method ot use. If this is null, Dcem will look for the configured policy.
+          asApiAuthMethod
+          if there is no authentication method in the policy, the authentication will generate an exception
+          if there is only authentication method than DCEM will use this method.
+          otherwise a list of authentication-methods will be returned. In this case the succesful flag will be set to false.
+          With multiple-authentication methods, use can select one of the returned methods and can call this method again with the selected method.
+        in: query
+        required: false
+        type:  string
+      - name: password
+        in: query
+        required: false
+        type: string
+        format: password
+        description: if password can be null if the ignorePassword is true
+      - name: passcode
+        in: query
+        required: false
+        type: string
+        description: This field is required for a succesful atuthentication with SMS, Voice, hardware-otp or mobile otp.
+      - name: networkAddress
+        in: query
+        required: false
+        type: string
+        description: |
+          This is the network Address of source. If this is within the network-range specified in the policy,
+          the 2FA will be bypassed and the user may authenticate with password only.
+      - name: fingerPrint
+        in: query
+        required: false
+        type: string
+        description: |
+          This is a fingerptint of the sources browser.
+          If this is enabled in the policy, user can by-pass the 2FA and authenticate with password only.
+      - name: ignorePassword
+        in: query
+        required: false
+        type: boolean
+        description: Whether or not to ignore the validity of a user's password while authenticating.
+      - name: fidoResponse
+        in: query
+        required: false
+        type: string
+        description: An authentication response from a FIDO key in JSON format.
+      - name: rpId
+        in: query
+        required: false
+        type: string
+        description: The effective domain of the caller to be sent as a Relying Party ID for FIDO authentications.
+
+      responses:
+        '200':
+          description: the response
+          schema:
+            $ref: '#/definitions/asApiAuthenticateResponse'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ###########################   
+  /login/authenticateMethods:
+    get:
+      description:
+        This method retrieves the authentication-methods available for this application.
+        This is used for a pre-selection of authentication-methods for the user. The authentication-methods are configured
+        in the policy assigned to this application or this application-type.
+
+      operationId: getAuthenticateMethods
+      produces:
+      - application/json
+
+
+
+      responses:
+        '200':
+          description: array of authentication methods
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/asApiAuthMethod"
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+  ###########################          
+  /login/requestLoginQrCode:
+    get:
+      description: Get a Byte Array for Qr-Code generation
+      operationId: requestLoginQrCode
+      produces:
+      - application/json
+      parameters:
+      - name: sessionId
+        in: query
+        description: this is the session Id of the portal
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Qr Code
+          schema:
+            $ref: '#/definitions/requestLoginQrCodeResponse'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ###########################################
+  /login/queryLoginQrCode:
+    get:
+      description: Queries if the login code was consumed
+      operationId: queryLoginQrCode
+      produces:
+      - application/json
+      parameters:
+      - name: sessionId
+        in: query
+        description: this is the session Id of the portal
+        required: true
+        type: string
+      - name: pollOnly
+        description: It set the QR-Code will not be removed in case it is available.
+        in: query
+        type: boolean
+      - name: waitTimeSeconds
+        in: query
+        required: false
+        type: integer
+        format: int32
+        default: 0
+        description: |
+          This is the time in seconds this method will wait till it gets a final-state message.
+          Zero means, check for qrcode and return immediatly. The value maybe between 0 and up to 60 seconds.
+      responses:
+        '200':
+          description: The Login Response
+          schema:
+            $ref: '#/definitions/queryLoginResponse'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ###########################################
+
+  /user/queryUsers:
+    post:
+      description: Queries
+      operationId: queryUsers
+      produces:
+      - application/json
+      parameters:
+      - name: offsItems
+        in: body
+        description: Message to user - device
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/asApiFilterItem'
+      - name: offset
+        in: query
+        type: integer
+      - name: maxResults
+        in: query
+        type: integer
+
+      responses:
+        '200':
+          description: Array of Users
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/asApiUser'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ##########################################
+  /user/addUser:
+    post:
+      description: add a User
+      operationId: addUser
+      produces:
+      - application/json
+      parameters:
+      - name: user
+        in: body
+        description: If initialPassword is set to null, an initialPassword will be generated and returned.
+        required: true
+        schema:
+          $ref: '#/definitions/asApiUser'
+
+      responses:
+        '200':
+          description: Returns the initialPassword
+          schema:
+            type: string
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ############################################
+  /user/modifyUser:
+    post:
+      description: Change User
+      operationId: modifyUser
+      produces:
+      - application/json
+      parameters:
+      - name: user
+        in: body
+        description: Data with null content will not be changed.
+        required: true
+        schema:
+          $ref: '#/definitions/asApiUser'
+
+      responses:
+        '200':
+          description: Array of Users
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ###########################################            
+  /user/getUser:
+    get:
+      description: get User using the loginId
+      operationId: getUser
+      produces:
+      - application/json
+      parameters:
+      - name: userLoginId
+        in: query
+        required: true
+        type: string
+
+      responses:
+        '200':
+          description: User
+          schema:
+            $ref: '#/definitions/asApiUser'
+
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+          ###################################
+
+  /user/deleteUser:
+    get:
+      description: Delete User. This is only possible if user has no devices yet.
+      operationId: deleteUser
+      produces:
+      - application/json
+      parameters:
+      - name: userLoginId
+        in: query
+        required: true
+        type: string
+
+      responses:
+        '200':
+          description: nothing to return
+
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ###########################################
+  /user/addActivationCode:
+    post:
+      description: Add activation code to a user
+      operationId: addActivationCode
+      produces:
+      - application/json
+      parameters:
+      - name: activationCode
+        in: body
+        description: If activationCode field is null, a new activationCode will be generated
+        required: true
+        schema:
+          $ref: '#/definitions/asApiActivationCode'
+
+      responses:
+        '200':
+          description: OK  returns the activation code
+          schema:
+            type: string
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+  ###################################################
+  /user/queryActivationCodes:
+    post:
+      description: Returns all active activation codes from a user
+      operationId: queryActivationCodes
+      produces:
+      - application/json
+      parameters:
+      - name: filterItems
+        in: body
+        description: Get all activation-code records which full fills the filter Following filter item names exists
+          user.loginId, createdOn , validTill, info
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/asApiFilterItem'
+      - name: offset
+        in: query
+        type: integer
+      - name: maxResults
+        in: query
+        type: integer
+
+      responses:
+        '200':
+          description: Array of Activation Codes
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/asApiActivationCode'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+            ####################################################################
+
+  /user/deleteActivationCode:
+    post:
+      description: deletes an activationCode
+      operationId: deleteActivationCode
+      produces:
+      - application/json
+      parameters:
+      - name: activationCodeId
+        in: query
+        type: integer
+        required: true
+      responses:
+        '200':
+          description: OK returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  /user/changePassword:
+    post:
+      description: change the user password
+      operationId: changePassword
+      produces:
+      - application/json
+      parameters:
+      - name: userLoginId
+        in: query
+        type: string
+        required: true
+      - name: oldPassword
+        in: query
+        type: string
+        required: true
+      - name: newPassword
+        in: query
+        type: string
+        required: true
+      responses:
+        '200':
+          description: OK returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  /user/setPassword:
+    post:
+      description: sets the user password after a password reset
+      operationId: setPassword
+      produces:
+      - application/json
+      parameters:
+      - name: userLoginId
+        in: query
+        type: string
+        required: true
+      - name: newPassword
+        in: query
+        type: string
+        required: true
+      responses:
+        '200':
+          description: OK returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  /user/addUrlToken:
+    post:
+      description: request an url token for password reset
+      operationId: addUrlToken
+      produces:
+      - application/json
+      parameters:
+      - name: urlToken
+        in: body
+        description: This is the Url Token object.
+        required: true
+        schema:
+          $ref: '#/definitions/asApiUrlToken'
+      responses:
+        '200':
+          description: OK returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  /user/verifyUrlToken:
+    post:
+      description: verifies the url token
+      operationId: verifyUrlToken
+      produces:
+      - application/json
+      parameters:
+      - name: urlToken
+        in: body
+        description: This is the Url Token object.
+        required: true
+        schema:
+          $ref: '#/definitions/asApiUrlToken'
+      responses:
+        '200':
+          description: User
+          schema:
+            $ref: '#/definitions/asApiUser'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  #########################################################
+  ##
+  ##  Device Management
+  ##          
+  /device/queryDevices:
+    post:
+      description: Queries
+      operationId: queryDevices
+      produces:
+      - application/json
+      parameters:
+      - name: filterItems
+        in: body
+        description: Get all devices which full fills the filter Following filter item names exists -
+          name, user.loginId, status (0=offline,1=online), state(0=Enabled, 1=Disabled, 2=TempLocked), asVersionPlatform.clientType (0= ANDROID,
+          1=I_OS,2= WINDOWS, 3=MAC, 4=LINUX)
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/asApiFilterItem'
+      - name: offset
+        in: query
+        type: integer
+      - name: maxResults
+        in: query
+        type: integer
+
+      responses:
+        '200':
+          description: Array of Devices
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/asApiDevice'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  #####################################################
+  /device/setDeviceState:
+    post:
+      description: Set the state of a device
+      operationId: setDeviceState
+      produces:
+      - application/json
+      parameters:
+      - name: deviceId
+        in: query
+        type: integer
+        required: true
+      - name: enableState
+        in: query
+        type: boolean
+        required: true
+      responses:
+        '200':
+          description: OK returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+  ###################################################
+  /device/deleteDevice:
+    post:
+      description: deletes a device
+      operationId: deleteDevice
+      produces:
+      - application/json
+      parameters:
+      - name: deviceId
+        in: query
+        type: integer
+        required: true
+      responses:
+        '200':
+          description: OK returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  #############################################       
+  /device/fidoStartRegistration:
+    post:
+      description: Request a FIDO create JSON
+      operationId: fidoStartRegistration
+      produces:
+      - application/json
+      parameters:
+      - name: username
+        in: query
+        description: the loginId of the user who will register a device
+        required: true
+        type: string
+      - name: domain
+        in: query
+        description: the effective domain of the caller
+        required: true
+        type: string
+
+      responses:
+        '200':
+          description: OK returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  #############################################       
+  /device/fidoFinishRegistration:
+    post:
+      description: send a FIDO create response JSON for validation
+      operationId: fidoFinishRegistration
+      produces:
+      - application/json
+      parameters:
+      - name: responseJson
+        in: query
+        description: a FIDO create response in JSON format
+        required: true
+        type: string
+      - name: displayName
+        in: query
+        description: a Display Name for the new FIDO key
+        required: true
+        type: string
+
+      responses:
+        '200':
+          description: OK returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  #############################################  
+  /device/queryFidoAuthenticators:
+    post:
+      description: Returns all FIDO Authenticators from a user
+      operationId: queryFidoAuthenticators
+      produces:
+      - application/json
+      parameters:
+      - name: filterItems
+        in: body
+        description: Get all FIDO Authenticator records which fullfill the following filters
+          user.loginId, registeredOn, lastUsed
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/asApiFilterItem'
+      - name: offset
+        in: query
+        type: integer
+      - name: maxResults
+        in: query
+        type: integer
+
+      responses:
+        '200':
+          description: Array of FIDO Authenticators
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/asApiFidoAuthenticator'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ###################################################
+  /device/deleteFidoAuthenticator:
+    post:
+      description: deletes a FIDO Authenticator
+      operationId: deleteFidoAuthenticator
+      produces:
+      - application/json
+      parameters:
+      - name: fidoAuthenticatorId
+        in: query
+        type: integer
+        required: true
+      responses:
+        '200':
+          description: OK returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+ 
+  #############################################################################
+  
+  /cloudSafe/queryCloudSafe:
+    post:
+      description: The result will not include the shared files. The contents of the files will be null. 
+      operationId: queryCloudSafe
+      produces:
+      - application/json
+      parameters:
+      - name: filterItems
+        in: body
+        description: Array of Filter Items
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/asApiFilterItem'
+      - name: offset
+        in: query
+        type: integer
+      - name: maxResults
+        in: query
+        type: integer
+
+      responses:
+        '200':
+          description: Array of AsApiCloudSafeFile. ATTENTION- The contents of the return asApiCloudSafeFile will be null.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/asApiCloudSafeFile'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  #####################################################################
+
+  /token/queryOtpTokens:
+    post:
+      description: Queries
+      operationId: queryOtpTokens
+      produces:
+      - application/json
+      parameters:
+      - name: filterItems
+        in: body
+        description: Get all Otp-Tokens which full fills the filter
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/asApiFilterItem'
+      - name: offset
+        in: query
+        type: integer
+      - name: maxResults
+        in: query
+        type: integer
+
+      responses:
+        '200':
+          description: Array of Otp-Tokens
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/asApiOtpToken'
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+
+  ##########################################
+  
+  /token/modifyOtpToken:
+    post:
+      description: Modify Token. Note the serial number cannot be modified and must match to the token id
+      operationId: modifyOtpToken
+      produces:
+      - application/json
+      parameters:
+      - name: token
+        in: body
+        description: The new token object. The ID and serial number must match.
+        required: true
+        schema:
+          $ref: '#/definitions/asApiOtpToken'
+      - name: passcode
+        in: formData
+        description: The Passcode which is shown in the token
+        required: false
+        type: string
+      responses:
+        '200':
+          description: OK  returns
+        '599':
+          description: Server Logic Exception
+          schema:
+            $ref: '#/definitions/asApiException'
+  
+
+####################################
+####################################
+definitions:
+  asApiMsgStatus:
+    type: string
+    enum: [Ok, Waiting, Queued, Sending, Rec_Error, Send_Error, Disconnected, Cancelled, SignatureError]
+  #####################################
+  asApiAuthMethod:
+    type: string
+    enum: [PASSWORD, SMS, VOICE_MESSAGE, HARDWARE_TOKEN, DOUBLECLUE_PASSCODE, PUSH_APPROVAL, QRCODE_APPROVAL, SESSION_RECONNECT, FIDO]
+  #####################################
+  asApiOtpType:
+    type: string
+    enum: [TIME_6_SHA1_60, TIME_8_SHA1_60, TIME_6_SHA2_60, TIME_8_SHA2_60, TIME_6_SHA1_30, TIME_8_SHA1_30, TIME_6_SHA2_30, TIME_8_SHA2_30, COUNTER_6_SHA1, COUNTER_8_SHA1, COUNTER_6_SHA2, COUNTER_8_SHA2]
+  #####################################
+  asApiUrlTokenUsage:
+    type: string
+    enum: [ResetPassword, VerifyEmail]
+  #####################################
+  asApiUrlToken:
+    type: object
+    properties:
+      url:
+        type: string
+        required: true
+      validMinutes:
+        type: integer
+        required: false
+      username:
+        type: string
+        required: true
+      token:
+        type: string
+        required: true
+      urlTokenUsage:
+        type: object
+        $ref: "#/definitions/asApiUrlTokenUsage"
+  #####################################
+  asApiAuthenticateResponse:
+    type: object
+    required:
+    - successful
+    properties:
+      successful:
+        type: boolean
+        description:
+          If true the authentication was susccesfull.
+          If false the authMethods array will be filled with available authentication methods, from which the user can choose for the next
+          authetication.
+      authMethods:
+        type: array
+        items:
+          $ref: "#/definitions/asApiAuthMethod"
+      secureMsgId:
+        type: integer
+        format: int64
+        description:
+          In case of Secure-Message authentication message, this is the message id.
+          You have to call successively the REST-Method getMessageResponse in order to get the Message final result.
+      secureMsgTimeToLive:
+        type: integer
+        description: In case of secure-message authentication, this is the time in seconds the user have to confirm the message
+      secureMsgRandomCode:
+        type: string
+        description: incase of secure-message authentication, this is the random code generated into the confirm message.
+      phoneNumber:
+        type: string
+        description: in case of SMS or Voice Message this is the phone number where DCEM sends the SMS or Voice Message respectivily.
+      fqUserLoginId:
+        type: string
+        description: This is the full qualified user login in. Which will include the domain name if user is a memebr of a domain.
+      fidoResponse:
+        type: string
+        description: JSON-formatted response from a FIDO registration or authentication request.
+
+
+  #####################################
+  asMapEntry:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+  #####################################
+  asApiMessage:
+    type: object
+    required:
+    - userLoginId
+    - templateName
+    - dataMap
+    properties:
+      userLoginId:
+        type: string
+      templateName:
+        type: string
+      dataMap:
+        type: array
+        items:
+          $ref: "#/definitions/asMapEntry"
+      deviceName:
+        type: string
+        description: |
+          This is optional. As default should be set to null as . If null, SEMS will send the message to the current online device or the first user's device which goes
+          online. Else you can specify the user's device name which the message is intented for, in this cas SEMS will send the message only to this device.                
+      sessionId:
+        type: string
+        description: This is optional and is the portal session Id. The value will be returned in the response.
+      responseRequired:
+        type: boolean
+        default: false
+      signatureRequired:
+        type: boolean
+        default: false
+        description: |
+          If true, on message-response the device will sign the dataMap, action-key and response data with the device private key. SEMS will verify the signature.
+          In particular cases, this be required for high security reasons, but it will consumes more device and SEMS resources.
+      responseTimeout:
+        type: integer
+        format: int32
+        default: 0
+        description: This is the time in seconds within the device have to response to the messageor if response is not required, it is the time till device goes online
+          If set to 0, the Response-Timeout will be retrieved from the DCEM Preferences 'Response Timeout'.
+      allowPasswordLess:
+        type: boolean
+        default: false
+        description: |
+          If false, message can only be send to device which are logged in using a password.
+          
+
+  #####################################
+
+  asApiMessageResponse:
+    type: object
+    required:
+    - id
+    - final
+    - msgStatus
+    properties:
+      id:
+        type: integer
+        format: int64
+        default: 0
+      final:
+        type: boolean
+        default: false
+      deviceName:
+        type: string
+        description: This is only available when 'final' is true.
+      userLoginId:
+        type: string
+      msgStatus:
+        type: object
+        $ref: "#/definitions/asApiMsgStatus"
+      inputMap:
+        type: array
+        items:
+          $ref: "#/definitions/asMapEntry"
+        description: if template contains input fields, these are the input data entered by the user.  Only set when final is true
+      actionId:
+        type: string
+        description: This is the template's Button's ID which the user activate.
+      info:
+        type: string
+      sessionId:
+        type: string
+        description: This is optional. Value returned from addMessage.
+      signature:
+        type: string
+        format: binary
+        description: This is optional. Available only if "signatureRequired" was true and 'final' is true.
+
+  ##################################################################
+
+  queryLoginResponse:
+    type: object
+    properties:
+      userLoginId:
+        type: string
+      deviceName:
+        type: string
+
+  #################################################################
+
+  addMessageResponse:
+    type: object
+    properties:
+      msgId:
+        type: integer
+        format: int64
+      timeToLive:
+        type: integer
+        format: int32
+      withPushNotification:
+        type: boolean
+        default: false
+        description: If true, a push Notification was sent to user devices.    
+
+  ###################################################################
+
+  requestLoginQrCodeResponse:
+    type: object
+    properties:
+      data:
+        type: string
+      timeToLive:
+        type: integer
+        format: int32
+        default: 0
+
+  ###################################################################
+
+  asApiUser:
+    type: object
+    properties:
+      loginId:
+        type: string
+      displayName:
+        type: string
+      email:
+        type: string
+      preferedLanguage:
+        type: string
+        description: A two character language-type as defined in ISO 639-1
+      mobileNumber:
+        type: string
+      privateMobileNumber:
+        type: string
+        description: This mobile number will not be displayed in the Domain or DCEM-GUI
+      telephoneNumber:
+        type: string
+      initialPassword:
+        type: string
+      acSuspendedTill:
+        description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+        type: string
+        format: date-time
+      disabled:
+        type: boolean
+        default: false
+      failActivations:
+        type: integer
+        format: int32
+        default: 0
+      domain:
+        type: boolean
+        default: false
+
+  #################################################################
+
+  asApiCloudSafeFile:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        default: 0
+        description: this is the database primary key of the object. Zero means unknown id else DCEM will use this to read, read or delete the file
+      owner:
+        type: string
+        enum:
+        - GLOBAL
+        - USER
+        - DEVICE
+        - USER_SHARE
+      name:
+        type: string
+      userLoginId:
+        description: this is the user login id. It must be set if owner is USER or DEVICE
+        type: string
+      deviceName:
+        description: if owner is DEVICE, this must be the user's unique deviceName
+        type: string
+      content:
+        description: Content is always null. You cannot get the contents from REST-API 
+        type: string
+        format: binary
+      length:
+        type: integer
+        format: int32 
+      lastModified:
+        type: string
+        format: date-time
+        description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+      discardAfter:
+        type: string
+        format: date-time
+        description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+      options:
+        type: string
+        description: not yet specified. Just let it null for the time being
+      signed:
+        type: boolean
+        description: if true, user/device did digitally sign this content
+      readOnly:
+        type: boolean
+     
+############################################
+
+  asApiShareCloudSafe:
+    type: object
+    properties:
+      cloudSafeFileId:
+        type: integer
+      userLoginId:
+        type: string
+      groupName:
+        type: string
+      writeAccess:
+        type: boolean
+
+###############################################
+
+  asApiShareCloudSafeDetails:
+    type: object
+    properties:
+      cloudSafeFile:
+        type: object
+        $ref: "#/definitions/asApiCloudSafeFile"
+      writeAccess:
+        type: boolean
+
+###############################################
+ 
+  asApiFilterItem:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        description: This muss be the exact name of the column variable
+        type: string
+      value:
+        description: Ths value have to be deserialzed
+        type: string
+      sortOrder:
+        type: string
+        enum:
+        - NONE
+        - ASCENDING
+        - DESCENDING
+      operator:
+        type: string
+        enum:
+        - EQUALS
+        - LIKE
+        - GREATER
+        - LESSER
+        - NOT_EQUALS
+        - NONE
+#######################################################
+  asApiException:
+    type: object
+    required:
+    - code
+    - message
+    properties:
+      code:
+        type: integer
+        format: int32
+        default: 0
+      message:
+        type: string
+      details:
+        type: string
+
+  ################################################
+  asApiDevice:
+    type: object
+    properties:
+      deviceId:
+        type: integer
+        format: int32
+      userloginId:
+        type: string
+      name:
+        type: string
+      clientType:
+        type: string
+        enum:
+        - ANDROID
+        - I_OS
+        - WINDOWS
+        - MAC
+        - LINUX
+      state:
+        type: string
+        enum:
+        - Enabled
+        - Disabled
+        - TempLocked
+      online:
+        type: boolean
+        description: This flag is true if device is on
+      lastTimeLogin:
+        description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+        type: string
+        format: date-time
+      deleted:
+        type: boolean
+        default: false
+######################################################
+  asApiFidoAuthenticator:
+    type: object
+    properties:
+      fidoAuthenticatorId:
+        type: integer
+        format: int32
+      userLoginId:
+        type: string
+      registeredOn:
+        type: string
+        format: date-time
+        description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+      lastUsed:
+        description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+        type: string
+        format: date-time
+      displayName:
+        type: string
+
+  ########################################
+
+  asApiOtpToken:
+    type: object
+    properties:
+      otpId:
+        type: integer
+        format: int32
+      otpType:
+        type: object
+        $ref: "#/definitions/asApiOtpType"
+      serialNumber:
+        type: string
+        description: The Serial Number of the OTP-Token
+      assignedTo:
+        type: string
+        description: The user login-Id. Null if token is not assigned
+      disabled:
+        type: boolean
+      info:
+        type: string
+
+  ########################################
+
+    

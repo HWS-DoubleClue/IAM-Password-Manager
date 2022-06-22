@@ -1,0 +1,365 @@
+@CHARSET "ISO-8859-1";
+
+/* General Settings */
+body {
+	background: #ffffff;
+	font-family: "Segoe UI", sans-serif;
+	font-size: 14px;
+	margin: 0;
+}
+
+.header1 {
+	font-size: 1.5em;
+	color: #ffffff;
+	padding: 10px !important;
+
+}
+
+.header3 {
+	font-size: large;
+	color: #005078;
+	padding: 10px;
+	
+}
+
+.header6 {
+	font-size: x-small;
+	color: #ffffff;
+	padding: 10px;
+}
+
+.viewTitle {
+	font-size: 1.6em;
+	color: #005078;
+	vertical-align: middle;
+	margin-left: 5px;
+	text-decoration: none;
+	}
+
+.dialogTitle {
+	color: #005078 !important;
+	font-size: 1.6em;
+	vertical-align: middle;
+	margin-left: 8px;
+	text-decoration: none;
+	background-color: none !important;
+}
+
+.fa {
+	margin-right: 8px;
+}
+
+/* Header Bar */
+#headerbar {
+	background-color: #448674 !important;
+	padding-left: 10px; 
+	height: 6vH;
+}
+
+.headTitle {
+	font-size: large;
+	color: #ffffff;
+	vertical-align: middle;
+	margin: 10px !important;
+}
+
+#headerbutton {
+	background-color: #ffffff !important;
+}
+
+.ui-widget-header {
+	border-color: transparent;
+}
+
+/* Menu */
+
+
+#sidemenu {
+	background-color: #303030;
+}
+
+.selectMenu {
+	display: inline-block;
+	vertical-align: center;
+}
+
+.ui-menubar {
+	border: none;
+	margin: 10px 0;
+}
+
+.menuActive {
+	/* color: yellow;*/
+	color: lightblue !important;
+	/* font-weight: bold; */
+	text-decoration: underline;
+}
+
+.menuDisabled {
+	color: darkgrey;
+}
+
+.menuEnabled {
+	color: white;
+	text-decoration: underline;
+}
+
+/* Tab View */
+.ui-toolbar {
+	background-color: #ffffff !important;
+}
+
+.ui-tabmenu-nav {
+	background-color: #ffffff !important;
+	border-color: transparent !important;
+	border-radius: none !important;
+}
+
+.ui-tabmenuitem {
+	background-color: #eee !important;
+	border: none !important;
+	
+}
+
+.wideButton20 {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.ui-widget-content .midButton {
+	margin-left: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 5px;
+	width: 180px !Important;
+}
+
+
+.scrollBody {
+	height: 100px;
+	overflow: auto;
+}
+
+.selectedRowClassName {
+	/* background-color: yellow; */
+	background-color: lightblue;
+}
+
+.unSelectedRowClassName {
+	background-color: lightred;
+}
+
+.autoDialogTabe {
+	margin: 10px;
+}
+
+.columnHeaderClass {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.columnClasses {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.menuCaption {
+	background-color: white;
+}
+
+.activeMenuCaption {
+	color: #eeee00;
+}
+
+.shortInput {
+	width: 60px;
+}
+
+.mediumInput {
+	width: 150px;
+}
+
+.longInput {
+	width: 250px;
+}
+
+.xlongInput {
+	width: 500px;
+}
+
+.ui-datatable table, .ui-datatable-resizable table {
+	table-layout: auto !important;
+	border-color: #d8d8d8;
+}
+
+.ui-dialog {
+	width: auto !important;
+	height: auto !important;
+}
+
+
+.columnLabel {
+	white-space: nowrap;
+	vertical-align: top;
+}
+
+.columnValue {
+	vertical-align: top;
+}
+
+.autoTableStyle {
+	word-wrap: break-word;
+}
+
+table {
+	border-color: #d8d8d8;
+}
+
+.ui-datatable-resizable thead th, .ui-datatable-resizable tbody td,
+	.ui-datatable-resizable tfoot td {
+	/*  white-space: nowrap; */
+	overflow: hidden;
+	border-width: 1px;
+	border-color: #d8d8d8 !important;
+	border-style: none;
+	text-overflow: ellipsis;
+	text-align: left;
+	padding-bottom: 1px !important;
+	padding-top: 1px !important;
+	padding-left: 2px !important;
+	padding-right: 1px !important;
+}
+
+ul.ui-menu-child {
+	white-space: nowrap;
+	width: 200px !important;
+}
+
+
+
+
+
+
+
+
+.scrollBody {
+	height: 100px;
+	overflow: auto;
+}
+
+
+.selectedRowClassName {
+	background-color: yellow;
+}
+
+.unSelectedRowClassName {
+	background-color: blue;
+}
+
+.autoDialogTabe {
+	margin: 10px;
+}
+
+.columnHeaderClass {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.columnClasses {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.activeMenuCaption {
+	color: eeee00;
+}
+
+.rf-msgs {
+	font-size: medium;
+}
+
+.shortInput {
+	width: 60px;
+}
+
+.mediumInput {
+	width: 150px;
+}
+
+.longInput {
+	width: 250px;
+}
+
+.xlongInput {
+	width: 350px;
+}
+
+.activeMenu {
+	color: yellow;
+}
+
+.ui-datatable table, .ui-datatable-resizable table {
+	table-layout: auto !important;
+}
+
+.ui-dialog {
+	width: auto !important;
+	height: auto !important;
+}
+
+.ui-icon.addActionIcon {
+	background: url("#{resource['pictures/icons/16x16/add.png']}") no-repeat
+		!important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.editActionIcon {
+	background: url("#{resource['pictures/icons/16x16/edit.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+
+.columnLabel {
+	white-space: nowrap;
+	vertical-align: top;
+}
+
+.columnValue {
+	vertical-align: top;
+}
+
+
+
+.autoTableStyle {
+	word-wrap: break-word;
+}
+
+.ui-datatable-resizable thead th, .ui-datatable-resizable tbody td,
+	.ui-datatable-resizable tfoot td {
+	/*  white-space: nowrap; */
+	overflow: hidden;
+	border-width: 1px;
+	border-color: #d8d8d8 !important;
+	border-style: none;
+	text-overflow: ellipsis;
+	text-align: left;
+	padding-bottom: 1px !important;
+	padding-top: 1px !important;
+	padding-left: 2px !important;
+	padding-right: 1px !important;
+}
+
+.ui-datatable.borderless table thead tr {
+    display: none;
+}
+
+.ui-datatable.borderless thead th,
+.ui-datatable.borderless tbody,
+.ui-datatable.borderless tbody tr,
+.ui-datatable.borderless tbody td {
+    border-style: none;
+}
+

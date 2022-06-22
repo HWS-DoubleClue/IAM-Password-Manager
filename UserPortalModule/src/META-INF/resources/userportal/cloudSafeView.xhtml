@@ -1,0 +1,728 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<h:outputStylesheet name="css/primeflex.css" />
+	<style>
+.ui-chkbox.checkBoxKachel .ui-chkbox-box {
+	width: 12px;
+	height: 12px;
+}
+
+.ui-chkbox.checkBoxKachel .ui-icon {
+	margin-top: -2px;
+	margin-left: -2px;
+}
+
+.ui-g {
+	background-color: #005078;
+}
+</style>
+	<h:panelGroup id="cloudSafeView" rendered="#{portalSessionBean.isViewVisible('CLOUD_DATA_VIEW')}">
+		<h:form id="cloudSafeForm">
+
+			<div>
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
+					<p:commandButton value="#{DcupMsg['button.yes']}" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+					<p:commandButton value="#{DcupMsg['button.no']}" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+				<p:dialog id="confirmDlg" widgetVar="confirmDlg" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
+					<f:facet name="header">
+						<h:outputLabel value="#{DcupMsg['dialog.title.confirm']}" class="dialogTitle" />
+					</f:facet>
+					<br />
+					<p:panel id="deleteTextMessage" style="margin-bottom: 40px;">
+						<p:outputLabel value="#{DcupMsg['dialog.message.deleteSelectedCloudSafeFiles']}" rendered="#{cloudSafeView.permanentDelete == true}" />
+						<p:outputLabel value="#{DcupMsg['dialog.message.recycleSelectedCloudSafeFiles']}" rendered="#{cloudSafeView.permanentDelete == false}" />
+					</p:panel>
+					<div style="margin-bottom: 20px;">
+						<p:commandButton value="#{DcupMsg['button.ok']}" action="#{cloudSafeView.deleteCloudSafeFiles}" update="cloudSafeForm:cloudSafeTable"
+							styleClass="wideButton" icon="fa fa-check" ajax="true">
+						</p:commandButton>
+						<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{DcupMsg['close']}" onclick="PF('confirmDlg').hide();"
+							style="float: right; margin-right: 1em;" immediate="true" />
+					</div>
+				</p:dialog>
+				<br />
+				<p:graphicImage library="pictures" name="cloudSafe.png" class="headerImg" />
+				<p:spacer width="7em" />
+
+				<p:outputLabel value="#{DcupMsg['title.cloudSafe']}" styleClass="viewTitleLabel" />
+
+				<div style="float: right; margin-right: 1em;">
+					<h:panelGrid columns="2" id="storageInfo">
+						<p:outputLabel value="#{DcupMsg['title.storageLimit']} " />
+						<p:outputLabel value="#{cloudSafeView.limit}" />
+						<p:outputLabel value="#{DcupMsg['title.storageUsage']} " />
+						<p:outputLabel value="#{cloudSafeView.usage}" />
+						<p:outputLabel value="#{DcupMsg['title.expires']}: " rendered="#{cloudSafeView.licenceExpires != null}" />
+						<p:outputLabel value="#{cloudSafeView.licenceExpires}">
+							<f:convertDateTime dateStyle="medium" type="date" />
+						</p:outputLabel>
+					</h:panelGrid>
+				</div>
+			</div>
+			<br />
+			<h:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-fluid" width="100%" style="line-height: 3em ! important ;">
+				<h:panelGroup>
+					<p:commandLink action="#{cloudSafeView.openUploadDialog}" update="uploadDlgForm" immediate="true">
+						<p:outputLabel id="openUploadBtn" class="fa fa-cloud-upload iconsButtons"></p:outputLabel>
+						<p:tooltip for="openUploadBtn" value="#{DcupMsg['button.upload']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink action="#{cloudSafeView.onDownloadFiles}" immediate="true">
+						<p:outputLabel id="downloadBtn" class="fa fa-cloud-download iconsButtons" style="margin-right: 1em;"></p:outputLabel>
+						<p:tooltip for="downloadBtn" value="#{DcupMsg['button.download']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink rendered="#{portalSessionBean.isActionEnable('CLOUD_SAFE_SHARE_FILE_ACTION')}" action="#{cloudSafeView.openShareDialog}" immediate="true">
+						<p:outputLabel id="shareBtn" class="fa fa-share-alt iconsButtons"></p:outputLabel>
+						<p:tooltip for="shareBtn" value="#{DcupMsg['button.share']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink action="#{cloudSafeView.openRenameDialog}" immediate="true">
+						<p:outputLabel id="renameBtn" class="fa fa-pencil iconsButtons"></p:outputLabel>
+						<p:tooltip for="renameBtn" value="#{DcupMsg['button.rename']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink action="#{cloudSafeView.validateCloudSafeFiles}" immediate="true">
+						<p:outputLabel id="deleteBtn" class="fa fa-trash iconsButtons"></p:outputLabel>
+						<p:tooltip for="deleteBtn" value="#{DcupMsg['button.delete']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink action="#{cloudSafeView.onAddFolder}" immediate="true">
+						<p:outputLabel id="addFolder" class="fa fa-plus-circle iconsButtons"></p:outputLabel>
+						<p:tooltip for="addFolder" value="#{DcupMsg['button.addFolder']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink action="#{cloudSafeView.openChangeOwnerShip}" immediate="true">
+						<p:outputLabel id="defineOwnerGroup" class="fa fa-users iconsButtons"></p:outputLabel>
+						<p:tooltip for="defineOwnerGroup" value="#{DcupMsg['label.changeOwnerGroupTitle']}" position="bottom" />
+					</p:commandLink>
+					<div style="display: inline-block; float: right; margin-right: 0.5em; vertical-align: top">
+						<p:outputLabel id="searchIcon" class="fa fa-search" style="color:#bae2f5 !important; margin-top: 0.4em; vertical-align: top"></p:outputLabel>
+						<p:inputText id="searchTxt" value="#{cloudSafeView.searchFile}" size="20" placeholder="#{DcupMsg['searchPlaceHolder']}"
+							style="margin-top: 0.2em; vertical-align: top">
+							<p:ajax event="keyup" update="cloudSafeTable" process="@this" />
+						</p:inputText>
+					</div>
+					<div style="display: inline-block; float: right;">
+						<p:commandLink update="cloudSafeForm:cloudSafeFilesView" action="#{cloudSafeView.setListView(false)}" immediate="true">
+							<i id="gridShow" class="fa fa-th iconsButtons"></i>
+						</p:commandLink>
+
+						<p:commandLink update="cloudSafeForm:cloudSafeFilesView" action="#{cloudSafeView.setListView(true)}" immediate="true">
+							<i id="listShow" class="fa fa-list iconsButtons"></i>
+						</p:commandLink>
+					</div>
+				</h:panelGroup>
+			</h:panelGrid>
+			<p:breadCrumb id="cloudSafeBreadCrumbId" class="breadCrumbStyle" homeDisplay="text" model="#{cloudSafeView.breadCrumbModel}">
+			</p:breadCrumb>
+
+			<p:contextMenu id="nodeContextMenu" widgetVar="nodeContextMenu" for="cloudSafeFilesView" class="contextMenu">
+				<p:menuitem value="#{DcupMsg['button.upload']}" action="#{cloudSafeView.openUploadDialog}" icon="fa fa-cloud-upload" />
+				<p:menuitem value="#{DcupMsg['button.download']}" action="#{cloudSafeView.onDownloadFiles}" icon="fa fa-cloud-download" />
+				<p:menuitem value="#{DcupMsg['button.rename']}" action="#{cloudSafeView.openRenameDialog}" icon="fa fa-pencil" />
+				<p:menuitem value="#{DcupMsg['button.deleteGroupsContext']}" action="#{cloudSafeView.validateCloudSafeFiles}" icon="fa fa-trash" />
+				<p:menuitem value="#{DcupMsg['button.share']}" action="#{cloudSafeView.openShareDialog}" icon="fa fa-share-alt" />
+				<p:menuitem value="#{DcupMsg['button.addFolderGroupsContext']}" action="#{cloudSafeView.onAddFolder}" icon="fa fa-plus" />
+				<p:menuitem value="#{DcupMsg['button.cutFolder']}" action="#{cloudSafeView.cutSelectedFilesOrFolders}" icon="fa fa-scissors" />
+				<p:menuitem value="#{DcupMsg['button.pasteFolder']}" action="#{cloudSafeView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
+					disabled="#{cloudSafeView.pasteDisabled}" />
+			</p:contextMenu>
+			<p:panel id="cloudSafeFilesView" class="cloudSafeViewPanel">
+				<h:panelGroup id="listView" rendered="#{cloudSafeView.listView == true}" style="background:none !important">
+					<h:panelGrid columns="2" id="cloudSafePanel" style="width:100%;background:none !important">
+
+						<p:dataTable reflow="true" id="cloudSafeTable" var="cloudSafeFile" value="#{cloudSafeView.currentFiles}" emptyMessage="#{DcupMsg['message.emptyTable']}"
+							selection="#{cloudSafeView.selectedCloudSafeFiles}" rowKey="#{cloudSafeFile.id}" class="borderlessCloudSafe" sortMode="single">
+
+							<!-- these events update selectedCloudSafeFiles -->
+							<!-- <p:ajax event="rowSelectCheckbox"  /> -->
+							<!-- <p:ajax event="rowUnselectCheckbox" /> -->
+							<!-- 	<p:ajax event="rowSelect" /> -->
+
+
+							<p:column selectionMode="multiple" style="width:6em !important;">
+								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.encrypted']}" library="pictures" name="key.png"
+									rendered="#{cloudSafeFile.options == 'PWD' }" />
+								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.encrypted']}" library="pictures" name="lockF.png"
+									rendered="#{cloudSafeFile.options == 'FPD' }" />
+								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.discarded']}" library="pictures" name="dicards.png"
+									rendered="#{cloudSafeFile.discardAfter != null }" />
+							</p:column>
+
+							<p:column headerText="#{DcupMsg['columnTitle.filename']}" sortBy="#{cloudSafeFile.name}" class="columName">
+								<p:commandLink action="#{cloudSafeView.actinClickFolderOrFile(cloudSafeFile)}" immediate="true" update="@form">
+									<p:graphicImage styleClass="viewFileImage" library="pictures" name="icons/16x16/#{cloudSafeView.getFileIcon(cloudSafeFile)}" />
+									<p:outputLabel value="#{cloudSafeFile.name}" id="cloudSafeFileName" style="color: black !Important" />
+								</p:commandLink>
+								<p:draggable for="cloudSafeFileName" revert="true" />
+								<p:droppable for="cloudSafeFileName" tolerance="touch" datasource="cloudSafeForm:cloudSafeTable">
+									<p:ajax listener="#{cloudSafeView.onDropFile}" update="cloudSafeForm:cloudSafeTable" />
+								</p:droppable>
+							</p:column>
+
+							<p:column headerText="#{DcupMsg['columnTitle.length']}" sortBy="#{cloudSafeFile.lengthKb}" class="columnToBeHidden">
+								<h:outputText value="#{cloudSafeFile.lengthKb}" class="columnToBeHidden" />
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.lastModified']}" sortBy="#{cloudSafeFile.lastModified}" class="columnToBeHidden">
+								<h:outputText value="#{cloudSafeFile.lastModified}" class="columnToBeHidden">
+									<f:convertDateTime dateStyle="medium" type="both" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.lastModifiedUser']}" sortBy="#{cloudSafeFile.lastModifiedUser.displayName}" class="columnToBeHidden">
+								<h:outputText value="#{cloudSafeFile.lastModifiedUser.displayName}" class="columnToBeHidden" />
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.discardsAfter']}" sortBy="#{cloudSafeFile.discardAfter}" class="columnToBeHidden">
+								<h:outputText value="#{cloudSafeFile.discardAfter}" class="columnToBeHidden">
+									<f:convertDateTime dateStyle="medium" type="date" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.ownerGroup']}" sortBy="#{cloudSafeFile.owner.value}" class="columnToBeHidden">
+								<h:outputText value="#{cloudSafeFile.group.name}" class="columnToBeHidden" rendered="#{cloudSafeFile.owner.value == 3}" />
+							</p:column>
+						</p:dataTable>
+
+					</h:panelGrid>
+				</h:panelGroup>
+
+				<h:panelGroup id="kachelnView" rendered="#{cloudSafeView.listView == false}">
+					<p:dataView id="cloudSafeKacheln" value="#{cloudSafeView.currentFiles}" var="cloudSafeFile" rowKey="#{cloudSafeFile.id}" layout="grid"
+						gridRowStyleClass="p-xl-1 p-lg-1 p-md-1 p-sm-2" emptyMessage="">
+						<p:dataViewGridItem>
+							<h:panelGroup style="display:block;margin-right:5em;">
+
+								<p:selectBooleanCheckbox styleClass="checkBoxKachel" valueChangeListener="#{cloudSafeView.changeselectedFileListener}">
+									<f:attribute name="cloudSafeFileId" value="#{cloudSafeFile.id}" />
+									<p:ajax event="change" listener="#{cloudSafeView.setSelectedCloudSafeFile(cloudSafeFile)}" />
+								</p:selectBooleanCheckbox>
+							</h:panelGroup>
+
+							<p:commandLink action="#{cloudSafeView.actinClickFolderOrFile(cloudSafeFile)}" style="text-decoration: none;"
+								update="cloudSafeForm:cloudSafeBreadCrumbId cloudSafeForm:cloudSafeKacheln openFolderForm:openFolderDlg">
+								<p:graphicImage library="pictures" name="icons/64x64/#{cloudSafeView.getFileIcon(cloudSafeFile)}" width="64" height="64" />
+								<br></br>
+								<h:outputText style="font-size:1em !important" value="#{cloudSafeFile.name}" id="cloudSafeFileName" />
+								<!-- <f:ajax event="click" listener="#{cloudSafeView.actinClickFolder(cloudSafeFile)}" /> -->
+							</p:commandLink>
+						</p:dataViewGridItem>
+					</p:dataView>
+				</h:panelGroup>
+			</p:panel>
+			<br />
+		</h:form>
+
+
+
+		<br />
+
+		<div id="cloudSafeSharedWithMe">
+			<p:outputLabel value="#{DcupMsg['title.sharedCloudSafe']}" styleClass="viewSecondTitleLabel" />
+			<br />
+			<h:form id="cloudSafeShareForm">
+				<p:contextMenu id="nodeShareContextMenu" widgetVar="nodeShareContextMenu" for="cloudSafeShareForm" class="contextMenu">
+					<p:menuitem value="#{DcupMsg['button.upload']}" action="#{cloudSafeView.openUploadDialogForSharedFile}" icon="fa fa-cloud-upload" />
+					<p:menuitem value="#{DcupMsg['button.download']}" action="#{cloudSafeView.downloadShareCloudSafeFiles}" icon="fa fa-cloud-download" />
+				</p:contextMenu>
+				<p />
+				<h:panelGroup>
+					<p:commandLink action="#{cloudSafeView.openUploadDialogForSharedFile}">
+						<p:outputLabel id="openUploadBtn" class="fa fa-cloud-upload iconsButtons"></p:outputLabel>
+						<p:tooltip for="openUploadBtn" value="#{DcupMsg['button.upload']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink action="#{cloudSafeView.downloadShareCloudSafeFiles}">
+						<p:outputLabel id="shareDownloadBtn" class="fa fa-cloud-download iconsButtons" style="margin-right: 1em;"></p:outputLabel>
+						<p:tooltip for="shareDownloadBtn" value="#{DcupMsg['button.download']}" position="bottom" />
+					</p:commandLink>
+				</h:panelGroup>
+
+				<h:panelGrid columns="2" id="sharedCloudSafePanel" style="width:100%;">
+					<h:panelGroup>
+						<p:breadCrumb id="sharedcloudSafeBreadCrumbId" class="breadCrumbStyle" homeDisplay="text" model="#{cloudSafeView.breadCrumbModelSharedFiles}">
+						</p:breadCrumb>
+						<p:dataTable reflow="true" class="borderlessCloudSafe" id="sharedCloudSafeTable" var="cloudSafeFile" value="#{cloudSafeView.currentSharedFiles}"
+							emptyMessage="#{DcupMsg['message.emptyTable']}" selection="#{cloudSafeView.currentSelectedSharedCloudSafeFiles}"
+							rowKey="#{cloudSafeFile.cloudSafeEntity.id}">
+
+							<p:ajax event="rowSelect" update="sharedCloudSafeTable" listener="#{cloudSafeView.onClickShareFolder}" />
+
+							<p:column selectionMode="multiple" style="width:4em;">
+								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.encrypted']}" library="pictures" name="key.png"
+									rendered="#{cloudSafeFile.cloudSafeEntity.options == 'PWD' }" />
+								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.encrypted']}" library="pictures" name="lockF.png"
+									rendered="#{cloudSafeFile.cloudSafeEntity.options == 'FPD' }" />
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.owner']}" sortBy="#{cloudSafeFile.cloudSafeEntity.user.loginId}">
+								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.user.loginId}" rendered="#{cloudSafeFile.cloudSafeEntity.owner.value == 1}" />
+								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.group.name}" rendered="#{cloudSafeFile.cloudSafeEntity.owner.value == 3}" />
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.writeAccess']}" sortBy="#{cloudSafeFile.writeAccess}">
+								<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{cloudSafeFile.writeAccess}" />
+								<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{cloudSafeFile.writeAccess == false}" />
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.filename']}" sortBy="#{cloudSafeFile.cloudSafeEntity.name}">
+								<p:graphicImage styleClass="viewFileImage" library="pictures" name="icons/16x16/#{cloudSafeView.getFileIcon(cloudSafeFile.cloudSafeEntity)}" />
+								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.name}" />
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.length']}" sortBy="#{cloudSafeFile.cloudSafeEntity.lengthKb}" class="columnToBeHidden">
+								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.lengthKb}" style="float:left" class="columnToBeHidden" />
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.lastModified']}" sortBy="#{cloudSafeFile.cloudSafeEntity.lastModified}" class="columnToBeHidden">
+								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.lastModified}" class="columnToBeHidden">
+									<f:convertDateTime dateStyle="medium" type="both" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.lastModifiedUser']}" sortBy="#{cloudSafeFile.cloudSafeEntity.lastModifiedUser.displayName}"
+								class="columnToBeHidden">
+								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.lastModifiedUser.displayName}" class="columnToBeHidden" />
+							</p:column>
+							<p:column headerText="#{DcupMsg['columnTitle.discardsAfter']}" sortBy="#{cloudSafeFile.cloudSafeEntity.discardAfter}" class="columnToBeHidden">
+								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.discardAfter}" class="columnToBeHidden">
+									<f:convertDateTime dateStyle="medium" type="date" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="#{DcupMsg['cloudSafe.restrictDownload']}" class="columnToBeHidden">
+								<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{cloudSafeFile.restrictDownload}" />
+								<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{cloudSafeFile.restrictDownload == false}" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGroup>
+				</h:panelGrid>
+				<p />
+
+			</h:form>
+			<!-- 	<p:growl id="msg" keepAlive="#{cloudSafeView.error}" /> -->
+
+		</div>
+		<h:form id="uploadDlgForm" enctype="multipart/form-data">
+			<p:dialog id="uploadDlg" widgetVar="uploadDlg" modal="true" draggable="true" resizable="false" style="border:none;">
+				<p:ajax event="open"
+					update="uploadDlgForm:uploadPasswordsFile uploadDlgForm:uploadPasswords uploadDlgForm:uploadInputs uploadDlgForm:uploadedFiles uploadDlgForm:uploadBtn " />
+
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['cloudSafe.Upload']}" />
+				</f:facet>
+
+				<p:messages layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<p />
+				<p />
+
+				<p:fileUpload id="uploadBtn" label="#{DcupMsg['chooseFile']}" styleClass="fileUploadCloudSafe" mode="advanced" dragDropSupport="true"
+					multiple="#{cloudSafeView.multipleUpload}" fileLimit="10" update="@this uploadedFiles" required="true" listener="#{cloudSafeView.handleFileUpload}"
+					auto="true">
+				</p:fileUpload>
+
+				<p />
+
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4" id="uploadInputs">
+					<p:outputLabel value="#{DcupMsg['label.uploadedFiles']}" />
+					<p:outputLabel id="uploadedFiles" value="#{cloudSafeView.uploadedFiles}" />
+					<p:outputLabel for="inputExpiry" value="#{DcupMsg['label.discardsAfter']}" />
+					<p:datePicker id="inputExpiry" class="calenderUpload" value="#{cloudSafeView.expiryDate}" timeZone="#{adminModule.timezone}"
+						locale="#{portalSessionBean.locale}" pattern="#{portalSessionBean.dateTimePattern}">
+						<p:ajax event="dateSelect" update="inputExpiry" />
+					</p:datePicker>
+
+					<p:outputLabel for="passwordProtected" value="#{DcupMsg['label.passwordProtected']}" rendered="#{cloudSafeView.parentProtected == false}" />
+					<p:inputSwitch id="passwordProtected" value="#{cloudSafeView.passwordProtected}" rendered="#{cloudSafeView.parentProtected == false}">
+						<p:ajax immediate="true" update="uploadPasswords" />
+					</p:inputSwitch>
+				</h:panelGrid>
+				<p></p>
+				<h:panelGroup id="uploadPasswordsFile" rendered="#{cloudSafeView.parentProtected == false}">
+					<h:panelGroup id="uploadPasswords">
+						<p:fieldset rendered="#{cloudSafeView.passwordProtected == true}">
+							<h:panelGroup rendered="#{cloudSafeView.passwordProtected == true}">
+								<h:outputLabel style="font-size: 1.5em" class="fa fa-warning" />
+								<h:outputLabel escape="false" value="#{DcupMsg['warning.password.cloudSafeUpload']}" />
+							</h:panelGroup>
+							<p></p>
+							<h:panelGrid columns="2" cellpadding="4" cellspacing="4" rendered="#{cloudSafeView.passwordProtected == true}">
+								<p:outputLabel for="filePassword" value="#{DcupMsg['dialog.passwordCloud']}" />
+								<p:password id="filePassword" value="#{cloudSafeView.filePassword}" feedback="true" validatorMessage="#{DcupMsg['registration.noMatchPassword']}"
+									match="filePassword2" toggleMask="true" />
+
+								<p:outputLabel value="#{DcupMsg['label.passwordRepeatCloud']}" />
+								<p:password id="filePassword2" value="#{cloudSafeView.filePassword}" toggleMask="true" />
+							</h:panelGrid>
+							<p></p>
+						</p:fieldset>
+					</h:panelGroup>
+
+				</h:panelGroup>
+				<p />
+				<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{DcupMsg['button.upload']}" actionListener="#{cloudSafeView.actionUpload}"
+					update="cloudSafeForm:cloudSafeTable cloudSafeForm:cloudSafeKacheln cloudSafeShareForm:sharedCloudSafeTable cloudSafeForm:storageInfo" ajax="true" />
+				<p:spacer width="12" />
+				<br />
+				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" actionListener="#{cloudSafeView.closeUploadDialog}"
+					style="float: right; margin-right: 1em;" immediate="true" />
+				<p />
+				<br />
+			</p:dialog>
+		</h:form>
+
+		<h:form id="confirmUploadForm">
+			<p:dialog widgetVar="confirmUploadDlg" modal="true" resizable="false" draggable="false" style="border:none;">
+				<p:ajax event="open" update="confirmUploadMessage" />
+				<h:outputLabel style="font-size: xx-large" class="fa fa-warning" value="" />
+				<p:outputLabel id="confirmUploadMessage" value="#{cloudSafeView.confirmUploadMessage}" />
+				<p />
+
+				<p:commandButton style="width: 8em" icon="fa fa-check" value="#{DcupMsg['button.replace']}" actionListener="#{cloudSafeView.actionConfirmUpload()}"
+					update="cloudSafeForm:cloudSafeTable cloudSafeShareForm:sharedCloudSafeTable" />
+				<p:spacer width="12" />
+
+				<p:commandButton style="width: 11em" icon="fa fa-copy" value="#{DcupMsg['button.uploadOfCopy']}" actionListener="#{cloudSafeView.actionUploadCopy()}"
+					update="cloudSafeForm:cloudSafeTable  cloudSafeShareForm:sharedCloudSafeTable" />
+				<p:spacer width="12" />
+
+				<p:commandButton value="#{DcupMsg['button.cancel']}" onclick="PF('confirmRenameDlg').hide();" icon="fa fa-close" style="width: 8em" immediate="true" />
+
+				<p />
+			</p:dialog>
+		</h:form>
+
+		<h:form id="renameForm">
+			<p:dialog widgetVar="renameDlg" id="renameDlg" modal="true" resizable="false" draggable="false" style="border:none;">
+				<p:ajax event="open" update="fileNameinput" />
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['button.rename']}" />
+				</f:facet>
+				<p:messages id="renameDlgMsg" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<h:outputLabel style="margin-right: 1em" value="#{DcupMsg['label.filename']}" />
+				<p:inputText id="fileNameinput" value="#{cloudSafeView.selectedFileName}" maxlength="128" style="width: 22em" />
+				<p />
+				<br></br>
+				<p:commandButton style="width: 10em" icon="fa fa-check" value="#{DcupMsg['button.ok']}" actionListener="#{cloudSafeView.setNewFileName}"/>
+				<p></p>
+				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" onclick="PF('renameDlg').hide();" style="float: right; margin-right: 1em;"
+					immediate="true" />
+				<br></br>
+
+				<p />
+			</p:dialog>
+		</h:form>
+
+		<h:form id="changeOwnerShipForm">
+			<p:dialog widgetVar="changeOwnerShipDlg" id="changeOwnerShipDlg" modal="true" resizable="false" draggable="false" style="border:none;">
+				<p:ajax event="open" update="groupName fileName" />
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['label.changeOwnerGroupTitle']}" />
+				</f:facet>
+				<p:messages id="changeOwerShipMsg" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+					<p:outputLabel for="fileName" value="#{DcupMsg['label.filename']}: " />
+					<p:outputLabel id="fileName" value="#{cloudSafeView.selectedFileName}" />
+
+					<p:outputLabel for="groupName" value="#{DcupMsg['label.defineOwner']}" />
+					<p:autoComplete id="groupName" minQueryLength="1" value="#{cloudSafeView.ownerGroup}" size="20" scrollHeight="250"
+						completeMethod="#{cloudSafeShareDialog.completeGroup}" effect="fade" active="#{cloudSafeShareDialog.isEnableAutoComplete() == true}" />
+
+					<h:outputLabel class="fa fa-warning" style="font-size: 2em;color:orange" />
+					<h:outputLabel escape="false" value="#{DcupMsg['warning.changeOwner']}" style="color:orange" />
+				</h:panelGrid>
+				<br></br>
+
+				<p:commandButton style="width: 10em" icon="fa fa-check" value="#{DcupMsg['button.ok']}" actionListener="#{cloudSafeView.actionChangeOwnerShip}"
+					update="cloudSafeForm:cloudSafeTable cloudSafeForm:cloudSafeKacheln" ignoreAutoUpdate="true" />
+				<p></p>
+				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" onclick="PF('changeOwnerShipDlg').hide();" style="float: right; margin-right: 1em;"
+					immediate="true" />
+				<br></br>
+
+				<p />
+			</p:dialog>
+		</h:form>
+
+		<h:form id="openFolderForm">
+			<p:dialog id="openFolderDlg" widgetVar="openFolderDlg" modal="true" resizable="false" draggable="false" style="border:none;">
+				<p:ajax event="open" update="folderName" />
+				<p:messages id="openFolderMsg" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['cloudSafe.openFolderDialogTitle']}"
+						rendered="#{cloudSafeView.folder == true}" />
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['cloudSafe.openFileDialogTitle']}"
+						rendered="#{cloudSafeView.folder == false}" />
+				</f:facet>
+
+				<p:outputLabel value="#{DcupMsg['cloudSafe.downloadFileName']}: " />
+				<p:outputLabel id="folderName" value="#{cloudSafeView.folderName}" />
+				<p></p>
+				<p:outputLabel for="folderPassword" value="#{DcupMsg['label.password']}" />
+				<p:password id="folderPassword" style="margin-left: 1em" value="#{cloudSafeView.filePassword}" autocomplete="off" required="true" toggleMask="true" />
+				<p></p>
+				<p:commandButton id="openFolderbtn" icon="fa fa-folder-open-o" value="#{DcupMsg['button.open']}" ajax="true" action="#{cloudSafeView.openFolder}">
+				</p:commandButton>
+				<p></p>
+				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" actionListener="#{cloudSafeView.actionCloseOpenFolderDlg}"
+					style="float: right; margin-right: 1em;" immediate="true" />
+				<br></br>
+				<p:remoteCommand name="stopDownLoad" action="#{cloudSafeView.actionCloseOpenFolderDlg()}" />
+				<p></p>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="downloadForm">
+			<p:dialog id="downloadDlg" widgetVar="downloadDlg" modal="true" resizable="false" draggable="false" style="border:none;">
+				<p:ajax event="open" update="password dldFileName" />
+				<p:messages id="downloadMsg" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['cloudSafe.downloadDialogTitle']}" />
+				</f:facet>
+
+				<p:outputLabel value="#{DcupMsg['cloudSafe.downloadFileName']} "></p:outputLabel>
+				<p:outputLabel id="dldFileName" value="#{cloudSafeView.downloadFileName}"></p:outputLabel>
+				<p></p>
+
+				<h:panelGroup id="password" rendered="#{cloudSafeView.downloadFileWithPassword}">
+					<p:outputLabel for="downloadPassword" value="#{DcupMsg['label.password']}" />
+					<p:password id="downloadPassword" style="margin-left: 1em" value="#{cloudSafeView.filePassword}" autocomplete="off" required="true" toggleMask="true" />
+					<br></br>
+				</h:panelGroup>
+				<br></br>
+				<p:outputLabel escape="false" style="color:#ffa500 !important" value="#{DcupMsg['wrningMessage.downloadMultipleFile']}"
+					rendered="#{cloudSafeView.isDownloadFoldersContainsProtectedFiles() == true}" />
+				<br></br>
+				<p:outputLabel escape="false" style="color:#ffa500 !important" value="#{DcupMsg['wrningMessage.downloadMultipleProtectedFile']}"
+					rendered="#{cloudSafeView.isDownloadMultipleProtectedFilesOrFolders() == true}" />
+				<br />
+				<p></p>
+				<p:commandButton id="actionDownloadFile" icon="fa fa-cloud-download" value="#{DcupMsg['button.download']}" ajax="false"
+					onclick="PrimeFaces.monitorDownload(null, stopDownLoad);" rendered="#{cloudSafeView.multipleFile == false}">
+					<p:fileDownload value="#{cloudSafeView.actionDownloadFile()}" />
+				</p:commandButton>
+
+				<p:commandButton id="actionDownloadMultiFile" icon="fa fa-cloud-download" value="#{DcupMsg['button.download']}" ajax="false"
+					action="#{cloudSafeView.verifyPasswordForDownloadFolder()}" rendered="#{cloudSafeView.multipleFile == true}" update="downloadForm">
+				</p:commandButton>
+
+				<p></p>
+				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" actionListener="#{cloudSafeView.actionCloseDownloadFile}"
+					style="float: right; margin-right: 1em;" immediate="true" />
+				<br></br>
+				<p:remoteCommand name="stopDownLoad" action="#{cloudSafeView.actionCloseDownloadFile()}" ignoreAutoUpdate="true" />
+				<p></p>
+			</p:dialog>
+		</h:form>
+
+
+		<h:form id="shareForm">
+			<p:dialog id="shareDlg" widgetVar="shareDlg" modal="true" resizable="false" draggable="true" style="border:none;" focus="addShare">
+
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle; margin:0;" class="dialogTitle" value="#{DcupMsg['cloudSafe.Share']}" />
+				</f:facet>
+				<p:messages id="errorMessageShareDialog" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<h:panelGroup style="padding-right: 80px">
+					<p:outputLabel value="#{DcupMsg['for']}: " />
+					<p:outputLabel id="fileName" value="#{cloudSafeShareDialog.selectedCloudSafeName}" />
+					<p></p>
+
+					<p:commandLink actionListener="#{cloudSafeShareDialog.actionOpenAddShareCloudSafe}" update="shareForm:sharedUsersTable" immediate="true">
+						<p:outputLabel id="addShare" class="fa fa-plus-circle iconsButtons"></p:outputLabel>
+						<p:tooltip for="addShare" value="#{DcupMsg['button.add']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink actionListener="#{cloudSafeShareDialog.actionOpenEditShareCloudSafe}" immediate="true" update="shareForm:sharedUsersTable"
+						ignoreAutoUpdate="true">
+						<p:outputLabel id="editShare" class="fa fa-edit iconsButtons"></p:outputLabel>
+						<p:tooltip for="editShare" value="#{DcupMsg['button.edit']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink actionListener="#{cloudSafeShareDialog.actionDeleteShareCloudSafe}" immediate="true" update="shareForm:sharedUsersTable">
+						<p:outputLabel id="deleteShare" class="fa fa-trash iconsButtons"></p:outputLabel>
+						<p:tooltip for="deleteShare" value="#{DcupMsg['button.delete']}" position="bottom" />
+					</p:commandLink>
+					<br></br>
+					<p></p>
+					<p:dataTable class="borderless" reflow="true" id="sharedUsersTable" var="shareCloudSafe" value="#{cloudSafeShareDialog.shareCloudSafeUsersAccess}"
+						emptyMessage="#{DcupMsg['message.emptyTable']}" selection="#{cloudSafeShareDialog.selectedShareCloudSafe}" rowKey="#{shareCloudSafe.id}">
+						<p:ajax event="rowSelect" />
+						<p:column selectionMode="single" />
+						<p:column headerText="#{DcupMsg['columnTitle.group']}">
+							<h:outputLabel value="#{shareCloudSafe.group.name}" />
+						</p:column>
+						<p:column headerText="#{DcupMsg['columnTitle.user']}">
+							<h:outputLabel value="#{shareCloudSafe.user.loginId}" />
+						</p:column>
+						<p:column headerText="#{DcupMsg['columnTitle.writeAccess']}">
+							<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{shareCloudSafe.writeAccess}" />
+							<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{shareCloudSafe.writeAccess == false}" />
+						</p:column>
+						<p:column headerText="#{DcupMsg['cloudSafe.restrictDownload']}">
+							<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{shareCloudSafe.restrictDownload}" />
+							<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{shareCloudSafe.restrictDownload == false}" />
+						</p:column>
+					</p:dataTable>
+					<p />
+				</h:panelGroup>
+				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" actionListener="#{cloudSafeShareDialog.actionCloseShareCloudSafeDialog}"
+					style="float: right; margin-right: 1em;" immediate="true" />
+				<p:spacer height="1" />
+				<p />
+			</p:dialog>
+		</h:form>
+
+		<h:form id="shareEditForm">
+			<p:dialog id="shareEditDlg" widgetVar="shareEditDlg" modal="true" resizable="false" draggable="false" style="border:none;" focus="shareBtn">
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;margin-left:0.3em;" class="dialogTitle" value="#{DcupMsg['cloudSafe.SharingOptions']}" />
+				</f:facet>
+				<p:ajax event="open" update="shareEditDlgInputs" />
+				<p:messages id="shareEditDlgMessages" layout="table" globalOnly="false" showSummary="true" closable="true" ajax="true">
+					<p:autoUpdate />
+				</p:messages>
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4" id="shareEditDlgInputs">
+					<p:outputLabel for="shareWith" value="#{DcupMsg['cloudSafe.shareWith']}" />
+					<p:selectOneRadio id="shareWith" value="#{cloudSafeShareDialog.shareCloudSafeType}" unselectable="true"
+						disabled="#{cloudSafeShareDialog.editingShareCloudSafe}">
+						<p:ajax listener="#{cloudSafeShareDialog.onChangeShareCloudSafeType(cloudSafeShareDialog.shareCloudSafeType)}" />
+						<f:selectItem itemLabel="#{DcupMsg['cloudSafe.SharingOptions.group']}" itemValue="g" />
+						<f:selectItem itemLabel="#{DcupMsg['cloudSafe.SharingOptions.user']}" itemValue="u" />
+					</p:selectOneRadio>
+					<p:outputLabel for="nameInput" value="#{DcupMsg['cloudSafe.SharingOptions.name']}:" />
+					<p:autoComplete id="nameInput" minQueryLength="1" value="#{cloudSafeShareDialog.shareCloudSafeName}" size="35" scrollHeight="250"
+						disabled="#{cloudSafeShareDialog.editingShareCloudSafe}" completeMethod="#{cloudSafeShareDialog.completeUser}" effect="fade"
+						active="#{cloudSafeShareDialog.isEnableAutoComplete() == true}" immediate="true" />
+
+					<p:outputLabel value="#{DcupMsg['columnTitle.writeAccess']}:" />
+					<p:selectBooleanCheckbox value="#{cloudSafeShareDialog.shareCloudSafeWriteAccess}" />
+
+					<p:outputLabel value="#{DcupMsg['cloudSafe.restrictDownload']}:" />
+					<p:selectBooleanCheckbox value="#{cloudSafeShareDialog.shareCloudSafeRestrictDownload}" />
+				</h:panelGrid>
+				<p />
+				<p:commandButton id="shareBtn" style="width: 8em" icon="fa fa-check" value="#{DcupMsg['button.share']}"
+					actionListener="#{cloudSafeShareDialog.actionAddEditShareCloudSafe(false)}" update="shareForm:sharedUsersTable" ignoreAutoUpdate="true" />
+				<p></p>
+				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" onclick="PF('shareEditDlg').hide();" style="float: right; margin-right: 1em;"
+					immediate="true" />
+				<p:spacer height="1" />
+				<p />
+			</p:dialog>
+		</h:form>
+
+		<h:form id="moveEntryConfirmationForm">
+			<p:dialog id="moveEntryConfirmation" widgetVar="moveEntryConfirmationDialog" modal="true" resizable="false" style="border:none;">
+				<p />
+				<f:facet name="header">
+					<h:outputLabel value="#{DcupMsg['dialog.moveConfirmationEntry']}" styleClass="dialogTitle" />
+				</f:facet>
+				<p />
+				<h:panelGrid columns="2">
+					<p:outputLabel value="#{DcupMsg['dialog.MoveEntries.text']}: " />
+					<ul>
+						<ui:repeat value="#{cloudSafeView.selectedCloudSafeFiles}" var="selectedCseFiles">
+							<li><p:outputLabel value="#{selectedCseFiles.name}" style="font-weight: bold;">
+								</p:outputLabel></li>
+						</ui:repeat>
+					</ul>
+					<p />
+					<p:outputLabel value="#{DcupMsg['dialog.MoveEntry.to']}: " />
+					<p />
+					<p:outputLabel style="font-weight: bold; margin-left: 0.5em" value="#{cloudSafeView.moveToFolder.name}" />
+				</h:panelGrid>
+
+				<p />
+				<br />
+				<p:commandButton id="moveConfirmationOK" value="#{DcupMsg['button.ok']}" action="#{cloudSafeView.moveFileEntry}" style="width: 8em" icon="fa fa-check"
+					ajax="true" update="cloudSafeForm:cloudSafeTable">
+				</p:commandButton>
+				<br />
+				<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{DcupMsg['close']}" onclick="PF('moveEntryConfirmationDialog').hide();"
+					style="float: right; margin-right: 1em;" immediate="true" />
+				<br />
+				<br />
+			</p:dialog>
+		</h:form>
+
+		<h:form id="processFolderForm">
+			<p:dialog id="processFolderDialog" widgetVar="processFolderDialog" modal="true" draggable="true" resizable="false" style="border:none;">
+				<p:ajax event="open" update="processFolderForm:addFolderInput processFolderForm:uploadPasswordsfolder processFolderForm:addPasswordsParentFolder" />
+
+				<f:facet name="header">
+					<h:outputLabel value="#{DcupMsg['dialog.addFolder']}" rendered="#{cloudSafeView.editFolderProcess == false}" class="dialogTitle" />
+					<h:outputLabel value="#{DcupMsg['dialog.editFolder']}" rendered="#{cloudSafeView.editFolderProcess == true}" class="dialogTitle" />
+				</f:facet>
+				<br />
+				<p:messages id="mainMessages" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<br />
+
+				<h:panelGrid id="addFolderInput" columns="2" cellpadding="4" cellspacing="2">
+					<p:outputLabel for="addFolderName" value="#{DcupMsg['dialog.addFolder.folderName']}" />
+					<p:inputText id="addFolderName" size="36" value="#{cloudSafeView.addFolderName}" maxlength="100" />
+				</h:panelGrid>
+
+				<h:panelGroup id="addPasswordsParentFolder" rendered="#{cloudSafeView.parentProtected == false}">
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="2">
+						<p:outputLabel for="passwordProtectedFolder" value="#{DcupMsg['label.folderPasswordProtected']}" />
+						<p:inputSwitch id="passwordProtectedFolder" value="#{cloudSafeView.passwordProtected}">
+							<p:ajax immediate="true" update="uploadPasswordsfolder" />
+						</p:inputSwitch>
+					</h:panelGrid>
+
+
+					<h:panelGroup id="uploadPasswordsfolder">
+						<p:fieldset rendered="#{cloudSafeView.passwordProtected == true}">
+							<h:panelGroup rendered="#{cloudSafeView.passwordProtected == true}">
+								<h:outputLabel style="font-size: 1.5em" class="fa fa-warning" />
+								<h:outputLabel escape="false" value="#{DcupMsg['warning.password.cloudSafeAddFolder']}" />
+							</h:panelGroup>
+							<p></p>
+							<h:panelGrid columns="2" cellpadding="4" cellspacing="4" rendered="#{cloudSafeView.passwordProtected == true}">
+								<p:outputLabel for="folderPassword" value="#{DcupMsg['dialog.passwordCloud']}" />
+								<p:password id="folderPassword" value="#{cloudSafeView.filePassword}" feedback="true" validatorMessage="#{DcupMsg['registration.noMatchPassword']}"
+									match="folderPassword2" toggleMask="true" />
+
+								<p:outputLabel value="#{DcupMsg['label.passwordRepeatCloud']}" />
+								<p:password id="folderPassword2" value="#{cloudSafeView.filePassword}" toggleMask="true" />
+
+							</h:panelGrid>
+							<p></p>
+
+						</p:fieldset>
+					</h:panelGroup>
+				</h:panelGroup>
+				<p />
+				<p:commandButton value="#{DcupMsg['button.ok']}" rendered="#{cloudSafeView.editFolderProcess == false}" action="#{cloudSafeView.addFolder}"
+					styleClass="wideButton" icon="fa fa-check" ajax="true" update="cloudSafeForm:cloudSafeTable cloudSafeForm:cloudSafeKacheln">
+				</p:commandButton>
+
+				<p:commandButton value="#{DcupMsg['button.ok']}" rendered="#{cloudSafeView.editFolderProcess == true}" action="#{cloudSafeView.editFolder}"
+					styleClass="wideButton" icon="fa fa-check" ajax="true" update="cloudSafeForm:cloudSafeTable cloudSafeForm:cloudSafeKacheln">
+				</p:commandButton>
+				<p></p>
+				<br></br>
+				<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{DcupMsg['close']}" onclick="PF('processFolderDialog').hide();"
+					style="float: right; margin-right: 1em;" immediate="true" />
+				<p />
+				<p></p>
+				<br />
+			</p:dialog>
+		</h:form>
+
+	</h:panelGroup>
+</ui:composition>
+

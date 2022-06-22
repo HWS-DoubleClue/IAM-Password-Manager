@@ -1,0 +1,3 @@
+ALTER TABLE core_user ADD userPrincipalName VARCHAR(255) NULL DEFAULT NULL;
+ALTER TABLE core_ldap ADD dc_rank INT NULL DEFAULT '0';
+ALTER TABLE core_ldap ADD mapEmailDomains VARCHAR(255) NULL DEFAULT NULL;

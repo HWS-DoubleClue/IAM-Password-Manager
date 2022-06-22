@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<h:outputScript library="js" name="userPortalJavaScript.js" />
+
+	<h:panelGroup rendered="#{portalSessionBean.isViewVisible('PASSWORD_MANAGER')}">
+		<script defer="defer" type="text/javascript">
+			
+		</script>
+		<h:form id="processEntryForm">
+			<p:dialog id="processEntryDialog" widgetVar="processEntryDialog" modal="true" resizable="false" draggable="true" style="border:none;resize: 200px; ">
+				<f:facet name="header">
+					<h:outputLabel value="#{DcupMsg['dialog.addEntry']}" rendered="#{keePassView.editEntryProcess  == false}" class="dialogTitle" />
+					<h:outputLabel value="#{DcupMsg['dialog.editEntry']}" rendered="#{keePassView.editEntryProcess}" class="dialogTitle" />
+				</f:facet>
+				<p />
+				<p:messages id="processEntryMessages" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<br />
+				<p:tabView class="keepassEntryTabs" id="tabView" scrollable="true" style="padding-right:0.5em ;">
+					<p:tab title="#{DcupMsg['dialog.entry']} ">
+
+						<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+
+							<p:outputLabel for="entryTitle" value="#{DcupMsg['dialog.addEntry.title']}" />
+							<p:inputText id="entryTitle" value="#{keePassView.currentEntry.title}" maxlength="64" size="36" required="true"
+								requiredMessage="#{DcupMsg['dialog.addEntry.titleRequired']}" />
+
+							<p:outputLabel value="#{DcupMsg['label.username']}" />
+							<p:inputText value="#{keePassView.currentEntry.username}" maxlength="64" size="36" autocomplete="false" />
+
+							<p:outputLabel for="entryPassword" value="#{DcupMsg['dialog.password']}" />
+							<p:password id="entryPassword" value="#{keePassView.currentEntry.password}" maxlength="300" size="36" inline="true" rendered="true" redisplay="true"
+									validatorMessage="#{DcupMsg['registration.noMatchPassword']}" toggleMask="true" match="confirmEntryPassword" autocomplete="false" />
+
+							<p:outputLabel for="confirmEntryPassword" value="#{DcupMsg['dialog.confirmPassword']}" />
+							<p:password id="confirmEntryPassword" value="#{keePassView.currentEntry.password}" toggleMask="true" maxlength="300" size="36" rendered="true" redisplay="true" />
+
+							<h:outputLabel value="#{DcupMsg['dialog.addEntry.url']}" />
+							<p:inputText value="#{keePassView.currentEntry.url}" maxlength="300" size="50" autocomplete="off" />
+
+							<p:outputLabel value="#{DcupMsg['dialog.addEntry.notes']}" />
+							<p:inputTextarea value="#{keePassView.currentEntry.notes}" autoResize="false" maxlength="1024" style="width:28.5em;" row="6" />
+						</h:panelGrid>
+						<p />
+						<br />
+
+					</p:tab>
+
+					<p:tab title="#{DcupMsg['dialog.customProperties']} ">
+						<p></p>
+						<p:commandLink action="#{keePassEntryView.addNewProperty}" immediate="true">
+							<p:outputLabel id="addNewProperty" class="fa fa-plus-circle iconsButtons"></p:outputLabel>
+							<p:tooltip for="addNewProperty" value="#{DcupMsg['button.add']}" position="bottom" />
+						</p:commandLink>
+
+						<p:commandLink action="#{keePassEntryView.editProperty}" immediate="true">
+							<p:outputLabel id="editProperty" class="fa fa-edit iconsButtons"></p:outputLabel>
+							<p:tooltip for="editProperty" value="#{DcupMsg['button.edit']}" position="bottom" />
+						</p:commandLink>
+
+						<p:commandLink action="#{keePassEntryView.deleteProperty}" immediate="true">
+							<p:outputLabel id="deleteProperty" class="fa fa-trash iconsButtons"></p:outputLabel>
+							<p:tooltip for="deleteProperty" value="#{DcupMsg['button.delete']}" position="bottom" />
+						</p:commandLink>
+
+						<p:panel style="display:inline-block;float:right;padding:0;margin:0;">
+							<p:commandLink update="customPropertiesTable" action="#{keePassEntryView.upAction}" immediate="true">
+								<h:outputText id="up" class="fa fa-arrow-up iconsButtons">></h:outputText>
+								<p:tooltip for="up" value="#{DcupMsg['button.up']}" position="bottom" />
+							</p:commandLink>
+							<p:commandLink update="customPropertiesTable" action="#{keePassEntryView.downAction}" immediate="true">
+								<h:outputText id="down" class="fa fa-arrow-down iconsButtons">></h:outputText>
+								<p:tooltip for="down" value="#{DcupMsg['button.down']}" position="bottom" />
+							</p:commandLink>
+						</p:panel>
+						<br></br>
+						<br></br>
+						<p:dataTable class="borderlessAttachment" id="customPropertiesTable" var="customProperty" value="#{keePassEntryView.customProperties}"
+							selection="#{keePassEntryView.selectedProperty}" rowKey="#{customProperty.key}" emptyMessage="#{DcupMsg['message.emptyTable']}">
+
+							<p:column selectionMode="single" style="width:16px; text-align:center" />
+							<p:ajax event="rowSelect" update="customPropertiesTable" />
+							<p:column headerText="#{DcupMsg['dialog.customProperties.name']}" style="text-align: left;">
+								<h:outputLabel value="#{customProperty.key}" />
+							</p:column>
+							<p:column headerText="#{DcupMsg['dialog.customProperties.value']}" style="text-align: left;">
+								<h:outputLabel value="#{customProperty.propertyValue.value}" />
+							</p:column>
+
+						</p:dataTable>
+					</p:tab>
+
+					<p:tab title="#{DcupMsg['dialog.attachments']} ">
+
+						<p:panelGrid columns="3" styleClass="gridAttachmentButtons">
+							<p:fileUpload id="uploadBtn" style="margin-left:-11px;" class="fileupload" sizeLimit="10485760" mode="advanced" dragDropSupport="true" fileLimit="1"
+								update="@this attachmentsTable" required="true" listener="#{keePassEntryView.handleFileUpload}" auto="true" label="#{DcupMsg['chooseFile']}">
+							</p:fileUpload>
+
+							<p:commandLink action="#{keePassEntryView.actionDownloadAttachment()}" ajax="false" immediate="true">
+								<p:outputLabel id="actionDownload" class="fa fa-cloud-download iconsButtons"></p:outputLabel>
+								<p:tooltip for="actionDownload" value="#{DcupMsg['button.download']}" position="bottom" />
+							</p:commandLink>
+
+							<p:commandLink action="#{keePassEntryView.deleteAttachment}" immediate="true">
+								<p:outputLabel id="deleteattach" class="fa fa-trash iconsButtons"></p:outputLabel>
+								<p:tooltip for="deleteattach" value="#{DcupMsg['button.delete']}" position="bottom" />
+							</p:commandLink>
+						</p:panelGrid>
+						<p></p>
+						<p:dataTable class="borderlessAttachment" id="attachmentsTable" var="attachment" value="#{keePassEntryView.currentFiles}"
+							selection="#{keePassEntryView.selectedAttachmentFile}" rowKey="#{attachment.key}" emptyMessage="#{DcupMsg['message.emptyTable']}" style="margin-bottom:0">
+
+							<p:column selectionMode="single" style="width:16px; text-align:center" />
+							<p:ajax event="rowSelect" update="attachmentsTable" />
+							<p:column headerText="#{DcupMsg['dialog.attachments.fileName']}" style="text-align: left;">
+								<h:outputLabel value="#{attachment.key}" />
+							</p:column>
+
+							<p:column headerText="#{DcupMsg['dialog.attachments.fileSize']}" style="text-align: left;">
+								<h:outputLabel value="#{attachment.length}" />
+							</p:column>
+
+						</p:dataTable>
+
+					</p:tab>
+				</p:tabView>
+				<p></p>
+				<p:commandButton value="#{DcupMsg['button.ok']}" rendered="#{keePassView.editEntryProcess == false}" action="#{keePassView.addEntry}"
+					styleClass="wideButton" icon="fa fa-check" ajax="true" update="pmForm:content">
+				</p:commandButton>
+				<p:commandButton value="#{DcupMsg['button.ok']}" rendered="#{keePassView.editEntryProcess}" action="#{keePassView.editEntry}" styleClass="wideButton"
+					icon="fa fa-check" ajax="true" update="pmForm:content">
+				</p:commandButton>
+				<br></br>
+				<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{DcupMsg['close']}" onclick="PF('processEntryDialog').hide();"
+					style="float: right; margin-right: 1em;" immediate="true" />
+				<p />
+				<p></p>
+				<br />
+			</p:dialog>
+
+		</h:form>
+
+		<h:form id="addNewPropertyForm">
+			<p:dialog id="addNewPropertyDialog" widgetVar="addNewPropertyDialog" modal="true" resizable="false" draggable="false">
+				<div id="customheader" style="vertical-align: middle; position: relative; margin-bottom: 2em;">
+					<h:outputLabel value="#{DcupMsg['dialog.customProperties.add']}" class="dialogTitle" style="font-size: 1.4em; "
+						rendered="#{keePassEntryView.editingProperty eq false}" />
+					<h:outputLabel value="#{DcupMsg['dialog.customProperties.edit']}" class="dialogTitle" style="font-size: 1.4em;"
+						rendered="#{keePassEntryView.editingProperty eq true}" />
+				</div>
+
+				<p:messages showDetail="false">
+					<p:autoUpdate />
+				</p:messages>
+				<p:focus context="addNewPropertyDialog" />
+				<h:panelGrid id="editPanel" columns="2" cellspacing="4" cellpadding="4">
+
+					<p:outputLabel for="name" value="#{DcupMsg['dialog.customProperties.name']}" />
+					<p:inputText id="name" value="#{keePassEntryView.customPropertyName}" maxlength="64" style="width: 24em" required="true"
+						disabled="#{keePassEntryView.editingProperty eq true}" requiredMessage="#{DcupMsg['dialog.addEntry.propertyNameRequired']}" />
+
+					<p:outputLabel for="value" value="#{DcupMsg['dialog.customProperties.value']}" />
+					<p:inputText id="value" value="#{keePassEntryView.customPropertyValue}" maxlength="1024" style="width: 24em" required="true"
+						requiredMessage="#{DcupMsg['dialog.addEntry.propertyValueRequired']}" />
+				</h:panelGrid>
+				<br></br>
+
+				<p:commandButton style="margin-left:10em" value="#{DcupMsg['button.ok']}" action="#{keePassEntryView.actionCustomProperty}" styleClass="wideButton"
+					icon="fa fa-check" ajax="true" update="">
+				</p:commandButton>
+				<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{DcupMsg['close']}" onclick="PF('addNewPropertyDialog').hide();"
+					style="float: right; margin-right: 1em; margin-top: 1em; display: block " immediate="true" />
+				<p />
+			</p:dialog>
+		</h:form>
+
+	</h:panelGroup>
+</ui:composition>
+</html>

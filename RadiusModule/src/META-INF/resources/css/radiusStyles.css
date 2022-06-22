@@ -1,0 +1,26 @@
+@CHARSET "ISO-8859-1";
+
+
+
+.radiusClientView {
+	background: url("#{resource['pictures/icons/16x16/earth_network.png']}")  no-repeat !important;
+	height: 16px; width : 16px;
+	padding-right: 4px;
+}
+
+
+
+.radiusReportView {
+	background: url("#{resource['pictures/icons/16x16/scroll.png']}")  no-repeat !important;
+	height: 16px; width : 16px;
+	padding-right: 4px;
+}
+
+
+.preferencesView {
+	background: url("#{resource['pictures/icons/16x16/preferences_edit.png']}") 	no-repeat !important;
+	height: 16px;
+	width: 16px;
+	padding-right: 4px;
+}
+

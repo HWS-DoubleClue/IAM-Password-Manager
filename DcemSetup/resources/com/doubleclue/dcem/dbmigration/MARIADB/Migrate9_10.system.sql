@@ -1,0 +1,7 @@
+ALTER TABLE core_user ADD COLUMN privateEmail VARCHAR(255) NULL DEFAULT NULL;
+ALTER TABLE as_cloudsafeshare ADD COLUMN restrictDownload BIT NOT NULL DEFAULT false;
+
+ALTER TABLE as_cloudsafe ADD COLUMN group_dc_id INTEGER NULL DEFAULT NULL,
+ADD CONSTRAINT FK_AS_PROP_GROUP
+FOREIGN KEY (group_dc_id)
+REFERENCES core_group (dc_id);

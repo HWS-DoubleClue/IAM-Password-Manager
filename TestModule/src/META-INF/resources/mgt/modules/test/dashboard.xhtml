@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<h:head>
+		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		</f:facet>
+		<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+			<h:outputStylesheet name="css/#{item.id}Styles.css" />
+		</c:forEach>
+	</h:head>
+
+	<div>
+		<br />
+		<h:form id="privilegeForm">
+			<p:overlayPanel for="infoButton" dismissable="false">
+				<p:panelGrid id="filterTbl" columns="2" cellpadding="4" cellspacing="4" styleClass="filterTbl">
+					<p>
+						ATTENTION! Before running these tests, make sure that: <br /> <br />- you have a correct SdkConfig in DCEM_HOME/testApp <br />- you have the correct
+						REST credentials in the preferences
+					</p>
+				</p:panelGrid>
+			</p:overlayPanel>
+
+
+			<p:commandButton value="Execute TestUnit(s)" icon="fa fa-play" action="#{dashboardView.runTestUnits}" />
+				&nbsp;
+				<p:commandButton value="Show Selected" action="#{dashboardView.showSelected}" />
+				&nbsp;
+				<p:commandButton value="Cancel TestUnit" icon="fa fa-stop" action="#{dashboardView.stopTestUnit}" />
+				&nbsp;
+				<p:commandButton value="Reload TestUnit" icon="fa fa-refresh" action="#{dashboardView.reloadTestUnits}" />
+				&nbsp;
+				<p:commandButton id="infoButton" type="button" icon="fa fa-info" styleClass="infoButton" />
+
+			<br />
+			<br />
+
+			<h:panelGroup id="testUnitGroup">
+				<p:panelGrid styleClass="testUnitsClass" columns="3" style="width: 100%; height: 2em !important">
+					<h:panelGroup>
+						<p:panelGrid styleClass="runningTestUnitClass" columns="2">
+							<p:outputLabel value="Running Test Unit: " />
+							<p:outputLabel style="font-style: italic; color: grey" value="no test unit running" rendered="#{dashboardView.isTestUnitRunning() == false}" />
+							<p:outputLabel style="font-weight: bold; color: blue" value="#{dashboardView.runningTestUnit}" rendered="#{dashboardView.isTestUnitRunning() == true}" />
+						</p:panelGrid>
+					</h:panelGroup>
+					<h:panelGroup style="text-align:center">
+						<h3>Test Units</h3>
+					</h:panelGroup>
+					<h:panelGroup style="float: right">
+						<p:commandButton id="selectAll" icon="fa fa-check-square-o" style="padding: 2px 5px" action="#{dashboardView.onSelectAll(true)}" />
+						<p:tooltip for="selectAll" value="Select all Nodes" position="top" showEffect="clip" hideEffect="clip" />
+						<p:commandButton id="deselectAll" icon="fa fa-minus-square-o" style="padding: 2px 5px" action="#{dashboardView.onSelectAll(false)}" />
+						<p:tooltip for="deselectAll" value="Deselect all Nodes" position="top" showEffect="clip" hideEffect="clip" />
+						&nbsp;&nbsp;
+						<p:commandButton id="expandAll" icon="fa fa-expand" style="padding: 2px 5px" />
+						<p:tooltip for="expandAll" value="Expand all Nodes" position="top" showEffect="clip" hideEffect="clip" />
+						<p:commandButton id="collapseAll" icon="fa fa-compress" style="padding: 2px 5px" />
+						<p:tooltip for="collapseAll" value="Collapse all Nodes" position="top" showEffect="clip" hideEffect="clip" />
+					</h:panelGroup>
+				</p:panelGrid>
+				<p:treeTable id="testUnitTreeTable" value="#{dashboardView.rootNode}" selection="#{dashboardView.selectedTreeNodes}" selectionMode="checkbox" var="unit"
+					style="width: 100%" showGridlines="true" rowKey="#{unit.name}" resizableColumns="true" liveResize="true">
+					<p:column headerText="Name" sortBy="#{unit.name}" style="width: 22em" >
+						<h:outputText value="#{unit.name}" />
+					</p:column>
+
+					<p:column headerText="Description" responsivePriority="2">
+						<h:outputText value="#{unit.description}" />
+					</p:column>
+
+					<p:column headerText="Dependencies" style="width: 22em">
+						<h:outputText value="#{unit.dependencies}" />
+					</p:column>
+
+					<p:column headerText="Status" style="width: 4em" sortBy="#{unit.getTestStatus().name()}"
+						styleClass="#{dashboardView.getStatusRowColor(unit.getTestStatus().name())}">
+						<h:outputText value="#{unit.getTestStatus().name()}" />
+					</p:column>
+
+					<p:column headerText="Information" style="width: 25em">
+						<h:outputText value="#{unit.info}" />
+					</p:column>
+
+					<p:column headerText="Last Run" sortBy="#{unit.date}" style="width: 12em">
+						<h:outputText value="#{unit.date}" />
+					</p:column>
+				</p:treeTable>
+			</h:panelGroup>
+
+			<br />
+
+			<!-- <p:dataTable id="pTable" value="#{dashboardView.testUnits}" selection="#{dashboardView.selectedTestUnit}" selectionMode="single" var="unit"
+				rowKey="#{unit.name}">
+				<p:ajax event="rowSelect" listener="#{dashboardView.onRowSelect}" update=":form:msgs" />
+        		<p:ajax event="rowUnselect" listener="#{dashboardView.onRowUnselect}" update=":form:msgs" />
+
+				<p:column headerText="Name" sortBy="#{unit.name}">
+					<h:outputText value="#{unit.name}" />
+				</p:column>
+
+				<p:column headerText="Description">
+					<h:outputText value="#{unit.description}" />
+				</p:column>
+
+				<p:column headerText="Dependencies">
+					<h:outputText value="#{unit.dependencies}" />
+				</p:column>
+
+				<p:column headerText="Status" sortBy="#{unit.getTestStatus().name()}">
+					<h:outputText value="#{unit.getTestStatus().name()}" />
+				</p:column>
+
+				<p:column headerText="Information" styleclass="rowColorClassYellow">
+					<h:outputText value="#{unit.info}" />
+				</p:column>
+
+				<p:column headerText="Last Run" sortBy="#{unit.date}">
+					<h:outputText value="#{unit.date}" />
+				</p:column>
+			</p:dataTable> -->
+		</h:form>
+	</div>
+</ui:composition>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+	version="2.2">
+
+	<factory>
+		<exception-handler-factory>com.doubleclue.dcem.core.gui.JsfExceptionHandlerFactory</exception-handler-factory>
+	</factory>
+
+	<application>
+		<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>en</supported-locale>
+			<supported-locale>de</supported-locale>
+			<supported-locale>it</supported-locale>
+		</locale-config>
+
+		<resource-bundle>
+			<base-name>com.doubleclue.dcem.core.resources.CoreMsg</base-name>
+			<var>CoreMsg</var>
+		</resource-bundle>
+		<resource-bundle>
+			<base-name>com.doubleclue.dcem.admin.resources.DbMsg</base-name>
+			<var>DbMsg</var>
+		</resource-bundle>
+		<resource-bundle>
+			<base-name>com.doubleclue.dcem.admin.resources.AdminMsg</base-name>
+			<var>AdminMsg</var>
+		</resource-bundle>
+
+		<message-bundle>com.doubleclue.dcem.core.resources.Messages</message-bundle>
+	</application>
+
+	<application>
+		<action-listener>org.primefaces.application.DialogActionListener</action-listener>
+		<navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
+		<view-handler>org.primefaces.application.DialogViewHandler</view-handler>
+		<!-- <resource-handler> com.doubleclue.dcem.core.gui.CustomResourceHandler 
+			</resource-handler> -->
+		<!-- <view-handler>com.doubleclue.dcem.admin.gui.CustomResourceHandler</view-handler> -->
+	</application>
+
+
+
+	<navigation-rule>
+		<display-name>MGT_LOGIN</display-name>
+		<from-view-id>/mgt/*</from-view-id>
+		<navigation-case>
+			<from-outcome>mgtLogin</from-outcome>
+			<to-view-id>/mgt/preLogin_.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<display-name>USER_PORTAL_LOGIN</display-name>
+		<from-view-id>/userportal/*</from-view-id>
+		<navigation-case>
+			<from-outcome>portalLogin</from-outcome>
+			<to-view-id>/userportal/login.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<display-name>SAML_LOGIN</display-name>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>samlLogin</from-outcome>
+			<to-view-id>/saml/login.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<display-name>LOGOFF</display-name>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>mgtLogoff</from-outcome>
+			<to-view-id>mgt/logoff_.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<display-name>ERROR</display-name>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>ERROR</from-outcome>
+			<to-view-id>/error_.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	
+
+
+</faces-config>

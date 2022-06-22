@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+		<h:outputStylesheet name="css/#{item.id}Styles.css" />
+	</c:forEach>
+	<title>#{viewNavigator.dialogTitle}</title>
+	<script defer="defer" type="text/javascript" src="#{resource['js/javaScriptDCEM.js']}"></script>
+</h:head>
+
+<f:view locale="#{operatorSession.locale}">
+	<h:body class="dialogBody">
+		<p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+			onerror="PF('statusDialog').hide()" oncomplete="PF('statusDialog').hide()" />
+
+		<span id="customheader" >
+			<h:outputLabel class="#{autoView.icon} dialogTitle"></h:outputLabel>
+			<h:outputLabel value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle"></h:outputLabel>
+		</span>
+
+		<h:form id="autoDialogForm">
+			<h:panelGroup >
+				<p:messages closable="true" >
+					<p:autoUpdate />
+				</p:messages>
+
+				
+				<p:focus context="panelGrid" />
+
+				<h:panelGrid id="panelGrid" columns="2" binding="#{autoDialog.panelGrid}" styleClass="autoDialogTable" cellpadding="3" cellspacing="1">
+				</h:panelGrid>
+
+				<p></p>				
+
+				<p:commandButton id="okButton"  style="width: 8em;" value="#{CoreMsg['OK']}" action="#{autoDialog.actionOk}" icon="fa fa-check" />
+					<p:spacer width= "20" />
+				<p:commandButton id="closeDialog"  style="width: 8em;" value="#{CoreMsg['cancel']}" action="#{viewNavigator.actionCloseDialog}" immediate="true"
+					icon="fa fa-close"  />
+
+				<p></p>
+				<br></br>
+				<p></p>
+				<br></br>
+							
+			</h:panelGroup>
+			
+			
+
+
+		</h:form>
+
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="true" resizable="false" showHeader="false"
+			style="border: 4; border-style: solid; border-color: #980808">
+			<p></p>
+			<h:outputText style="font-size: medium" value="Please wait...." />
+			<h:graphicImage library="pictures" name="icons/24x24/test.gif" style="border: 0; padding-left: 8px" />
+			<p></p>
+		</p:dialog>
+	</h:body>
+</f:view>
+</html>

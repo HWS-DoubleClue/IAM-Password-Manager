@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="dcem">
+	<Properties>
+		<Property name="log-filename">testLog</Property>
+		<Property name="log-path">logs</Property>
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{DEFAULT} %-5p [%t]  [%X{MDC_SESSIONID}] [%C{2}.%M:%L]: %m%n" />
+		</Console>
+		<RollingFile name="RollingFile" fileName="${log-path}/${log-filename}.log" filePattern="${log-path}/${log-filename}-%d{yyyy-MM-dd}.log">
+			<PatternLayout pattern="%d{DEFAULT} %-5p [%t]  [%X{MDC_SESSIONID}] [%C{2}.%M:%L]: %m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" />
+			</Policies>
+		</RollingFile>
+		
+	</Appenders>
+	<Loggers>
+		<Logger name="com.doubleclue.dcem" level="debug" additivity="false">
+			<AppenderRef ref="RollingFile" />
+			<AppenderRef ref="Console" /> 
+		</Logger>
+
+		<Root level="warn">
+			<AppenderRef ref="RollingFile" />
+		</Root>
+	</Loggers>
+</Configuration>

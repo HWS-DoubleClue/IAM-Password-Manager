@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</f:facet>
+	<title>DoubleClue UserPortal</title>
+	<h:outputStylesheet library="css" name="portalStyles.css" />
+	<h:outputStylesheet library="css" name="media.css" />
+</h:head>
+
+
+<f:view locale="#{portalSessionBean.locale}">
+	<h:body>
+		<ui:include src="titleLogin.xhtml" />
+		<p />
+		<div class="ui-fluid" style="margin: 2em 1em 0 1em">
+			<p />
+			<h:form id="loginForm">
+				<p:panel id="basic" style="border: 0; margin: 0 auto;">
+					<f:facet name="header">
+						<h:outputText style="font-size: x-large !important; color: white; padding: 0.5em 0 0 0.5em" class="fa fa-user-secret" />
+						<p:outputLabel value="#{endMessageView.title}" styleClass="dialogTitle2" />
+					</f:facet>
+					<p:separator />
+					<br />
+					<h:panelGrid columns="2" style="border: none" rendered="#{endMessageView.error == false}">
+						<h:outputText class="fa fa-info-circle" style="white-space: normal; color: #FFFFFF; font-size: x-large" />
+						<p:outputLabel style="color: #222222; font-size: large" value="#{endMessageView.message}" />
+					</h:panelGrid>
+					<p:panel rendered="#{endMessageView.error}">
+						<h:panelGrid columns="2" style="border: none">
+							<h:outputText class="fa fa-warning" style="white-space: normal; color: orange; font-size: xx-large" />
+							<p:outputLabel style="color: red; font-size: large" value="#{endMessageView.message}" />
+						</h:panelGrid>
+					</p:panel>
+
+					<p />
+					<br></br>
+
+					<p:commandLink id="secureLogin" action="#{upLoginView.actionGotoLogin}" ajax="false" style="color: #FFFFFF" immediate="true">
+						<i class="fa fa-angle-double-left" />
+						<h:outputText value="#{DcupMsg['button.backToLogin']}" />
+					</p:commandLink>
+
+				</p:panel>
+			</h:form>
+		</div>
+	</h:body>
+</f:view>
+</html>

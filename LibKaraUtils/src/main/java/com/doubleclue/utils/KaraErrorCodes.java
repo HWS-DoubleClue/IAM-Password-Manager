@@ -1,0 +1,6 @@
+package com.doubleclue.utils;
+
+public enum KaraErrorCodes {
+	UNKNOWN_FILE_IN_CONFIG, CORRUPTED_SDKCONFIG, MISSING_FILE_IN_CONFIG, GENERIC, SDKCONFIG_READ_ERROR
+	
+}

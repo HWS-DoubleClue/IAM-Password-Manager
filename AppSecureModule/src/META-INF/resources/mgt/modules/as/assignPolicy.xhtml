@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+		<h:outputStylesheet name="css/#{item.id}Styles.css" />
+	</c:forEach>
+	<title>#{viewNavigator.dialogTitle}</title>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+</h:head>
+
+
+<f:view locale="#{operatorSession.locale}">
+
+	<h:body class="dialogBody">
+		<span id="customheader" >
+			<h:outputLabel class="#{autoView.icon} dialogTitle"></h:outputLabel>
+			<h:outputLabel value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle"></h:outputLabel>
+		</span>
+
+
+			<h:panelGroup style="padding: 120px;">
+				<h:form id="policyForm">
+				
+				<p:messages showSummary="true" showDetail="false" closable="true" >
+					<p:autoUpdate />
+				</p:messages>
+
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4" style="width: 90%">
+
+					<p:outputLabel style="white-space: nowrap;" value="#{asMsg['policyDialog.assignPolicyTo']}: " />
+					<p:outputLabel id="name" value="#{policyDialog.assignPolicyTo}"  />
+					
+					<p:outputLabel style="white-space: nowrap;" value="#{asMsg['policyDialog.group']}: " />
+					<p:selectOneMenu value="#{policyDialog.assignedGroup}" >
+							<f:selectItem itemLabel="[No-Group]" itemValue="0" noSelectionOption="false" />
+							<f:selectItems value="#{policyDialog.groups}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel style="white-space: nowrap;" value="#{asMsg['policyDialog.selectPolicy']}: " />
+					<p:selectOneMenu value="#{policyDialog.assignedPolicy}" >
+							<f:selectItem itemLabel="[NO-Policy]" itemValue="0" noSelectionOption="true" />
+							<f:selectItems value="#{policyDialog.policies}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel style="white-space: nowrap;" value="#{asMsg['policyDialog.priority']}: " />
+					<p:selectOneMenu value="#{policyDialog.priority}" >
+							<f:selectItem itemLabel="#{asMsg['policyDialog.priorityLow']}" itemValue="0"  />
+							<f:selectItem itemLabel="1" itemValue="1"  />
+							<f:selectItem itemLabel="2" itemValue="2"  />
+							<f:selectItem itemLabel="3" itemValue="3"  />
+							<f:selectItem itemLabel="4" itemValue="4"  />
+							<f:selectItem itemLabel="5" itemValue="5"  />
+							<f:selectItem itemLabel="6" itemValue="6"  />
+							<f:selectItem itemLabel="7" itemValue="7"  />
+							<f:selectItem itemLabel="8" itemValue="8"  />
+							<f:selectItem itemLabel="9" itemValue="9"  />
+							<f:selectItem itemLabel="#{asMsg['policyDialog.priorityHigh']}" itemValue="10"  />
+					</p:selectOneMenu>
+					
+				
+
+				</h:panelGrid>
+
+				<p></p>
+
+				<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="false"
+					actionListener="#{policyDialog.actionAssign}"></p:commandButton>
+				<p:spacer width="12" />
+				
+							
+				
+				<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" icon="fa fa-close" style="width: 8em" immediate="true"
+					action="#{viewNavigator.actionCloseDialog}"></p:commandButton>
+				
+
+			</h:form>
+			</h:panelGroup>
+
+			
+		
+
+	</h:body>
+</f:view>
+</html>

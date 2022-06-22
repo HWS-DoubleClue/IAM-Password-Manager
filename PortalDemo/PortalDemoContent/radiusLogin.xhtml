@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<title>DoubleClue PortalDemo</title>
+	<h:outputStylesheet library="css" name="portalStyles.css" />
+</h:head>
+
+<f:view>
+
+	<h:body>
+		<div>
+			<ui:include src="title.xhtml" />
+
+			<p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()"
+				onerror="PF('statusDialog').hide()"
+				oncomplete="PF('statusDialog').hide()" />
+
+			<h:form id="loginForm">
+				<p></p>
+				<br></br>
+
+				<p:messages id="msgs" showDetail="false" >
+					<p:autoUpdate />
+				</p:messages>
+
+				<p></p>
+				<br></br>
+
+				<p />
+				<p:panel id="basic" style="width: 450px; margin: 0 auto; border: 1px solid #d8d8d8">
+					<p />
+					<div id="customheader" style="vertical-align: middle; position: relative;">
+                        			<h:outputLabel value="Login with RADIUS" class="dialogTitle" style="margin-left: 8px; font-size: 1.4em;"></h:outputLabel>
+					</div>
+
+					<p></p>
+
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+
+						<h:outputLabel value="User Name: " />
+						<p:inputText id="name" value="#{loginRadiusView.name}"
+							redisplay="true" />
+						<h:outputLabel value="Passcode/Password: " />
+						<h:panelGroup>
+						<p:password id="password" value="#{loginRadiusView.password}" title="For OTP authentication, enter 'your-passcode/your-password'"
+							redisplay="true"  />
+							<p:tooltip for="password" showEvent="focus"
+								hideEvent="blur" />
+						</h:panelGroup>
+
+					</h:panelGrid>
+
+					<p></p>
+
+					<p:commandButton id="login" value="Login"
+						action="#{loginRadiusView.actionLogin}" styleClass="bigButton"
+						update="@form" ajax="true">
+					</p:commandButton>
+
+					<p></p>
+					<br></br>
+					<p:commandLink id="secureLogin"
+						action="#{loginView.actionRequestSecureMessage}" ajax="false">
+						<h:outputText value="Back to Login" />
+					</p:commandLink>
+					<p></p>
+					<br></br>
+
+				</p:panel>
+
+				
+
+				<p:dialog header="Radius Challenge" widgetVar="challengeDlg"
+					modal="true">
+					<p></p>
+					<h:outputText style="font-weight: bold"
+						value="#{loginRadiusView.challengeText}" />
+
+					<p></p>
+
+					<p:commandButton id="challenge" value="OK"
+						action="#{loginRadiusView.actionChallenge}" />
+					<p></p>
+				</p:dialog>
+
+				<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+					closable="true" resizable="false" showHeader="false"
+					style="border: 4; border-style: solid; border-color: #980808">
+					<p></p>
+					<h:outputText style="font-size: medium" value="Please wait...." />
+					<h:graphicImage library="pictures" name="icons/24x24/test.gif"
+						style="border: 0; padding-left: 8px" />
+					<p></p>
+				</p:dialog>
+
+
+				<script>
+					$('#form login:eq(0)').focus();
+				</script>
+
+
+			</h:form>
+
+		</div>
+	</h:body>
+</f:view>
+</html>

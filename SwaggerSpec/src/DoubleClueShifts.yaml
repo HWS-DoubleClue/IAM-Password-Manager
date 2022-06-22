@@ -1,0 +1,467 @@
+---
+openapi: 3.0.0
+info:
+  title: DoubleClue Shifts Module API
+  description: DoubleClue Shifts Module API
+  contact:
+    email: support@doubleclue.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/DoubleClue.com/Shifts/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://virtserver.swaggerhub.com/DoubleClue.com/shifts/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://doubleclue.online/dcem/restApi/shifts
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+  
+paths:
+  /shifts/misc/echo:
+    get:
+      description: This is used for testing purposes
+      operationId: echo
+      parameters:
+      - name: text
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: the echo textDcemApiException
+          content:
+            text/plain:
+              schema:
+                type: string
+        "599":
+          description: Server Logic Exception
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/DcemApiException.yaml'
+###################################################################                
+  /shifts/getUsersNotInShift:
+     get:
+        description: This is used to get a list of all users which are not assigned to a shift
+        operationId: queryUsersNotInShift
+        parameters:
+        - name: startDate
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+             type: string
+             description: Data Format should either be yyyy-MM-dd or yyyy-MM-dd'T'HH:mm:ss.SSS 
+             example: 2021-06-21 or 2021-06-21T17:00:00.000
+             format: date-time
+        - name: endDate
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+             type: string
+             description: Data Format should either be yyyy-MM-dd or yyyy-MM-dd'T'HH:mm:ss.SSS 
+             example: 2021-06-21 or 2021-06-21T17:00:00.000
+             format: date-time 
+        responses:
+           "200":
+              description: Array of Users
+              content:
+                application/json:
+                 schema:
+                   type: array
+                   items: 
+                     $ref: '#/components/schemas/shiftsApiUsers' 
+           "599":
+               description: Server Logic Exception
+               content:
+                  application/json:
+                    schema:
+                      $ref: './schemas/DcemApiException.yaml'
+###################################################################
+  /shifts/getCurrentShift:
+     get:
+        description: This is used to get a list of all current shifts assigned to a user
+        operationId: queryCurrentShift
+        parameters:
+        - name: users
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+             type: array
+             items:
+                type: string
+        - name: currentDate
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+             type: string
+             description: Data Format should either be yyyy-MM-dd or yyyy-MM-dd'T'HH:mm:ss.SSS 
+             example: 2021-06-21 or 2021-06-21T17:00:00.000
+             format: date-time
+        responses:
+            "200":
+               description: Array of a Shift
+               content: 
+                 application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/shiftsApiShifts'
+            "599":
+               description: Server Logic Exception
+               content:
+                  application/json:
+                    schema:
+                      $ref: './schemas/DcemApiException.yaml'   
+########################################################################
+  /shifts/getNextShift:
+     get:
+        description: This is used to get a list of all next shifts assigned to a user
+        operationId: queryNextShift
+        parameters:
+        - name: users
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+             type: array
+             items:
+                type: string
+        - name: currentDate
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+             type: string
+             description: Data Format should either be yyyy-MM-dd or yyyy-MM-dd'T'HH:mm:ss.SSS 
+             example: 2021-06-21 or 2021-06-21T17:00:00.000
+             format: date-time
+        responses:
+            "200":
+               description: Array of a Shift
+               content: 
+                 application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/shiftsApiShifts'
+            "599":
+               description: Server Logic Exception
+               content:
+                  application/json:
+                    schema:
+                      $ref: './schemas/DcemApiException.yaml'                
+####################################################################
+  /shifts/absenses/query:
+    post:
+      description: This is used for creating new values for absenses in the shifts module
+      operationId: queryAbsenses
+      requestBody:
+        $ref: './requestsBodies/FilterBody.yaml'
+      responses:
+        "200":
+          description: Array of Absenses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/shiftsApiAbsense'
+        "599":
+          description: Server Logic Exception
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/DcemApiException.yaml'
+##########################################################################
+  /shifts/users/query:
+     post:
+      description: This is used for creating new values for users in the shifts module
+      operationId: queryUser
+      requestBody:
+        $ref: './requestsBodies/FilterBody.yaml'
+      responses:
+         "200":
+           description: Array of Users
+           content:
+             application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/shiftsApiUsers' 
+         "599":
+            description: Server Logic Exception
+            content:
+               application/json:
+                 schema:
+                   $ref: './schemas/DcemApiException.yaml'
+###########################################################
+  /shifts/entry/query:
+     post:
+      description: This is used for creating new values for entries in the shifts module
+      operationId: queryEntries
+      requestBody:
+        $ref: './requestsBodies/FilterBody.yaml'
+      responses:
+         "200":
+           description: Array of Entries
+           content:
+             application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/shiftsApiShifts' 
+         "599":
+            description: Server Logic Exception
+            content:
+               application/json:
+                 schema:
+                   $ref: './schemas/DcemApiException.yaml'
+##################################################################
+  /shifts/team/query:
+     post:
+        description: This is used for creating new values for teams in the shifts module
+        operationId: queryTeams
+        requestBody:
+           $ref: './requestsBodies/FilterBody.yaml'
+        responses:
+           "200":
+              description: Array of Teams
+              content:
+                application/json:
+                 schema:
+                   type: array
+                   items: 
+                     $ref: '#/components/schemas/shiftsApiTeam' 
+           "599":
+               description: Server Logic Exception
+               content:
+                  application/json:
+                    schema:
+                      $ref: './schemas/DcemApiException.yaml'
+########################################################
+  /shifts/skills/query:
+     post:
+        description: This is used for creating new values for skills in the shifts module
+        operationId: querySkills
+        requestBody:
+           $ref: './requestsBodies/FilterBody.yaml'
+        responses:
+           "200":
+              description: Array of Skills
+              content:
+                application/json:
+                 schema:
+                   type: array
+                   items: 
+                     $ref: '#/components/schemas/shiftsApiSkills' 
+           "599":
+               description: Server Logic Exception
+               content:
+                  application/json:
+                    schema:
+                      $ref: './schemas/DcemApiException.yaml' 
+###################################################################
+components:
+  schemas:
+    shiftsApiAbsense:
+      type: object
+      properties:
+        currentDate:
+          type: string
+          description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+          format: date-time
+        userName:
+          type: string
+        startDate:
+          type: string
+          description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+          format: date-time
+        endDate:
+          type: string
+          description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+          format: date-time
+        absenseType:
+          type: string
+          enum:
+          - HomeOffice
+          - Vacation
+          - Sick
+          - Others
+        comments:
+          type: string
+###################################################################
+    shiftsApiUsers:
+      type: object
+      properties:
+         id:
+            type: integer
+            description: Id of a user in the database
+         accountName:
+            type: string
+            description: displayName of a user for shifts
+            example: emanuel.galea
+         displayName:
+            type: string
+            example: Emanuel Galea
+         onCallAllowed:
+            type: boolean
+            description: Either true or false
+         onCallNumber:
+            type: string
+            description: The on call number of an user
+         availableOn:
+            type: string
+            description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+            format: date-time
+         startDate:
+             type: string
+             description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+             format: date-time
+         exitDate:
+            type: string
+            description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+            format: date-time
+         external:
+            type: boolean
+            description: If true user ia a external
+         skills:
+                type: array
+                items: 
+                   $ref: '#/components/schemas/shiftsApiSkills' 
+         allowedShifts:
+            type: array
+            items:
+               type: Integer
+###########################################
+    shiftsApiType:
+       type: object
+       properties:
+                 id:
+                   type: integer
+                   description: Id of a shiftsType in the database
+                 name:
+                   type: string
+                   description: Name of a shiftsType
+                 startDate:
+                   type: string
+                   description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+                   format: date-time
+                 endDate:
+                   type: string
+                   description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+                   format: date-time
+                 isOnCall:
+                   type: boolean
+                   description: true if a user is on call
+                 workingDays:
+                   type: string
+                   enum:
+                   - Monday
+                   - Tuesday
+                   - Wednesday
+                   - Thursday
+                   - Friday
+                   - Saturday
+                   - Sunday
+                   - PublicHoliday
+                 duration:
+                   type: number
+                   description: duration of an absence
+                   format: float
+##########################################################################
+    shiftsApiTeam:
+       type: object
+       properties:
+          id: 
+             type: integer
+             description: Id of a shiftsTeam in the databse
+          name:
+             type: string
+             description: Name of a shiftsTeam
+##########################################################################
+    shiftsApiSkills:
+       type: object
+       properties:
+          id:
+             type: integer
+             description: Id of a shiftsSkills in the database
+          skillName:
+             type: string
+             description: Name of a skill
+          skillAbbriviation:
+             type: string
+             description: Abbrivitiation of a skill
+##########################################################################
+    shiftsApiShifts:
+       type: object
+       properties:
+          id:
+             type: integer
+             description: Id of a shift in the database
+          shiftDate:
+             type: string
+             description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+          assignedUsers: 
+             type: array
+             items:
+               type: string
+          entry:
+             type: array
+             items: 
+                   $ref: '#/components/schemas/shiftsApiEntry'     
+########################################################################
+    shiftsApiEntry:
+       type: object
+       properties:
+          startDate:
+             type: string
+             description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+             format: date-time
+          endDate:
+             type: string
+             description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+             format: date-time
+          entryTeam:
+             type: string
+             description: Name of the entry in the database
+          entryType:
+             type: string
+             description: Name of the type in the database
+########################################################################
+    shiftsApiAssignement:
+       type: object
+       properties:
+          userName:
+             type: string
+             description: String of userName in the Database
+          startDate:
+             type: string
+             description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+             format: date-time
+          endDate:
+             type: string
+             description: Data Format is ISO-8601 (e.g. "2017-12-10T14:50:12.123+02:00")
+             format: date-time
+          shift:
+             type: object
+             items:
+                   $ref: '#/components/schemas/shiftsApiShifts'

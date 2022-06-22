@@ -1,0 +1,9 @@
+@CHARSET "ISO-8859-1";
+
+.adminHead {
+	font-size: xx-large;
+}
+
+.rowStyleError {
+	background-color: #f7dddd;
+}	

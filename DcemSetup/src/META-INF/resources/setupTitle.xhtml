@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<div style="height: 6vh">
+		<h:form>
+			<table width="100%" id="headerbar">
+				<tr>
+					<td style="width: 12em;">
+						<div style="float: left; line-height: 6em; vertical-align: middle; width: 200px; border: none yellow; margin-left: 20px; height: 6em;">
+							<h:graphicImage library="pictures" style="border: 0; width: 48px; height: 48px;  vertical-align: middle" name="DC_Logo_Check_trans_64.png" />
+							<h:graphicImage library="pictures" style="border: 0; width: 128px; height: auto; vertical-align: middle" name="DC_white_font_128.png" />
+						</div>
+					</td>
+					<td style="text-align: center;"><h:outputText value="DoubleClue Enterprise Management - Setup" styleClass="headTitle" /></td>
+					<td style="text-align: right; width: 14em;"><h:outputText value="Version: #{dcemApplication.version}"
+							style="vertical-align: bottom; padding-right: 8px;color: white; font-size: x-small" /></td>
+				</tr>
+			</table>
+		</h:form>
+	</div>
+</ui:composition>

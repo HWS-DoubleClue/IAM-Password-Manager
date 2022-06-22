@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
+	<title>DCEM-Setup</title>
+	
+</h:head>
+
+<h:body>
+	<ui:include src="/setupTitle.xhtml" />
+	<h:outputStylesheet library="css" name="setupStyles.css" />
+	<p />
+	<p:panel>
+		<div id="customheader" style="vertical-align: middle; position: relative; padding-bottom: 20px;">
+			<h:outputLabel value="Setup - Configuration" styleClass="viewTitle" />
+		</div>
+		<p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()"
+			oncomplete="PF('statusDialog').hide()" />
+		<h:form id="wizardForm">
+			<p:wizard widgetVar="myWizard" flowListener="#{setupWizard.onFlowProcess}">
+				<p:tab id="dbConfig" title="Database Configuration">
+					<p:messages showDetail="false" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+					<p />
+					<h:panelGrid columns="2" cellspacing="4" cellpadding="4">
+						<p:outputLabel for="databaseType" value="Type " />
+						<h:selectOneMenu id="databaseType" value="#{dbView.dbConfig.databaseType}">
+							<f:selectItems value="#{dbView.databaseTypes}" var="types" itemLabel="#{types.name()}" />
+							<f:ajax execute="databaseType" listener="#{dbView.dbChange}" render="@form" />
+						</h:selectOneMenu>
+
+						<p:outputLabel for="url" value="JDBC-URL " />
+						<h:panelGroup>
+							<p:inputText id="url" value="#{dbView.dbConfig.jdbcUrl}" size="70" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
+							<p:commandButton id="urlBtn" value="Configure URL" style="width: 10em; color: white;" icon="fa fa-cog" immediate="true" onclick="PF('urlConfig').show();"
+								disabled="#{dbView.embedded}" />
+						</h:panelGroup>
+
+						<p:outputLabel for="database" value="Database Name " />
+						<p:inputText id="database" value="#{dbView.dbConfig.databaseName}" required="true" disabled="#{dbView.embedded}" />
+
+						<p:outputLabel for="schema" value="Schema Name " rendered="#{dbView.withSchema()}" />
+						<h:panelGroup rendered="#{dbView.withSchema()}">
+							<p:inputText id="schema" value="#{dbView.dbConfig.schemaName}" title="Default is dbo" rendered="#{dbView.withSchema()}" required="false" />
+							<p:tooltip for="schema" showEvent="focus" hideEvent="blur" />
+						</h:panelGroup>
+
+						<p:outputLabel for="admin" value="Administrator Name " />
+						<h:panelGroup>
+							<p:inputText id="admin" value="#{dbView.dbConfig.adminName}" required="true" title="Admin for DCEM database connections" disabled="#{dbView.embedded}" />
+							<p:tooltip id="toolTipFocus" for="admin" showEvent="focus" hideEvent="blur" />
+						</h:panelGroup>
+						<p:outputLabel for="password" value="Administrator Password " />
+						<p:password id="password" title="Password will be encrypted and saved in configuration.xml file." disabled="#{dbView.embedded}"
+								value="#{dbView.dbConfig.adminPassword}" redisplay="true" toggleMask="true" autocomplete="false" validatorMessage="Please enter a strong password with at least 4 digits.">
+								<f:validateLength minimum="4"></f:validateLength>
+						</p:password>
+
+						<p:outputLabel for="nodeName" value="DoubleClue Node-Name " />
+						<h:panelGroup>
+							<p:inputText id="nodeName" value="#{dbView.nodeName}"
+								title="The Node-Name must be unique in the cluster and have to be the same name as in the DoubleClue System Nodes configuration." required="true" />
+							<p:tooltip for="nodeName" showEvent="focus" hideEvent="blur" />
+						</h:panelGroup>
+
+					</h:panelGrid>
+					<p />
+					<p:commandButton id="save" value="Save &amp; Verify DB-Connection" icon="fa fa-save" action="#{dbView.actionSave}" ajax="true" update="@form" />
+					<p />
+					<p:commandButton id="closeApp1" value="Close DoubleClue Setup" action="#{createTablesView.closeApplication}" ajax="false" update="@form"
+						style="width: 16em;" rendered="#{dbView.closeApplication}" icon="fa fa-sign-out" />
+					<p:spacer width="20" />
+					<p:commandButton style="width: 16em; color: white;" icon="fa fa-rotate-left" value="Recover SuperAdmin Access" immediate="true"
+						onclick="PF('resetPassword').show();" rendered="#{dbView.stateOk}" />
+					<p:spacer width="20" />
+					<p:commandButton style="width: 16em;" styleClass="cloudSafe-icon" value="Change CloudSafe Storage" immediate="true"
+						onclick="PF('cloudSafeStorageDialog').show();" rendered="#{dbView.stateOk}" />
+					<p />
+
+					<p:outputLabel style="font-size: small" value="Local configuration file stored at: #{dbView.localConfigurationFile}" />
+				</p:tab>
+				<p:tab id="createSchema" title="Create Database">
+					<p:messages showDetail="false" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+					<p />
+					<h:panelGrid columns="2" cellspacing="4" cellpadding="4" rendered="#{createSchemaView.schemaRequired}">
+
+						<p:outputLabel for="schemaAdmin" value="Database-Administrator Name: " />
+						<h:panelGroup>
+							<p:inputText id="schemaAdmin" value="#{createSchemaView.adminName}" />
+							<h:graphicImage id="info" name="pictures/icons/16x16/icon_question.png" style="padding-left: 8px" />
+							<p:tooltip for="info" position="top" value="DB Admin requires DB rights to create the database/schema. This password will not be saved." />
+						</h:panelGroup>
+
+						<p:outputLabel for="schemaPassword" value="Database-Administrator Password: " />
+						<p:password id="schemaPassword" value="#{createSchemaView.adminPassword}" redisplay="true" toggleMask="true"
+								validatorMessage="Please enter a strong password with at least 4 digits.">
+								<f:validateLength minimum="4"></f:validateLength>
+						</p:password>
+
+					</h:panelGrid>
+					<p />
+					<p:commandButton id="actionCreateDatabase" value="Create Database" action="#{createSchemaView.actionCreateSchema}" ajax="true" update="@form"
+						style="width: 10em;" async="true" rendered="#{createSchemaView.schemaRequired}" />
+					<p />
+				</p:tab>
+				<p:tab id="createTables" title="Create Database Tables">
+					<p:messages showDetail="false" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+					<p />
+					<h:panelGrid columns="2" cellspacing="4" cellpadding="4" rendered="#{createTablesView.tablesRequired}">
+						<p:outputLabel for="tableAdmin" value="Create-Tables Administrator Name: " />
+						<h:panelGroup>
+							<p:inputText id="tableAdmin" value="#{createTablesView.adminName}" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
+							<h:graphicImage id="tableAdminInfo" name="pictures/icons/16x16/icon_question.png" style="padding-left: 8px" />
+							<p:tooltip for="tableAdminInfo" position="top" value="DB Admin requires DB rights to create tables. This password will not be saved." />
+						</h:panelGroup>
+						<p:outputLabel for="tablePassword" value="Create-Tables Administrator Password: " />
+						<p:password id="tablePassword" value="#{createTablesView.adminPassword}" required="false" redisplay="true" disabled="#{dbView.embedded}"
+								validatorMessage="Please enter a strong password with at least 4 digits." toggleMask="true">
+								<f:validateLength minimum="4"></f:validateLength>
+						</p:password>
+
+						<p:outputLabel for="superPassword" value="SuperAdmin Password: " />
+							<p:password id="superPassword" title="Password to log into DCEM as SuperAdmin" value="#{createTablesView.superAdminPassword}" match="confirmPassword"
+								required="true" validatorMessage="Please enter a strong password with at least 4 digits. Please ensure the passwords match." toggleMask="true">
+								<f:validateLength minimum="4"></f:validateLength>
+							</p:password>
+
+						<p:outputLabel for="confirmPassword" value="Confirm SuperAdmin Password: " />
+						<p:password id="confirmPassword" value="#{createTablesView.superAdminPassword}" required="true" toggleMask="true" />
+
+						<p:outputLabel for="serverUrl" value="DoubleClue Server URL" />
+						<h:panelGroup>
+							<p:inputText id="serverUrl" size="70"
+								title="URL should be reachable for users and device from the internet. You may change this later in tht Cluster-Configuration view."
+								value="#{createTablesView.serverUrl}" required="true" />
+							<p:tooltip for="serverUrl" showEvent="focus" hideEvent="blur" />
+						</h:panelGroup>
+					</h:panelGrid>
+					<p />
+					<p:commandButton id="actionCreateTables" value="Create Tables" icon="fa fa-database" action="#{createTablesView.actionCreateTables}" ajax="true"
+						process="createTables" update="@form" style="width: 14em;" async="true" rendered="#{createTablesView.tablesRequired}" />
+					<p />
+					<p:panel rendered="#{createTablesView.appClose}">
+						<p:outputLabel class="viewTitle" value="Setup is Ready" />
+						<p />
+						<p:outputLabel value="Close setup application and afterwards install and run DCEM as a service by running the script " />
+						<p:outputLabel style="font-weight: bold" value="'installDcemServer'" />
+
+						<br />
+						<p:outputLabel value="Wait till DCEM has started and proceed with this URL: " />
+						<p />
+						<a href="#{createTablesView.dcemUrl}" style="font-size: 1.4em; font-weight: bold">#{createTablesView.dcemUrl}</a>
+						<p />
+						<br />
+						<p:commandButton id="closeApp" icon="fa fa-sign-out" value="Close DoubleClue Setup" action="#{createTablesView.closeApplication}" ajax="false"
+							update="@form" style="width: 16em;" />
+						<p />
+					</p:panel>
+				</p:tab>
+				<p:tab id="dbMigration" title="Database Migration" rendered="#{dbView.migration}">
+					<p:messages showDetail="false" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+					<h:panelGrid columns="2" cellspacing="4" cellpadding="4">
+						<p:outputLabel for="migAdmin" value="Create-Tables Administrator Name: " />
+						<h:panelGroup>
+							<p:inputText id="migAdmin" value="#{migrationView.adminName}" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
+							<h:graphicImage id="migAdminInfo" name="pictures/icons/16x16/icon_question.png" style="padding-left: 8px" />
+							<p:tooltip for="migAdminInfo" position="top" value="DB Admin requires DB rights to create tables. This password will not be saved." />
+						</h:panelGroup>
+						<p:outputLabel for="migPassword" value="Create-Tables Administrator Password: " />
+						<p:password id="migPassword" value="#{migrationView.adminPassword}" required="false" toggleMask="true" redisplay="true" disabled="#{dbView.embedded}" />
+
+					</h:panelGrid>
+					<p />
+					<p:dataTable id="migTable" var="item" value="#{migrationView.migrationModules}">
+						<p:column headerText="Module ID">
+							<h:outputText value="#{item.id}" />
+						</p:column>
+
+						<p:column headerText="Module Name">
+							<h:outputText value="#{item.name}" />
+						</p:column>
+
+						<p:column headerText="Current DB Version">
+							<h:outputText value="#{item.currentVersion}" />
+						</p:column>
+
+						<p:column headerText="Update to DB Version">
+							<h:outputText value="#{item.updateToVersion}" />
+						</p:column>
+					</p:dataTable>
+					<p />
+					<p:commandButton id="migrate" value="Start Migration" onclick="PF('confirmBackup').show();" style="width: 12em; color: white;" icon="fa fa-play-circle"
+						rendered="#{migrationView.migrationDone == false}" />
+					<p />
+					<p:commandButton id="migCloseApp" icon="fa fa-sign-out" value="Close DoubleClue Setup" action="#{createTablesView.closeApplication}" ajax="false"
+						update="@form" style="width: 16em;" rendered="#{migrationView.migrationDone}" />
+					<br />
+				</p:tab>
+			</p:wizard>
+
+			<p:dialog id="resetPassword" header="Recover SuperAdmin Access" widgetVar="resetPassword" modal="true" width="30em" rendered="#{dbView.stateOk}">
+				<p />
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+					<p:outputLabel for="superPassword2" value="New Password: " />
+					<p:password id="superPassword2" title="Password to log into DCEM as SuperAdmin" value="#{createTablesView.resetSuperAdminPassword}"
+							match="confirmPassword2" required="false" validatorMessage="Please enter a strong password with at least 4 digits."  toggleMask="true">
+							<f:validateLength minimum="4"></f:validateLength>
+					</p:password>
+						
+					<p:outputLabel for="confirmPassword2" value="Confirm Password: " />
+					<p:password id="confirmPassword2" value="#{createTablesView.resetSuperAdminPassword}" required="false" toggleMask="true" />
+						
+				</h:panelGrid>
+				<p:commandButton id="resetAdminPass" value="OK" style="width: 8em; color: white;" icon="fa fa-check" action="#{createTablesView.actionResetAdminPassword()}"
+					oncomplete="PF('resetPassword').hide();" />
+				<p:spacer width="40px" />
+				<p:commandButton id="cancel2" value="Cancel" style="width: 8em; color: white;" icon="fa fa-close" onclick="PF('resetPassword').hide();" />
+				<p />
+			</p:dialog>
+
+
+
+
+			<p:dialog id="urlConfig" header="Database URL Configuration" widgetVar="urlConfig" modal="true" width="50%">
+				<p />
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+					<p:outputLabel for="address" value="IP Address: " />
+					<p:inputText id="address" value="#{dbView.dbConfig.ipAddress}" size="60" required="true" />
+					<p:outputLabel for="port" value="IP Port: " />
+					<p:inputText id="port" value="#{dbView.dbConfig.port}" required="true" />
+				</h:panelGrid>
+				<p />
+				<p:commandButton id="saveUrl" value="OK" style="width: 8em; color: white;" icon="fa fa-check;" action="#{dbView.actionCreateUrl()}" process="urlConfig"
+					update="url" oncomplete="PF('urlConfig').hide();" />
+				<p:spacer width="40px" />
+				<p:commandButton id="cancel" value="Cancel" style="width: 8em; color: white;" icon="fa fa-close" onclick="PF('urlConfig').hide();" />
+				<p />
+			</p:dialog>
+
+			<p:dialog widgetVar="readyMsg" modal="true">
+				<h:outputText class="fa fa-check" style="vertical-align: middle; font-size: 1.8em; padding-right: 6px; color: #454686" />
+				<p:outputLabel class="viewTitle" value="Database Setup Ready" />
+				<p:panel style="border-color: #850000">
+					<p:outputLabel value="All confidential data is encrypted / decrypted on being put into / retrieved from database! The encryption key is saved in:" />
+					<br />
+					<p:outputLabel style="font-style: italic;" value="#{createTablesView.configPath}" />
+					<p />
+					<p:outputLabel value="Please save this file in a safe place. This configuration file is required for setting up the other cluster nodes." />
+				</p:panel>
+				<p />
+				<p:commandButton id="msgOk" value="OK" style="width: 8em; color: white;" icon="fa fa-check" onclick="PF('urlConfig').close();" />
+				<p />
+			</p:dialog>
+
+			<p:dialog id="confirmBackup" widgetVar="confirmBackup" modal="true" width="50%">
+				<p:ajax event="close" update="@form" />
+				<f:facet name="header">
+					<h:outputText class="fa fa-exclamation-triangle" style="vertical-align: middle; font-size: 1.8em; padding-right: 6px; color: #850000" />
+					<p:outputLabel class="viewTitle" value=" Please do a database backup before migration!" />
+				</f:facet>
+				<p />
+				<p:outputLabel value="Before migration you should do a database backup. If you use the 'Embedded Database', the backup will be done automatically." />
+				<p />
+				<p:commandButton id="migrateConfirmed" value="Yes, I did a database backup" style="width: 280px;" action="#{migrationView.actionMigrate}" ajax="true"
+					immediate="false" icon="fa fa-check" />
+				<p:spacer width="40px" />
+				<p:commandButton id="cancelMigrate" value="Cancel" style="width: 8em;" onclick="PF('confirmBackup').hide();" icon="fa fa-close" />
+				<p />
+			</p:dialog>
+
+			<p:dialog widgetVar="embeddedDbMsg" modal="true">
+				<f:facet name="header">
+					<h:outputText class="fa fa-exclamation-triangle" style="vertical-align: middle; font-size: 1.8em; padding-right: 6px; color: #850000" />
+					<p:outputLabel class="viewTitle" value=" Embedded Database" />
+				</f:facet>
+				<p />
+				<ul style="list-style-type: square;">
+					<li><p:outputLabel value="The 'Embedded Database' does not support multiple nodes!" /></li>
+					<li><p:outputLabel value="Database is stored at: #{dbView.embeddedDir}." /></li>
+					<li><p:outputLabel value="To backup the database directory, you have to stop DCEM first and then copy the directory." /></li>
+				</ul>
+				<p />
+				<br />
+				<p:commandButton id="embeddedMsgOk" immediate="true" value="Close" style="width: 8em; color: white;" icon="fa fa-close"
+					onclick="PF('embeddedDbMsg').close();" ajax="true" />
+				<p />
+			</p:dialog>
+		</h:form>
+		<h:form id="cloudSafeStorageForm">
+			<p:remoteCommand name="updateDialog" update="currentType" />
+			<p:dialog id="cloudSafeStorageDialog" header="Configure CloudSafe Storage" widgetVar="cloudSafeStorageDialog" modal="true" width="670px"
+				rendered="#{dbView.stateOk}" onShow="updateDialog ">
+				<f:facet name="header">
+					<h:graphicImage library="pictures" style="border: 0; vertical-align: middle; height: 22px; width: 22px; margin-right: 5px; margin-bottom: 7px;"
+						name="Cloud_white.png" />
+					<h:outputText style="font-size: large" value=" Configure CloudSafe Storage" />
+
+				</f:facet>
+				<p:messages showDetail="false" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<h:panelGroup id="cloudSafeStorageGroup">
+					<p:outputLabel value="Current CloudSafe-Storage-Type is: " />
+					<p:outputLabel id="currentType" style="font-weight: bold" value="#{setupCloudSafe.currentCloudStorageType}" />
+					<p />
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+						<p:outputLabel for="storageType" value="Change Storage Type to: " />
+						<p:selectOneMenu id="storageType" value="#{setupCloudSafe.cloudStorageType}">
+							<f:selectItems value="#{setupCloudSafe.cloudStorageTypes}" var="types" itemLabel="#{types.name()}" />
+							<p:ajax process="storageType" update="cloudSafeStorageGroup" />
+						</p:selectOneMenu>
+						<p:outputLabel value="NAS Path: " rendered="#{setupCloudSafe.nas}" />
+						<p:inputText size="60" value="#{setupCloudSafe.nasPath}" rendered="#{setupCloudSafe.nas}" />
+
+					</h:panelGrid>
+					<p></p>
+					<p:commandButton id="cloudSafeStorageOk" value="OK" style="width: 8em; color: white;" icon="fa fa-check" action="#{setupCloudSafe.actionSave}"
+						update="currentType" />
+					<p:spacer width="40px" />
+					<p:commandButton id="cancel2" value="Cancel" style="width: 8em; color: white;" icon="fa fa-close" onclick="PF('cloudSafeStorageDialog').hide();" />
+					<p />
+				</h:panelGroup>
+			</p:dialog>
+		</h:form>
+
+	</p:panel>
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="true" resizable="false" showHeader="false"
+		style="border: 4; border-style: solid; border-color: #980808">
+		<p />
+		<h:outputText style="font-size: medium" value="Please wait...." />
+		<h:graphicImage library="pictures" name="icons/24x24/test.gif" style="border: 0; padding-left: 8px" />
+		<p />
+	</p:dialog>
+</h:body>
+</html>

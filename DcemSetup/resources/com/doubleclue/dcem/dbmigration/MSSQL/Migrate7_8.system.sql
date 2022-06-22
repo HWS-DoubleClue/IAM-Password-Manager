@@ -1,0 +1,1 @@
+ALTER TABLE radius_client ADD settingsJson VARCHAR(4096) NULL DEFAULT NULL;

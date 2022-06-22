@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>Access to your DoubleClue Tenant</title>
+    <style>
+        .vertical-center {
+ 	         margin: 0;
+	  /*        position: absolute; */
+	  /*        top: 96%; */
+	         right: 0;
+	         left:0;
+	/*          -ms-transform: translateY(-50%);
+	         transform: translateY(-50%); */
+	         text-align: center;
+	         font-size: medium;
+	         font-family: Arial, sans-serif;
+         }
+        
+        #heading_1 {
+            color: #005078;
+            font-size: x-large;
+            padding: 1.2em;
+            text-align: center;
+        }
+
+        #heading_2 {
+            color: black;
+            font-size: large;
+        }
+
+        #divider {
+            background-color: #005078;
+            height: 0.2em;
+            margin-top: 0.5em;
+        }
+
+        #wrapper {
+            margin: 0.5em 1.8em;
+            text-align: left;
+            font-size: small;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="vertical-center">
+       <div>
+        <p> <span id="heading_1">DoubleClue</span><br><span id="heading_2">Cleverly Secures Identities</span></p>
+       </div>
+       <div id="divider">
+       </div>
+
+       <p></p><br><p></p>
+       <div id="wrapper">
+        Hello {{UserName}},
+        <p></p><br>
+        your DoubleClue tenant is now active.<br>
+        The name of your tenant is: <span style="font-weight: bold;">{{TenantName}} </span><br>
+        You can access the DoubleClue Enterprise Management (DCEM) at <span style="font-weight: bold; padding: 0.5em; color: #005078;">{{TenantUrl}}</span><br>
+        <p></p><br>
+        <span style="font-weight: bold;">Login Credentials</span><br>
+        Username: <span style="font-weight: bold;">{{loginId}}</span>. This user has full access rights.<br>     
+        Password: You have chosen your password during the registration. <br>
+        <p></p><br>
+        The login to DCEM is protected with multi-factor authentication. To gain access, you need to install and activate the DoubleClue app.<br>
+        The DoubleClue App is available for download in the <a style="font-weight:bold; color:#005078; text-align: center;" href="https://apps.apple.com/app/doubleclue/id1296803375">App Store</a>,
+        <a style="font-weight:bold; color:#005078; text-align: center;" href="https://play.google.com/store/apps/details?id=com.doubleclue.android&hl=gsw">Google Play Store</a>,
+        and as desktop app at <a style="font-weight:bold; color:#005078; text-align: center;" href="https://doubleclue.com/files/DoubleClue-Desktop.zip">https://doubleclue.com/</a>.<br>   
+        <p></p><br>
+        DoubleClue App ID: <span style="font-weight: bold; padding: 0.5em; color: #005078;">{{UserDomain}}</span><br>
+        Activation Code: <span style="font-weight: bold; padding: 0.5em; color: #005078;">{{ActivationCode}}</span><br>
+        The Activation Code is valid till {{ValidTill}}.        
+        <p></p><br>
+        Or scan this QR-Code with the DoubleClue app to activate your account:
+
+       <p>
+       {{image}}
+       <p>
+
+       Detailed information on the administration and implementation of DoubleClue is available in our 
+       <a style="font-weight:bold; color:#005078; text-align: center;" href="https://doubleclue.com/en/ressourcen-2/#manuals">Technical Documentation</a>.
+
+       For any further questions or requests, please contact us at <a style="font-weight: bold; color: #005078; text-align: center;" href="mailto:support@doubleclue.com">support@doubleclue.com</a>.
+
+        <p></p>
+        With best regards<br>Your DoubleClue Team 
+    </div>
+    </div>
+
+</body>
+
+</html>

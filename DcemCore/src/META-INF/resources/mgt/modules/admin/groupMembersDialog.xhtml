@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
+		<h:outputStylesheet name="css/#{item.id}Styles.css" />
+	</c:forEach>
+	<title>#{viewNavigator.dialogTitle}</title>
+	<style>
+.ui-datatable-scrollable-header {
+	background: #fff;
+}
+.ui-datatable{
+	width: 480px;;
+}
+</style>
+</h:head>
+<f:view locale="#{operatorSession.locale}">
+	<h:body class="dialogBody" style="height: 500px !important; width: 400px !important;">
+		<span id="customheader"> <h:outputLabel class="#{autoView.icon} dialogTitle"></h:outputLabel> <h:outputLabel value="#{viewNavigator.dialogTitle}"
+				styleClass="dialogTitle"></h:outputLabel>
+		</span>
+		<h:form id="groupMemberForm">
+			<p />
+			<h:panelGroup>
+				<p:outputLabel value="#{AdminMsg['groupName']}: " />
+				<p:outputLabel value="#{groupMembersDialog.actionObject.name}" style="font-weight: bold;" />
+				<p />
+				<h:panelGroup rendered="#{groupMembersDialog.actionObject.isDomainGroup() == false}">
+					<p:commandButton id="addMember" style="width: 12em" value="#{AdminMsg['addMember']}" ajax="true" onclick="PF('addMemberDialog').show();" />
+					<p:spacer width="30px" />
+					<p:commandButton id="removeMember" style="width: 12em" value="#{AdminMsg['removeMember']}" ajax="true" action="#{groupMembersDialog.actionRemoveMembers}"
+						update="memberTable memberCount" />
+				</h:panelGroup>
+				<p />
+				<p:dataTable id="memberTable" var="member" value="#{groupMembersDialog.members}" selectionMode="multiple" styleClass="memberTable"
+					selection="#{groupMembersDialog.selectedUsers}" scrollable="true" rowKey="#{member.id}" scrollHeight="300" emptyMessage="#{CoreMsg['emptyTable']}">
+					<p:column filterBy="#{member.shortLoginId}" headerText="Name" filterMatchMode="contains" sortBy="#{member.shortLoginId}">
+						<h:outputText value="#{member.shortLoginId}" />
+					</p:column>
+				</p:dataTable>
+				<p />
+				<p:commandButton id="closeDialog" value="#{CoreMsg['close']}" icon="fa fa-close" style="width: 8em" immediate="true"
+					action="#{viewNavigator.actionCloseDialog}"></p:commandButton>
+				<p:outputLabel id="memberCount" style="float: right; font-size: small" value="#{groupMembersDialog.members.size()} #{AdminMsg['members']}" />
+			</h:panelGroup>
+			<p:dialog widgetVar="addMemberDialog" modal="true">
+				<f:facet name="header">
+					<h:graphicImage library="pictures" style="border: 0; vertical-align: middle" name="icons/24x24/user_generic_blue.png" />
+		        #{AdminMsg['addMember']}
+				</f:facet>
+				<p:messages showSummary="true" showDetail="false" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<h:panelGrid columns="2" cellpadding="4">
+					<p:outputLabel for="user" value="Domain: " />
+					<p:selectOneMenu id="domain" value="#{groupMembersDialog.domainName}" style="vertical-align: middle;">
+						<f:selectItem itemValue="" itemLabel="{local}" />
+						<f:selectItems value="#{domainLogic.domainNames}" />
+						<p:ajax process="@this" listener="#{groupMembersDialog.changeDomain}" update="user"></p:ajax>
+					</p:selectOneMenu>
+					<p:outputLabel for="user" value="#{CoreMsg['user']}: " />
+					<h:panelGroup>
+						<p:autoComplete id="user" minQueryLength="1" value="#{groupMembersDialog.userLoginId}" completeMethod="#{groupMembersDialog.completeUser}" effect="fade"
+							size="30" />
+					</h:panelGroup>
+				</h:panelGrid>
+				<p />
+				<p:commandButton id="actionAddMember" value="#{AdminMsg['addMember']}" style="width: 12em" ajax="true" action="#{groupMembersDialog.actionAddMember}"
+					update="memberTable memberCount" />
+				<p:spacer width="12" />
+				<p:commandButton id="closeDialog2" value="#{CoreMsg['close']}" icon="fa fa-close" style="width: 8em" immediate="true"
+					onclick="PF('addMemberDialog').hide();" />
+				<p />
+			</p:dialog>
+		</h:form>
+	</h:body>
+</f:view>
+</html>

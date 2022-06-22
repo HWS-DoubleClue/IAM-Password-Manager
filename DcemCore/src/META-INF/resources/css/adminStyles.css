@@ -1,0 +1,29 @@
+@CHARSET "ISO-8859-1";
+
+
+
+.roleViewTableStyle {
+	width: 60%;
+}
+
+.sideBarDcem {
+  display: flex;
+  flex-flow: column;
+  float: left; 
+  vertical-align: top; 
+  overflow-y: auto; 
+  height: 100vh; 
+  margin-top: 0px; 
+  width: 220px;
+}
+
+.flexBoxSpacing{
+  flex-grow: 1;
+  align-items: flex-end;
+}
+
+.poweredByImage{
+  width: 80%;
+  display: block;
+  margin: 0 auto 10%;
+}

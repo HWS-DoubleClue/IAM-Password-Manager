@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<div>
+		<h:form id="inputUsersForm">
+			<p:outputLabel value="#{CoreMsg['importDomain.domain']}: " />
+			<p:selectOneMenu id="ldapDomain" value="#{importLdapUsersView.domainName}" style="width:125px">
+				<f:selectItems value="#{domainLogic.domainNames}" />
+				<p:ajax event="change" update="@form" process="@this" listener="#{importLdapUsersView.onChangeDomainName()}" />
+			</p:selectOneMenu>
+			<p />
+			<p:tabView id="tabs">
+				<p:tab id="users" title="#{CoreMsg['importDomain.users']} ">
+					<p:panel>
+						<span id="customheader"> <h:outputLabel value="Filter" class="dialogTitle" style="margin-left: 0; font-size: 1.4em;" />
+						</span>
+						<h:panelGrid columns="2">
+							<p:outputLabel value="#{CoreMsg['importDomain.reversedDn']}" for="ldapTree" rendered="#{importLdapUsersView.ldapDomain}" />
+							<h:panelGroup rendered="#{importLdapUsersView.ldapDomain}">
+								<p:autoComplete id="ldapTree" value="#{importLdapUsersView.ldapTree}" inputStyleClass="mystyle" completeMethod="#{importLdapUsersView.completeLdapTree}"
+									size="70" />
+								<p:tooltip for="@(.mystyle)" showEvent="focus" hideEvent="blur" position="top" value="Enter a COMMA for a full search" />
+							</h:panelGroup>
+							<p:outputLabel value="#{CoreMsg['importDomain.group']}" for="group" />
+							<h:panelGroup>
+								<p:autoComplete id="group" value="#{importLdapUsersView.group}" completeMethod="#{importLdapUsersView.completeGroup}" size="40" scrollHeight="350" />
+								<p:spacer width="25px"></p:spacer>
+								<p:outputLabel value="#{CoreMsg['importDomain.user']}" for="userAccount" />
+								<p:inputText id="userAccount" title="Use * for wildcards" value="#{importLdapUsersView.userAccount}" size="40" />
+								<p:tooltip for="userAccount" showEvent="focus" hideEvent="blur" position="top" />
+								<p:spacer width="10px"></p:spacer>
+								<p:commandButton id="ok" value="#{CoreMsg['importDomain.search']}" ajax="true" update="grid usersPanel" async="true" icon="fa fa-search"
+									style="color: white;" actionListener="#{importLdapUsersView.search}" />
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:panel>
+					<p />
+					<p />
+					<p:panel>
+						<span id="customheader"> <h:outputLabel value="#{CoreMsg['importDomain.hactivationCodes']}" class="dialogTitle"
+								style="margin-left: 0; font-size: 1.4em;" />
+						</span>
+						<p />
+						<h:outputText value="#{CoreMsg['importDomain.createaconimp']}" />
+						<p:selectBooleanCheckbox value="#{importLdapUsersView.createActivationCode}">
+							<p:ajax event="change" update="activationPanel" />
+						</p:selectBooleanCheckbox>
+						<p:outputPanel id="activationPanel">
+							<p:panel rendered="#{importLdapUsersView.createActivationCode}">
+								<h:panelGrid columns="2">
+									<h:outputText value="#{CoreMsg['importDomain.createacexisting']}" />
+									<p:selectBooleanCheckbox value="#{importLdapUsersView.createActivationCodeExisting}" />
+									<p:outputLabel value="#{CoreMsg['importDomain.acvalidtill']}" />
+									<p:datePicker id="validTill" value="#{importLdapUsersView.validTill}" timeZone="#{adminModule.timezone}" locale="#{operatorSession.locale}"
+										pattern="#{operatorSession.dateTimePattern}" showTime="true" />
+
+									<p:outputLabel value="#{CoreMsg['importDomain.acsendvia']}" for="sendBy" />
+									<p:selectOneMenu id="sendBy" value="#{importLdapUsersView.sendBy}" style="width:125px">
+										<f:selectItems value="#{importLdapUsersView.sendByValues}" />
+									</p:selectOneMenu>
+								</h:panelGrid>
+							</p:panel>
+						</p:outputPanel>
+						<p />
+					</p:panel>
+					<p />
+					<p:panel  id="usersPanel">
+						<span id="customheader"> <h:outputLabel value="#{CoreMsg['importDomain.husers']}" class="dialogTitle" style="margin-left: 0; font-size: 1.4em" />
+						</span>
+						<p />
+						<p:commandButton id="import" value="#{CoreMsg['importDomain.importselectedusers']}" ajax="true" update="grid"
+							actionListener="#{importLdapUsersView.actionImportUsers}" icon="fa fa-upload" style="color: white !important;" />
+						<p />
+						<p:commandButton id="selectAll" value="#{CoreMsg['importDomain.selectall']}" rendered="#{importLdapUsersView.userSearchMap.isEmpty() == false}"
+							ajax="true" update="grid" actionListener="#{importLdapUsersView.selectAll}" icon="fa fa-plus" style="color: white !important;" />
+						<p:commandButton id="deselectAll" value="#{CoreMsg['importDomain.deselectall']}" ajax="true" update="grid"
+							rendered="#{importLdapUsersView.userSearchMap.isEmpty() == false}" actionListener="#{importLdapUsersView.deselectAll}" icon="fa fa-minus"
+							style="color: white !important;" />
+						<p:selectManyCheckbox id="grid" value="#{importLdapUsersView.selectedUsers}" layout="grid" style="padding: 5px" columns="2">
+							<f:selectItems value="#{importLdapUsersView.users}" var="user" itemLabel="#{user}" itemValue="#{user}" />
+						</p:selectManyCheckbox>
+						<p />
+					</p:panel>
+				</p:tab>
+				<p:tab id="policyTab" title="#{CoreMsg['importDomain.tabGroups']} ">
+					<p />
+					<p:outputLabel value="#{AdminMsg['importDomain.groupFilter']}: " />
+					<p:inputText id="groupSearch" title="Use * for wildcards" value="#{importLdapUsersView.groupFilter}" style="width: 300px" />
+					<p:tooltip for="groupSearch" showEvent="focus" hideEvent="blur" position="top" />
+					<p:spacer width="10px"></p:spacer>
+					<p:commandButton id="okGroup" value="#{CoreMsg['importDomain.search']}" ajax="true" update="groupGrid" async="true" icon="fa fa-search"
+						style="color: white;" actionListener="#{importLdapUsersView.searchGroup}" />
+					<p />
+					<p:panel>
+						<span id="customheader"> <h:outputLabel value="Import" class="dialogTitle" style="margin-left: 0; font-size:1.4em;" />
+						</span>
+						<p />
+						<h:outputText value="#{CoreMsg['importDomain.createaconimp']}" />
+						<p:selectBooleanCheckbox value="#{importLdapUsersView.createActivationCodeGroup}">
+							<p:ajax event="change" update="activationPanelGroup" />
+						</p:selectBooleanCheckbox>
+						<p:outputPanel id="activationPanelGroup">
+							<p:panel rendered="#{importLdapUsersView.createActivationCodeGroup}">
+								<h:panelGrid columns="2">
+									<h:outputText value="#{CoreMsg['importDomain.createacexistingGroup']}" />
+									<p:selectBooleanCheckbox value="#{importLdapUsersView.createActivationCodeExistingGroup}">
+									</p:selectBooleanCheckbox>
+									<p:outputLabel value="#{CoreMsg['importDomain.acvalidtillGroup']}" />
+									<p:datePicker id="validTillGroup" value="#{importLdapUsersView.validTillGroup}" showTime="true" locale="#{operatorSession.locale}"
+										pattern="#{operatorSession.dateTimePattern}" />
+									<p:outputLabel value="#{CoreMsg['importDomain.acsendvia']}" for="sendBy" />
+									<p:selectOneMenu id="sendByGroup" value="#{importLdapUsersView.sendByGroup}" style="width:125px">
+										<f:selectItems value="#{importLdapUsersView.sendByValues}" />
+									</p:selectOneMenu>
+								</h:panelGrid>
+							</p:panel>
+						</p:outputPanel>
+						<p />
+						<p:commandButton id="importGroup" value="#{AdminMsg['importDomain.importselectedGroups']}" ajax="true" update="grid"
+							actionListener="#{importLdapUsersView.actionImportGroups(false)}" icon="fa fa-upload" style="color: white !important;" />
+						<p:spacer width="12" />
+						<p:commandButton id="importGroupWithUsers" value="#{AdminMsg['importDomain.importselectedGroupsWithUsers']}" ajax="true" update="grid"
+							actionListener="#{importLdapUsersView.actionImportGroups(true)}" icon="fa fa-upload" style="color: white !important;" />
+						<p />
+					</p:panel>
+					<p />
+					<p:panel>
+						<span id="customheader"> <h:outputLabel value="#{AdminMsg['importDomain.groups']}" class="dialogTitle" style="margin-left: 0; font-size: 1.4em;" />
+						</span>
+						<p />
+						<p:commandButton id="selectAllGroups" value="#{CoreMsg['importDomain.selectall']}" ajax="true" update="groupGrid"
+							actionListener="#{importLdapUsersView.selectAllGroups}" icon="fa fa-plus" style="color: white !important;" />
+					&nbsp;
+				<p:commandButton id="deselectAllGroups" value="#{CoreMsg['importDomain.deselectall']}" ajax="true" update="groupGrid"
+							actionListener="#{importLdapUsersView.deselectAllGroups}" icon="fa fa-minus" style="color: white !important;" />
+						<p:selectManyCheckbox id="groupGrid" value="#{importLdapUsersView.selectedGroups}" layout="grid" style="padding: 2" columns="4">
+							<f:selectItems value="#{importLdapUsersView.groups}" var="group" itemLabel="#{group}" itemValue="#{group}" />
+						</p:selectManyCheckbox>
+					</p:panel>
+				</p:tab>
+			</p:tabView>
+			<p:growl id="autoMessages" layout="table" globalOnly="false" showSummary="true" sticky="true">
+				<p:autoUpdate />
+			</p:growl>
+		</h:form>
+	</div>
+</ui:composition>

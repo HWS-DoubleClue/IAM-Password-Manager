@@ -1,0 +1,28 @@
+
+AsThrift-AppToServer
+C:\Frameworks\thrift-0.13.0\thrift-0.13.0.exe
+-r  --gen java -o   ${git_work_tree}\..\Libs\LibAsThrift\src\main\java -out  ${git_work_tree}\..\Libs\LibAsThrift\src\main\java\ -verbose -I  ${git_work_tree}\..\Libs\LibAsThrift\artifacts ${git_work_tree}\..\Libs\LibAsThrift\artifacts\ServerToApp.thrift
+_________________________________________________________________________________________________________
+
+AsThrift-ServerToApp
+C:\Frameworks\thrift-0.13.0\thrift-0.13.0.exe
+-r  --gen java -o   ${workspace_loc}\LibAsThrift\src\main\java\ -out  ${workspace_loc}\LibAsThrift\src\main\java\ -verbose -I  ${workspace_loc}\LibAsThrift\artifacts ${workspace_loc}\LibAsThrift\artifacts\ServerToApp.thrift
+__________________________________
+
+DcemParent CleanPackage
+Goal: clean package
+______________________________________________________________________________________________________
+
+DcemApplication
+-DDCEM_HOMEXXXX=${workspace_loc}\SemParent\etc\SEM_HOME -Dlog4jdbc=true -Dlog4jdbc.debug.stack.prefix=eu.kara -Djavax.net.debugXXX=ssl
+
+________________________________________________________________________________________________________
+
+setup
+-DDCEM_HOMEXXX=${workspace_loc}\SemParent\etc\DCEM_HOME -Dlog4jdbc=true -Dlog4jdbc.debug.stack.prefix=eu.kara -Djavax.net.debugXXX=ssl
+
+----------------------------------------------------------------------------------------------------------
+Genereting C# thrift files
+C:\Frameworks\thrift-0.13.0\thrift-0.13.0.exe
+-r  --gen csharp -o   ${git_work_tree}\..\Libs\LibAsThrift\src_csharp -out  ${git_work_tree}\..\Libs\LibAsThrift\src_csharp\gen-csharp -verbose -I  ${git_work_tree}\..\Libs\LibAsThrift\artifacts ${git_work_tree}\..\Libs\LibAsThrift\artifacts\ServerToApp.thrift
+

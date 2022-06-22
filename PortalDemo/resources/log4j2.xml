@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="sem" packages="com.doubleclue.dcem.core.logging">
+	<Properties>
+		<Property name="log-filename">portalDemo</Property>
+		<Property name="log-path">${sys:DCEM_LOGS}</Property>
+
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{DEFAULT} %-5p [%t] [%C{2}.%M:%L]: %m%n" />
+		</Console>
+		<RollingFile name="RollingFile" fileName="${log-path}/portalDemo.log"
+			filePattern="${log-path}/portalDemo-%i.log">
+			<PatternLayout>
+				<pattern>%d{dd/MMM/yyyy HH:mm:ss,SSS}- %c{1}: %m%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="250 KB" />
+			</Policies>
+			<DefaultRolloverStrategy max="4" />
+		</RollingFile>
+
+	</Appenders>
+	<Loggers>
+		<Logger name="com.doubleclue" level="debug" additivity="false">
+			<AppenderRef ref="RollingFile" />
+			<AppenderRef ref="Console" />
+		</Logger>
+
+		<Root level="warn">
+			<AppenderRef ref="RollingFile" />
+		</Root>
+	</Loggers>
+</Configuration>

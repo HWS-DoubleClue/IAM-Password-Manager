@@ -1,0 +1,124 @@
+<assembly>
+	<id>Linux-${project.version}</id>
+	<formats>
+		<!-- <format>zip</format> -->
+		<format>tar.gz</format>
+	</formats>
+	
+	<includeBaseDirectory>true</includeBaseDirectory>
+	<!-- <baseDirectory>c:/temp/Installation</baseDirectory> -->
+<!-- 	<repositories>
+		<repository>
+			<includeMetadata>false</includeMetadata>
+			<outputDirectory>Packages</outputDirectory>
+		</repository>
+	</repositories>
+	 -->
+	<fileSets>
+		<fileSet>
+			<outputDirectory>bin</outputDirectory>
+			<directory>${basedir}/../DcemApplication/target/bin</directory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+
+
+		<fileSet>
+			<outputDirectory>bin</outputDirectory>
+			<directory>${basedir}/../DcemSetup/target/bin</directory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		
+		<fileSet>
+			<outputDirectory>bin</outputDirectory>
+			<directory>${basedir}/../PortalDemo/target/bin</directory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>bin</outputDirectory>
+			<directory>${basedir}/../UserPortal/target/bin</directory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+
+		
+		<fileSet>
+			<outputDirectory>/</outputDirectory>
+			<directory>${basedir}/../DcemApplication/target/</directory>
+			<includes>
+				<include>DcemApplication.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>WebContent/</outputDirectory>
+			<directory>${basedir}/../DcemApplication/WebContent</directory>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>/</outputDirectory>
+			<directory>${basedir}/../DcemSetup/target/</directory>
+			<includes>
+				<include>DcemSetup.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>/</outputDirectory>
+			<directory>${basedir}/../PortalDemo/target/</directory>
+			<includes>
+				<include>PortalDemo.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>/</outputDirectory>
+			<directory>${basedir}/../UserPortal/target/</directory>
+			<includes>
+				<include>UserPortal.jar</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>SetupContent</outputDirectory>
+			<directory>${basedir}/../DcemSetup/SetupContent/</directory>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>PortalDemoContent</outputDirectory>
+			<directory>${basedir}/../PortalDemo/PortalDemoContent/</directory>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>DCUPContent</outputDirectory>
+			<directory>${basedir}/../UserPortal/DCUPContent/</directory>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>/</outputDirectory>
+			<directory>${basedir}/../DcemDistribution/artifacts/yajsw</directory>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>/sh</outputDirectory>
+			<directory>${basedir}/artifacts/sh</directory>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>/jvm</outputDirectory>
+			<directory>${basedir}/artifacts/jvm</directory>
+		</fileSet>
+		  <fileSet>
+            <outputDirectory>myApplications</outputDirectory>
+            <directory>${basedir}/../DcemCore/resources/com/doubleclue/dcem/myApplications</directory>
+        </fileSet>
+		<fileSet>
+			<outputDirectory>REST-WebServices/JavaSimpleDemo</outputDirectory>
+			<directory>${basedir}/../RestApiDemo</directory>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>REST-WebServices/CSharpSimpleDemo</outputDirectory>
+			<directory>${basedir}/../RestApiDemoCSharp</directory>
+		</fileSet>
+
+
+	</fileSets>
+
+
+</assembly>

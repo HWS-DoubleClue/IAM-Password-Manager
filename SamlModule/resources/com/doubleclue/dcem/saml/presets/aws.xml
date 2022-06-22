@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE xml>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="urn:amazon:webservices">
+	<SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" WantAssertionsSigned="true">
+		<KeyDescriptor use="signing">
+			<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+				<ds:X509Data>
+					<ds:X509Certificate>MIIDbTCCAlWgAwIBAgIEIWYegzANBgkqhkiG9w0BAQsFADBnMR8wHQYDVQQDExZ1
+cm46YW1hem9uOndlYnNlcnZpY2VzMSIwIAYDVQQKExlBbWF6b24gV2ViIFNlcnZp
+Y2VzLCBJbmMuMRMwEQYDVQQIEwpXYXNoaW5ndG9uMQswCQYDVQQGEwJVUzAeFw0x
+ODA2MjUwMDAwMDBaFw0xOTA2MjUwMDAwMDBaMGcxHzAdBgNVBAMTFnVybjphbWF6
+b246d2Vic2VydmljZXMxIjAgBgNVBAoTGUFtYXpvbiBXZWIgU2VydmljZXMsIElu
+Yy4xEzARBgNVBAgTCldhc2hpbmd0b24xCzAJBgNVBAYTAlVTMIIBIjANBgkqhkiG
+9w0BAQEFAAOCAQ8AMIIBCgKCAQEAltaUMEzEn/uW8jmqLzAFAH+Lw9pNQf5RodCu
+1zr5x214Uercli9BXh1lxP1Wjz+ADGUnP+HbcHvx/xa6mMmcPLSghnGmKbXCau9y
+7vvJt3nk2mUyO5spQBJngldoOr6p1SqyE9+LKCarn1kcZ4+OBPnXp+hZb4qVFtqc
+Of9PuBGbVHovq2DXsccv50jsbm6j8pgBxcvbK62KtBuqVTNgC4ZsHmhjNmRH7lfv
+OCrD8kqQ05OhA/Vc69TSDphO680xaEtPB+lMJyc0hwaVgCeLWoXNUj4E1mFcejLC
+vEP+evTdxHaK+gGEUjCqbnp5jdSa6yU93v1oRdrzZibnXnSZuwIDAQABoyEwHzAd
+BgNVHQ4EFgQUMYr2ZW/MZWQhDdYmTNDeKNkZQfcwDQYJKoZIhvcNAQELBQADggEB
+AIgBxSyDx09dM7a8jjF6fxMVyLyIuaXdc5MLQw5An/l9c16VPYX2DupioJ0rhjg1
+cdgGZGBxSaxXhCXwioDu9iD1EBGEI50gB2Py7caFZpUpMve8zknU22SI/qVID1bw
+Sxe7Rmzu4HoWusHuOxSOUxg6zWDK+0kuPO1xhhXGlCvV/u47ipNlQiFdN/WzEWY0
+C+ffJEKotZiCnqBLsow599+SmZjvpbwBium6txqQyzsn3WJreDYlbz0U6yNg+vsF
+U/afbqwSdsA97zilVWOr1AZ4nSS5dJbYnYFg/LMS6z8MePNcGVbQLZed3Bzla6Jg
+BHz0gXEJZv6fJuHb+iTBhaE=</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</KeyDescriptor>
+		<NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</NameIDFormat>
+		<AssertionConsumerService index="1" isDefault="true" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://signin.aws.amazon.com/saml"/>
+		<AttributeConsumingService index="1">
+			<ServiceName xml:lang="en">AWS Management Console Single Sign-On</ServiceName>
+			<RequestedAttribute isRequired="true" Name="https://aws.amazon.com/SAML/Attributes/Role" FriendlyName="RoleEntitlement" UserProperty="USER_INPUT"/>
+			<RequestedAttribute isRequired="true" Name="https://aws.amazon.com/SAML/Attributes/RoleSessionName" FriendlyName="RoleSessionName" UserProperty="EMAIL"/>
+		</AttributeConsumingService>
+	</SPSSODescriptor>
+	<Organization>
+		<OrganizationName xml:lang="en">Amazon Web Services, Inc.</OrganizationName>
+		<OrganizationDisplayName xml:lang="en">Amazon Web Services</OrganizationDisplayName>
+		<OrganizationURL xml:lang="en">https://aws.amazon.com</OrganizationURL>
+	</Organization>
+</EntityDescriptor>
+

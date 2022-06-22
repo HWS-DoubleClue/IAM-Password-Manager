@@ -1,0 +1,87 @@
+@CHARSET "ISO-8859-1";
+
+
+.ui-icon.messageIcon {
+	background: url("#{resource['pictures/icons/16x16/message.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.showPasswordIcon {
+	background:
+		url("#{resource['pictures/icons/16x16/key_information.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.viewActivationCodeIcon {
+	background: url("#{resource['pictures/icons/16x16/view.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.viewPolicyAssignIcon {
+	background: url("#{resource['pictures/icons/16x16/application_edit.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.showMsgIcon {
+	background: url("#{resource['pictures/icons/16x16/view.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.generateSdkIcon {
+	background: url("#{resource['pictures/icons/16x16/registry.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.enableActionIcon {
+	background:
+		url("#{resource['pictures/icons/16x16/pda_preferences.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.disableActionIcon {
+	background: url("#{resource['pictures/icons/16x16/pda_delete.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.enableUser {
+	background:
+		url("#{resource['pictures/icons/16x16/user_preferences.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.ui-icon.billingActionIcon {
+	background: url("#{resource['pictures/icons/16x16/receipt.png']}")
+		no-repeat !important;
+	height: 16px;
+	width: 16px;
+}
+
+.policyList.ui-datalist-item {
+	border: none;
+	background: inherit;
+}
+
+.ui-datalist-content.ui-widget-content {
+	border: none;
+	background: inherit;
+	color: inherit;
+	}
+}

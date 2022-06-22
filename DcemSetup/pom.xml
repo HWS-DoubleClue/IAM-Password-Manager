@@ -1,0 +1,162 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.doubleclue.application</groupId>
+	<artifactId>DcemSetup</artifactId>
+
+	<parent>
+		<artifactId>DcemParent</artifactId>
+		<groupId>com.doubleclue</groupId>
+		<version>2.8.0-SNAPSHOT</version>
+		<relativePath>../DcemParent</relativePath>
+	</parent>
+
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.codehaus.woodstox</groupId>
+			<artifactId>woodstox-core-asl</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jasper-el</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jsp-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>DcemCore</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
+			</dependency> -->
+
+		<!-- <dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>DcemCore</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+ -->
+
+		<dependency>
+			<artifactId>AppSecureModule</artifactId>
+			<groupId>com.doubleclue.dcem.module</groupId>
+		</dependency>
+
+		<!-- <dependency> <groupId>com.doubleclue.dcem.TestModule</groupId> <artifactId>TestModule</artifactId> 
+			</dependency> -->
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>RadiusModule</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>SamlModule</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>OtpModule</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>OAuthModule</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>UserPortalModule</artifactId>
+		</dependency>
+		
+<!--  		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>PerformanceDeckModule</artifactId>
+		</dependency>	 -->		
+		
+<!-- 		 <dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>PetshopModule</artifactId>
+		</dependency> -->
+	
+
+		<!-- DO NOT COMMIT WITH LICENCE-MODULE and DIPACHTER-MODULE -->
+		<!-- <dependency> <artifactId>LicenseModule</artifactId> <groupId>com.doubleclue.dcem.module</groupId>
+			</dependency> -->
+
+		<!-- DO NOT COMMIT WITH LICENCE-MODULE and DIPACHTER-MODULE -->
+		<!-- <dependency> <artifactId>DispatcherModule</artifactId> <groupId>com.doubleclue.dcem.module</groupId> 
+			</dependency> -->
+
+		<!-- <dependency> <groupId>org.jboss.weld.servlet</groupId> <artifactId>weld-servlet</artifactId> 
+			<version>2.2.16.Final</version> </dependency> -->
+
+	</dependencies>
+
+	<build>
+
+		<finalName>DcemSetup</finalName>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<scope>runtime</scope>
+							<outputDirectory>${project.build.directory}/bin</outputDirectory>
+							<includeScope>runtime</includeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>./bin/</classpathPrefix>
+							<mainClass>com.doubleclue.dcem.setup.MainSetup</mainClass>
+							<useUniqueVersions>false</useUniqueVersions>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+
+</project>

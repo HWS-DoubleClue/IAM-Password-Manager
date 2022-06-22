@@ -1,0 +1,17 @@
+DcemErrorCodes_EXCEED_USER_MESSAGE_QUEUE=Die Größe der Warteschlange für Meldungen an Benutzer wurde überschritten. Bitte antworten Sie auf Ihre Meldungen, bevor Sie weitere senden.
+DcemErrorCodes_INVALID_USER_ID=Der Benutzer wurde nicht gefunden. Bitten Sie Ihren Administrator, Ihr Konto zu registrieren.
+DcemErrorCodes_NO_DEFAULT_TEMPLATE_FOUND=Für diese Meldung wurde keine Vorlage gefunden. Bitte kontaktieren Sie Ihren Administrator.
+DcemErrorCodes_USER_HAS_NO_DEVICES=Der Benutzer hat keine registrierten Geräte. Bitte registrieren Sie Ihr Gerät und versuchen Sie es erneut.
+DcemErrorCodes_USER_IS_DISABLED=Der Benutzer ist deaktiviert. Bitte kontaktieren Sie Ihren Administrator.
+ErrorMessageCancelled=Meldung abgebrochen.
+ErrorMessageDenied=Meldung vom Benutzer abgelehnt.
+ErrorMessageDisconnected=Meldung getrennt.
+ErrorMessageRecError=Meldung mit einem Fehler erhalten.
+ErrorMessageTimedOut=Zeitüberschreitung beim Warten auf eine Antwort auf die Meldung.
+ErrorPageEncounteredError=Ein Fehler ist aufgetreten:
+ErrorPageTitle=DoubleClue-Fehler
+ErrorPageTryAgain=Versuchen Sie es erneut
+LoginPageInstruction=Bitte bestätigen Sie den Login für Code '{0}' in Ihrer DoubleClue App.
+LoginPageTitle=DoubleClue-Login
+MetadataDescription=Authentifizieren Sie sich mit der DoubleClue App auf Ihrem Gerät.
+MetadataFriendlyName=DoubleClue-Authentifizierung

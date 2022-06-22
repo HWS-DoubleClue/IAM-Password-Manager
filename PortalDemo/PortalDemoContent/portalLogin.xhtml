@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	</f:facet>
+	<title>DoubleClue PortalDemo</title>
+	<h:outputStylesheet library="css" name="portalStyles.css" />
+	<h:outputScript library="js" name="fingerprint2.js" />
+	<h:outputScript library="js" name="webauthn.js" />
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var options = {};
+			Fingerprint2.get(options, function (components) {
+				var values = components.map(function (component) { return component.value });
+			    var murmur = Fingerprint2.x64hash128(values.join(''), 31);
+			    $('#loginForm\\:fingerprint').val(murmur);
+			});
+		});
+
+		function startFidoAuthentication(requestJson) {
+			if (checkFidoCompatibility()) {
+				var request = JSON.parse(requestJson);
+				webAuthnGet(request, fidoAuthCallback, fidoErrorCallback);
+			}
+		}
+
+		function checkFidoCompatibility() {
+			if (!isBrowserWebAuthnCompatible() || !isWebAuthnApiAccessible()) {
+				fidoErrorCallback(new Error(
+						"#{DcupMsg['error.local.FIDO_NOT_SUPPORTED']}"));
+				return false;
+			}
+			return true;
+		}
+
+		function fidoAuthCallback(response) {
+			$('#loginForm\\:fidoResponse').val(response);
+			finishFidoAuthentication();
+		}
+
+		function fidoErrorCallback(err) {
+			$('#loginForm\\:fidoError').val(err.message);
+			showFidoError();
+		}
+	</script>
+</h:head>
+
+<f:view>
+	<h:body>
+		<div>
+			<ui:include src="title.xhtml" />
+			<h:form id="loginForm">
+				<p />
+				<br />
+				<p />
+				<br />
+				<f:metadata>
+					<f:viewParam name="loginOtp" value="#{loginView.loginOtp}" />
+				</f:metadata>
+				<p />
+
+				<!-- Remote Commands -->
+				<p:remoteCommand name="finishFidoAuthentication" update="@form" action="#{loginView.actionFinishFidoAuthentication}" />
+				<p:remoteCommand name="showFidoError" update="@form" action="#{loginView.actionShowFidoError}" />
+
+				<!-- Hidden Inputs -->
+				<h:inputHidden id="fingerprint" value="#{loginView.browserFingerprint}" />
+				<h:inputHidden id="fidoResponse" value="#{loginView.fidoResponse}" />
+				<h:inputHidden id="fidoError" value="#{loginView.fidoError}" />
+
+				<!-- Login Form -->
+				<p:panel id="basic" style="width: 450px; margin: 0 auto; border: 1px solid #d8d8d8">
+					<p />
+					<div id="customheader" style="vertical-align: middle; position: relative;">
+						<h:outputLabel value="Login with DoubleClue Authentication" class="dialogTitle" style="margin-left: 8px; font-size: 1.4em;"></h:outputLabel>
+					</div>
+					<p></p>
+					<br></br>
+					<p:focus context="basic" />
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+						<h:outputLabel value="Username: " />
+						<h:panelGroup>
+							<p:inputText id="name" value="#{loginView.name}" size="35" autocomplete="off" />
+							<p:tooltip for="name" style="font-size: x-small; white-space: normal" value="#{DcpmRes['message.chooseAuthMethod']}" position="top" />
+						</h:panelGroup>
+						<h:outputLabel value="Password: " />
+						<p:password id="password" size="35" value="#{loginView.password}" />
+					</h:panelGrid>
+					<p />
+					<p:commandButton id="login" value="Login" action="#{loginView.actionLogin}" style="width: 10em" update="" ajax="true" async="true">
+					</p:commandButton>
+					<p />
+				<!-- 	<p:commandLink id="radiusLogin" action="#{loginView.actionRequestRadiusLogin}" ajax="false">
+						<h:outputText value="Radius Login" />
+					</p:commandLink> -->
+					<p></p>
+					<br></br>
+				</p:panel>
+
+				<!-- QR Code -->
+				<p:outputPanel id="qrcodePanel" style="width: 450px; display: block; margin: auto;">
+					<p:graphicImage id="qrCodeImage" value="#{loginQrCodeView.qrCodeImage}" stream="false" />
+					<br></br>
+					<h:panelGroup id="counterMsg" rendered="#{loginQrCodeView.stop eq false}">
+						<p:outputLabel value="QR-Code is valid for: " />
+						<p:outputLabel style="display: inline;" id="counter">#{loginQrCodeView.timeToLive}</p:outputLabel>
+						<p:outputLabel value=" seconds" />
+					</h:panelGroup>
+					<p:poll id="poller" interval="#{loginView.pollIntervalSeconds}" stop="#{loginQrCodeView.stop}" async="true"
+						listener="#{loginQrCodeView.checkQrCode}" global="false" />
+
+					<p:commandButton id="requestQrCode" value="Request New QrCode" rendered="#{loginQrCodeView.stop}"
+						action="#{loginQrCodeView.requestNewQrCode()}" ajax="false" icon="fa fa-qrcode"></p:commandButton>
+
+					<p />
+				</p:outputPanel>
+
+				<!-- Auth Method Dialog -->
+				<p:dialog id="authMethodDialog" widgetVar="authDlg" modal="true" resizable="false" style="border-bottom: none !important;">
+					<div id="customheader" style="vertical-align: middle; position: relative;">
+						<h:outputLabel value="Choose an Authentication Method" class="dialogTitle"
+							style="font-size: 1.4em; margin-left: -2px; margin-right: 10px"></h:outputLabel>
+					</div>
+					<p></p>
+					<h:panelGroup>
+						<p:dataTable value="#{loginView.authMethodGuis}" var="amethod" style="margin:auto; padding: 20px 20px 10px 10px; "
+							styleClass="borderless">
+							<p:column style="text-align: center;">
+								<p:commandLink action="#{loginView.actionAuthMethodChosen(amethod.method)}" ajax="true" async="true">
+									<h:graphicImage style="vertical-align: middle; padding-right:4px; text-align: center;" width="" height="" library="pictures"
+										name="#{amethod.image}" />
+								</p:commandLink>
+							</p:column>
+							<p:column>
+								<p:commandButton style="width: 12em;" ajax="true" value="#{amethod.name}"
+									action="#{loginView.actionAuthMethodChosen(amethod.method)}" />
+							</p:column>
+
+						</p:dataTable>
+					</h:panelGroup>
+					<p></p>
+					<br></br>
+				</p:dialog>
+
+
+
+				<!-- Progress Dialog -->
+				<p:dialog id="progressDlg" widgetVar="progressDlg" modal="true">
+					<div id="customheader" style="vertical-align: middle; position: relative;">
+						<h:outputLabel value="Waiting for confirmation" class="dialogTitle" style="font-size: 1.4em; margin-left: -2px;"></h:outputLabel>
+					</div>
+					<p></p>
+					<p:outputLabel value="Please start your DoubleClue App and confirm the message. Check the following number: " />
+					<p:outputLabel id="randomCode" style="font-weight: bold" value="#{loginView.randomCode}" />
+					<p />
+					<p:progressBar interval="#{loginView.pollIntervalMilli}" widgetVar="pbAjax" ajax="true" value="#{loginView.progress}"
+						labelTemplate="{value}%" styleClass="animated" global="true">
+						<p:ajax event="complete" listener="#{loginView.onComplete}" update="msgs status timeLeft" />
+					</p:progressBar>
+					<p />
+					<h:panelGrid columns="2" cellpadding="0">
+						<p:outputLabel for="status" value="Status: " />
+						<p:outputLabel id="status" value="#{loginView.msgStatus} " />
+						<p:outputLabel for="timeLeft" value="Time left: " />
+						<p:outputLabel id="timeLeft" value="#{loginView.timeLeft}" />
+					</h:panelGrid>
+					<p />
+					<p:commandButton id="cancel" value="Cancel" action="#{loginView.cancel}" />
+					<p></p>
+					<br></br>
+				</p:dialog>
+
+				<p:defaultCommand target="login" scope="basic" />
+			</h:form>
+			<h:form>
+				<!-- Passcode Dialog -->
+				<p:dialog id="passcodeDialog" widgetVar="pcDlg" modal="true" resizable="false" width="500px">
+
+					<p:messages showDetail="false">
+						<p:autoUpdate />
+					</p:messages>
+					<div id="customheader" style="vertical-align: middle; position: relative;">
+						<h:outputLabel value="Enter Passcode" class="dialogTitle" style="font-size: 1.4em; margin-left: -2px;"></h:outputLabel>
+					</div>
+					<p></p>
+					<p:focus context="passcodeDialog" />
+					<p />
+					<h:outputLabel value="#{loginView.authInstruction}" />
+					<p />
+					<p:panel id="passCodePanel"
+						style="margin-left:auto; margin-right:auto; margin-top:15px; margin-bottom:10px; display:table; border-bottom: none !important;">
+						<h:outputLabel for="passcode" value="Passcode: " />
+						<p:inputText id="passcode" value="#{loginView.passcode}" style="margin:auto; width:200px;" />
+						<p></p>
+						<br></br>
+						<p:commandButton id="passcodeOk" style="width: 8em;" ajax="true" value="OK" action="#{loginView.actionPasscodeEntered}" />
+						<p:spacer width="12" />
+						<p:commandButton style="width: 8em;" action="#{loginView.cancelPassCode}" ajax="true" immediate="true" value="Cancel" />
+						<p></p>
+						<br></br>
+					</p:panel>
+				</p:dialog>
+				<p:defaultCommand target="passcodeOk" />
+
+
+
+			</h:form>
+
+			<p:growl id="msgs" showDetail="false" sticky="true">
+				<p:autoUpdate />
+			</p:growl>
+
+
+		</div>
+		<h:outputScript>
+		var x = setInterval(function() {
+			var counterElement = document.getElementById("loginForm:counter");
+			if (counterElement !== null) {
+				var counter = counterElement.innerHTML;
+				counter = counter - 2;
+				// Display the result in the element with id="demo"
+				counterElement.innerHTML = counter;
+				// If the count down is finished, write some text
+				if (counter &lt; 0) {
+					clearInterval(x);
+					counterElement.innerHTML = " EXPIRED ";
+				}
+			}
+		}, 2000);
+	</h:outputScript>
+	</h:body>
+</f:view>
+</html>

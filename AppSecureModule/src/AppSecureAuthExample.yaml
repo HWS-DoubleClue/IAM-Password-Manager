@@ -1,0 +1,96 @@
+---
+# This is a sample Swagger spec, describing a simple API as a starting point.  
+swagger: "2.0"
+info:
+  description: App Secure Authentication Messges
+  version: 1.0.0
+  title: App Secure Mesages
+host: taxblaster.com
+basePath: /api
+schemes:
+- http
+
+# Tags organize operations into groups for presentation in the Swagger UI.
+# Each tag has an optional description, which the Swagger UI will display in 
+# the tag group header.
+tags:
+- name: TaxFilingObject
+  description: An individual Tax Filing record, accessed by its ID
+
+paths:
+
+  # Each Path Item Object describes a resource, containing a set of operations
+  # at a specified path.  The Path Item object can define parameters and 
+  # responses common all of its contained operations.
+  /taxFilings/{id}:
+
+    # Operations are identified by an HTTP method.  
+    get:
+      tags:
+      - TaxFilingObject
+      description: Retrieves a tax filing having the specified id.
+      operationId: getTaxFiling
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of the requested TaxFiling
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response, with a representation of the Tax Filing.
+          schema:
+            # Reference to a Schema Object described in 'definitions' section
+            $ref: "#/definitions/TaxFilingObject"
+          examples:
+            # Example message, keyed by media type
+            application/json :
+              {
+                filingID : 1234,
+                jurisdiction : Federal,
+                year : 2015,
+                period : CALENDAR_YEAR,
+                currency : EUR,
+                grossIncome : 74832,
+                taxLiability : 15640
+              }
+        404:
+          description: The requested tax filing was not found.
+
+# The definitions section contains a set of named Schema Objects.  Each schema
+# object describes a reusable data type, which can be reference by name.
+definitions:
+  MapEntry:
+    type: object 
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+  SecureMessage:
+    type: object
+    description: An individual Tax Filing record.
+    properties:
+      userId:
+        type: string
+      deviceName:
+        type: string
+        description: this is optional. If set to null, DCEM will take the last used user's device.
+      templateName:
+        type: string
+      responseRequired:
+        type: boolean  
+      dataMap:
+        type: array
+        items:
+           $ref: "#/definitions/MapEntry"
+      responseTime:
+        type: integer
+        description: if set to zero, Server will take default
+        
+  
+        

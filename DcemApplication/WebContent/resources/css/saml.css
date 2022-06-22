@@ -1,0 +1,79 @@
+@CHARSET "ISO-8859-1";
+
+body {
+	background: #f0f8ff;
+	background-color: #fcfdfd;
+	font-size: small;
+}
+
+.selectMenu {
+	display: inline-block;
+	vertical-align: center;
+}
+
+.header1 {
+	font-size: xx-large;
+	color: #0000b8;
+	font-style: italic;
+	/*   font-weight: bold; */
+}
+
+.header3 {
+	font-size: large;
+	color: #0000b8;
+	/*   font-weight: bold; */
+}
+
+.header6 {
+	font-size: x-small;
+	color: #0000b8;
+}
+
+.scrollBody {
+	height: 100px;
+	overflow: auto;
+}
+
+.viewTitle {
+	font-size: x-large;
+	/* font-weight: bold; */
+	color: #0000b8;
+	vertical-align: middle;
+	margin-left: 5px;
+}
+
+.rf-msgs {
+	font-size: medium;
+}
+
+.columnValue {
+	vertical-align: top;
+}
+
+.ui-datatable.borderless table thead tr {
+	display: none;
+}
+
+.ui-datatable.borderless thead th, .ui-datatable.borderless tbody,
+	.ui-datatable.borderless tbody tr, .ui-datatable.borderless tbody td {
+	border-style: none;
+}
+
+.companyLogoStyle{
+	width: 100%;
+	height: 100%;
+	border: none;
+	vertical-align: middle;
+}
+
+
+
+.dialogTitle {
+	color: #005078 !important;
+	font-size: 1.6em;
+	vertical-align: middle;
+	margin-left: 8px;
+	margin-right: 10px;
+	text-decoration: none;
+	background-color: none !important;
+}

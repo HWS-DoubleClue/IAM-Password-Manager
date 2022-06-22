@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 	
+//#excludeif COMMUNITY_EDITION == true
+ -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	
+	
+<h:form enctype="multipart/form-data">
+		<p:fieldset style="margin-bottom:10px; margin-right:20px;">
+
+			<p:panel>
+				<div id="customheader" style="vertical-align: middle; position: relative; margin-bottom: 0.5em;">
+					<h:outputLabel value="#{AdminMsg['tenantBranding.timezoneTitle']}" styleClass="tenantBrandingTitle" />
+				</div>
+
+				<h:panelGroup>
+					<p:outputLabel for="timezone" value="#{AdminMsg['tenantBranding.timezone']}" style="vertical-align: middle;" />
+					<p:selectOneMenu id="timezone" value="#{tenantBrandingView.continentTimezone}" style="margin-left: 1em;">
+						<f:selectItems value="#{tenantBrandingView.continentTimezones}">
+						</f:selectItems>
+						<p:ajax event="change" update="timezoneCountry" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="timezoneCountry" value="#{AdminMsg['tenantBranding.timezoneCountry']}" style="vertical-align: middle; margin-left: 4em;" />
+					<p:selectOneMenu id="timezoneCountry" value="#{tenantBrandingView.countryTimezone}" style="margin-left: 1em;">
+						<f:selectItems value="#{tenantBrandingView.countryTimezones}">
+						</f:selectItems>
+					</p:selectOneMenu>
+
+				</h:panelGroup>
+			</p:panel>
+			<br />
+
+			<p:accordionPanel>
+				<p:tab title="#{AdminMsg['tenantBranding.banners']}">
+					<p:panel>
+						<div id="customheader" style="vertical-align: middle; position: relative; margin-bottom: 0.5em;">
+							<h:outputLabel value="#{AdminMsg['tenantBranding.bannerEnterpriseManage']}" styleClass="tenantBrandingTitle" />
+						</div>
+						<h:panelGroup>
+							<div style="float: left">
+								<h:outputText value="#{AdminMsg['tenantBranding.bannerText']}" />
+								<p:inputText size="40" maxlength="150" style="margin-left: 1em;" value="#{tenantBrandingView.branding.bannerTextEnterpriseManagment}" />
+
+								<h:outputText value="#{AdminMsg['tenantBranding.bannerStyleCSS']}" style="margin-left: 7em;" />
+							</div>
+							<div style="width: auto; overflow: hidden; padding: 0 1em 0 1em">
+								<p:inputText maxlength="200" style="width: 100%;" value="#{tenantBrandingView.branding.bannerStyleCSS}" />
+							</div>
+						</h:panelGroup>
+					</p:panel>
+					<br />
+
+					<p:panel>
+						<div id="customheader" style="vertical-align: middle; position: relative; margin-bottom: 0.5em;">
+							<h:outputLabel value="#{AdminMsg['tenantBranding.bannerUserPortal']}" styleClass="tenantBrandingTitle" />
+						</div>
+						<h:panelGroup>
+							<div style="float: left">
+								<h:outputText value="#{AdminMsg['tenantBranding.bannerText']}" />
+								<p:inputText size="40" maxlength="150" style="margin-left: 1em;" value="#{tenantBrandingView.branding.bannerTextUserPortal}" />
+
+								<h:outputText value="#{AdminMsg['tenantBranding.bannerStyleCSS']}" style="margin-left: 7em;" />
+							</div>
+							<div style="width: auto; overflow: hidden; padding: 0 1em 0 1em">
+								<p:inputText maxlength="200" style="width: 100%;" value="#{tenantBrandingView.branding.bannerStyleCSSUserPortal}" />
+							</div>
+						</h:panelGroup>
+					</p:panel>
+					<br />
+
+					<p:panel>
+						<div id="customheader" style="vertical-align: middle; position: relative; margin-bottom: 0.5em;">
+							<h:outputLabel value="#{AdminMsg['tenantBranding.bannerStyleSaml']}" styleClass="tenantBrandingTitle" />
+						</div>
+						<h:panelGroup>
+							<div style="float: left; padding-top: 5px">
+								<h:outputText value="#{AdminMsg['tenantBranding.bannerStyleSamlText']}" />
+								<h:outputText value="#{AdminMsg['tenantBranding.bannerStyleCSS']}" style="margin-left:2em" />
+							</div>
+							<div style="width: auto; overflow: hidden; padding: 0 1em 0 1em">
+								<p:inputText maxlength="200" style="width: 100%;" value="#{tenantBrandingView.branding.bannerStyleCSSsaml}" />
+							</div>
+						</h:panelGroup>
+					</p:panel>
+					<br />
+
+					<p:panel>
+						<div id="customheader" style="vertical-align: middle; position: relative; margin-bottom: 0.5em;">
+							<h:outputLabel value="#{AdminMsg['tenantBranding.bannerStyleOauth']}" styleClass="tenantBrandingTitle" />
+						</div>
+						<h:panelGroup>
+							<div style="float: left; padding-top: 5px">
+								<h:outputText value="#{AdminMsg['tenantBranding.bannerStyleOauthText']}" />
+								<h:outputText value="#{AdminMsg['tenantBranding.bannerStyleCSS']}" style="margin-left:2em" />
+							</div>
+							<div style="width: auto; overflow: hidden; padding: 0 1em 0 1em">
+								<p:inputText maxlength="200" style="width: 100%" value="#{tenantBrandingView.branding.bannerStyleCSSOauth}" />
+							</div>
+						</h:panelGroup>
+					</p:panel>
+				</p:tab>
+			</p:accordionPanel>
+			<br></br>
+
+			<p:panel>
+				<div id="customheader" style="vertical-align: middle; position: relative; margin-bottom: 0.5em;">
+					<h:outputLabel value="#{AdminMsg['tenantBranding.loginTextGroup']}" styleClass="tenantBrandingTitle" />
+				</div>
+
+				<h:panelGroup>
+					<p:outputLabel for="signInPageText" value="#{AdminMsg['tenantBranding.signInPageText']}" />
+
+					<p:inputText id="signInPageText" value="#{tenantBrandingView.branding.signInPageText}" size="40" maxlength="150" style="margin-left: 1em;" />
+
+					<p:outputLabel for="signInPageText" value="#{AdminMsg['tenantBranding.signInTextStyle']}" style="margin-left: 7em;" />
+					<p:inputText id="signInTextCssStyle" value="#{tenantBrandingView.branding.signTextStyleCSS}" size="60" maxlength="150" style="margin-left: 1em;" />
+
+				</h:panelGroup>
+			</p:panel>
+
+			<br></br>
+			<p:panel id="ana">
+				<div id="customheader" style="vertical-align: middle; position: relative;">
+					<h:outputLabel value="#{AdminMsg['tenantBranding.backgroundAndLogoTitle']}" styleClass="tenantBrandingTitle" />
+				</div>
+				<h:panelGrid id="activationImage" columns="2" columnClasses="first-column, second-column" cellpadding="2" cellspacing="2">
+					<h:panelGroup>
+						<h:outputText value="#{AdminMsg['tenantBranding.companyLogoTitle']}" />
+						<br></br>
+						<h:outputText style="font-size: x-small" value="#{AdminMsg['tenantBranding.companyLogoInfo']}" />
+					</h:panelGroup>
+					<h:panelGroup id="fileLogo">
+						<p:graphicImage cache="false" style="border: 1px solid #111;height: 3.5em;width: 15em;margin-left:0.5em;" value="#{tenantBrandingView.fileLogoimg}" />
+
+						<br></br>
+						<p:fileUpload listener="#{tenantBrandingView.fileLogoListener}" label="#{CoreMsg['choose']}" value="#{tenantBrandingView.fileLogo}" mode="advanced"
+							skinSimple="true" auto="true" multiple="false" update="fileLogo" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" fileLimit="1" sizeLimit="10240"
+							invalidSizeMessage="#{AdminMsg['tenantBranding.invalidFileSizeLogoMsg']}" />
+						<h:outputText value="#{tenantBrandingView.logoName}" style="margin-left: 1em;" />
+					</h:panelGroup>
+
+					<p:outputLabel for="StyleType" value="#{AdminMsg['tenantBranding.backgroundType']}" />
+					<p:selectOneRadio id="StyleType" value="#{tenantBrandingView.backgroundType}">
+						<f:selectItem itemLabel="#{AdminMsg['tenantBranding.image']}" itemValue="Image" />
+						<f:selectItem itemLabel="#{AdminMsg['tenantBranding.color']}" itemValue="Color" />
+						<p:ajax event="change" process="@this" update="activationImage" />
+					</p:selectOneRadio>
+
+					<h:panelGroup rendered="#{!tenantBrandingView.branding.backgroundTypeColor}">
+						<h:outputText value="#{AdminMsg['tenantBranding.backgroundImageTitle']}" />
+						<br></br>
+						<h:outputText style="font-size: x-small" value="#{AdminMsg['tenantBranding.backgroundImageInfo']}" />
+					</h:panelGroup>
+					<h:panelGroup rendered="#{!tenantBrandingView.branding.backgroundTypeColor}" id="fileBackground">
+						<p:graphicImage cache="false" style="border: 1px solid #111;height: 12em;width: 22em;margin-left:0.5em;" value="#{tenantBrandingView.fileBackgroundimg}" />
+						<br></br>
+						<p:fileUpload customUI="true" listener="#{tenantBrandingView.fileBackgroundListener}" label="#{CoreMsg['choose']}"
+							value="#{tenantBrandingView.fileBackgroundImage}" mode="advanced" skinSimple="true" auto="true" immediate="true" required="true" multiple="false"
+							update="fileBackground" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG|JPG|GIF|JPEG)$/" fileLimit="1" sizeLimit="307200"
+							invalidSizeMessage="#{AdminMsg['tenantBranding.invalidFileSizeBackgroundMsg']}" />
+						<h:outputText value="#{tenantBrandingView.backgroundFileName}" />
+					</h:panelGroup>
+
+					<h:outputText value="#{AdminMsg['tenantBranding.backgroundColor']}" rendered="#{tenantBrandingView.branding.backgroundTypeColor}" />
+					<p:colorPicker value="#{tenantBrandingView.branding.backgroundColor}" rendered="#{tenantBrandingView.branding.backgroundTypeColor}" />
+
+
+				</h:panelGrid>
+			</p:panel>
+
+		</p:fieldset>
+
+		<p:commandButton value="#{CoreMsg['AUTO_ACTION.save']}" action="#{tenantBrandingView.actionSave}" style="width: 10em"
+			rendered="#{tenantBrandingView.permissionSave}" icon="fa fa-save" ajax="false" />
+
+		<p:commandButton value="#{AdminMsg['tenantBranding.setAsDefault']}" action="#{tenantBrandingView.setDefault}"
+			style="margin-right:1.5em;float: right;width: 10em" rendered="#{tenantBrandingView.permissionSave}" icon="fa fa-undo" ajax="false" />
+
+	</h:form>
+</ui:composition>

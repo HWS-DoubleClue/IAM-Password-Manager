@@ -1,0 +1,11 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'maven-publish'
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+}
+
+def clientLibVersion = "2.8.0-SNAPSHOT"
+def clientLibName = "LibDcThrift"
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence">
+	<persistence-unit name="dcem.oauth" transaction-type="RESOURCE_LOCAL">
+		<class>com.doubleclue.dcem.oauth.entities.OAuthClientEntity</class>
+		<class>com.doubleclue.dcem.oauth.entities.OAuthTokenEntity</class>
+	</persistence-unit>
+</persistence>

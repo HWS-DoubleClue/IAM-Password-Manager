@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:form id="adminIndex">
+	<style type="text/css">
+.ui-button-alert .ui-button-text {
+	width: 23px;
+	height: 23px;
+	border: 1px solid;
+	font-weight: bold;
+	padding: 0;
+}
+
+.ui-button-WARN .ui-button-text {
+	color: #c09853 !important;
+	background-color: #fcf8e3;
+	border-color: #fbeed5;
+}
+
+.ui-button-ERROR .ui-button-text, .ui-button-FATAL .ui-button-text {
+	color: #b94a48 !important;
+	background-color: #f2dede;
+	border-color: #eed3d7;
+}
+
+.ui-button-INFO .ui-button-text {
+	color: #3a87ad !important;
+	background-color: #d9edf7;
+	border-color: #bce8f1;
+}
+
+.alertTable table {
+	width: auto;
+}
+
+.alertTable table thead {
+	display: none;
+}
+
+.alertTable table tbody td {
+	border: none;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.alertTable .ui-widget-content {
+	border: none;
+}
+
+.jqplot-highlighter-tooltip, .jqplot-canvasOverlay-tooltip {
+    background: white;
+}
+</style>
+
+	<h:outputText style="font-size: 1.1em"
+		value="#{welcomeView.welcomeText}"></h:outputText>
+	<p></p>
+
+	<h:panelGroup layout="block"
+		rendered="#{!reportingLogic.welcomeViewAlerts.isEmpty()}">
+		<p>#{CoreMsg['welcomeAlerts.text']}</p>
+		<p:dataList value="#{reportingLogic.welcomeViewAlerts.entrySet()}"
+			var="alertCategory" type="definition">
+			<p style="font-weight: bold;">#{CoreMsg['welcomeAlerts.category.'.concat(alertCategory.key)]}:</p>
+			<p:dataTable value="#{alertCategory.value.entrySet()}"
+				var="alertEntry" styleClass="alertTable">
+				<p:column>
+					<p:staticMessage
+						severity="#{alertEntry.value.getWelcomViewAlertSeverity()}"
+						summary="#{alertEntry.value.source != null ? alertEntry.value.source.concat(':') : null}"
+						detail="#{alertEntry.value.time.toString().concat(' - ').concat(alertEntry.value.info == null ? CoreMsg['DcemErrorCodes.'.concat(alertEntry.value.errorCode)] : alertEntry.value.info)}" />
+				</p:column>
+				<p:column rendered="#{welcomeView.privilegedForDeletingAlerts}">
+					<p:commandButton
+						styleClass="#{'ui-button-alert ui-button-'.concat(alertEntry.value.getWelcomViewAlertSeverity())}"
+						ajax="false"
+						action="#{dcemApplication.removeAlert(alertCategory.key, alertEntry.key, alertEntry.value.id)}"
+						value="x" />
+				</p:column>
+			</p:dataTable>
+		</p:dataList>
+	</h:panelGroup>
+
+	<div align="center" style="padding: 1em;">
+		<h:outputLabel id="chosenDateLabel" value="#{welcomeView.chosenDate}"
+			style="font-weight:bold;" />
+		<br></br>
+		<p:commandButton icon="fa fa-angle-left" type="submit"
+			action="#{welcomeView.changeFormatSelection('PREVIOUS')}"
+			style="height:29px;"
+			update="changeDateBtn barChart pieChart chosenDateLabel">
+		</p:commandButton>
+		<p:selectOneMenu id="dates"
+			style="width:125px; margin-left:5px; margin-right:5px;"
+			value="#{welcomeView.selectedDateFormat}">
+			<p:ajax event="change"
+				listener="#{welcomeView.changeDateSelection(welcomeView.selectedDateFormat)}"
+				update="changeDateBtn barChart pieChart chosenDateLabel" />
+			<f:selectItems value="#{welcomeView.dateFormats}"
+				var="selectedFormat" itemValue="#{selectedFormat}"
+				itemLabel="#{CoreMsg['welcomeView.dashboard.'.concat(selectedFormat)]}" />
+		</p:selectOneMenu>
+		<p:commandButton icon="fa fa-angle-right" type="submit"
+			id="changeDateBtn" disabled="#{welcomeView.lastDate}"
+			action="#{welcomeView.changeFormatSelection('NEXT')}"
+			update="changeDateBtn barChart pieChart chosenDateLabel"
+			style="height:29px; ">
+		</p:commandButton>
+		<br></br>
+	</div>
+
+	<p:chart type="bar" model="#{welcomeView.userActivityBarChart}" responsive="true" id="barChart">
+		<p:ajax event="itemSelect" listener="#{welcomeView.itemSelect}" update="viewPart"/>
+	</p:chart>
+	<br></br>
+	<p:chart type="pie" model="#{welcomeView.authMethodsPieChart}" style="width:400px;height:300px; margin-left:35px" id="pieChart" />
+</h:form>
+</html>
