@@ -37,12 +37,13 @@
 			<version>2.9.10</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.upokecenter/cbor -->
+		<!-- https://mvnrepository.com/artifact/com.upokecenter/cbor 
 		<dependency>
 			<groupId>com.upokecenter</groupId>
 			<artifactId>cbor</artifactId>
 			<version>4.0.1</version>
 		</dependency>
+		-->
 
 		<!-- https://mvnrepository.com/artifact/com.augustcellars.cose/cose-java -->
 		<dependency>
