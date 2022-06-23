@@ -31,7 +31,7 @@ Hardware Requirements
 
 - RAM: Minimum of 4 GB (depending on the number of users)
 - Hard Drive: Minimum of 20 GB
-- Operating System: Windows 64 Bit or Linux 64 Bit
+- Operating System Windows 64 Bit or Linux 64 Bit
 - DNS entries in the internal company network as well as external
 - Default Network Ports:
     - 8443 for Management and Setup

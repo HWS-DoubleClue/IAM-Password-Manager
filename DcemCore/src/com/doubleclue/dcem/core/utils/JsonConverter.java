@@ -15,10 +15,10 @@ public class JsonConverter {
 
 	private final static ObjectMapper objectMapper = new ObjectMapper();
 
-	static public  HashMap<String, String> getAsMap(String json) throws JsonParseException, JsonMappingException, IOException {
+	static public  Map<String, String> getAsMap(String json) throws JsonParseException, JsonMappingException, IOException {
 		TypeReference<Map<String, String>> typeRef = new TypeReference<Map<String, String>>() {
 		};
-		HashMap<String, String> result = objectMapper.readValue(json, typeRef);
+		Map<String, String> result = objectMapper.readValue(json, typeRef);
 		return result;
 	}
 	
