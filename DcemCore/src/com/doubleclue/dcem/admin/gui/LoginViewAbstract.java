@@ -744,6 +744,9 @@ public abstract class LoginViewAbstract implements Serializable {
 					// requestParam.setBrowserFingerPrint(browserFingerprint);
 					requestParam.setIgnorePassword(true);
 					requestParam.setUseAlternativeAuthMethods(false);
+					if (location == null) {
+						location = requestParam.getNetworkAddress();
+					}
 					requestParam.setLocation(location);
 					authResponse = asModuleApi.authenticate(authApplication, applicationSubId, userLoginId, AuthMethod.QRCODE_APPROVAL, null, null, requestParam);
 					if (authResponse.getDcemException() != null) {
