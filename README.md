@@ -3,8 +3,6 @@
 
 # [DoubleClue.com](https://www.doubleClue.com)
 
-@
-
 1. [Identity and Access Management]()
 2. [PasswordSafe]()
 3. [Modularity]()
