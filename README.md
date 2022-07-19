@@ -24,8 +24,8 @@ https://www.doubleclue.online/dcem/createTenant/index.xhtml
 #### Download OnPremisses Version
 
 Latest Release:
-Windows: https://doubleclue.com/files/DCEM-2.7.2.zip
-Linux: https://doubleclue.com/files/DCEM-Linux-2.7.2.zip
+Windows: https://doubleclue.com/files/DCEM-2.7.3.zip
+Linux: https://doubleclue.com/files/DCEM-Linux-2.7.3.zip
 
 For on premises installation please follow the link: <a href="https://doubleclue.com/wp-content/uploads/Quick_Installation_Guide_EN.pdf">Installation Guide</a>
 
