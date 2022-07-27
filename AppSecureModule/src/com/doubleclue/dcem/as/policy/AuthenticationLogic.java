@@ -145,7 +145,7 @@ public class AuthenticationLogic {
 		DcemUser dcemUser = null;
 		byte[] binPassword = null;
 		PolicyAppEntity appEntity = null;
-
+		boolean networkBypass = false;
 		try {
 			appEntity = policyLogic.getDetachedPolicyApp(authApplication, subId);
 			if (appEntity == null) {
@@ -192,8 +192,10 @@ public class AuthenticationLogic {
 			authenticateResponse.setFqUserLoginId(dcemUser.getLoginId());
 			authenticateResponse.setDcemUser(dcemUser);
 			String networkAddress = requestParam.getNetworkAddress();
+			
 			PolicyEntity policyEntity = policyLogic.getPolicy(authApplication, subId, dcemUser);
-			List<AuthMethod> methods = policyLogic.getAuthMethods(policyEntity, authApplication, subId, dcemUser, networkAddress);
+//			System.out.println("USER " + dcemUser +  ",  networkAddress: " + networkAddress + ", Policy " + policyEntity);
+			List<AuthMethod> methods = policyLogic.getAuthMethods(policyEntity, authApplication, subId, dcemUser);
 			if (methods.isEmpty()) {
 				throw new DcemException(DcemErrorCodes.NO_AUTH_METHOD_FOUND, null);
 			}
@@ -234,14 +236,15 @@ public class AuthenticationLogic {
 			}
 
 			if (authMethod == null) {
-				if (requestParam.isUnlockUserAuth() && !policyEntity.getDcemPolicy().isMfaOnUnlock()) {
+				if (requestParam.isUnlockUserAuth() && policyEntity.getDcemPolicy().isMfaOnUnlock() == false) {
 					authMethod = AuthMethod.PASSWORD;
 					List<AuthMethod> retunredMethods = new ArrayList<>(1);
 					retunredMethods.add(authMethod);
 					authenticateResponse.setAuthMethods(retunredMethods);
 				} else {
-					if (methods.size() == 1 && methods.get(0) == AuthMethod.PASSWORD) {
-						authMethod = methods.get(0);
+					if (policyLogic.isNetworkPassThrough(policyEntity.getDcemPolicy(), networkAddress)) {
+						networkBypass = true;
+						authMethod = AuthMethod.PASSWORD;
 						authenticateResponse.setAuthMethods(methods);
 					} else if (policyEntity.getDcemPolicy().getDefaultPolicy() != null && (requestParam.isUseAlternativeAuthMethods() == false)) {
 						authMethod = policyEntity.getDcemPolicy().getDefaultPolicy();
@@ -310,7 +313,7 @@ public class AuthenticationLogic {
 					userLogic.resetPasswordCounter(dcemUser);
 				}
 				userLogic.setUserLogin(dcemUser);
-				DcemReporting report = new DcemReporting(getAppName(appEntity), getReportAction(authMethod), dcemUser, null, requestParam.getLocation(),
+				DcemReporting report = new DcemReporting(getAppName(appEntity), getReportAction(authMethod, networkBypass), dcemUser, null, requestParam.getLocation(),
 						requestParam.getReportInfo(), AlertSeverity.OK);
 				reportingLogic.addReporting(report);
 			}
@@ -323,6 +326,7 @@ public class AuthenticationLogic {
 			AuthMethod authMethod_ = authMethod;
 			DcemUser dcemUser_ = dcemUser;
 			String userLoginId_ = userLoginId;
+			boolean networkBypass_ = networkBypass;
 
 			taskExecutor.execute(new com.doubleclue.dcem.core.tasks.CoreTask(this.getClass().getSimpleName(), TenantIdResolver.getCurrentTenant()) {
 				@Override
@@ -334,7 +338,7 @@ public class AuthenticationLogic {
 						info = info + " " + exp.getMessage();
 					}
 					if (exp.getErrorCode() != DcemErrorCodes.DATABASE_CONNECTION_ERROR) {
-						DcemReporting report = new DcemReporting(getAppName(appEntity_), getReportAction(authMethod_), dcemUser_, exp.getErrorCode().name(),
+						DcemReporting report = new DcemReporting(getAppName(appEntity_), getReportAction(authMethod_, networkBypass_), dcemUser_, exp.getErrorCode().name(),
 								requestParam.getLocation(), info, AlertSeverity.FAILURE);
 						reportingLogic.addReporting(report);
 					}
@@ -345,18 +349,17 @@ public class AuthenticationLogic {
 					}
 				}
 			});
-
 			return authenticateResponse;
-
 		} catch (Exception exp) {
 			logger.info("Authentication Failed. " + authApplication.name() + "/" + subId + ", " + userLoginId, exp);
 			PolicyAppEntity appEntity_ = appEntity;
 			AuthMethod authMethod_ = authMethod;
 			DcemUser dcemUser_ = dcemUser;
+			boolean networkBypass_ = networkBypass;
 			taskExecutor.execute(new com.doubleclue.dcem.core.tasks.CoreTask("test", TenantIdResolver.getCurrentTenant()) {
 				@Override
 				public void runTask() {
-					DcemReporting report = new DcemReporting(getAppName(appEntity_), getReportAction(authMethod_), dcemUser_,
+					DcemReporting report = new DcemReporting(getAppName(appEntity_), getReportAction(authMethod_, networkBypass_), dcemUser_,
 							DcemErrorCodes.UNEXPECTED_ERROR.name(), requestParam.getLocation(), exp.toString(), AlertSeverity.FAILURE);
 					reportingLogic.addReporting(report);
 				}
@@ -511,12 +514,15 @@ public class AuthenticationLogic {
 		return authenticateResponse;
 	}
 
-	private ReportAction getReportAction(AuthMethod authMethod) {
+	private ReportAction getReportAction(AuthMethod authMethod, boolean netWorkBypass) {
 		if (authMethod == null) {
 			return ReportAction.Authenticate;
 		}
 		switch (authMethod) {
 		case PASSWORD:
+			if (netWorkBypass == true) {
+				return ReportAction.Authenticate_NetworkBypass;
+			}
 			return ReportAction.Authenticate_pwd;
 		case SMS:
 			return ReportAction.Authenticate_sms;
@@ -566,7 +572,7 @@ public class AuthenticationLogic {
 			errorCode = pendingMsg.getMsgStatus().name();
 		}
 		userLogic.setUserLogin(dcemUser);
-		DcemReporting report = new DcemReporting(getAppName(pendingMsg.getPolicyTransaction().getPolicyAppEntity()), getReportAction(AuthMethod.PUSH_APPROVAL),
+		DcemReporting report = new DcemReporting(getAppName(pendingMsg.getPolicyTransaction().getPolicyAppEntity()), getReportAction(AuthMethod.PUSH_APPROVAL, false),
 				dcemUser, errorCode, pendingMsg.getInfo(), pendingMsg.getDeviceName(), AlertSeverity.OK);
 		reportingLogic.addReporting(report);
 		return;

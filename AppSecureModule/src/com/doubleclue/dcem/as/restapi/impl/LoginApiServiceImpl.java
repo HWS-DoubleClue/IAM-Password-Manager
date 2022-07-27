@@ -112,7 +112,7 @@ public class LoginApiServiceImpl {
 
 	public Response getAuthenticateMethods(SecurityContext securityContext) {
 		try {
-			List<AuthMethod> methods = policyLogic.getAuthMethods(AuthApplication.WebServices, operatorSessionBean.getDcemUser().getId(), null, null);
+			List<AuthMethod> methods = policyLogic.getAuthMethods(AuthApplication.WebServices, operatorSessionBean.getDcemUser().getId(), null);
 			List<AsApiAuthMethod> apiAuthMethods = new ArrayList<>(methods.size());
 			for (AuthMethod authMethod : methods) {
 				apiAuthMethods.add(AsApiAuthMethod.fromValue(authMethod.name()));

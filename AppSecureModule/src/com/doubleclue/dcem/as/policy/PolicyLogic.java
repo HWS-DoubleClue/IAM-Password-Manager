@@ -394,9 +394,9 @@ public class PolicyLogic implements ReloadClassInterface {
 		return query.getResultList();
 	}
 
-	public List<AuthMethod> getAuthMethods(AuthApplication authApplication, int subId, DcemUser user, String network) throws DcemException {
+	public List<AuthMethod> getAuthMethods(AuthApplication authApplication, int subId, DcemUser user) throws DcemException {
 		PolicyEntity policyEntity = getPolicy(authApplication, subId, user);
-		return getAuthMethods(policyEntity, authApplication, subId, user, network);
+		return getAuthMethods(policyEntity, authApplication, subId, user);
 	}
 
 	/**
@@ -408,25 +408,13 @@ public class PolicyLogic implements ReloadClassInterface {
 	 * @return
 	 * @throws DcemException
 	 */
-	public List<AuthMethod> getAuthMethods(PolicyEntity policyEntity, AuthApplication authApplication, int subId, DcemUser user, String network)
-			throws DcemException {
+	public List<AuthMethod> getAuthMethods(PolicyEntity policyEntity, AuthApplication authApplication, int subId, DcemUser user) throws DcemException {
 
 		DcemPolicy dcemPolicy = policyEntity.getDcemPolicy();
 		if (dcemPolicy.isDenyAccess()) { // ignore rest of policy rules
 			return new ArrayList<AuthMethod>();
 		} else {
 			if (user != null) {
-				// check fingerprint
-				// if (dcemPolicy.isBrowserFingerPrint() && fingerprint != null &&
-				// !fingerprint.isEmpty()) {
-				// PolicyAppEntity appEntity = getDetachedPolicyApp(authApplication, subId);
-				// if (fingerPrintLogic.verifyFingerprint(user.getId(), appEntity.getId(),
-				// fingerprint)) {
-				// List<AuthMethod> list = new ArrayList<>(1);
-				// list.add(AuthMethod.PASSWORD);
-				// return list;
-				// }
-				// } else
 				if (dcemPolicy.isRefrain2FaWithInTime() == true) {
 					PolicyAppEntity appEntity = getDetachedPolicyApp(authApplication, subId);
 					if (fingerPrintLogic.verifyFingerprint(user.getId(), appEntity.getId(), null)) {
@@ -435,15 +423,16 @@ public class PolicyLogic implements ReloadClassInterface {
 						return list;
 					}
 				}
-				// check the network bypass
-				if (dcemPolicy.getIpRanges() != null && dcemPolicy.getIpRanges().isInRange(network)) {
-					List<AuthMethod> list = new ArrayList<AuthMethod>(dcemPolicy.getAllowedMethods());
-					list.add(AuthMethod.PASSWORD);
-					return list;
-				}
 			}
 			return new ArrayList<AuthMethod>(dcemPolicy.getAllowedMethods());
 		}
+	}
+
+	public boolean isNetworkPassThrough(DcemPolicy dcemPolicy, String network) throws DcemException {
+		if (dcemPolicy.getIpRanges() != null && dcemPolicy.getIpRanges().isInRange(network)) {
+			return true;
+		}
+		return false;
 	}
 
 	@DcemTransactional

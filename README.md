@@ -1,52 +1,85 @@
 [![Tech Doc](https://img.shields.io/badge/master-docs-875A7B.svg?style=flat&colorA=8F8F8F)](https://doubleclue.com/wp-content/uploads/DCEM_Manual_EN.pdf)
 [![Help](https://img.shields.io/badge/master-help-875A7B.svg?style=flat&colorA=8F8F8F)](https://doubleclue.com/en/contact-us-eng/)
 
-DoubleClue
-----
+# [DoubleClue.com](https://www.doubleClue.com)
 
-The Identity & Access Management (IAM) Software DoubleClue facilitates the administration of identities as well as the management of access rights for various applications, systems and networks. A Multi-Factor Authentication (MFA) with eight different authentication methods is the key element of this IAM solution. Furthermore, DoubleClue has an integrated CloudSafe storage and a PasswareSafe utility, which manages user passwords based on KeePass.
+1. [Identity and Access Management]()
+2. [PasswordSafe]()
+3. [Modularity]()
 
-DoubleClue Community Edition can be used as stand-alone application hosted locally with all the basic features available for free; such features include:
+# Identity and Access Management
 
-- PasswordSafe
-- Access Management System
-- OTP Support
-- KeePass Plugin
-- Android/iOS Application
+DoubleClue is an Identity & Access Management (IAM) Software which facilitates the administration of identities as well as the management of access rights for various applications, systems and networks. A Multi-Factor Authentication (MFA) with eight different authentication methods.
 
-DoubleClue Enterprise Edition available from HWS Gruppe enables the user to use additional features; such features include:
+## Installation and Download
 
-- Online Application
-- Radius Compatibility
-- OpenID and OAuth Integration
-- Active Directory Integration
-- Change History Logging
-- Geolocation
-- Windows Credential provider
-- Health Check Detector
-- Multi node cluster and Multi-Tenancy
+DoubleClue can be installed on premisses (Windows or Linux 64Bit Systems). 
+Alternatively you can start immediate using DoubleClue cloud.
+To start testing the cloud version go to: 
 
-Hardware Requirements
--------------------------
+#### Try the DoubleClue Cloud Version at
 
-- RAM: Minimum of 4 GB (depending on the number of users)
-- Hard Drive: Minimum of 20 GB
-- Operating System Windows 64 Bit or Linux 64 Bit
-- DNS entries in the internal company network as well as external
-- Default Network Ports:
-    - 8443 for Management and Setup
-    - 443 for Smart-Device Web-Sockets
-    - 8001 for REST Web-Services 
+https://www.doubleclue.online/dcem/createTenant/index.xhtml
 
-Getting started with DoubleClue
--------------------------
+#### Download OnPremisses Version
 
-For a standard installation please follow the <a href="https://doubleclue.com/wp-content/uploads/Quick_Installation_Guide_EN.pdf">Setup instructions</a>
-from the documentation.
+Latest Release:
+Windows: https://doubleclue.com/files/DCEM-2.7.3.zip
+Linux: https://doubleclue.com/files/DCEM-Linux-2.7.3.zip
 
-Images
--------------------------
+For on premises installation please follow the link: <a href="https://doubleclue.com/wp-content/uploads/Quick_Installation_Guide_EN.pdf">Installation Guide</a>
 
-<img src="https://user-images.githubusercontent.com/96478737/152746270-05773ae4-6e21-42bd-8e97-35de7119227b.jpg" alt="DoubleClue" width="500" />
-<img src="https://user-images.githubusercontent.com/96478737/152746286-3c2a6cab-d37a-42b9-8d09-fffba4b3016a.png" alt="Single-Sign-On" width="500" />
-<img src="https://user-images.githubusercontent.com/96478737/152746280-e3066062-5c10-41e7-b06e-3918a1694672.png" alt="Multifaktor_doubleclue" width="500" />
+## Interfaces
+
+DoubleClue has build-in interfaces with the all the most popular Identity interfaces such as:
+
+- RADIUS (mostly used by VPN, Firewalls and applications)
+- SAML (Security Assertion Markup Language 2.0)
+- OpenId (OAuth)
+- REST-API
+
+## Authentication
+
+DoubleClue supports 8 different authentication methods.
+
+- Push Approval: It uses the user's mobile phone, finger print or faces-id or password to do very comfortable MFA authentication. DoubleClue App is required
+- SMS
+- Voice Message
+- Hardware OTP (One Time Password)
+- Software OTP
+- FIDO
+- QR-Code Generator,  Requires DoubleClue App
+- password
+
+## Integration
+
+- Integrates with Microsoft Active Director
+- Integrates with Microsoft Azure
+
+# PasswordSafe
+
+PasswordSafe the password management of DoubleClue. Your passwords are stored in (kdbx KeePass Format) files in DoubleClue CloudStorage 
+
+- Password files are stored centrally. Never stored on mobile phones or workstations
+
+- The Master-Key for the kdbx files is never stored in DoubleClue. 
+
+- User can access passwords from UserPortal, DoubleClue App or by installing the DoubleClue Plug-in to KeePass.
+
+- User can share kdbx files with other users or groups
+
+# Modularity
+
+DoubleClue is a very modular architecture. You can add plugin modules to DoubleClue. The module will have its own menus and actions.
+
+## Menu and Action Privileges
+
+Every module menu and action (button and links) will be managed by the administration privileges utility
+
+## Auto GUI
+
+AutoGUI is a utility which can list, display, edit and deletes objects with only some lines of code. See more information at : TODO
+
+## Auto Preferences
+
+This utility creates auto GUI for all module preferences. Developer needs just to add variable in the preferences Java class of the module

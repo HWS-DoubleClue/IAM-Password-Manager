@@ -236,7 +236,7 @@ public class AuthGatewayServices {
 		AppSession appSession = AppWsConnection.getInstance().getAppSession();
 		VerifyAuthGatewayResponse verifyGatewayResponse = verifyGatewayCredentials(appSession, authSelectParam.authGatewayId, authSelectParam.getSharedSecret(), ReportAction.GetAuthMethods);
 		try {
-			List<AuthMethod> authMethods = policyLogic.getAuthMethods(AuthApplication.AuthGateway, verifyGatewayResponse.authGatewayEntity.getId(), null, null);
+			List<AuthMethod> authMethods = policyLogic.getAuthMethods(AuthApplication.AuthGateway, verifyGatewayResponse.authGatewayEntity.getId(), null);
 			List<ThriftAuthMethod> listThriftMethods = new ArrayList<>(authMethods.size());
 			for (AuthMethod authMethod2 : authMethods) {
 				listThriftMethods.add(getThriftAuthMethod(authMethod2));
