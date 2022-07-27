@@ -57,9 +57,6 @@ import com.sun.mail.imap.protocol.Item;
 
 public class DomainLdap implements DomainApi {
 
-	private final static int MASK_8_BIT = 0xff;
-	private final static long MASK_32_BIT = 0xffffffffL;
-	private final static long MASK_48_BIT = 0xffffffffffffL;
 
 	private static final Logger logger = LogManager.getLogger(DomainLdap.class);
 	private static final String PROPERTY_DISTINGUISHED_NAME = "distinguishedName";

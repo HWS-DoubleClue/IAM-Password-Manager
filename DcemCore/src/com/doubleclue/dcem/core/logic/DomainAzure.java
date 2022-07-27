@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
@@ -47,6 +50,8 @@ import com.microsoft.graph.requests.extensions.IUserCollectionPage;
 import com.microsoft.graph.requests.extensions.ProfilePhotoStreamRequest;
 
 public class DomainAzure implements DomainApi {
+	
+	private static final Logger logger = LogManager.getLogger(DomainAzure.class);
 
 	private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId";
 	private static final String SELECT_USER_ATTRIBUTES_EXT = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId, profilePhoto";
@@ -176,7 +181,11 @@ public class DomainAzure implements DomainApi {
 	public HashSet<String> getUserGroupNames(DcemUser dcemUser, String filter, int pageSize) throws DcemException {
 		IDirectoryObjectCollectionWithReferencesPage collection;
 		try {
-			collection = getSearchGraphClient().users().byId(dcemUser.getUserDn()).memberOf().buildRequest().top(pageSize).select("displayName").get();
+			String userId = dcemUser.getUserDn();
+			if (userId == null) {
+				userId = dcemUser.getAccountName();
+			}
+			collection = getSearchGraphClient().users().byId(userId).memberOf().buildRequest().top(pageSize).select("displayName").get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
 				graphClient = null;
@@ -314,10 +323,12 @@ public class DomainAzure implements DomainApi {
 			photo = DcemUtils.resizeImage(photo);
 			return photo;
 		} catch (GraphServiceException gse) {
-			if (gse.getServiceError().code.equals("ImageNotFound")) {
-				return null;
-			}
-			throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, "Phone", gse);
+//			if (gse.getServiceError().code.equals("ImageNotFound")) {
+//				return null;
+//			}
+//			throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, "Phone", gse);
+			logger.debug("Couldn't retrieve photo for  " + dcemUser.getDisplayNameOrLoginId(), gse.toString());
+			return null;
 		} catch (Exception e) {
 			throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, "Phone", e);
 		}
@@ -407,7 +418,6 @@ public class DomainAzure implements DomainApi {
 	// }
 
 	private IGraphServiceClient getUserGraphClient(DcemUser dcemUser, String password) throws DcemException {
-
 		String userAccessToken = AzureUtils.getAuthResultByRopc(domainEntity, dcemUser.getUserPrincipalName(), password).getAccessToken();
 		return getGraphClient(userAccessToken);
 	}
