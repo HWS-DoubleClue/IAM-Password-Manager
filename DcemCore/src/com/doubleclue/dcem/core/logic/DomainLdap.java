@@ -57,7 +57,6 @@ import com.sun.mail.imap.protocol.Item;
 
 public class DomainLdap implements DomainApi {
 
-
 	private static final Logger logger = LogManager.getLogger(DomainLdap.class);
 	private static final String PROPERTY_DISTINGUISHED_NAME = "distinguishedName";
 	private static final String AD_USER_ACCOUNT_CONTROL = "UserAccountControl";
@@ -401,7 +400,9 @@ public class DomainLdap implements DomainApi {
 		if (hasUserAccountControl) {
 			sb.append("(&(objectclass=person)(UserAccountControl:1.2.840.113556.1.4.803:=512)" + "(!(UserAccountControl:1.2.840.113556.1.4.803:=2))");
 		} else {
-			sb.append("(&(objectclass=person)");
+			if (domainEntity.getDomainType() == DomainType.Active_Directory) {
+				sb.append("(&(objectclass=person)");
+			}
 		}
 		if (user != null && user.isEmpty() == false) {
 			sb.append("(" + domainEntity.getLoginAttribute() + "=" + user + ")");
@@ -409,7 +410,9 @@ public class DomainLdap implements DomainApi {
 		if (dcemGroup != null && dcemGroup.getGroupDn() != null) {
 			sb.append("(memberOf=" + dcemGroup.getGroupDn() + ")");
 		}
-		sb.append(")");
+		if (domainEntity.getDomainType() == DomainType.Active_Directory) {
+		  sb.append(")");
+		}
 		// String searchFilter = "(&(objectclass=person)(memberOf=" +groupDn+"))";
 		Map<String, Attributes> map;
 
@@ -417,9 +420,10 @@ public class DomainLdap implements DomainApi {
 			map = getSearchTry(tree, sb.toString(), null, defaultUserReturnedAtts, pageSize);
 			List<DcemUser> users = new ArrayList<>(map.size());
 			if (map != null) {
-				for (Attributes attributes : map.values()) {
+				for (String dn : map.keySet()) {
 					try {
-						DcemUser dcemUser = new DcemUser(domainEntity, attributes.get(PROPERTY_DISTINGUISHED_NAME).get().toString(),
+						Attributes attributes = map.get(dn);
+						DcemUser dcemUser = new DcemUser(domainEntity, dn + domainEntity.getBaseDN(),
 								attributes.get(domainEntity.getLoginAttribute()).get().toString());
 						// dcemUser.ldapSync(getDcemLdapAttributes(attributes));
 						dcemUser.setDcemLdapAttributes(getDcemLdapAttributes(attributes));
@@ -805,20 +809,20 @@ public class DomainLdap implements DomainApi {
 		}
 		return groups;
 	}
-	
+
 	@Override
 	public HashSet<String> getUserGroupNames(DcemUser dcemUser, String filter, int pageSize) throws DcemException {
-		HashSet<String> groups =  getLdapUserGroupNames(dcemUser, filter, pageSize);
+		HashSet<String> groups = getLdapUserGroupNames(dcemUser, filter, pageSize);
 		if (groups.isEmpty()) {
 			DcemUser dcemUser2 = getUser(dcemUser.getAccountName());
 			if (dcemUser.getUserDn().equals(dcemUser2.getUserDn()) == false) {
 				dcemUser.setUserDn(dcemUser2.getUserDn());
-				groups = getUserGroupNames(dcemUser, filter, pageSize);  // try again with new DN
-			}			
+				groups = getUserGroupNames(dcemUser, filter, pageSize); // try again with new DN
+			}
 		}
 		return groups;
 	}
-	
+
 	private HashSet<String> getLdapUserGroupNames(DcemUser dcemUser, String filter, int pageSize) throws DcemException {
 		// check if user has been moved around
 		DcemUser dcemUser2 = getUser(dcemUser.getAccountName());
@@ -864,8 +868,8 @@ public class DomainLdap implements DomainApi {
 			DcemUser dcemUser2 = getUser(dcemUser.getAccountName());
 			if (dcemUser.getUserDn().equals(dcemUser2.getUserDn()) == false) {
 				dcemUser.setUserDn(dcemUser2.getUserDn());
-				groups = getLdapGroups(MEMBER, dcemUser.getUserDn(), pageSize);  // try again with new DN
-			}			
+				groups = getLdapGroups(MEMBER, dcemUser.getUserDn(), pageSize); // try again with new DN
+			}
 		}
 		return groups;
 	}
@@ -991,8 +995,7 @@ public class DomainLdap implements DomainApi {
 			return null;
 		}
 	}
-	
-	
+
 	@Override
 	public void changeUserPhotoProfile(DcemUser dcemUser, byte[] photo, String password) throws DcemException {
 		LdapContext ldapContext = getSearchAccount();
