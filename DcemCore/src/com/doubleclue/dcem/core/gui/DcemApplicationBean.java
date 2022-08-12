@@ -51,7 +51,7 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.ActionLogic;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
 import com.doubleclue.dcem.core.logic.DomainLogic;
@@ -114,7 +114,7 @@ public class DcemApplicationBean implements Serializable {
 	UserLogic userLogic;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	ServletContext servletContext;
 
@@ -486,8 +486,7 @@ public class DcemApplicationBean implements Serializable {
 				tenantMap.remove(tenantEntity.getName().toUpperCase());
 			}
 		}
-		// now adding
-		licenceLogic.getLicencePolicy();
+
 
 		for (TenantEntity tenantEntity : dbTenants) {
 			if (tenantMap.get(tenantEntity.getName().toUpperCase()) == null) {

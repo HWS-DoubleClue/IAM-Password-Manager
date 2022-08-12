@@ -142,7 +142,6 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 
 	}
 	
-	// #if COMMUNITY_EDITION == false
 	public String getDiagnosticFile(String diagnosticTime) throws Exception {
 		Map<String, List<ModuleStatistic>> statistics;
 		if (diagnosticTime.equals(DiagnosticLogic.CURRENT_TIME)) {
@@ -165,7 +164,6 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		}
 		return selectItems;
 	}
-	// #endif
 
 	@DcemTransactional
 	public int deleteDiagnostics() {

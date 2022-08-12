@@ -168,10 +168,8 @@ public class ClientMetadataDialog extends DcemDialog {
 		}
 		switch (selectedClaim.getAttributeTypeEnum()) {
 		case CLOUD_SAFE_USER:
-			// #if COMMUNITY_EDITION == false
 		case DOMAIN_ATTRIBUTE:
 		case GROUPS:
-			// #endif
 		case USER_INPUT:
 			returnValue = true;
 			break;

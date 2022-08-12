@@ -1,4 +1,3 @@
-//#excludeif COMMUNITY_EDITION == true
 package com.doubleclue.dcem.system.gui;
 
 import javax.enterprise.context.SessionScoped;

@@ -13,7 +13,8 @@ public enum AuthMethod {
 	PUSH_APPROVAL("Push Approval", "push"),
 	QRCODE_APPROVAL("Qr-Code Approval", "qrcode"),
 	SESSION_RECONNECT(null, null),
-	FIDO_U2F("FIDO Authentication", "fido");
+	FIDO_U2F("FIDO Authentication", "fido"),
+	WINDOWS_SSO (null, null),;
 
 	private String value;
 	private String abbreviation;

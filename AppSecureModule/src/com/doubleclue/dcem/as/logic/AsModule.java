@@ -65,7 +65,7 @@ import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.ExportRecords;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.RoleLogic;
@@ -111,7 +111,7 @@ public class AsModule extends DcemModule {
 	SystemModule systemModule;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	@Inject
 	AsActivationLogic activationLogic;

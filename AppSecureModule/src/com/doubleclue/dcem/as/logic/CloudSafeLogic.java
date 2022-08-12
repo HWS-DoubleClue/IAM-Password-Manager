@@ -61,7 +61,7 @@ import com.doubleclue.dcem.core.jpa.DbEncryption;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.JpaSelectProducer;
 import com.doubleclue.dcem.core.licence.LicenceKeyContent;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.AuditingLogic;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
 import com.doubleclue.dcem.core.logic.GroupLogic;
@@ -117,7 +117,7 @@ public class CloudSafeLogic {
 	private DcemReportingLogic reportingLogic;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	CloudSafeContentI cloudSafeContentI;
 

@@ -278,6 +278,9 @@
 				</h:form>
 			</div>
 		</div>
+		<p:growl id="msgs" showDetail="false" sticky="true">
+				<p:autoUpdate />
+		</p:growl>
 		<h:outputScript>
 		var x = setInterval(function() {
 			var counterElement = document.getElementById("loginForm:counter");

@@ -26,33 +26,27 @@ public class AuditingLogic {
 
 	@DcemTransactional
 	public void addAudit(DcemAction dcemAction, String information) {
-		// #if COMMUNITY_EDITION == false
 		if (dcemAction.getId() == null) {
 			dcemAction = actionLogic.getDcemAction(dcemAction);
 		}
 		Auditing auditing = new Auditing(dcemAction, information, operatorSessionBean.getDcemUser());
 		em.persist(auditing);
-		//#endif
 	}
 	
 	@DcemTransactional
 	public void addAudit(DcemAction dcemAction, DcemUser dcemUser, String information) {
-		// #if COMMUNITY_EDITION == false
 		if (dcemAction.getId() == null) {
 			dcemAction = actionLogic.getDcemAction(dcemAction);
 		}
 		Auditing auditing = new Auditing(dcemAction, information, dcemUser);
 		em.persist(auditing);
-		//#endif
 	}
 
 
 	@DcemTransactional
 	public void deleteAllAuditsForUser(DcemUser dcemUser) {
-		// #if COMMUNITY_EDITION == false
 		Query query = em.createNamedQuery(Auditing.DELETE_BY_USER);
 		query.setParameter(1, dcemUser);
 		query.executeUpdate();
-		//#endif
 	}
 }

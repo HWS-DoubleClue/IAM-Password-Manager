@@ -1,4 +1,3 @@
-//#excludeif COMMUNITY_EDITION
 package com.doubleclue.dcem.core.licence;
 
 import java.security.spec.AlgorithmParameterSpec;
@@ -64,10 +63,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ApplicationScoped
 @EnterpriseEdition
-@Named("licenceLogicEe")
-public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterface {
+@Named("licenceLogic")
+public class LicenceLogic implements ReloadClassInterface {
 
-	private static final Logger logger = LogManager.getLogger(LicenceLogicEe.class);
+	private static final Logger logger = LogManager.getLogger(LicenceLogic.class);
 
 	@Inject
 	ConfigLogic configLogic;
@@ -106,7 +105,7 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 
 	// PRIVATE METHODS
 
-	@Override
+
 	public void checkForLicence(AuthApplication application, boolean allowChanceAfterExpiration) throws DcemException {
 		AdminTenantData adminTenantData = adminModule.getTenantData();
 		LicenceKeyContent licenceKeyContent = adminTenantData.getLicenceKeyContent();
@@ -137,13 +136,9 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		}
 	}
 
-	public String getLicencePolicy() {
-		return DcemConstants.LICENCE_POLICY_ENTERPRISE;
-	}
-
+	
 	// PUBLIC METHODS
 
-	@Override
 	public byte[] getEncryptedLicence(LicenceKeyContent licenceContent) throws DcemException {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -185,7 +180,7 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		}
 	}
 
-	@Override
+
 	public LicenceKeyContent getDecryptedLicence(String licenceKey) throws DcemException {
 		try {
 			byte[] encryptedLicenceBytes = java.util.Base64.getDecoder().decode(licenceKey);
@@ -196,7 +191,7 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		}
 	}
 
-	@Override
+
 	public LicenceKeyContent loadLicenceKeyContent() throws DcemException {
 		try {
 			DcemConfiguration dcemConfiguration = configLogic.getDcemConfiguration(AdminModule.MODULE_ID,
@@ -224,12 +219,12 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		}
 	}
 
-	@Override
+
 	public void resetExpiredLicenceUserShouldAuthenticate() {
 		expiredLicenceUserShouldAuthenticate = true;
 	}
 
-	@Override
+
 	public LicenceKeyContent createTrialLicence(int days, String customerName) throws DcemException {
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
@@ -240,7 +235,7 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 				DcemConstants.LICENCE_KEY_VERSION);
 	}
 
-	@Override
+
 	public String getEncryptedLicenceAsString(LicenceKeyContent licenceKeyContent) throws DcemException {
 		try {
 			byte[] encryptedLicence = getEncryptedLicence(licenceKeyContent);
@@ -250,7 +245,7 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		}
 	}
 
-	@Override
+
 	public void addLicenceToDb(LicenceKeyContent licenceContent) throws DcemException {
 		String tenantId = licenceContent.tenantId;
 		if (((tenantId == null || tenantId.isEmpty()) && TenantIdResolver.isCurrentTenantMaster())
@@ -278,7 +273,7 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		}
 	}
 
-	@Override
+
 	public void setLicence(LicenceKeyContent licenceKeyContent, TenantEntity tenantEntity) throws Exception {
 		Future<Exception> future = taskExecutor.submit(new Callable<Exception>() {
 			@Override
@@ -302,7 +297,6 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		}
 	}
 
-	@Override
 	public void checkLicenceAlerts() {
 		Map<String, List<DcemReporting>> moduleWarnings = getLicenceAlertsFromModules();
 		for (Entry<String, List<DcemReporting>> entry : moduleWarnings.entrySet()) {
@@ -318,7 +312,6 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		}
 	}
 
-	@Override
 	public List<DcemReporting> getLicenceWarnings() {
 		List<DcemReporting> alerts = new ArrayList<DcemReporting>();
 		AdminTenantData adminTenantData = adminModule.getTenantData();
@@ -367,7 +360,6 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		return parameters.length > 0 ? new MessageFormat(message).format(parameters) : message;
 	}
 
-	@Override
 	public Map<String, List<DcemReporting>> getLicenceAlertsFromModules() {
 		Map<String, List<DcemReporting>> licenceWarnings = new HashMap<>();
 		for (DcemModule module : dcemApplicationBean.getSortedModules()) {
@@ -379,7 +371,6 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		return licenceWarnings;
 	}
 
-	@Override
 	public void sendLicenceWarningEmails() throws DcemException {
 		Map<String, List<DcemReporting>> moduleAlerts = getLicenceAlertsFromModules();
 		if (moduleAlerts.isEmpty() == false) {
@@ -430,13 +421,13 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		return alertMessage;
 	}
 
-	@Override
+
 	public LicenceKeyContent getLicenceKeyContent() {
 		AdminTenantData adminTenantData = adminModule.getTenantData();
 		return adminTenantData.getLicenceKeyContent();
 	}
 
-	@Override
+
 	public LicenceKeyContentUsage getTenantLicenceKeyUsage(TenantEntity tenantEntity) throws Exception {
 		Future<LicenceKeyContentUsage> future = taskExecutor.submit(new Callable<LicenceKeyContentUsage>() {
 			@Override
@@ -454,7 +445,7 @@ public class LicenceLogicEe implements LicenceLogicInterface, ReloadClassInterfa
 		return future.get();
 	}
 
-	@Override
+
 	public LicenceKeyContentUsage getLicenceKeyContentUsage() {
 		AsModuleApi asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
 		return new LicenceKeyContentUsage(userLogic.getTotalUserCount(), asModuleApi.getCloudSafeUsageMb(),

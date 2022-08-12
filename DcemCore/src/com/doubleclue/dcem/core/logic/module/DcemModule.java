@@ -34,7 +34,7 @@ import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.EntityManagerProducer;
 import com.doubleclue.dcem.core.jpa.StatisticCounter;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
 import com.doubleclue.dcem.core.logic.RawAction;
 import com.doubleclue.dcem.core.utils.DcemUtils;
@@ -57,7 +57,7 @@ public abstract class DcemModule implements Serializable {
 	EntityManagerProducer emp;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	@Inject
 	DcemReportingLogic dcemReportingLogic;

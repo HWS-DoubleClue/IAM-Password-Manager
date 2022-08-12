@@ -20,7 +20,6 @@ public class NodeLogic {
 	@Inject
 	private EntityManager em;
 	
-	// #if COMMUNITY_EDITION == false
 	@DcemTransactional
 	public void addAutoDcemNode(DcemNode dcemNode) {
 		dcemNode.setStartedOn(new Date());
@@ -43,7 +42,6 @@ public class NodeLogic {
 	public DcemNode getNodeById(int id) {
 		return em.find(DcemNode.class, id);
 	}
-	// #endif
 	
 	@DcemTransactional
 	public void addDcemNode(DcemNode dcemNode) {

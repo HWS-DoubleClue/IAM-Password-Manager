@@ -1,4 +1,3 @@
-//#excludeif COMMUNITY_EDITION == true
 package com.doubleclue.dcem.admin.gui;
 
 import java.util.Map;
@@ -20,8 +19,7 @@ import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.licence.LicenceKeyContent;
-import com.doubleclue.dcem.core.licence.LicenceLogicEe;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.TenantLogic;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.hazelcast.core.Member;
@@ -32,7 +30,7 @@ import com.hazelcast.core.MultiExecutionCallback;
 public class AdminLicenceDialog extends DcemDialog implements MultiExecutionCallback {
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	@Inject
 	AdminLicenceView licenceView;
@@ -71,7 +69,7 @@ public class AdminLicenceDialog extends DcemDialog implements MultiExecutionCall
 			throw new DcemException(DcemErrorCodes.INVALID_LICENCE_CONTENT, "Wrong Tenant");
 		}
 		licenceLogic.setLicence(licenceKeyContent, tenantEntity);
-		Exception exception = DcemUtils.reloadTaskNodes(LicenceLogicEe.class, tenantEntity.getName());
+		Exception exception = DcemUtils.reloadTaskNodes(LicenceLogic.class, tenantEntity.getName());
 		if (exception != null) {
 			throw exception;
 		}

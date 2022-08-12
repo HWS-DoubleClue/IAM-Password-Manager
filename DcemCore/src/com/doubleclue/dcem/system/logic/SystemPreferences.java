@@ -22,7 +22,6 @@ public class SystemPreferences extends ModulePreferences {
 	@DcemGui(separator = "Log Configuration", help = "Please do not enter any data here if not instructed to do so by the DoubleClue support team.")
 	String additionalLoggers = "";
 
-	// #if COMMUNITY_EDITION == false
 	@DcemGui
 	boolean enableMonitoring;
 
@@ -56,7 +55,6 @@ public class SystemPreferences extends ModulePreferences {
 	public void setMonitoringInterval(int monitoringInterval) {
 		this.monitoringInterval = monitoringInterval;
 	}
-	// #endif
 
 	@DcemGui(help = "The amount of record entries that will be stored. Once this number is exceeded, the oldest entries will be overwritten.")
 	int maxMonitoringRecords = 1000;

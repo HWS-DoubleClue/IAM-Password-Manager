@@ -78,7 +78,7 @@
 
 			<div class="btnLoginTutorial">
 				<div style="margin:0 auto; width:12em">
-					<p:commandButton style="width: 15em;" ajax="true" actionListener="#{upLoginView.actionGotoLoginAjax}" value="#{DcupMsg['button.backToLogin']}" />
+					<p:commandButton style="width: 15em;" ajax="true" actionListener="#{upLoginView.actionTutorialtoLogin}" value="#{DcupMsg['button.backToLogin']}" />
 					<p:selectBooleanCheckbox id="showTutorialCheckBox" value="#{upLoginView.hideTutorial}" onchange="setLocalStorageValue()"
 						itemLabel="#{DcupMsg['tutorial.showAgainTutorial']}" style="padding-top:5em;" />
 				</div>

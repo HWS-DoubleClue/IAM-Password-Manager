@@ -73,7 +73,6 @@ public class TenantLogic implements ReloadClassInterface {
 	 * @throws IOException
 	 */
 
-	// #if COMMUNITY_EDITION == false
 	@DcemTransactional
 	public void addOrUpdateTenant(TenantEntity tenantEntity, DcemAction dcemAction, String superAdminPassword, String superAdminPhone, String superAdminEmail,
 			SupportedLanguage supportedLanguage, String loginId, String displayName, TimeZone timeZone, boolean audit) throws Exception {
@@ -156,9 +155,6 @@ public class TenantLogic implements ReloadClassInterface {
 		}
 		auditingLogic.addAudit(dcemAction, tenantEntity.getName());
 	}
-	
-	
-	// #endif
 
 	public List<TenantEntity> getAllTenants() {
 		TypedQuery<TenantEntity> query = em.createNamedQuery(TenantEntity.GET_ALL, TenantEntity.class);

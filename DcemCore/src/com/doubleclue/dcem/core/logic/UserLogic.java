@@ -40,11 +40,10 @@ import com.doubleclue.dcem.core.entities.UrlTokenEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
-import com.doubleclue.dcem.core.gui.DcemGui;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.jpa.DbFactoryProducer;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
@@ -88,7 +87,7 @@ public class UserLogic {
 	UserSubject userSubject;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	AsModuleApi asModuleApi;
 

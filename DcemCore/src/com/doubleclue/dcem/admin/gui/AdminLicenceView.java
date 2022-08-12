@@ -1,4 +1,3 @@
-//#excludeif COMMUNITY_EDITION == true
 package com.doubleclue.dcem.admin.gui;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.licence.LicenceKeyContent;
 import com.doubleclue.dcem.core.licence.LicenceKeyContentUsage;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.TenantLogic;
 
 @Named("adminLicenceView")
@@ -51,7 +50,7 @@ public class AdminLicenceView extends DcemView {
 	LicenceKeyContentUsage licenceKeyContentUsage ;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	@Inject
 	AdminLicenceSubject licenceSubject;
@@ -84,7 +83,6 @@ public class AdminLicenceView extends DcemView {
 		}		
 	}
 
-	// #if COMMUNITY_EDITION == false
 	public List<SelectItem> getTenantOptions() {
 		List<TenantEntity> list = tenantLogic.getAllTenants();
 		List<SelectItem> selection = new ArrayList<>(list.size());
@@ -93,7 +91,6 @@ public class AdminLicenceView extends DcemView {
 		}
 		return selection;
 	}
-	// #endif
 	
 	public void setTenantOption(String selectedTenantOptions) {
 		this.selectedTenantOptions = selectedTenantOptions;

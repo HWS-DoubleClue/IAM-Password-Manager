@@ -78,6 +78,8 @@ public class UpLoginView extends LoginViewAbstract {
 	private boolean hideTutorial = false;
 	private boolean qrCodeUseState = false;
 
+	private boolean doNotRedirectToTutorial;
+
 	@PostConstruct
 	public void init() {
 		super.init();
@@ -98,9 +100,10 @@ public class UpLoginView extends LoginViewAbstract {
 		return DcupConstants.LOGIN_PAGE + DcemConstants.FACES_REDIRECT;
 	}
 
-	public void actionGotoLoginAjax() {
+	public void actionTutorialtoLogin() {
 		try {
-			FacesContext.getCurrentInstance().getExternalContext().redirect(DcupConstants.LOGIN_PAGE);
+			doNotRedirectToTutorial = true;
+			FacesContext.getCurrentInstance().getExternalContext().redirect("preLogin_.xhtm");
 		} catch (IOException e) {
 			logger.error("Could not redirect to Login", e);
 		}
@@ -108,7 +111,8 @@ public class UpLoginView extends LoginViewAbstract {
 
 	public void actionRedirectionToDCEM() {
 		try {
-			FacesContext.getCurrentInstance().getExternalContext().redirect(DcupConstants.DCEM_PAGE + DcemConstants.FACES_REDIRECT);
+			FacesContext.getCurrentInstance().getExternalContext()
+					.redirect(DcupConstants.DCEM_PAGE + DcemConstants.FACES_REDIRECT);
 		} catch (IOException e) {
 			logger.error("Could not redirect to DCEM", e);
 		}
@@ -142,12 +146,13 @@ public class UpLoginView extends LoginViewAbstract {
 			ExternalContext ec = JsfUtils.getExternalContext();
 			((HttpServletRequest) ec.getRequest()).changeSessionId(); // avoid session hijacking
 			if (latestView != null && latestView.isEmpty() == false) {
-					portalSessionBean.setLatestView(latestView);
+				portalSessionBean.setLatestView(latestView);
 //					DcupViewEnum dcupViewEnum = DcupViewEnum.valueOf(latestView);
 //					portalSessionBean.gotoView(latestView);
 //					portalSessionBean.changeCurrentIndex(dcupViewEnum.ordinal());
 			}
-			ec.redirect(ec.getApplicationContextPath() + DcupConstants.WEB_USER_PORTAL_CONTEXT + "/" + DcupConstants.HTML_PAGE_USERSTORAGE);
+			ec.redirect(ec.getApplicationContextPath() + DcupConstants.WEB_USER_PORTAL_CONTEXT + "/"
+					+ DcupConstants.HTML_PAGE_USERSTORAGE);
 		} catch (Exception e) {
 			logger.warn("finishlogin()", e);
 			JsfUtils.addErrorMessage(e.getMessage());
@@ -204,15 +209,13 @@ public class UpLoginView extends LoginViewAbstract {
 
 	@Override
 	public String actionPreLoginOk() {
-		if (hideTutorial) {
-			String page = super.actionPreLoginOk();
-			if (page == null) {
-				return DcupConstants.HTML_PAGE_USERSTORAGE;
-			}
-			return page;
-		} else {
-			return DcupConstants.HTML_PAGE_TUTORIAL;
+
+		String page = super.actionPreLoginOk();
+		System.out.println("UpLoginView.actionPreLoginOk() " + page);
+		if (page == null) {
+			page = DcupConstants.HTML_PAGE_USERSTORAGE;
 		}
+		return page;
 	}
 
 	public boolean isQrCodeUseState() {
@@ -229,7 +232,7 @@ public class UpLoginView extends LoginViewAbstract {
 		}
 		return portalSessionBean.getDcemUser().getId();
 	}
-	
+
 	public void clearCache() {
 		PrimeFaces.current().executeScript("localStorage.clear();");
 	}

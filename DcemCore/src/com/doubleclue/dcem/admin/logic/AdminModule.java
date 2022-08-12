@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -33,8 +32,7 @@ import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jpa.ExportRecords;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
-import com.doubleclue.dcem.core.licence.LicenceKeyContent;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.GroupLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
@@ -58,10 +56,8 @@ public class AdminModule extends DcemModule {
 
 	private static Logger logger = LogManager.getLogger(AdminModule.class);
 
-	// #if COMMUNITY_EDITION == false
 	@Inject
 	TenantBrandingLogic tenantBrandingLogic;
-	// #endif
 
 	@Inject
 	ExportRecords exportRecords;
@@ -76,7 +72,7 @@ public class AdminModule extends DcemModule {
 	protected EntityManager em;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	@Inject
 	GroupLogic groupLogic;
@@ -365,17 +361,14 @@ public class AdminModule extends DcemModule {
 			adminTenantData.setSuperAdmin(superAdmin);
 		}
 		try {
-			// #if COMMUNITY_EDITION == false
 			TenantBrandingEntity brandingEntity = tenantBrandingLogic.getTenantBrandingEntity();
 			adminTenantData.setTenantBrandingEntity(brandingEntity);
-			// #endif
 			if (adminTenantData.getTenantBrandingEntity() == null) {
 				adminTenantData.setTenantBrandingEntity(new TenantBrandingEntity());
 			}
 		} catch (Exception e) {
 			logger.error("Could initialize Tenant Branding for " + tenantEntity.getName(), e);
 		}
-
 	}
 
 	public AdminTenantData getAdminTenantData() {

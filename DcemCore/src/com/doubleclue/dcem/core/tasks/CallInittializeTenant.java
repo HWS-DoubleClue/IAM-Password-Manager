@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.ActionLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.weld.CdiUtils;
@@ -50,7 +50,7 @@ public class CallInittializeTenant implements Callable<Exception> {
 					return exp;
 				}
 			}
-	 		LicenceLogicInterface licenceLogic = CdiUtils.getReference(LicenceLogicInterface.class);
+	 		LicenceLogic licenceLogic = CdiUtils.getReference(LicenceLogic.class);
 			try {
 				licenceLogic.reload();
 			} catch (DcemException exp) {
