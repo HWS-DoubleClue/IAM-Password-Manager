@@ -52,10 +52,7 @@
 		<finalName>LibOAuth</finalName>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-			</plugin>
+			
 		</plugins>
 	</build>
 </project>

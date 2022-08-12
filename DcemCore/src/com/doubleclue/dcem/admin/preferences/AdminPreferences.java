@@ -65,16 +65,14 @@ public class AdminPreferences extends ModulePreferences {
 
 	@DcemGui()
 	String alertsNotificationGroup = null;
+	
+	@DcemGui(help = "Windows Single Sign On works only if DoubleClue is istalled on Windows Server")
+	boolean useWindowsSSO;
 
-	// #if COMMUNITY_EDITION == false
 	@DcemGui(separator = "Location", choose = { "None", "IP", "City" })
-	// #endif
 	String locationInformation = "None";
-
-	// #if COMMUNITY_EDITION == false
-	// our key is "d7927d18c88c40c380a3daefdced4ffb"
+	
 	@DcemGui(style = "width: 18em", password = true)
-	// #endif
 	String locationApiKey;
 	
 	public String getLocationInformation() {
@@ -218,6 +216,14 @@ public class AdminPreferences extends ModulePreferences {
 
 	public void setMaxExport(int maxExport) {
 		this.maxExport = maxExport;
+	}
+	
+	public boolean isUseWindowsSSO() {
+		return useWindowsSSO;
+	}
+
+	public void setUseWindowsSSO(boolean useWindowsSSO) {
+		this.useWindowsSSO = useWindowsSSO;
 	}
 
 }

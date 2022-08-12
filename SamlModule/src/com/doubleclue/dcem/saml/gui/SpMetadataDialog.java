@@ -296,9 +296,7 @@ public class SpMetadataDialog extends DcemDialog {
 		}
 		switch (selectedAttribute.getAttributeTypeEnum()) {
 		case CLOUD_SAFE_USER:
-		// #if COMMUNITY_EDITION == false
 		case DOMAIN_ATTRIBUTE:
-		// #endif
 		case STATIC_TEXT:
 			returnValue = true;
 			break;

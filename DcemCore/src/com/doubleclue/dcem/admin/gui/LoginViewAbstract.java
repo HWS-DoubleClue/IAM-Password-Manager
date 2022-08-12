@@ -19,6 +19,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +34,8 @@ import com.doubleclue.comm.thrift.AppSystemConstants;
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
+import com.doubleclue.dcem.admin.windowssso.WindowsSso;
+import com.doubleclue.dcem.admin.windowssso.WindowsSsoResult;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AsMessageResponse;
 import com.doubleclue.dcem.core.as.AsModuleApi;
@@ -84,6 +87,9 @@ public abstract class LoginViewAbstract implements Serializable {
 	@Inject
 	AdminModule adminModule;
 
+	@Inject
+	WindowsSso windowsSso;
+
 	public static Logger logger = LogManager.getLogger(LoginViewAbstract.class);
 
 	private String username;
@@ -96,6 +102,12 @@ public abstract class LoginViewAbstract implements Serializable {
 	private String rpId;
 
 	private boolean inProgress;
+
+	String preLoginMessage;
+
+	public String getPreLoginMessage() {
+		return preLoginMessage;
+	}
 
 	protected DcemUser dcemUser;
 	private boolean useAlternativeAuthMethods;
@@ -215,14 +227,16 @@ public abstract class LoginViewAbstract implements Serializable {
 						authResponse.setSessionCookieExpiresOn(asMessageResponse.getSessionCookieExpiresOn());
 						finishLogin();
 					} else {
-						JsfUtils.addErrorMessage(JsfUtils.getMessageFromBundle(adminResourceBundle, "mfalogin.rejected"));
+						JsfUtils.addErrorMessage(
+								JsfUtils.getMessageFromBundle(adminResourceBundle, "mfalogin.rejected"));
 						closeProgressDialog();
 						loginReEnter.set(false);
 						return 0;
 					}
 				} else {
 					String msg = JsfUtils.getMessageFromBundle(adminResourceBundle, "mfalogin.failed");
-					JsfUtils.addErrorMessage(msg + " " + JsfUtils.getMessageFromBundle(adminResourceBundle, "mfalogin." + msgStatus.name()));
+					JsfUtils.addErrorMessage(msg + " "
+							+ JsfUtils.getMessageFromBundle(adminResourceBundle, "mfalogin." + msgStatus.name()));
 					closeProgressDialog();
 					loginReEnter.set(false);
 					return 0;
@@ -275,6 +289,10 @@ public abstract class LoginViewAbstract implements Serializable {
 	}
 
 	public String getUserName() {
+		if (preLoginMessage != null) {
+			JsfUtils.addErrorMessage(preLoginMessage);
+			preLoginMessage = null;
+		}
 		return this.username;
 	}
 
@@ -362,10 +380,12 @@ public abstract class LoginViewAbstract implements Serializable {
 			switch (chosenAuthMethod) {
 			case HARDWARE_TOKEN:
 			case DOUBLECLUE_PASSCODE:
-				return JsfUtils.getMessageFromBundle(adminResourceBundle, "mfalogin.passcodeGenerate." + chosenAuthMethod.getAbbreviation());
+				return JsfUtils.getMessageFromBundle(adminResourceBundle,
+						"mfalogin.passcodeGenerate." + chosenAuthMethod.getAbbreviation());
 			case SMS:
 			case VOICE_MESSAGE:
-				return JsfUtils.getMessageFromBundle(adminResourceBundle, "mfalogin.passcodeGenerate." + chosenAuthMethod.getAbbreviation(), phoneNumber);
+				return JsfUtils.getMessageFromBundle(adminResourceBundle,
+						"mfalogin.passcodeGenerate." + chosenAuthMethod.getAbbreviation(), phoneNumber);
 			default:
 				break;
 			}
@@ -441,11 +461,13 @@ public abstract class LoginViewAbstract implements Serializable {
 				break;
 			case USER_MUST_RESET_PASSWORD:
 			case USER_PASSWORD_EXPIRED:
-				JsfUtils.addWarningMessage(AdminModule.RESOURCE_NAME, DcemConstants.MESSAGE_RESET_PASSWORD_BEFORE_LOGIN);
+				JsfUtils.addWarningMessage(AdminModule.RESOURCE_NAME,
+						DcemConstants.MESSAGE_RESET_PASSWORD_BEFORE_LOGIN);
 				showChangePassword();
 				break;
 			case LDAP_CONNECTION_FAILED:
-				reportingLogic.addWelcomeViewAlert(AdminModule.MODULE_ID, exp.getErrorCode(), DcemConstants.DOUBLECLUE, AlertSeverity.ERROR, true);
+				reportingLogic.addWelcomeViewAlert(AdminModule.MODULE_ID, exp.getErrorCode(), DcemConstants.DOUBLECLUE,
+						AlertSeverity.ERROR, true);
 				JsfUtils.addErrorMessage(exp.getLocalizedMessage());
 				logger.warn("actionLogin error", exp);
 				break;
@@ -486,10 +508,15 @@ public abstract class LoginViewAbstract implements Serializable {
 		if (chosenAuthMethod == AuthMethod.SESSION_RECONNECT) {
 			requestParam.setSessionCookie(sessionCookie);
 		}
+		if (chosenAuthMethod == AuthMethod.WINDOWS_SSO) {
+			requestParam.setIgnorePassword(true);
+			chosenAuthMethod = null;
+		}
 		if (ignorePasscode == false && passcode.isEmpty()) {
 			throw new DcemException(DcemErrorCodes.PASSCODE_EMPTY, null);
 		}
-		authResponse = asModuleApi.authenticate(authApplication, applicationSubId, userLoginId, chosenAuthMethod, password, passcode, requestParam);
+		authResponse = asModuleApi.authenticate(authApplication, applicationSubId, userLoginId, chosenAuthMethod,
+				password, passcode, requestParam);
 		availableAuthMethods = authResponse.getAuthMethods();
 		dcemUser = authResponse.getDcemUser();
 		if (password != null) {
@@ -558,7 +585,8 @@ public abstract class LoginViewAbstract implements Serializable {
 			return null;
 		}
 		listUserAccounts.removeAccount(selectedAccount);
-		PrimeFaces.current().executeScript("localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
+		PrimeFaces.current()
+				.executeScript("localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
 		return DcemConstants.PRE_LOGIN_PAGE;
 	}
 
@@ -576,11 +604,12 @@ public abstract class LoginViewAbstract implements Serializable {
 			} else {
 				removeUserAccount(dcemUser.getId());
 				if (stayLoggedIn == true) {
-					UserAccount userAccount = new UserAccount(username, dcemUser.getId(), authResponse.getSessionCookie(),
-							authResponse.getSessionCookieExpiresOn());
+					UserAccount userAccount = new UserAccount(username, dcemUser.getId(),
+							authResponse.getSessionCookie(), authResponse.getSessionCookieExpiresOn());
 					listUserAccounts.addAccount(userAccount);
 				}
-				PrimeFaces.current().executeScript("localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
+				PrimeFaces.current().executeScript(
+						"localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
 			}
 		}
 	}
@@ -603,9 +632,11 @@ public abstract class LoginViewAbstract implements Serializable {
 	}
 
 	private void processFidoAuthentication() throws DcemException {
-		if (authResponse != null && authResponse.getFidoResponse() != null && !authResponse.getFidoResponse().isEmpty()) {
+		if (authResponse != null && authResponse.getFidoResponse() != null
+				&& !authResponse.getFidoResponse().isEmpty()) {
 			if (!authResponse.isSuccessful()) {
-				PrimeFaces.current().executeScript("startFidoAuthentication('" + authResponse.getFidoResponse() + "');");
+				PrimeFaces.current()
+						.executeScript("startFidoAuthentication('" + authResponse.getFidoResponse() + "');");
 			} else {
 				String regResultJson = authResponse.getFidoResponse();
 				JSONObject obj = new JSONObject(regResultJson);
@@ -648,7 +679,8 @@ public abstract class LoginViewAbstract implements Serializable {
 				break;
 			case DcemConstants.FIDO_ERROR_NOT_REGISTERED_CHROME:
 			case DcemConstants.FIDO_ERROR_NOT_REGISTERED_FIREFOX:
-				localisedError = adminResourceBundle.getString("mfalogin.error.local.FIDO_AUTHENTICATOR_NOT_REGISTERED");
+				localisedError = adminResourceBundle
+						.getString("mfalogin.error.local.FIDO_AUTHENTICATOR_NOT_REGISTERED");
 				break;
 			default:
 				localisedError = fidoError;
@@ -685,7 +717,8 @@ public abstract class LoginViewAbstract implements Serializable {
 				return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
 			} catch (Exception exp) {
 				if (exp.getCause() instanceof ConnectException) {
-					JsfUtils.addErrorMessage("Connection to Server failed, please check connection parameters. Go to portalConfig.xhtml.");
+					JsfUtils.addErrorMessage(
+							"Connection to Server failed, please check connection parameters. Go to portalConfig.xhtml.");
 					return JsfUtils.getEmptyImage();
 				}
 				JsfUtils.addErrorMessage(exp.toString());
@@ -733,8 +766,8 @@ public abstract class LoginViewAbstract implements Serializable {
 				if (qrCodeResponse == null) {
 					requestNewQrCode();
 				}
-				QueryLoginResponse queryLoginResponse = asModuleApi.queryLoginQrCode(AuthApplication.DCEM.name(), JsfUtils.getSessionId(), false,
-						DcemConstants.LOGIN_WAIT_INTERVAL_MILLI_SECONDS);
+				QueryLoginResponse queryLoginResponse = asModuleApi.queryLoginQrCode(AuthApplication.DCEM.name(),
+						JsfUtils.getSessionId(), false, DcemConstants.LOGIN_WAIT_INTERVAL_MILLI_SECONDS);
 				if (queryLoginResponse.getUserLoginId() != null) {
 					stopQrCode = true;
 					userLoginId = queryLoginResponse.getUserLoginId();
@@ -748,7 +781,8 @@ public abstract class LoginViewAbstract implements Serializable {
 						location = requestParam.getNetworkAddress();
 					}
 					requestParam.setLocation(location);
-					authResponse = asModuleApi.authenticate(authApplication, applicationSubId, userLoginId, AuthMethod.QRCODE_APPROVAL, null, null, requestParam);
+					authResponse = asModuleApi.authenticate(authApplication, applicationSubId, userLoginId,
+							AuthMethod.QRCODE_APPROVAL, null, null, requestParam);
 					if (authResponse.getDcemException() != null) {
 						throw authResponse.getDcemException();
 					}
@@ -756,7 +790,7 @@ public abstract class LoginViewAbstract implements Serializable {
 						throw new DcemException(DcemErrorCodes.INVALID_AUTH_METHOD, userLoginId);
 					}
 					dcemUser = authResponse.getDcemUser();
-					
+
 					availableAuthMethods = new ArrayList<>(1);
 					availableAuthMethods.add(AuthMethod.QRCODE_APPROVAL);
 //					dcemUser = userLogic.getDistinctUser(userLoginId);
@@ -812,52 +846,86 @@ public abstract class LoginViewAbstract implements Serializable {
 	 * @return
 	 */
 	public String actionPreLoginOk() {
-		if (serializedAccounts == null || serializedAccounts.length() < 8) {
-			return DcemConstants.HTML_PAGE_LOGIN + DcemConstants.FACES_REDIRECT;
-		}
-		listUserAccounts = deserializeAccounts(serializedAccounts);
-		int myTime = (int) ((System.currentTimeMillis() / 1000));
-		UserAccount foundAccount = null;
-		for (UserAccount userAccount : listUserAccounts.getAccounts()) {
-			if (userAccount.getSessionExpiresOn() > myTime) {
-				foundAccount = userAccount;
-				break;
+		if (serializedAccounts != null && serializedAccounts.length() > 8) {
+			listUserAccounts = deserializeAccounts(serializedAccounts);
+			int myTime = (int) ((System.currentTimeMillis() / 1000));
+			UserAccount foundAccount = null;
+			for (UserAccount userAccount : listUserAccounts.getAccounts()) {
+				if (userAccount.getSessionExpiresOn() > myTime) {
+					foundAccount = userAccount;
+					break;
+				}
 			}
-		}
-		if (foundAccount != null) {
-			chosenAuthMethod = AuthMethod.SESSION_RECONNECT;
-			sessionCookie = foundAccount.getSessionCookie();
-			username = foundAccount.getUserLoginId();
-			userLoginId = username;
-			stayLoggedIn = true;
-			try {
-				authenticateUser(true, true);
-				return null;
-			} catch (DcemException exp) {
-				chosenAuthMethod = null;
-				if (exp.getErrorCode() != DcemErrorCodes.AUTH_SESSION_COOKIE_NOT_ALLOWED) {
-					logger.info("Session Reconnect failed for " + username);
+			if (foundAccount != null) {
+				chosenAuthMethod = AuthMethod.SESSION_RECONNECT;
+				sessionCookie = foundAccount.getSessionCookie();
+				username = foundAccount.getUserLoginId();
+				userLoginId = username;
+				stayLoggedIn = true;
+				try {
+					authenticateUser(true, true);
+					return null;
+				} catch (DcemException exp) {
+					chosenAuthMethod = null;
+					if (exp.getErrorCode() != DcemErrorCodes.AUTH_SESSION_COOKIE_NOT_ALLOWED) {
+						logger.info("Session Reconnect failed for " + username);
+						foundAccount.setSessionExpiresOn(0);
+						foundAccount.setSessionCookie(null);
+						PrimeFaces.current().executeScript(
+								"localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
+
+					} else {
+						JsfUtils.addWarnMessage(adminResourceBundle.getString("mfalogin.noStayLoggedIn"));
+					}
+					if (exp.getErrorCode() == DcemErrorCodes.INVALID_AUTH_SESSION_COOKIE) {
+						JsfUtils.addWarnMessage(adminResourceBundle.getString("mfalogin.loggedInSomewhereElse"));
+					}
+				} catch (Exception exp) {
+					logger.info("Session Reconnect failed for " + username, exp);
 					foundAccount.setSessionExpiresOn(0);
 					foundAccount.setSessionCookie(null);
-					PrimeFaces.current().executeScript("localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
-
-				} else {
-					JsfUtils.addWarnMessage(adminResourceBundle.getString("mfalogin.noStayLoggedIn"));
+					chosenAuthMethod = null;
+					PrimeFaces.current().executeScript(
+							"localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
 				}
-				if (exp.getErrorCode() == DcemErrorCodes.INVALID_AUTH_SESSION_COOKIE) {
-					JsfUtils.addWarnMessage(adminResourceBundle.getString("mfalogin.loggedInSomewhereElse"));
-				}
-			} catch (Exception exp) {
-				logger.info("Session Reconnect failed for " + username, exp);
-				foundAccount.setSessionExpiresOn(0);
-				foundAccount.setSessionCookie(null);
-				chosenAuthMethod = null;
-				PrimeFaces.current().executeScript("localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
+				return DcemConstants.HTML_PAGE_SELECT_LOGIN;
 			}
-			return DcemConstants.HTML_PAGE_SELECT_LOGIN;
 		}
 
-		if (listUserAccounts.getAccounts().isEmpty()) {
+		if (adminModule.getPreferences().isUseWindowsSSO() == true) {
+			HttpServletRequest request = (HttpServletRequest) JsfUtils.getExternalContext().getRequest();
+			HttpServletResponse response = (HttpServletResponse) JsfUtils.getExternalContext().getResponse();
+			try {
+				WindowsSsoResult ssoResult = windowsSso.singleSignOn(request, response);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Windows SSO Result: " + ssoResult);
+				}
+				switch (ssoResult.getResultType()) {
+				case NO_AUTHORIZATION_HEADER:
+					windowsSso.sendUnauthorized(response, true);
+					JsfUtils.getFacesContext().responseComplete();
+					return null;
+				case OK:
+					String result = windowsSsologin(ssoResult);
+					if (result != null) {
+						return result;
+					}
+				case NO_WINDOWS_PROVIDER:
+					logger.info(ssoResult);
+					return DcemConstants.HTML_PAGE_SELECT_LOGIN;
+				default:
+					logger.info(ssoResult);
+					return DcemConstants.HTML_PAGE_SELECT_LOGIN;
+				}
+			} catch (Exception e) {
+				logger.info("WindowsSSO", e);
+			}
+		}
+
+//		return DcemConstants.HTML_PAGE_LOGIN + DcemConstants.FACES_REDIRECT;
+//	}
+
+		if (listUserAccounts != null && listUserAccounts.getAccounts().isEmpty()) {
 			selectedAccount = null;
 			return DcemConstants.HTML_PAGE_LOGIN + DcemConstants.FACES_REDIRECT;
 		}
@@ -911,7 +979,8 @@ public abstract class LoginViewAbstract implements Serializable {
 		try {
 			String ser = objectMapper.writeValueAsString(listUserAccounts);
 			// System.out.println("LoginViewAbstract.serializeUserAccounts() " + ser);
-			byte[] data = SecureServerUtils.encryptDataSalt(DcemCluster.getInstance().getClusterKey(), ser.getBytes(DcemConstants.UTF_8));
+			byte[] data = SecureServerUtils.encryptDataSalt(DcemCluster.getInstance().getClusterKey(),
+					ser.getBytes(DcemConstants.UTF_8));
 			return Base64.getEncoder().encodeToString(data);
 		} catch (Exception e) {
 			logger.warn("serializeUserAccounts", e);
@@ -934,7 +1003,8 @@ public abstract class LoginViewAbstract implements Serializable {
 			if (userAccountFound != null && stayLoggedIn == true) {
 				userAccountFound.setSessionCookie(null);
 				userAccountFound.setSessionExpiresOn(0);
-				PrimeFaces.current().executeScript("localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
+				PrimeFaces.current().executeScript(
+						"localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
 			}
 		}
 		ExternalContext extCon = FacesContext.getCurrentInstance().getExternalContext();
@@ -1059,7 +1129,8 @@ public abstract class LoginViewAbstract implements Serializable {
 			if (validatePasswordInput()) {
 				try {
 					userLogic.changePassword(username, passwordOld, passwordNew);
-					JsfUtils.addInfoMessage(adminResourceBundle.getString("userDialog.info.passwordChangedSuccessfully"));
+					JsfUtils.addInfoMessage(
+							adminResourceBundle.getString("userDialog.info.passwordChangedSuccessfully"));
 					StringUtils.wipeString(passwordOld);
 					StringUtils.wipeString(passwordNew);
 					actionLogin();
@@ -1147,4 +1218,24 @@ public abstract class LoginViewAbstract implements Serializable {
 	public void setPasswordRepeat(String passwordRepeat) {
 		this.passwordRepeat = passwordRepeat;
 	}
+
+	private String windowsSsologin(WindowsSsoResult windowsSsoResult) {
+		username = windowsSsoResult.getFqn();
+		userLoginId = username;
+		try {
+			authenticateUser(true, true);
+			return DcemConstants.HTML_PAGE_LOGIN;
+		} catch (DcemException exp) {
+			chosenAuthMethod = null;
+			preLoginMessage = exp.getLocalizedMessage();
+			return DcemConstants.HTML_PAGE_LOGIN;
+
+		} catch (Exception exp) {
+			logger.info("windowsSsologin failed ", exp);
+			preLoginMessage = exp.toString();
+			return DcemConstants.HTML_PAGE_LOGIN;
+		}
+
+	}
+
 }

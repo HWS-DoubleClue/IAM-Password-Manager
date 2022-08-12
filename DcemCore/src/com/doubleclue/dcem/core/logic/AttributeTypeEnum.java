@@ -18,12 +18,10 @@ public enum AttributeTypeEnum {
 	PASSWORD ("User Password", false),
 	STATIC_TEXT ("Static Text", true),
 	AUTHENTICATOR_PASSCODE ("Authenticator Passcode", false)
-	// #if COMMUNITY_EDITION == false
 	,GROUPS("Groups", true),
 	DOMAIN_ATTRIBUTE("Domain Attribute", true),
 	POLICY ("Policy Name", false),
 	AD_OBJECT_GUID ("AD ObjectGUID", false)
-	// #endif
 ;
 	private String displayName;
 	private boolean valueRequired;

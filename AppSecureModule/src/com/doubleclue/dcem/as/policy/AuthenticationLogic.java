@@ -52,7 +52,7 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.AttributeTypeEnum;
 import com.doubleclue.dcem.core.logic.ClaimAttribute;
 import com.doubleclue.dcem.core.logic.DbResourceBundle;
@@ -127,7 +127,7 @@ public class AuthenticationLogic {
 	AsFidoLogic fidoLogic;
 	
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	private static final Logger logger = LogManager.getLogger(AuthenticationLogic.class);
 
@@ -287,6 +287,8 @@ public class AuthenticationLogic {
 				}
 				authenticateResponse = respondSessionReconnect(authenticateResponse, appEntity, dcemUser, requestParam);
 				break;
+			case WINDOWS_SSO:
+				System.out.println("AuthenticationLogic.authenticate()");
 			case SMS:
 			case VOICE_MESSAGE:
 				authenticateResponse = respondSmsOrVoiceMessage(authenticateResponse, appEntity, dcemUser, tenantData, passcode, authMethod);
@@ -637,13 +639,11 @@ public class AuthenticationLogic {
 		Map<String, String> attrMap = null;
 		if (user.isDomainUser()) {
 			List<String> domainAttributes = new ArrayList<String>();
-			// #if COMMUNITY_EDITION == false
 			for (ClaimAttribute claimAttribute : claimAttributes) {
 				if (claimAttribute.getAttributeTypeEnum() == AttributeTypeEnum.DOMAIN_ATTRIBUTE) {
 					domainAttributes.add(claimAttribute.getValue());
 				}
 			}
-			// #endif
 			if (domainAttributes.isEmpty() == false) {
 				try {
 					attrMap = domainLogic.getUserAttributes(user, domainAttributes);
@@ -685,7 +685,6 @@ public class AuthenticationLogic {
 							e);
 				}
 				break;
-			// #if COMMUNITY_EDITION == false
 			case AD_OBJECT_GUID:
 				claimAttribute.setValue(user.getObjectGuidString());
 				break;
@@ -706,7 +705,6 @@ public class AuthenticationLogic {
 			case POLICY:
 				claimAttribute.setValue(policyName);
 				break;
-				// #endif
 			case ACCOUNT_NAME:
 				claimAttribute.setValue(user.getAccountName());
 				break;

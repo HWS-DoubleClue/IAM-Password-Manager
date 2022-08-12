@@ -47,7 +47,7 @@ import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.JdbcUtils;
 import com.doubleclue.dcem.core.jpa.ScriptRunner;
 import com.doubleclue.dcem.core.licence.LicenceKeyContent;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.utils.FileContent;
@@ -90,7 +90,7 @@ public class CreateTenant {
 	GroupLogic groupLogic;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	@Inject
 	AdminModule adminModule;

@@ -91,7 +91,6 @@ import com.doubleclue.dcem.as.tasks.CallGetReversProxyStatusTask;
 import com.doubleclue.dcem.as.tasks.CheckMessageTask;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AuthApplication;
-import com.doubleclue.dcem.core.as.AuthMethod;
 import com.doubleclue.dcem.core.as.QueryLoginResponse;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.config.LocalPaths;
@@ -108,7 +107,7 @@ import com.doubleclue.dcem.core.jpa.ApiFilterItem;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.licence.LicenceKeyContent;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.GroupLogic;
@@ -178,7 +177,7 @@ public class AppServices {
 	DcemApplicationBean applicationBean;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	@Inject
 	DomainLogic domainLogic;

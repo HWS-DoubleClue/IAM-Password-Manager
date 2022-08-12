@@ -1,4 +1,3 @@
-//#excludeif COMMUNITY_EDITION == true
 package com.doubleclue.dcem.as.gui;
 
 import java.util.List;

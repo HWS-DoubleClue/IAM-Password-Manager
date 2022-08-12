@@ -53,10 +53,8 @@ public class DiagnosticsView extends DcemView {
 	@Inject
 	private DiagnosticsSubject diagnosticsSubject;
 
-	// #if COMMUNITY_EDITION == false
 	@Inject
 	private DiagnosticChartsDialog diagnosticsChartsDialog;
-	// #endif
 
 	@Inject
 	private DiagnosticResetDialog diagnosticsResetDialog;
@@ -91,10 +89,8 @@ public class DiagnosticsView extends DcemView {
 		// addAutoViewAction(DcemConstants.ACTION_SAVE, resourceBundle, null, null);
 		addAutoViewAction(DcemConstants.ACTION_RESET_COUNTERS, resourceBundle, diagnosticsResetDialog, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);	
 		addAutoViewAction(DcemConstants.ACTION_DOWNLOAD_LOG_FILE, resourceBundle, null, null);
-		// #if COMMUNITY_EDITION == false
 		addAutoViewAction(DcemConstants.ACTION_DOWNLOAD_DIAGNOSTIC_FILE, resourceBundle, null, null);
 		addAutoViewAction(DcemConstants.ACTION_SHOW_DIAGNOSTIC_CHARTS, resourceBundle, diagnosticsChartsDialog, CHARTS_DIALOG);
-		// #endif
 	}
 
 	@Override
@@ -130,7 +126,6 @@ public class DiagnosticsView extends DcemView {
 		}
 	}
 
-	// #if COMMUNITY_EDITION == false
 	@Override
 	public void triggerAction(AutoViewAction autoViewAction) {
 		if (autoViewAction.getDcemAction().getAction().equals(DcemConstants.ACTION_SHOW_DIAGNOSTIC_CHARTS)) {
@@ -179,7 +174,6 @@ public class DiagnosticsView extends DcemView {
 		return diagnosticTimes;
 
 	}
-	// #endif
 	
 	private void convertValues() {
 		Date date = new Date();
