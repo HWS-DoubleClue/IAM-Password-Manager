@@ -184,7 +184,7 @@ public class AuthenticationLogic {
 
 			dcemUser = userLogic.getUser(userLoginId);
 			if (dcemUser == null) {
-				dcemUser = createDomainAccount(userLoginId, password);
+				dcemUser = createDomainAccount(userLoginId, password, ignorePassword);
 				if (dcemUser == null) {
 					throw new DcemException(DcemErrorCodes.CREATE_ACCOUNT_INVALID_CREDENTIALS, "loginId: " + userLoginId);
 				}
@@ -597,7 +597,7 @@ public class AuthenticationLogic {
 		return new UserFingerprintEntity(fpId, sessionCookie, dcemPolicy.getRememberBrowserFingerPrint() * 60);
 	}
 
-	private DcemUser createDomainAccount(String userLoginId, String password) {
+	private DcemUser createDomainAccount(String userLoginId, String password, boolean ignorePassword) {
 		/*
 		 * create user automatically if it is a domain user with correct password
 		 */
@@ -623,8 +623,11 @@ public class AuthenticationLogic {
 				dcemUser.setUserPrincipalName(userLoginId);
 				dcemUser.setDisplayName(userLoginId);
 			}
-
-			domainLogic.verifyDomainLogin(dcemUser, password.getBytes(DcemConstants.CHARSET_UTF8));
+			if (ignorePassword == false) {
+                domainLogic.verifyDomainLogin(dcemUser, password.getBytes(DcemConstants.CHARSET_UTF8));
+            } else {
+                dcemUser = domainLogic.getUser(dcemUser.getDomainEntity().getName(), dcemUser.getAccountName());
+            }
 			dcemUser.setLanguage(adminModule.getPreferences().getUserDefaultLanguage());
 			userLogic.addOrUpdateUserWoAuditing(dcemUser);
 		} catch (Exception e) {

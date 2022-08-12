@@ -411,7 +411,7 @@ public class DomainLdap implements DomainApi {
 			sb.append("(memberOf=" + dcemGroup.getGroupDn() + ")");
 		}
 		if (domainEntity.getDomainType() == DomainType.Active_Directory) {
-		  sb.append(")");
+			sb.append(")");
 		}
 		// String searchFilter = "(&(objectclass=person)(memberOf=" +groupDn+"))";
 		Map<String, Attributes> map;
@@ -419,13 +419,17 @@ public class DomainLdap implements DomainApi {
 		try {
 			map = getSearchTry(tree, sb.toString(), null, defaultUserReturnedAtts, pageSize);
 			List<DcemUser> users = new ArrayList<>(map.size());
+			String dn;
 			if (map != null) {
-				for (String dn : map.keySet()) {
+				for (String key : map.keySet()) {
 					try {
-						Attributes attributes = map.get(dn);
-						DcemUser dcemUser = new DcemUser(domainEntity, dn + domainEntity.getBaseDN(),
-								attributes.get(domainEntity.getLoginAttribute()).get().toString());
-						// dcemUser.ldapSync(getDcemLdapAttributes(attributes));
+						Attributes attributes = map.get(key);
+						if (attributes.get(PROPERTY_DISTINGUISHED_NAME) != null) {
+							dn = attributes.get(PROPERTY_DISTINGUISHED_NAME).get().toString();
+						} else {
+							dn = key + domainEntity.getBaseDN();
+						}
+						DcemUser dcemUser = new DcemUser(domainEntity, dn, attributes.get(domainEntity.getLoginAttribute()).get().toString());
 						dcemUser.setDcemLdapAttributes(getDcemLdapAttributes(attributes));
 						users.add(dcemUser);
 					} catch (NamingException e) {
