@@ -36,6 +36,7 @@ import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.admin.windowssso.WindowsSso;
 import com.doubleclue.dcem.admin.windowssso.WindowsSsoResult;
+import com.doubleclue.dcem.admin.windowssso.WindowsSsoResultType;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AsMessageResponse;
 import com.doubleclue.dcem.core.as.AsModuleApi;
@@ -64,7 +65,7 @@ import com.doubleclue.dcem.core.utils.SecureServerUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.utils.StringUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper; 
 
 @SuppressWarnings("serial")
 public abstract class LoginViewAbstract implements Serializable {
@@ -454,6 +455,7 @@ public abstract class LoginViewAbstract implements Serializable {
 			case INVALID_USERID:
 			case INVALID_PASSWORD:
 			case CREATE_ACCOUNT_INVALID_CREDENTIALS:
+			case INVALID_DOMAIN_NAME:
 				JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, DcemConstants.MESSAGE_WRONG_CREDENTIALS);
 				break;
 			case UNEXPECTED_ERROR:
@@ -507,10 +509,6 @@ public abstract class LoginViewAbstract implements Serializable {
 		requestParam.setLocation(location);
 		if (chosenAuthMethod == AuthMethod.SESSION_RECONNECT) {
 			requestParam.setSessionCookie(sessionCookie);
-		}
-		if (chosenAuthMethod == AuthMethod.WINDOWS_SSO) {
-			requestParam.setIgnorePassword(true);
-			chosenAuthMethod = null;
 		}
 		if (ignorePasscode == false && passcode.isEmpty()) {
 			throw new DcemException(DcemErrorCodes.PASSCODE_EMPTY, null);
@@ -846,6 +844,7 @@ public abstract class LoginViewAbstract implements Serializable {
 	 * @return
 	 */
 	public String actionPreLoginOk() {
+		System.out.println("LoginViewAbstract.actionPreLoginOk()");
 		if (serializedAccounts != null && serializedAccounts.length() > 8) {
 			listUserAccounts = deserializeAccounts(serializedAccounts);
 			int myTime = (int) ((System.currentTimeMillis() / 1000));
@@ -895,6 +894,7 @@ public abstract class LoginViewAbstract implements Serializable {
 		if (adminModule.getPreferences().isUseWindowsSSO() == true) {
 			HttpServletRequest request = (HttpServletRequest) JsfUtils.getExternalContext().getRequest();
 			HttpServletResponse response = (HttpServletResponse) JsfUtils.getExternalContext().getResponse();
+			String page = null;	
 			try {
 				WindowsSsoResult ssoResult = windowsSso.singleSignOn(request, response);
 				if (logger.isDebugEnabled()) {
@@ -904,22 +904,31 @@ public abstract class LoginViewAbstract implements Serializable {
 				case NO_AUTHORIZATION_HEADER:
 					windowsSso.sendUnauthorized(response, true);
 					JsfUtils.getFacesContext().responseComplete();
-					return null;
+					break;
 				case OK:
 					String result = windowsSsologin(ssoResult);
 					if (result != null) {
-						return result;
+						page = result;
 					}
+					break;
 				case NO_WINDOWS_PROVIDER:
-					logger.info(ssoResult);
-					return DcemConstants.HTML_PAGE_SELECT_LOGIN;
+					page = DcemConstants.HTML_PAGE_SELECT_LOGIN;
+					break;
+				case NON_WINDOWS:
+					page = DcemConstants.HTML_PAGE_SELECT_LOGIN;
+					break;
+				case EXCEPTION:
+					page = DcemConstants.HTML_PAGE_SELECT_LOGIN;
+					break;
 				default:
-					logger.info(ssoResult);
-					return DcemConstants.HTML_PAGE_SELECT_LOGIN;
+					page = DcemConstants.HTML_PAGE_SELECT_LOGIN;
+					break;
 				}
 			} catch (Exception e) {
 				logger.info("WindowsSSO", e);
 			}
+			System.out.println("LoginViewAbstract.actionPreLoginOk() PAGE " + page);
+			return page;
 		}
 
 //		return DcemConstants.HTML_PAGE_LOGIN + DcemConstants.FACES_REDIRECT;
@@ -930,6 +939,29 @@ public abstract class LoginViewAbstract implements Serializable {
 			return DcemConstants.HTML_PAGE_LOGIN + DcemConstants.FACES_REDIRECT;
 		}
 		return DcemConstants.HTML_PAGE_SELECT_LOGIN;
+	}
+	
+	private String windowsSsologin(WindowsSsoResult windowsSsoResult) {
+		username = windowsSsoResult.getFqn();
+		userLoginId = username;
+		try {
+			chosenAuthMethod = AuthMethod.WINDOWS_SSO;
+			authenticateUser(true, true);
+			return DcemConstants.HTML_PAGE_LOGIN;
+		} catch (DcemException exp) {
+			if (exp.getErrorCode() != DcemErrorCodes.WINDOWS_SSO_NOT_IN_DOMAIN) {
+				preLoginMessage = exp.getLocalizedMessage();
+			} 
+			chosenAuthMethod = null;
+			return DcemConstants.HTML_PAGE_LOGIN;
+
+		} catch (Exception exp) {
+			logger.info("windowsSsologin failed ", exp);
+			preLoginMessage = exp.toString();
+			return DcemConstants.HTML_PAGE_LOGIN;
+		} finally {
+			chosenAuthMethod = null;
+		}
 	}
 
 	public String actionGoToLogin() {
@@ -1046,7 +1078,7 @@ public abstract class LoginViewAbstract implements Serializable {
 
 	public List<UserAccount> getUserAccounts() {
 		if (listUserAccounts == null) {
-			return null;
+			return new ArrayList<>(0);
 		}
 		return listUserAccounts.getAccounts();
 	}
@@ -1219,23 +1251,6 @@ public abstract class LoginViewAbstract implements Serializable {
 		this.passwordRepeat = passwordRepeat;
 	}
 
-	private String windowsSsologin(WindowsSsoResult windowsSsoResult) {
-		username = windowsSsoResult.getFqn();
-		userLoginId = username;
-		try {
-			authenticateUser(true, true);
-			return DcemConstants.HTML_PAGE_LOGIN;
-		} catch (DcemException exp) {
-			chosenAuthMethod = null;
-			preLoginMessage = exp.getLocalizedMessage();
-			return DcemConstants.HTML_PAGE_LOGIN;
 
-		} catch (Exception exp) {
-			logger.info("windowsSsologin failed ", exp);
-			preLoginMessage = exp.toString();
-			return DcemConstants.HTML_PAGE_LOGIN;
-		}
-
-	}
 
 }

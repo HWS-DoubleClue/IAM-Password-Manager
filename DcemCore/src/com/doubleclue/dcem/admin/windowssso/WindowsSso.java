@@ -45,7 +45,7 @@ public class WindowsSso  {
 	private IWindowsAuthProvider authProvider = new WindowsAuthProviderImpl();
 
 	/** The allow guest login. */
-	private boolean allowGuestLogin = true;
+	private boolean allowGuestLogin = false;
 
 	/** The impersonate. */
 	private boolean impersonate;
@@ -88,19 +88,6 @@ public class WindowsSso  {
 			return new WindowsSsoResult(WindowsSsoResultType.NON_WINDOWS);
 		}			
 		final AuthorizationHeader authorizationHeader = new AuthorizationHeader(request);
-
-		// If exclude bearer authorization and is bearer authorization, result the
-		// filter chain
-//		if (this.excludeBearerAuthorization && authorizationHeader.isBearerAuthorizationHeader()) {
-//			logger.debug("[waffle.servlet.NegotiateSecurityFilter] Authorization: Bearer");
-//			chain.doFilter(sreq, sres);
-//			return;
-//		}
-//		if (this.doFilterPrincipal(request, response, chain)) {
-//			// previously authenticated user
-//			return;
-//		}
-
 		logger.debug ("authorization Header: " + request.getHeader("authorization"));
 		if (authorizationHeader.isNull() == false) {
 			// log the user in using the token
@@ -108,13 +95,11 @@ public class WindowsSso  {
 			try {
 				windowsIdentity = this.providers.doFilter(request, response);
 				if (windowsIdentity == null) {
-					logger.debug ("authorization Header: " + request.getHeader("authorization"));
 					return new WindowsSsoResult(WindowsSsoResultType.NO_WINDOWS_PROVIDER);
 				}
 			} catch (final IOException e) {
-				logger.warn("error logging in user: {}", e.getMessage());
+				logger.info("error logging in user: {}", e.getMessage());
 				logger.trace("", e);
-				this.sendUnauthorized(response, true);
 				return new WindowsSsoResult(WindowsSsoResultType.EXCEPTION);
 			}
 
@@ -124,18 +109,17 @@ public class WindowsSso  {
 					logger.warn("guest login disabled: {}", windowsIdentity.getFqn());
 					return new WindowsSsoResult(WindowsSsoResultType.NO_GUEST_ALLOWED);
 				}
-				logger.debug("logged in user: {} ({})", windowsIdentity.getFqn(), windowsIdentity.getSidString());
-				WindowsPrincipal windowsPrincipal;
-				if (this.impersonate) {
-					windowsPrincipal = new AutoDisposableWindowsPrincipal(windowsIdentity, this.principalFormat,
-							this.roleFormat);
-				} else {
-					windowsPrincipal = new WindowsPrincipal(windowsIdentity, this.principalFormat, this.roleFormat);
-				}
+//				WindowsPrincipal windowsPrincipal;
+//				if (this.impersonate) {
+//					windowsPrincipal = new AutoDisposableWindowsPrincipal(windowsIdentity, this.principalFormat,
+//							this.roleFormat);
+//				} else {
+//					windowsPrincipal = new WindowsPrincipal(windowsIdentity, this.principalFormat, this.roleFormat);
+//				}
 				logger.info("successfully logged in user: {}", windowsIdentity.getFqn());
 				WindowsSsoResult windowsSsoResult = new WindowsSsoResult(WindowsSsoResultType.OK);
-				windowsSsoResult.setFqn(windowsPrincipal.getName());
-				windowsSsoResult.setSid(windowsPrincipal.getSid());
+				windowsSsoResult.setFqn(windowsIdentity.getFqn());
+				windowsSsoResult.setSid(windowsIdentity.getSid());
 				return windowsSsoResult;
 			} finally {
 				if (this.impersonate && ctx != null) {
@@ -166,7 +150,7 @@ public class WindowsSso  {
 //			final HttpSession session = request.getSession(false);
 //			if (session != null) {
 //				principal = (Principal) session.getAttribute(PRINCIPALSESSIONKEY);
-//			}
+//			} 
 //		}
 //		if (principal == null) {
 //			// no principal in this request

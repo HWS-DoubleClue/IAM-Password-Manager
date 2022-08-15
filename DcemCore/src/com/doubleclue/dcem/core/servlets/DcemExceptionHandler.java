@@ -62,9 +62,10 @@ public class DcemExceptionHandler extends HttpServlet {
 			error = "Page Not Found";
 			break;
 		case 401:
-			request.getSession().invalidate();
+//			request.getSession().invalidate();
 			error = "Unauthorized";
-			break;
+			return;
+		//	break;
 		case HttpServletResponse.SC_SERVICE_UNAVAILABLE:
 			request.getSession().invalidate();
 			error = "Service is unavailable";

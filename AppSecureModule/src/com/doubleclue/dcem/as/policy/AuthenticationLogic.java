@@ -125,7 +125,7 @@ public class AuthenticationLogic {
 
 	@Inject
 	AsFidoLogic fidoLogic;
-	
+
 	@Inject
 	LicenceLogic licenceLogic;
 
@@ -138,8 +138,9 @@ public class AuthenticationLogic {
 	private static final String ACTION_OK = "ok";
 
 	@DcemTransactional
-	public AuthenticateResponse authenticate(AuthApplication authApplication, int subId, String userLoginId, AuthMethod authMethod, String password,
-			String passcode, AuthRequestParam requestParam) throws DcemException {
+	public AuthenticateResponse authenticate(AuthApplication authApplication, int subId, String userLoginId,
+			AuthMethod authMethod, String password, String passcode, AuthRequestParam requestParam)
+			throws DcemException {
 
 		AuthenticateResponse authenticateResponse = new AuthenticateResponse();
 		DcemUser dcemUser = null;
@@ -149,7 +150,8 @@ public class AuthenticationLogic {
 		try {
 			appEntity = policyLogic.getDetachedPolicyApp(authApplication, subId);
 			if (appEntity == null) {
-				throw new DcemException(DcemErrorCodes.UNKNOWN_POLICY_APPLICATION, authApplication.name() + "/" + subId);
+				throw new DcemException(DcemErrorCodes.UNKNOWN_POLICY_APPLICATION,
+						authApplication.name() + "/" + subId);
 			} else if (userLoginId == null) {
 				throw new DcemException(DcemErrorCodes.USER_IS_NULL, appEntity.toString());
 			}
@@ -173,9 +175,11 @@ public class AuthenticationLogic {
 				if (password.startsWith(PASSWORD_AUTH_METHOD_DETECTION)) {
 					ind = password.indexOf(PASSWORD_AUTH_METHOD_DETECTION, PASSWORD_AUTH_METHOD_DETECTION.length());
 					if (ind != -1) {
-						authMethod = AuthMethod.fromAbbr(password.substring(PASSWORD_AUTH_METHOD_DETECTION.length(), ind));
+						authMethod = AuthMethod
+								.fromAbbr(password.substring(PASSWORD_AUTH_METHOD_DETECTION.length(), ind));
 						if (authMethod == null) {
-							throw new DcemException(DcemErrorCodes.INVALID_AUTH_METHOD, "From Password. Password is starts with ## ? " + userLoginId);
+							throw new DcemException(DcemErrorCodes.INVALID_AUTH_METHOD,
+									"From Password. Password is starts with ## ? " + userLoginId);
 						}
 						password = password.substring(ind + PASSWORD_AUTH_METHOD_DETECTION.length());
 					}
@@ -184,15 +188,16 @@ public class AuthenticationLogic {
 
 			dcemUser = userLogic.getUser(userLoginId);
 			if (dcemUser == null) {
-				dcemUser = createDomainAccount(userLoginId, password, ignorePassword);
+				dcemUser = createDomainAccount(userLoginId, password, ignorePassword, authMethod);
 				if (dcemUser == null) {
-					throw new DcemException(DcemErrorCodes.CREATE_ACCOUNT_INVALID_CREDENTIALS, "loginId: " + userLoginId);
+					throw new DcemException(DcemErrorCodes.CREATE_ACCOUNT_INVALID_CREDENTIALS,
+							"loginId: " + userLoginId);
 				}
 			}
 			authenticateResponse.setFqUserLoginId(dcemUser.getLoginId());
 			authenticateResponse.setDcemUser(dcemUser);
 			String networkAddress = requestParam.getNetworkAddress();
-			
+
 			PolicyEntity policyEntity = policyLogic.getPolicy(authApplication, subId, dcemUser);
 //			System.out.println("USER " + dcemUser +  ",  networkAddress: " + networkAddress + ", Policy " + policyEntity);
 			List<AuthMethod> methods = policyLogic.getAuthMethods(policyEntity, authApplication, subId, dcemUser);
@@ -201,7 +206,8 @@ public class AuthenticationLogic {
 			}
 			if (authMethod != null) {
 				if (authMethod != AuthMethod.SESSION_RECONNECT && methods.contains(authMethod) == false
-						&& !(appEntity.getAuthApplication() == AuthApplication.WebServices && appEntity.getSubId() == 0)) {
+						&& !(appEntity.getAuthApplication() == AuthApplication.WebServices
+								&& appEntity.getSubId() == 0)) {
 					throw new DcemException(DcemErrorCodes.AUTH_METHOD_NOT_ALLOWED, null);
 				}
 				List<AuthMethod> retunredMethods = new ArrayList<>(1);
@@ -246,7 +252,8 @@ public class AuthenticationLogic {
 						networkBypass = true;
 						authMethod = AuthMethod.PASSWORD;
 						authenticateResponse.setAuthMethods(methods);
-					} else if (policyEntity.getDcemPolicy().getDefaultPolicy() != null && (requestParam.isUseAlternativeAuthMethods() == false)) {
+					} else if (policyEntity.getDcemPolicy().getDefaultPolicy() != null
+							&& (requestParam.isUseAlternativeAuthMethods() == false)) {
 						authMethod = policyEntity.getDcemPolicy().getDefaultPolicy();
 						List<AuthMethod> retunredMethods = new ArrayList<>(1);
 						retunredMethods.add(authMethod);
@@ -278,8 +285,8 @@ public class AuthenticationLogic {
 				authenticateResponse.setSuccessful(true);
 				break;
 			case PUSH_APPROVAL:
-				authenticateResponse = respondSecureMessage(authenticateResponse, appEntity, dcemUser, tenantData, requestParam, policyEntity, authApplication,
-						subId, requestParam.getLocation());
+				authenticateResponse = respondSecureMessage(authenticateResponse, appEntity, dcemUser, tenantData,
+						requestParam, policyEntity, authApplication, subId, requestParam.getLocation());
 				break;
 			case SESSION_RECONNECT:
 				if (policyEntity.getDcemPolicy().isEnableSessionAuthentication() == false) {
@@ -288,10 +295,10 @@ public class AuthenticationLogic {
 				authenticateResponse = respondSessionReconnect(authenticateResponse, appEntity, dcemUser, requestParam);
 				break;
 			case WINDOWS_SSO:
-				System.out.println("AuthenticationLogic.authenticate()");
 			case SMS:
 			case VOICE_MESSAGE:
-				authenticateResponse = respondSmsOrVoiceMessage(authenticateResponse, appEntity, dcemUser, tenantData, passcode, authMethod);
+				authenticateResponse = respondSmsOrVoiceMessage(authenticateResponse, appEntity, dcemUser, tenantData,
+						passcode, authMethod);
 				break;
 			case FIDO_U2F:
 				authenticateResponse = respondFido(authenticateResponse, requestParam, userLoginId);
@@ -307,15 +314,18 @@ public class AuthenticationLogic {
 				FingerprintId fpId = new FingerprintId(dcemUser.getId(), appEntity);
 				UserFingerprintEntity userFingerprintEntity = createFingerPrint(fpId, policyEntity.getDcemPolicy());
 				if (userFingerprintEntity != null && authenticateResponse.isStayLoggedInAllowed() == true) {
-					fingerprintLogic.updateFingerprint(userFingerprintEntity, authMethod != AuthMethod.SESSION_RECONNECT);
+					fingerprintLogic.updateFingerprint(userFingerprintEntity,
+							authMethod != AuthMethod.SESSION_RECONNECT);
 					authenticateResponse.setSessionCookie(userFingerprintEntity.getFingerprint());
-					authenticateResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().getTime() / 1000));
+					authenticateResponse
+							.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().getTime() / 1000));
 				}
 				if (dcemUser.getPassCounter() > 0) {
 					userLogic.resetPasswordCounter(dcemUser);
 				}
 				userLogic.setUserLogin(dcemUser);
-				DcemReporting report = new DcemReporting(getAppName(appEntity), getReportAction(authMethod, networkBypass), dcemUser, null, requestParam.getLocation(),
+				DcemReporting report = new DcemReporting(getAppName(appEntity),
+						getReportAction(authMethod, networkBypass), dcemUser, null, requestParam.getLocation(),
 						requestParam.getReportInfo(), AlertSeverity.OK);
 				reportingLogic.addReporting(report);
 			}
@@ -330,7 +340,8 @@ public class AuthenticationLogic {
 			String userLoginId_ = userLoginId;
 			boolean networkBypass_ = networkBypass;
 
-			taskExecutor.execute(new com.doubleclue.dcem.core.tasks.CoreTask(this.getClass().getSimpleName(), TenantIdResolver.getCurrentTenant()) {
+			taskExecutor.execute(new com.doubleclue.dcem.core.tasks.CoreTask(this.getClass().getSimpleName(),
+					TenantIdResolver.getCurrentTenant()) {
 				@Override
 				public void runTask() {
 					String info = requestParam.getReportInfo();
@@ -339,13 +350,19 @@ public class AuthenticationLogic {
 					} else {
 						info = info + " " + exp.getMessage();
 					}
+					if (dcemUser_ == null) {
+						info = info + ": " + userLoginId_;
+					}
 					if (exp.getErrorCode() != DcemErrorCodes.DATABASE_CONNECTION_ERROR) {
-						DcemReporting report = new DcemReporting(getAppName(appEntity_), getReportAction(authMethod_, networkBypass_), dcemUser_, exp.getErrorCode().name(),
+						DcemReporting report = new DcemReporting(getAppName(appEntity_),
+								getReportAction(authMethod_, networkBypass_), dcemUser_, exp.getErrorCode().name(),
 								requestParam.getLocation(), info, AlertSeverity.FAILURE);
 						reportingLogic.addReporting(report);
 					}
-					logger.info("Authentication Failed, Cause: " + exp.toString() + " from: " + authApplication.name() + "/" + subId + ", " + userLoginId_);
-					if (exp.getErrorCode() == DcemErrorCodes.INVALID_PASSWORD || exp.getErrorCode() == DcemErrorCodes.INVALID_OTP) {
+					logger.info("Authentication Failed, Cause: " + exp.toString() + " from: " + authApplication.name()
+							+ "/" + subId + ", " + userLoginId_);
+					if (exp.getErrorCode() == DcemErrorCodes.INVALID_PASSWORD
+							|| exp.getErrorCode() == DcemErrorCodes.INVALID_OTP) {
 						userLogic.setPasswordCounter(dcemUser_.getId(), (dcemUser_.getPassCounter() + 1));
 						fingerprintLogic.deleteFingerPrint(dcemUser_.getId(), appEntity_);
 					}
@@ -358,14 +375,17 @@ public class AuthenticationLogic {
 			AuthMethod authMethod_ = authMethod;
 			DcemUser dcemUser_ = dcemUser;
 			boolean networkBypass_ = networkBypass;
-			taskExecutor.execute(new com.doubleclue.dcem.core.tasks.CoreTask("test", TenantIdResolver.getCurrentTenant()) {
-				@Override
-				public void runTask() {
-					DcemReporting report = new DcemReporting(getAppName(appEntity_), getReportAction(authMethod_, networkBypass_), dcemUser_,
-							DcemErrorCodes.UNEXPECTED_ERROR.name(), requestParam.getLocation(), exp.toString(), AlertSeverity.FAILURE);
-					reportingLogic.addReporting(report);
-				}
-			});
+			taskExecutor
+					.execute(new com.doubleclue.dcem.core.tasks.CoreTask("test", TenantIdResolver.getCurrentTenant()) {
+						@Override
+						public void runTask() {
+							DcemReporting report = new DcemReporting(getAppName(appEntity_),
+									getReportAction(authMethod_, networkBypass_), dcemUser_,
+									DcemErrorCodes.UNEXPECTED_ERROR.name(), requestParam.getLocation(), exp.toString(),
+									AlertSeverity.FAILURE);
+							reportingLogic.addReporting(report);
+						}
+					});
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, exp.toString());
 		}
 	}
@@ -374,7 +394,8 @@ public class AuthenticationLogic {
 		return appEntity.getSubName() != null ? appEntity.getSubName() : appEntity.getAuthApplication().name();
 	}
 
-	private AuthenticateResponse respondHardwareToken(AuthenticateResponse authenticateResponse, DcemUser dcemUser, String passcode) throws DcemException {
+	private AuthenticateResponse respondHardwareToken(AuthenticateResponse authenticateResponse, DcemUser dcemUser,
+			String passcode) throws DcemException {
 		OtpModuleApi otpModuleApi = CdiUtils.getReference(OtpModuleApi.OTP_SERVICE_IMPL);
 		if (passcode != null && !passcode.isEmpty()) {
 			otpModuleApi.verifyOtpPasscode(dcemUser, passcode);
@@ -383,7 +404,8 @@ public class AuthenticationLogic {
 		return authenticateResponse;
 	}
 
-	private AuthenticateResponse respondPasscode(AuthenticateResponse authenticateResponse, DcemUser dcemUser, String passcode) throws DcemException {
+	private AuthenticateResponse respondPasscode(AuthenticateResponse authenticateResponse, DcemUser dcemUser,
+			String passcode) throws DcemException {
 		if (passcode != null && !passcode.isEmpty()) {
 			deviceLogic.verifyUserPasscode(dcemUser, passcode);
 			authenticateResponse.setSuccessful(true);
@@ -403,8 +425,9 @@ public class AuthenticationLogic {
 	 * @return
 	 * @throws DcemException
 	 */
-	private AuthenticateResponse respondSecureMessage(AuthenticateResponse authenticateResponse, PolicyAppEntity appEntity, DcemUser dcemUser,
-			AsTenantData tenantData, AuthRequestParam requestParam, PolicyEntity policyEntity, AuthApplication authApplication, int subId, String location)
+	private AuthenticateResponse respondSecureMessage(AuthenticateResponse authenticateResponse,
+			PolicyAppEntity appEntity, DcemUser dcemUser, AsTenantData tenantData, AuthRequestParam requestParam,
+			PolicyEntity policyEntity, AuthApplication authApplication, int subId, String location)
 			throws DcemException {
 
 		AsApiMessage apiMessage = new AsApiMessage();
@@ -423,7 +446,8 @@ public class AuthenticationLogic {
 			dataMap.add(new AsMapEntry(DcemConstants.AUTH_MAP_SOURCE, appEntity.getAuthApplication().name()));
 		}
 		apiMessage.setDataMap(dataMap);
-		AddMessageResponse addMessageResponse = messageHandler.sendMessage(apiMessage, dcemUser, operatorSessionBean.getDcemUser(), authApplication, subId, policyEntity, location);
+		AddMessageResponse addMessageResponse = messageHandler.sendMessage(apiMessage, dcemUser,
+				operatorSessionBean.getDcemUser(), authApplication, subId, policyEntity, location);
 		long msgId = addMessageResponse.getMsgId();
 		authenticateResponse.setSecureMsgId(msgId);
 		authenticateResponse.setSecureMsgTimeToLive(addMessageResponse.getTimeToLive());
@@ -431,8 +455,8 @@ public class AuthenticationLogic {
 		return authenticateResponse;
 	}
 
-	private AuthenticateResponse respondSessionReconnect(AuthenticateResponse authenticateResponse, PolicyAppEntity appEntity, DcemUser dcemUser,
-			AuthRequestParam requestParam) throws DcemException {
+	private AuthenticateResponse respondSessionReconnect(AuthenticateResponse authenticateResponse,
+			PolicyAppEntity appEntity, DcemUser dcemUser, AuthRequestParam requestParam) throws DcemException {
 		int appId = 0;
 		if (appEntity.getAuthApplication().isShareSession() == false) {
 			appId = appEntity.getId();
@@ -445,8 +469,9 @@ public class AuthenticationLogic {
 		return authenticateResponse;
 	}
 
-	private AuthenticateResponse respondSmsOrVoiceMessage(AuthenticateResponse authenticateResponse, PolicyAppEntity appEntity, DcemUser dcemUser,
-			AsTenantData tenantData, String passcode, AuthMethod authMethod) throws DcemException {
+	private AuthenticateResponse respondSmsOrVoiceMessage(AuthenticateResponse authenticateResponse,
+			PolicyAppEntity appEntity, DcemUser dcemUser, AsTenantData tenantData, String passcode,
+			AuthMethod authMethod) throws DcemException {
 
 		FingerprintId fingerprintId = new FingerprintId(dcemUser.getId(), appEntity);
 		if (passcode == null || passcode.isEmpty()) {
@@ -454,7 +479,8 @@ public class AuthenticationLogic {
 			tenantData.getSmsPasscodesMap().put(fingerprintId, otp, 5, TimeUnit.MINUTES);
 			List<String> telephoneNumbers = new LinkedList<>();
 			String mobile = dcemUser.getMobile();
-			DbResourceBundle dbResourceBundle = DbResourceBundle.getDbResourceBundle(dcemUser.getLanguage().getLocale());
+			DbResourceBundle dbResourceBundle = DbResourceBundle
+					.getDbResourceBundle(dcemUser.getLanguage().getLocale());
 			if (authMethod == AuthMethod.SMS) {
 				if (mobile == null) {
 					throw new DcemException(DcemErrorCodes.SMS_USER_HAS_NO_MOBILE, dcemUser.getLoginId());
@@ -462,7 +488,8 @@ public class AuthenticationLogic {
 				Map<String, String> map = new HashMap<>();
 				map.put(AsConstants.SMS_CODE, otp);
 				map.put(AsConstants.SMS_USER_NAME, dcemUser.getDisplayName());
-				String body = StringUtils.substituteTemplate(dbResourceBundle.getString(AsConstants.SMS_PASSCODE_BUNDLE_KEY), map);
+				String body = StringUtils
+						.substituteTemplate(dbResourceBundle.getString(AsConstants.SMS_PASSCODE_BUNDLE_KEY), map);
 				telephoneNumbers.add(mobile);
 				messageBird.sendSmsMessage(telephoneNumbers, body);
 				authenticateResponse.setPhoneNumber(telephoneNumbers.get(0));
@@ -503,11 +530,12 @@ public class AuthenticationLogic {
 		return authenticateResponse;
 	}
 
-	private AuthenticateResponse respondFido(AuthenticateResponse authenticateResponse, AuthRequestParam requestParam, String userLoginId)
-			throws DcemException {
+	private AuthenticateResponse respondFido(AuthenticateResponse authenticateResponse, AuthRequestParam requestParam,
+			String userLoginId) throws DcemException {
 		String response = requestParam.getFidoResponse();
 		if (response == null || response.isEmpty()) {
-			authenticateResponse.setFidoResponse(fidoLogic.startAuthentication(userLoginId, requestParam.getFidoRpId()));
+			authenticateResponse
+					.setFidoResponse(fidoLogic.startAuthentication(userLoginId, requestParam.getFidoRpId()));
 			licenceLogic.resetExpiredLicenceUserShouldAuthenticate();
 		} else {
 			authenticateResponse.setFidoResponse(fidoLogic.finishAuthentication(response));
@@ -551,7 +579,8 @@ public class AuthenticationLogic {
 	public void onSecureMessageResponseReceived(PendingMsg pendingMsg, AsApiMessageResponse apiMessageResponse) {
 		DcemPolicy dcemPolicy = pendingMsg.getPolicyTransaction().getDcemPolicy();
 		DcemUser dcemUser = userLogic.getUser(pendingMsg.getUserId());
-		FingerprintId fpId = new FingerprintId(dcemUser.getId(), pendingMsg.getPolicyTransaction().getPolicyAppEntity());
+		FingerprintId fpId = new FingerprintId(dcemUser.getId(),
+				pendingMsg.getPolicyTransaction().getPolicyAppEntity());
 		String errorCode = null;
 		if (pendingMsg.getMsgStatus() == AsApiMsgStatus.OK) {
 			if (pendingMsg.getActionId().equals(ACTION_OK)) {
@@ -560,7 +589,8 @@ public class AuthenticationLogic {
 					if (userFingerprintEntity != null && dcemPolicy.isEnableSessionAuthentication() == true) {
 						fingerprintLogic.updateFingerprint(userFingerprintEntity, true);
 						apiMessageResponse.setSessionCookie(userFingerprintEntity.getFingerprint());
-						apiMessageResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().getTime() / 1000));
+						apiMessageResponse.setSessionCookieExpiresOn(
+								(int) (userFingerprintEntity.getTimestamp().getTime() / 1000));
 						apiMessageResponse.setStayLoggedInAllowed(dcemPolicy.isEnableSessionAuthentication());
 					}
 				}
@@ -574,8 +604,9 @@ public class AuthenticationLogic {
 			errorCode = pendingMsg.getMsgStatus().name();
 		}
 		userLogic.setUserLogin(dcemUser);
-		DcemReporting report = new DcemReporting(getAppName(pendingMsg.getPolicyTransaction().getPolicyAppEntity()), getReportAction(AuthMethod.PUSH_APPROVAL, false),
-				dcemUser, errorCode, pendingMsg.getInfo(), pendingMsg.getDeviceName(), AlertSeverity.OK);
+		DcemReporting report = new DcemReporting(getAppName(pendingMsg.getPolicyTransaction().getPolicyAppEntity()),
+				getReportAction(AuthMethod.PUSH_APPROVAL, false), dcemUser, errorCode, pendingMsg.getInfo(),
+				pendingMsg.getDeviceName(), AlertSeverity.OK);
 		reportingLogic.addReporting(report);
 		return;
 	}
@@ -597,47 +628,47 @@ public class AuthenticationLogic {
 		return new UserFingerprintEntity(fpId, sessionCookie, dcemPolicy.getRememberBrowserFingerPrint() * 60);
 	}
 
-	private DcemUser createDomainAccount(String userLoginId, String password, boolean ignorePassword) {
+	private DcemUser createDomainAccount(String userLoginId, String password, boolean ignorePassword,
+			AuthMethod authMethod) throws Exception {
 		/*
 		 * create user automatically if it is a domain user with correct password
 		 */
 		DcemUser dcemUser = null;
-		try {
-			DomainApi domainApi = domainLogic.getDomainFromEmail(userLoginId, null);
-			if (domainApi == null) {
-				String[] domainUser = userLoginId.split(DcemConstants.DOMAIN_SEPERATOR_REGEX);
-				if (domainUser.length > 1) {
-					domainUser[0] = domainUser[0].toUpperCase();
-					dcemUser = new DcemUser(domainUser[0], domainUser[1]);
-					try {
-						domainApi = domainLogic.getDomainApi(domainUser[0]);
-						dcemUser.setDomainEntity(domainApi.getDomainEntity());
-					} catch (Exception e) {
-						return null;
+		DomainApi domainApi = domainLogic.getDomainFromEmail(userLoginId, null);
+		if (domainApi == null) {
+			String[] domainUser = userLoginId.split(DcemConstants.DOMAIN_SEPERATOR_REGEX);
+			if (domainUser.length == 2) {
+				domainUser[0] = domainUser[0].toUpperCase();
+				dcemUser = new DcemUser(domainUser[0], domainUser[1]);
+				try {
+					domainApi = domainLogic.getDomainApi(domainUser[0]);
+				} catch (DcemException e) {
+					if (e.getErrorCode() == DcemErrorCodes.INVALID_DOMAIN_NAME && authMethod == AuthMethod.WINDOWS_SSO) {
+						e.setErrorCode(DcemErrorCodes.WINDOWS_SSO_NOT_IN_DOMAIN); 
 					}
-				} else {
-					return null;
+					throw e;
 				}
+				dcemUser.setDomainEntity(domainApi.getDomainEntity());
 			} else {
-				dcemUser = new DcemUser(domainApi.getDomainEntity(), null, userLoginId);
-				dcemUser.setUserPrincipalName(userLoginId);
-				dcemUser.setDisplayName(userLoginId);
+				throw new DcemException(DcemErrorCodes.CREATE_ACCOUNT_INVALID_CREDENTIALS, "loginId: " + userLoginId);
 			}
-			if (ignorePassword == false) {
-                domainLogic.verifyDomainLogin(dcemUser, password.getBytes(DcemConstants.CHARSET_UTF8));
-            } else {
-                dcemUser = domainLogic.getUser(dcemUser.getDomainEntity().getName(), dcemUser.getAccountName());
-            }
-			dcemUser.setLanguage(adminModule.getPreferences().getUserDefaultLanguage());
-			userLogic.addOrUpdateUserWoAuditing(dcemUser);
-		} catch (Exception e) {
-			logger.debug("couldn't create the user automatically for: " + userLoginId, e);
-			return null;
+		} else {
+			dcemUser = new DcemUser(domainApi.getDomainEntity(), null, userLoginId);
+			dcemUser.setUserPrincipalName(userLoginId);
+			dcemUser.setDisplayName(userLoginId);
 		}
+		if (ignorePassword == false) {
+			domainLogic.verifyDomainLogin(dcemUser, password.getBytes(DcemConstants.CHARSET_UTF8));
+		} else {
+			dcemUser = domainLogic.getUser(dcemUser.getDomainEntity().getName(), dcemUser.getAccountName());
+		}
+		dcemUser.setLanguage(adminModule.getPreferences().getUserDefaultLanguage());
+		userLogic.addOrUpdateUserWoAuditing(dcemUser);
 		return dcemUser;
 	}
 
-	public List<ClaimAttribute> getClaimAttributeValues(List<ClaimAttribute> claimAttributes, DcemUser user, String policyName, String password) {
+	public List<ClaimAttribute> getClaimAttributeValues(List<ClaimAttribute> claimAttributes, DcemUser user,
+			String policyName, String password) {
 		List<ClaimAttribute> result = new ArrayList<ClaimAttribute>();
 		Map<String, String> attrMap = null;
 		if (user.isDomainUser()) {
@@ -677,15 +708,17 @@ public class AuthenticationLogic {
 				break;
 			case CLOUD_SAFE_USER:
 				try {
-					CloudSafeEntity cloudSafeEntity = cloudSafeLogic.getCloudSafe(CloudSafeOwner.USER, claimAttribute.getValue(), user, null, 0, null);
+					CloudSafeEntity cloudSafeEntity = cloudSafeLogic.getCloudSafe(CloudSafeOwner.USER,
+							claimAttribute.getValue(), user, null, 0, null);
 					if (cloudSafeEntity != null) {
 						claimAttribute.setValue(cloudSafeLogic.getContentAsString(cloudSafeEntity, null, null));
 					} else {
-						logger.info("SAML - could not find CloudSafe '" + claimAttribute.getName() + "' for user '" + user.getDisplayNameOrLoginId() + "'.");
+						logger.info("SAML - could not find CloudSafe '" + claimAttribute.getName() + "' for user '"
+								+ user.getDisplayNameOrLoginId() + "'.");
 					}
 				} catch (DcemException e) {
-					logger.warn("SAML - error while getting CloudSafe '" + claimAttribute.getName() + "' for user '" + user.getDisplayNameOrLoginId() + "': ",
-							e);
+					logger.warn("SAML - error while getting CloudSafe '" + claimAttribute.getName() + "' for user '"
+							+ user.getDisplayNameOrLoginId() + "': ", e);
 				}
 				break;
 			case AD_OBJECT_GUID:
