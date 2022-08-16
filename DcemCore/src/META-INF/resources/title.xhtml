@@ -45,7 +45,7 @@
 							<div style="display: inline-block; vertical-align: middle;">
 								<p:commandLink id="profile" rendered="#{operatorSession.loggedIn}" style="margin-right:1em;">
 									<p:overlayPanel for="profile" style="width:135px;margin-right:1em;" dynamic="true">
-										<p:commandLink action="#{mfaLoginView.logoff}">
+										<p:commandLink action="#{mfaLoginView.logoff}" ajax="false">
 											<i class="fa fa-sign-out" style="color: black; font-size: 1.2em; margin-right: 1em;"></i>
 											<h:outputText value="#{CoreMsg['menu.logoff']}" icon="fa fa-sign-out" />
 										</p:commandLink>

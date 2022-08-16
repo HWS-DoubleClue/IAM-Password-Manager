@@ -393,6 +393,10 @@ public class AdminModule extends DcemModule {
 	public TimeZone getTimezone() {
 		return TimeZone.getTimeZone(getTenantData().getTenantBrandingEntity().getTimezone());
 	}
+	
+	public boolean isWindowsSso() {
+		return getPreferences().isUseWindowsSSO();
+	}
 
 	@Override
 	public void preferencesValidation(ModulePreferences modulePreferences) throws DcemException {

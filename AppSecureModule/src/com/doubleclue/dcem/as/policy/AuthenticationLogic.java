@@ -287,8 +287,6 @@ public class AuthenticationLogic {
 				}
 				authenticateResponse = respondSessionReconnect(authenticateResponse, appEntity, dcemUser, requestParam);
 				break;
-			case WINDOWS_SSO:
-				System.out.println("AuthenticationLogic.authenticate()");
 			case SMS:
 			case VOICE_MESSAGE:
 				authenticateResponse = respondSmsOrVoiceMessage(authenticateResponse, appEntity, dcemUser, tenantData, passcode, authMethod);

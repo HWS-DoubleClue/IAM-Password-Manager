@@ -65,7 +65,7 @@ import com.doubleclue.dcem.core.utils.SecureServerUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.utils.StringUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper; 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SuppressWarnings("serial")
 public abstract class LoginViewAbstract implements Serializable {
@@ -619,7 +619,7 @@ public abstract class LoginViewAbstract implements Serializable {
 				if (method == AuthMethod.QRCODE_APPROVAL || method.getValue() == null) {
 					System.out.println("LoginViewAbstract.getAuthMethodGuis()  " + method.getValue());
 					continue;
-				} 
+				}
 				authMethodGuis.add(new AuthMethodGui(method, getResounceBundleModule()));
 			}
 		}
@@ -895,7 +895,7 @@ public abstract class LoginViewAbstract implements Serializable {
 		if (adminModule.getPreferences().isUseWindowsSSO() == true) {
 			HttpServletRequest request = (HttpServletRequest) JsfUtils.getExternalContext().getRequest();
 			HttpServletResponse response = (HttpServletResponse) JsfUtils.getExternalContext().getResponse();
-			String page = null;	
+			String page = null;
 			try {
 				WindowsSsoResult ssoResult = windowsSso.singleSignOn(request, response);
 				if (logger.isDebugEnabled()) {
@@ -941,15 +941,16 @@ public abstract class LoginViewAbstract implements Serializable {
 		}
 		return DcemConstants.HTML_PAGE_SELECT_LOGIN;
 	}
-	
+
 	private String windowsSsologin(WindowsSsoResult windowsSsoResult) {
 		username = windowsSsoResult.getFqn();
 		userLoginId = username;
 		try {
-			chosenAuthMethod = AuthMethod.WINDOWS_SSO;
+			chosenAuthMethod = null;
 			authenticateUser(true, true);
 			return DcemConstants.HTML_PAGE_LOGIN;
 		} catch (DcemException exp) {
+			System.out.println("LoginViewAbstract.windowsSsologin() " + exp);
 			switch (exp.getErrorCode()) {
 			case WINDOWS_SSO_NOT_IN_DOMAIN:
 			case INVALID_DOMAIN_NAME:
@@ -1045,6 +1046,7 @@ public abstract class LoginViewAbstract implements Serializable {
 						"localStorage.setItem('accounts', '" + serializeUserAccounts(listUserAccounts) + "')");
 			}
 		}
+		loggedIn = false;
 		ExternalContext extCon = FacesContext.getCurrentInstance().getExternalContext();
 		HttpSession session = (HttpSession) extCon.getSession(true);
 		session.invalidate();
@@ -1256,7 +1258,5 @@ public abstract class LoginViewAbstract implements Serializable {
 	public void setPasswordRepeat(String passwordRepeat) {
 		this.passwordRepeat = passwordRepeat;
 	}
-
-
 
 }
