@@ -19,25 +19,31 @@
 <h:body>
 	<ui:include src="titleLogin.xhtml" />
 	<div id="container" style="width: auto; height: 93vh; position: relative;">
-			<div class="box" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
-				<p:graphicImage cache="true" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.backgroundImg != null}" />
-			</div>
-			
+		<div class="box" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+			<p:graphicImage cache="true" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.backgroundImg != null}" />
+		</div>
+
 		<div class="box" style="width: 100%; height: 100%;position: absolute;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
-	
-	
-	<div class="ui-fluid" style="margin-left: 2em; margin-top: 2em;">
-		<h:form>
-			<p />
-			<br />
-			<h:outputLabel class="fa fa-hourglass-end" style="font-size: 2.0em; color: #fff " />
-			<h:outputText  styleClass="LogoffTxt" style="font-size: large;color: #fff " value="#{DcupMsg['message.sessionExpired']}. " />
-			<p:spacer width="4em" />
-			<h:link styleClass="loginLinkExpired" value="#{DcupMsg['label.toUserPortal']}" outcome="uplogin" />
-	</h:form>
-	
-	</div>
-	</div>
+			<div class="ui-fluid" style="margin-left: 2em; margin-top: 2em;">
+				<h:form>
+
+					<p></p>
+
+					<h:outputLabel class="fa fa-hourglass-end" style="font-size: 1.4em; color: #fff; margin-left: 10em; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
+					<h:outputText styleClass="LogoffTxt" style="font-size: 1.4em;  color: #fff;" value="#{DcupMsg['message.sessionExpired']}" />
+
+					<p></p>
+					<h:link style="font-size: 1.4em; margin-left: 10em" value="#{CoreMsg['view.login.button.login']}" outcome="uplogin" />
+					<p></p>
+					<h:outputLabel class="fa fa-hourglass-end" style="font-size: 1.4em; color: #fff; margin-left: 10em; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
+					<h:outputText styleClass="LogoffTxt" style="font-size: 1.4em;  color: #fff;" value="#{DcupMsg['message.sessionExpired']}" />
+					<p></p>
+					<h:link style="font-size: 1.4em; margin-left: 10em" value="#{CoreMsg['view.login.button.sso']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso}" />
+
+
+				</h:form>
+			</div>
+		</div>
 	</div>
 </h:body>
 </html>
