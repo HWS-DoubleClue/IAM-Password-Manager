@@ -16,6 +16,9 @@ public enum AuthMethod {
 	FIDO_U2F("FIDO Authentication", "fido"),
 	WINDOWS_SSO (null, null),;
 
+	/*
+	 * if value is null, then this auth method cannot be selected by user
+	 */
 	private String value;
 	private String abbreviation;
 	// private ThriftAuthMethod thriftAuthMethod;

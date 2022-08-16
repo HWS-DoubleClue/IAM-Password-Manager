@@ -616,9 +616,10 @@ public abstract class LoginViewAbstract implements Serializable {
 		List<AuthMethodGui> authMethodGuis = new ArrayList<>();
 		if (availableAuthMethods != null) {
 			for (AuthMethod method : availableAuthMethods) {
-				if (method == AuthMethod.QRCODE_APPROVAL || method == AuthMethod.SESSION_RECONNECT) {
+				if (method == AuthMethod.QRCODE_APPROVAL || method.getValue() == null) {
+					System.out.println("LoginViewAbstract.getAuthMethodGuis()  " + method.getValue());
 					continue;
-				}
+				} 
 				authMethodGuis.add(new AuthMethodGui(method, getResounceBundleModule()));
 			}
 		}
@@ -949,9 +950,14 @@ public abstract class LoginViewAbstract implements Serializable {
 			authenticateUser(true, true);
 			return DcemConstants.HTML_PAGE_LOGIN;
 		} catch (DcemException exp) {
-			if (exp.getErrorCode() != DcemErrorCodes.WINDOWS_SSO_NOT_IN_DOMAIN) {
+			switch (exp.getErrorCode()) {
+			case WINDOWS_SSO_NOT_IN_DOMAIN:
+			case INVALID_DOMAIN_NAME:
+				preLoginMessage = null;
+				break;
+			default:
 				preLoginMessage = exp.getLocalizedMessage();
-			} 
+			}
 			chosenAuthMethod = null;
 			return DcemConstants.HTML_PAGE_LOGIN;
 
