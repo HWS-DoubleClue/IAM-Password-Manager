@@ -19,26 +19,23 @@
 <f:view locale="#{portalSessionBean.locale}">
 	<h:body>
 		<ui:include src="titleLogin.xhtml" />
+
 		<div id="container" style="width: auto; height: 93vh; position: relative;">
 			<div class="box" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
 				<p:graphicImage cache="false" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.backgroundImg != null}" />
 			</div>
-			<div class="box" style="width: 100%; height: 100%;position: absolute;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
+
+			<div class="box" style="width: 100%; height: 100%; position: absolute; top: 3.5em; left: 0; #{adminModule.loginBackgroundColor};">
+				<div style="padding-left: 5em; padding-top: 1em; text-align: left; height: 2em; font-size: 27px;"></div>
+				<p></p>
 				<h:form>
-
 					<p></p>
-
 					<h:outputLabel class="fa fa-sign-out" style="font-size: 1.4em; color: #fff; margin-left: 10em; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
 					<h:outputText styleClass="LogoffTxt" style="font-size: 1.4em;  color: #fff;" value="#{DcupMsg['message.sessionLogoff']}" />
 					<p></p>
 					<h:link style="font-size: 1.4em; margin-left: 10em" value="#{CoreMsg['view.login.button.login']}" outcome="uplogin" />
 					<p></p>
-					<h:outputLabel class="fa fa-sign-out" style="font-size: 1.4em; color: #fff; margin-left: 10em; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
-					<h:outputText styleClass="LogoffTxt" style="font-size: 1.4em;  color: #fff;" value="#{DcupMsg['message.sessionLogoff']}" />
-					<p></p>
 					<h:link style="font-size: 1.4em; margin-left: 10em" value="#{CoreMsg['view.login.button.sso']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso}" />
-
-
 				</h:form>
 			</div>
 		</div>

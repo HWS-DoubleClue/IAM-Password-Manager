@@ -26,21 +26,14 @@
 			<div class="box" style="width: 100%; height: 100%;position: absolute;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
 				<div style="padding-left: 5em; padding-top: 2em; text-align: left; height: 2em; font-size: 27px;"></div>
 				<p></p>
-
 				<h:form>
-
 					<p></p>
-
 					<h:outputLabel class="fa fa-hourglass-end" style="font-size: 1.4em; color: #445686; margin-left: 10em; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
 					<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.error.label.expired']}" />
 					<p></p>
 					<h:link style="font-size: 1.4em; margin-left: 10em" value="#{CoreMsg['view.login.button.login']}" outcome="mgtLogin" />
 					<p></p>
-					<h:outputLabel class="fa fa-hourglass-end" style="font-size: 1.4em; color: #445686; margin-left: 10em; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
-					<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.error.label.expired']}" />
-					<p></p>
 					<h:link style="font-size: 1.4em; margin-left: 10em" value="#{CoreMsg['view.login.button.sso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
-
 				</h:form>
 			</div>
 		</div>
