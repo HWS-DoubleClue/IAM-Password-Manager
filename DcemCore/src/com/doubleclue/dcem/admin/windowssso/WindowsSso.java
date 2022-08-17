@@ -216,7 +216,8 @@ public class WindowsSso  {
 			throw new RuntimeException(e);
 		}
 	}
-
 	
-
+	public boolean isWindows() {
+		return isWindows;
+	}
 }

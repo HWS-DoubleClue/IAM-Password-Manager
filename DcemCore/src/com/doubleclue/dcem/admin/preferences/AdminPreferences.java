@@ -75,6 +75,18 @@ public class AdminPreferences extends ModulePreferences {
 	@DcemGui(style = "width: 18em", password = true)
 	String locationApiKey;
 	
+	@DcemGui(separator = "Reporting")
+	boolean reportErrorsOnly = false;
+
+	@DcemGui()
+	@Min(10)
+	@Max(value = 10000)
+	int maxExport = 1000;
+
+	@DcemGui()
+	int durationForReportArchive = 0;
+	
+	
 	public String getLocationInformation() {
 		return locationInformation;
 	}
@@ -90,19 +102,6 @@ public class AdminPreferences extends ModulePreferences {
 	public void setLocationApiKey(String locationApiKey) {
 		this.locationApiKey = locationApiKey;
 	}
-	
-
-
-	@DcemGui(separator = "Reporting")
-	boolean reportErrorsOnly = false;
-
-	@DcemGui()
-	@Min(10)
-	@Max(value = 10000)
-	int maxExport = 1000;
-
-	@DcemGui()
-	int durationForReportArchive = 0;
 
 	public int getUserPasswordLength() {
 		return userPasswordLength;
@@ -176,8 +175,6 @@ public class AdminPreferences extends ModulePreferences {
 		this.defaultPhoneCountryCode = defaultPhoneCountryCode;
 	}
 
-	
-
 	public String getAlertsNotificationGroup() {
 		return alertsNotificationGroup;
 	}
@@ -225,5 +222,4 @@ public class AdminPreferences extends ModulePreferences {
 	public void setUseWindowsSSO(boolean useWindowsSSO) {
 		this.useWindowsSSO = useWindowsSSO;
 	}
-
 }
