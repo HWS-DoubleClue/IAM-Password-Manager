@@ -17,8 +17,6 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -62,7 +60,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ApplicationScoped
-@EnterpriseEdition
 @Named("licenceLogic")
 public class LicenceLogic implements ReloadClassInterface {
 
