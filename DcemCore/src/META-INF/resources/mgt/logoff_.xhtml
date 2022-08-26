@@ -29,14 +29,14 @@
 				<p></p>
 				<h:form>
 					<p></p>
-					<h:outputLabel class="fa fa-sign-out" style="font-size: 1.4em; color: #445686; margin-left: 10em; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
+					<h:outputLabel class="fa fa-sign-out" style="font-size: 1.4em; color: #445686; margin-left: 100px; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
 					<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.logoff.text']}" />
 					<p></p>
-					<h:link style="font-size: 1.4em; margin-left: 10em" value="#{CoreMsg['view.login.button.login.normal']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
+					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
 					<p></p>
-					<h:link style="font-size: 1.4em; margin-left: 10em" value="#{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
+					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
 					<p></p>
-					<h:link style="font-size: 1.4em; margin-left: 10em" value="#{CoreMsg['view.login.button.sso']}" outcome="mgtLogin" rendered="#{adminModule.windowsSso}"/>
+					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" rendered="#{adminModule.windowsSso}"/>
 					<p></p>
 				</h:form>
 			</div>
