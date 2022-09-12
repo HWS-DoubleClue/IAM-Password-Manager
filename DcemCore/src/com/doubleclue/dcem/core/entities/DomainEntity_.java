@@ -23,6 +23,7 @@ public class DomainEntity_ {
 	public static volatile SingularAttribute<DomainEntity, String> mailAttribute;
 	public static volatile SingularAttribute<DomainEntity, String> telephoneAttribute;
 	public static volatile SingularAttribute<DomainEntity, String> mobileAttribute;
+	public static volatile SingularAttribute<DomainEntity, String> groupAttribute;
 	public static volatile SingularAttribute<DomainEntity, String> mapEmailDomains;
 	public static volatile SingularAttribute<DomainEntity, String> configJson;
 	public static volatile SingularAttribute<DomainEntity, Boolean> enable;

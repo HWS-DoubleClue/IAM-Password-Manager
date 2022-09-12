@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.naming.directory.Attributes;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -496,6 +498,13 @@ public class DomainAzure implements DomainApi {
 		IGraphServiceClient userGraphClient = getSearchGraphClient();
 		byte[] stream = Base64.getDecoder().decode(photo);
 		userGraphClient.users().byId(dcemUser.getUserDn()).photo().content().buildRequest().put(stream);
+	}
+
+	@Override
+	public Map<String, Attributes> customSearchAttributeMap(String filter, String baseDn, int pAGE_SIZE) throws DcemException {
+		// TODO Auto-generated method stub
+		// used for customSearch in Ldap
+		return null;
 	}
 
 	// private String getAccessTokenForUser(DcemUser dcemUser, String password) throws DcemException {
