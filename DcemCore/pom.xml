@@ -131,6 +131,17 @@
 			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
 			<artifactId>owasp-java-html-sanitizer</artifactId>
 			<version>20220608.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+				<groupId>com.microsoft.azure</groupId>
+				<artifactId>msal4j</artifactId>
 		</dependency>
 
 		<dependency>
@@ -233,6 +244,12 @@
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-jersey2-jaxrs</artifactId>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- <dependency> <groupId>org.glassfish.jersey.media</groupId> <artifactId>jersey-media-multipart</artifactId> 
 			</dependency> -->
@@ -298,11 +315,13 @@
 			<groupId>com.google.zxing</groupId>
 			<artifactId>javase</artifactId>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>com.microsoft.azure</groupId>
 			<artifactId>adal4j</artifactId>
 			<version>1.6.4</version>
 		</dependency>
+		-->
 
 		<!-- <dependency> <groupId>com.microsoft.azure</groupId> <artifactId>msal4j</artifactId> 
 			<version>1.1.0</version> </dependency> -->
@@ -312,10 +331,6 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>

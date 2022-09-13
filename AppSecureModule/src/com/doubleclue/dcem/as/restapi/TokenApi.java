@@ -33,7 +33,7 @@ public class TokenApi {
 			throws DcemApiException {
 		OtpModuleApi apiServiceImpl = CdiUtils.getReference(OtpModuleApi.OTP_SERVICE_IMPL);
 		if (apiServiceImpl == null) {
-			return Response.status(DcemConstants.SERVER_LOGIC_EXCEPTION).entity(new DcemApiException(0, "otpApiServiceImpl", null)).build();
+			return Response.status(DcemConstants.SERVER_LOGIC_EXCEPTION).entity(new DcemApiException("", "otpApiServiceImpl", null)).build();
 		}
 		try {
 			apiServiceImpl.modifyOtpToken(asApiOtpToken, passcode);
@@ -54,7 +54,7 @@ public class TokenApi {
 
 		OtpModuleApi apiServiceImpl = CdiUtils.getReference(OtpModuleApi.OTP_SERVICE_IMPL);
 		if (apiServiceImpl == null) {
-			return Response.status(DcemConstants.SERVER_LOGIC_EXCEPTION).entity(new DcemApiException(0, "otpApiServiceImpl", null)).build();
+			return Response.status(DcemConstants.SERVER_LOGIC_EXCEPTION).entity(new DcemApiException("0", "otpApiServiceImpl", null)).build();
 		}
 		return apiServiceImpl.queryOtpTokens(filterItems, offset, maxResults, securityContext);
 	}

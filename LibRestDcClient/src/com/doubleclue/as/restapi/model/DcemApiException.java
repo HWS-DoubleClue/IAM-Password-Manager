@@ -39,7 +39,7 @@ public class DcemApiException  extends Exception {
  static public final int SERVER_LOGIC_EXCEPTION = 599;
 	
   @JsonProperty("code")
-  private int code = 0;
+  private String code = "0";
 
   @JsonProperty("message")
   private String message = null;
@@ -47,7 +47,7 @@ public class DcemApiException  extends Exception {
   @JsonProperty("details")
   private String details = null;
 
-  public DcemApiException code(int code) {
+  public DcemApiException code(String code) {
     this.code = code;
     return this;
   }
@@ -56,11 +56,11 @@ public class DcemApiException  extends Exception {
    * Get code
    * @return code
   **/
-  public int getCode() {
+  public String getCode() {
     return code;
   }
 
-  public void setCode(int code) {
+  public void setCode(String code) {
     this.code = code;
   }
 

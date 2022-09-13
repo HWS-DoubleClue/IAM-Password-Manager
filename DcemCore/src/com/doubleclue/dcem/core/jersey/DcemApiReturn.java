@@ -12,18 +12,18 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 @SuppressWarnings("serial")
 public class DcemApiReturn implements Serializable {
 
-	private int code = 0;
+	private String code = "";
 
 	private String message = null;
 
 	private String details = null;
 
-	public DcemApiReturn code(int code) {
+	public DcemApiReturn code(String code) {
 		this.code = code;
 		return this;
 	}
 
-	public DcemApiReturn(int code, String message, String details) {
+	public DcemApiReturn(String code, String message, String details) {
 		super();
 		this.code = code;
 		this.message = message;
@@ -31,7 +31,7 @@ public class DcemApiReturn implements Serializable {
 	}
 
 	public DcemApiReturn(DcemException exp) {
-		this.code = exp.getErrorCode().getErrorCode();
+		this.code = exp.getErrorCode().name();
 		this.message = exp.getErrorCode().name();
 		this.details = exp.getLocalizedMessage();
 	}
@@ -41,11 +41,11 @@ public class DcemApiReturn implements Serializable {
 	 * 
 	 * @return code
 	 **/
-	public int getCode() {
+	public String getCode() {
 		return code;
 	}
 
-	public void setCode(int code) {
+	public void setCode(String code) {
 		this.code = code;
 	}
 

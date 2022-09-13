@@ -88,16 +88,19 @@
 						<h:outputLabel class="labelLogin" value="#{AdminMsg['mfalogin.login.username']}" />
 						<br></br>
 						<h:panelGroup>
-							<p:inputText id="name" value="#{mfaLoginView.userName}" size="40" autocomplete="on" style="width: 88%;" />
+							<p:inputText id="name" value="#{mfaLoginView.userName}" size="50" autocomplete="on" style="width: 88%;" />
 						</h:panelGroup>
 						<p></p>
 						<h:outputLabel class="labelLogin" value="#{AdminMsg['mfalogin.login.password']}" />
 						<br></br>
-						<p:password id="password" size="40" value="#{mfaLoginView.password}" style="width: 88%" autocomplete="off" toggleMask="true" />
+						<p:password id="password" size="50" value="#{mfaLoginView.password}" style="width: 88%" autocomplete="off" toggleMask="true" />
 						<p></p>
 
 						<p:commandButton id="login" value="#{AdminMsg['mfalogin.login.button']}" action="#{mfaLoginView.actionLogin}" style="width: 91%;" ajax="true" async="true"
 							icon="fa fa-sign-in" />
+							<p></p>
+						<p:commandButton id="azureLogin" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{mfaLoginView.actionAzureLogin}" style="width: 91%;" ajax="false" async="true"
+							icon="fa fa-sign-in" rendered="#{mfaLoginView.azureLogin}" />
 
 					</p:panel>
 

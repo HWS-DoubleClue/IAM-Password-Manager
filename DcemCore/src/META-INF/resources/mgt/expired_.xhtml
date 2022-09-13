@@ -30,11 +30,11 @@
 				<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.error.label.expired']}" />
 				<h:form>
 					<p></p>
-					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
+					<p:link style="font-size: 1.4em; margin-left: 100px"   value="#{CoreMsg['view.login.button.login']}"  outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
 					<p></p>
-					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
+					<p:link style="font-size: 1.4em; margin-left: 100px" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
 					<p></p>
-					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" rendered="#{adminModule.windowsSso}"/>
+					<p:link style="font-size: 1.4em; margin-left: 100px" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" rendered="#{adminModule.windowsSso}"/>
 					<p></p>
 				</h:form>
 			</div>

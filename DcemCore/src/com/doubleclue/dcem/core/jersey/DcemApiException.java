@@ -11,18 +11,18 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 @SuppressWarnings("serial")
 public class DcemApiException extends Exception {
 
-	private int code = 0;
+	private String code;
 
 	private String message = null;
 
 	private String details = null;
 
-	public DcemApiException code(int code) {
+	public DcemApiException code(String code) {
 		this.code = code;
 		return this;
 	}
 
-	public DcemApiException(int code, String message, String details) {
+	public DcemApiException(String code, String message, String details) {
 		super();
 		this.code = code;
 		this.message = message;
@@ -30,7 +30,7 @@ public class DcemApiException extends Exception {
 	}
 
 	public DcemApiException(DcemException exp) {
-		this.code = exp.getErrorCode().getErrorCode();
+		this.code = exp.getErrorCode().name();
 		this.message = exp.getErrorCode().name();
 		this.details = exp.getLocalizedMessage();
 	}
@@ -40,11 +40,11 @@ public class DcemApiException extends Exception {
 	 * 
 	 * @return code
 	 **/
-	public int getCode() {
+	public String getCode() {
 		return code;
 	}
 
-	public void setCode(int code) {
+	public void setCode(String code) {
 		this.code = code;
 	}
 

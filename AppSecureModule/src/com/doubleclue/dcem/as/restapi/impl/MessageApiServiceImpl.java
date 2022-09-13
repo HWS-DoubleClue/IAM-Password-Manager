@@ -102,7 +102,7 @@ public class MessageApiServiceImpl  {
 
 		if (dcemUser == null) {
 			return Response.status(DcemConstants.SERVER_LOGIC_EXCEPTION)
-					.entity(new DcemApiException(DcemErrorCodes.INVALID_USERID.getErrorCode(),
+					.entity(new DcemApiException(DcemErrorCodes.INVALID_USERID.name(),
 							DcemErrorCodes.INVALID_USERID.name(), null))
 					.build();
 		}

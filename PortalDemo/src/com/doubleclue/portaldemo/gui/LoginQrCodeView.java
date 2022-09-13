@@ -86,7 +86,7 @@ public class LoginQrCodeView extends AbstractPortalView {
 				}
 
 			} catch (DcemApiException e) {
-				if (e.getCode() == 36) {
+				if (e.getCode().equals("LOGIN_QR_CODE_NOT_FOUND") == true) {
 					stopQrCode();
 				} else {
 					JsfUtils.addErrorMessage(e.toString());

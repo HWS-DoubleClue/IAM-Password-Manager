@@ -1,8 +1,6 @@
 package com.doubleclue.dcem.core.logic;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -51,8 +49,6 @@ import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
-import com.doubleclue.utils.KaraUtils;
-import com.microsoft.graph.requests.extensions.ProfilePhotoStreamRequest;
 import com.sun.mail.imap.protocol.Item;
 
 public class DomainLdap implements DomainApi {

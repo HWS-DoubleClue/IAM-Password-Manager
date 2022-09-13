@@ -188,7 +188,7 @@ public class UserApiServiceImpl {
 
 		if (dcemUser == null) {
 			return Response.status(DcemConstants.SERVER_LOGIC_EXCEPTION)
-					.entity(new DcemApiException(DcemErrorCodes.INVALID_USERID.getErrorCode(), DcemErrorCodes.INVALID_USERID.name(), null)).build();
+					.entity(new DcemApiException(DcemErrorCodes.INVALID_USERID.name(), DcemErrorCodes.INVALID_USERID.name(), null)).build();
 		}
 		AsApiUser asApiUser = new AsApiUser();
 		DcemUtils.copyObject(dcemUser, asApiUser);
@@ -204,7 +204,7 @@ public class UserApiServiceImpl {
 			DcemUser dcemUser = userLogic.getUser(apiUser.getLoginId());
 			if (dcemUser == null) {
 				return Response.status(DcemConstants.SERVER_LOGIC_EXCEPTION)
-						.entity(new DcemApiException(DcemErrorCodes.INVALID_USERID.getErrorCode(), DcemErrorCodes.INVALID_USERID.name(), null)).build();
+						.entity(new DcemApiException(DcemErrorCodes.INVALID_USERID.name(), DcemErrorCodes.INVALID_USERID.name(), null)).build();
 			}
 			DcemUtils.copyObject(apiUser, dcemUser);
 			if (apiUser.getPreferedLanguage() == null) {

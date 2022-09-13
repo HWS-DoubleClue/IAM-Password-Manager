@@ -68,7 +68,7 @@ public class AddTenUsersTest extends AbstractTestUnit {
 				initialPassword = clientRestApi.addUser(apiUser);
 				addedUserCount++;
 			} catch (DcemApiException e) {
-				if (e.getCode() != DcemErrorCodes.USER_EXISTS_ALREADY.getErrorCode()) {
+				if (e.getCode().equals(DcemErrorCodes.USER_EXISTS_ALREADY.name()) == false) {
 					throw e;
 				}
 				continue;

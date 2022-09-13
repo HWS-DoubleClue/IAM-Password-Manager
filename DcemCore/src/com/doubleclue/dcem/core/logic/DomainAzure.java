@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,57 +13,75 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+import javax.faces.context.ExternalContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.config.ConnectionServicesType;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.DomainEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.gui.DcemApplicationBean;
+import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
-import com.doubleclue.dcem.core.logic.module.DcemModule;
-import com.doubleclue.dcem.core.utils.AzureUtils;
 import com.doubleclue.dcem.core.utils.DcemUtils;
-import com.doubleclue.oauth.oauth2.OAuthErrorResponse;
+import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.utils.KaraUtils;
-import com.google.gson.JsonArray;
+import com.doubleclue.utils.StringUtils;
+//import com.doubleclue.utils.StringUtils;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.microsoft.aad.adal4j.AuthenticationException;
-import com.microsoft.graph.authentication.IAuthenticationProvider;
-import com.microsoft.graph.core.DefaultClientConfig;
-import com.microsoft.graph.core.IClientConfig;
+import com.microsoft.aad.msal4j.ClientCredentialFactory;
+import com.microsoft.aad.msal4j.ClientCredentialParameters;
+import com.microsoft.aad.msal4j.ConfidentialClientApplication;
+import com.microsoft.aad.msal4j.IAuthenticationResult;
+import com.microsoft.aad.msal4j.MsalInteractionRequiredException;
+import com.microsoft.aad.msal4j.PublicClientApplication;
+import com.microsoft.aad.msal4j.UserNamePasswordParameters;
 import com.microsoft.graph.http.GraphServiceException;
-import com.microsoft.graph.http.IHttpRequest;
 import com.microsoft.graph.logger.LoggerLevel;
-import com.microsoft.graph.models.extensions.DirectoryObject;
-import com.microsoft.graph.models.extensions.Group;
-import com.microsoft.graph.models.extensions.IGraphServiceClient;
-import com.microsoft.graph.models.extensions.User;
+import com.microsoft.graph.models.DirectoryObject;
+import com.microsoft.graph.models.Group;
+import com.microsoft.graph.models.User;
+import com.microsoft.graph.models.UserChangePasswordParameterSet;
 import com.microsoft.graph.options.QueryOption;
-import com.microsoft.graph.requests.extensions.GraphServiceClient;
-import com.microsoft.graph.requests.extensions.IDirectoryObjectCollectionWithReferencesPage;
-import com.microsoft.graph.requests.extensions.IGroupCollectionPage;
-import com.microsoft.graph.requests.extensions.IUserCollectionPage;
-import com.microsoft.graph.requests.extensions.ProfilePhotoStreamRequest;
+import com.microsoft.graph.requests.AuthenticationMethodCollectionPage;
+import com.microsoft.graph.requests.DirectoryObjectCollectionWithReferencesPage;
+import com.microsoft.graph.requests.GraphServiceClient;
+import com.microsoft.graph.requests.GroupCollectionPage;
+import com.microsoft.graph.requests.ProfilePhotoStreamRequest;
+import com.microsoft.graph.requests.UserCollectionPage;
+
+import okhttp3.Request;
 
 public class DomainAzure implements DomainApi {
-	
+
 	private static final Logger logger = LogManager.getLogger(DomainAzure.class);
 
 	private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId";
 	private static final String SELECT_USER_ATTRIBUTES_EXT = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId, profilePhoto";
-
+	private static final String SCOPE = "https://graph.microsoft.com/.default";
 	private final DomainEntity domainEntity;
+	private final static Set<String> SCOPE_USER_PASSWORD = Collections.singleton("");
 
-	private IGraphServiceClient graphClient = null;
-	private String domainName = null;
+	private GraphServiceClient<Request> graphServiceClient = null;
+	private static ConfidentialClientApplication confidentialClientApplication;
+	PublicClientApplication pca;
+	ClientCredentialParameters clientCredentialParam;
+	private String authority = null;
 
 	public DomainAzure(DomainEntity domainEntity) {
 		this.domainEntity = domainEntity;
+		authority = DcemConstants.AZURE_AUTHORITY + domainEntity.getTenantId();
 	}
 
 	@Override
@@ -71,27 +90,39 @@ public class DomainAzure implements DomainApi {
 
 	@Override
 	public void testConnection() throws DcemException {
+
 		try {
-			AzureUtils.getAuthResultByClientCredentials(domainEntity);
+			confidentialClientApplication = ConfidentialClientApplication
+					.builder(domainEntity.getClientId(), ClientCredentialFactory.createFromSecret(domainEntity.getClientSecret())).authority(authority).build();
+			clientCredentialParam = ClientCredentialParameters.builder(Collections.singleton(SCOPE)).build();
+			pca = PublicClientApplication.builder(domainEntity.getClientId()).authority(authority)
+					// .setTokenCacheAccessAspect(tokenCacheAspect)
+					.build();
+			graphServiceClient = null;
+			getAuthResultByClientCredentials();
 		} catch (Exception e) {
-			Throwable cause = e.getCause();
-			if (cause != null && cause.getClass().equals(AuthenticationException.class)) {
-				OAuthErrorResponse errorResponse = new OAuthErrorResponse(cause.getMessage());
-				String description = errorResponse.getErrorDescription();
-				int index = description.indexOf("Trace ID:");
-				if (index > -1) {
-					description = description.substring(0, index);
-				}
-				throw new DcemException(DcemErrorCodes.AZURE_DOMAIN_AUTHENTICATION_ERROR, description);
-			}
-			throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, e.getMessage());
+			// Throwable cause = e.getCause();
+			// if (cause != null && cause.getClass().equals(AuthenticationException.class)) {
+			// OAuthErrorResponse errorResponse = new OAuthErrorResponse(cause.getMessage());
+			// String description = errorResponse.getErrorDescription();
+			// int index = description.indexOf("Trace ID:");
+			// if (index > -1) {
+			// description = description.substring(0, index);
+			// }
+			// throw new DcemException(DcemErrorCodes.AZURE_DOMAIN_AUTHENTICATION_ERROR, description);
+			// }
+			throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public DcemUser verifyLogin(DcemUser dcemUser, byte[] password) throws DcemException {
-		IGraphServiceClient userGraphClient = getUserGraphClient(dcemUser, new String(password, DcemConstants.UTF_8));
-		User user = userGraphClient.me().buildRequest().select(SELECT_USER_ATTRIBUTES).get();
+
+		GraphServiceClient<Request> userGraphClient = getUserGraphClient(dcemUser, new String(password, DcemConstants.UTF_8));
+		AuthenticationMethodCollectionPage au = userGraphClient.me().authentication().methods().buildRequest().get();
+
+		User user = userGraphClient.me().buildRequest().get();
+		// List<AuthenticationMethod> list = user.authentication.methods.getCurrentPage();
 		return createDcemUser(user);
 	}
 
@@ -101,9 +132,12 @@ public class DomainAzure implements DomainApi {
 
 	@Override
 	public void updateUserPassword(DcemUser dcemUser, String currentPassword, String newPassword) throws DcemException {
-		IGraphServiceClient userGraphClient = getUserGraphClient(dcemUser, currentPassword);
+		GraphServiceClient<Request> userGraphClient = getUserGraphClient(dcemUser, currentPassword);
+		userGraphClient.me();
 		try {
-			userGraphClient.me().changePassword(currentPassword, newPassword).buildRequest().post();
+			UserChangePasswordParameterSet changePasswordParameterSet = UserChangePasswordParameterSet.newBuilder().withCurrentPassword(currentPassword)
+					.withNewPassword(newPassword).build();
+			userGraphClient.me().changePassword(changePasswordParameterSet);
 		} catch (GraphServiceException gse) {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, gse.getServiceError().message);
 		}
@@ -133,12 +167,12 @@ public class DomainAzure implements DomainApi {
 		if (queryOption != null) {
 			options.add(queryOption);
 		}
-		IGroupCollectionPage groupCollectionPage = null;
+		GroupCollectionPage groupCollectionPage = null;
 		try {
 			groupCollectionPage = getSearchGraphClient().groups().buildRequest(options).select("id, displayName").get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
-				graphClient = null;
+				graphServiceClient = null;
 				groupCollectionPage = getSearchGraphClient().groups().buildRequest(options).select("id, displayName").get();
 			}
 		}
@@ -155,52 +189,41 @@ public class DomainAzure implements DomainApi {
 
 	@Override
 	public List<DcemGroup> getUserGroups(DcemUser dcemUser, int pagesize) throws DcemException {
-		IDirectoryObjectCollectionWithReferencesPage collection;
+		DirectoryObjectCollectionWithReferencesPage collection = null;
+		List<DcemGroup> groupList = new LinkedList<>();
+
 		try {
-			collection = getSearchGraphClient().users().byId(dcemUser.getUserDn()).memberOf().buildRequest().select("id, displayName").get();
+			collection = getSearchGraphClient().users(dcemUser.getUserDn()).memberOf().buildRequest().get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
-				graphClient = null;
-				collection = getSearchGraphClient().users().byId(dcemUser.getUserDn()).memberOf().buildRequest().select("id, displayName").get();
+				graphServiceClient = null;
+				collection = getSearchGraphClient().users().byId(dcemUser.getUserDn()).memberOf().buildRequest().get();
+			} else if (e.getServiceError().code.equals("Authorization_RequestDenied")) {
+				logger.info("AZURE Authorization_RequestDenied " + e.toString());
 			} else {
 				throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString(), e);
 			}
 		}
-		Iterator<DirectoryObject> iterator = collection.getCurrentPage().iterator();
-		DcemGroup dcemGroup;
-		List<DcemGroup> groupList = new LinkedList<>();
-		while (iterator.hasNext()) {
-			DirectoryObject directoryObject = iterator.next();
-			dcemGroup = new DcemGroup(domainEntity, directoryObject.id, directoryObject.getRawObject().get("displayName").getAsString());
-			groupList.add(dcemGroup);
+		if (collection != null) {
+			Iterator<DirectoryObject> iterator = collection.getCurrentPage().iterator();
+			DcemGroup dcemGroup;
+			while (iterator.hasNext()) {
+				DirectoryObject directoryObject = iterator.next();
+				if (directoryObject instanceof Group) {
+					dcemGroup = new DcemGroup(domainEntity, directoryObject.id, ((Group) directoryObject).displayName);
+					groupList.add(dcemGroup);
+				}
+			}
 		}
 		return groupList;
 	}
 
 	@Override
 	public HashSet<String> getUserGroupNames(DcemUser dcemUser, String filter, int pageSize) throws DcemException {
-		IDirectoryObjectCollectionWithReferencesPage collection;
-		try {
-			String userId = dcemUser.getUserDn();
-			if (userId == null) {
-				userId = dcemUser.getAccountName();
-			}
-			collection = getSearchGraphClient().users().byId(userId).memberOf().buildRequest().top(pageSize).select("displayName").get();
-		} catch (GraphServiceException e) {
-			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
-				graphClient = null;
-				collection = getSearchGraphClient().users().byId(dcemUser.getUserDn()).memberOf().buildRequest().top(pageSize).select("displayName").get();
-			} else {
-		//		throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString(), e);
-				return new HashSet<>();
-			}
-		}
-
-		Iterator<DirectoryObject> iterator = collection.getCurrentPage().iterator();
+		List<DcemGroup> groups = getUserGroups(dcemUser, pageSize);
 		HashSet<String> groupSet = new HashSet<>();
-		while (iterator.hasNext()) {
-			DirectoryObject directoryObject = iterator.next();
-			groupSet.add(domainEntity.getName() + DcemConstants.DOMAIN_SEPERATOR + directoryObject.getRawObject().get("displayName").getAsString());
+		for (DcemGroup dcemGroup : groups) {
+			groupSet.add(dcemGroup.getName());
 		}
 		return groupSet;
 	}
@@ -222,20 +245,19 @@ public class DomainAzure implements DomainApi {
 
 	@Override
 	public List<DcemUser> getGroupMembers(DcemGroup dcemGroup, String filter) throws DcemException {
-
-		IDirectoryObjectCollectionWithReferencesPage collectionWithReferencesPage;
+		UserCollectionPage userCollectionPage;
 		try {
-			collectionWithReferencesPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).members().buildRequest().get();
+			userCollectionPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).membersAsUser().buildRequest().get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
-				graphClient = null;
-				collectionWithReferencesPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).members().buildRequest().get();
+				graphServiceClient = null;
+				userCollectionPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).membersAsUser().buildRequest().get();
 			} else {
 				throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString(), e);
 			}
 		}
 
-		List<DirectoryObject> list = collectionWithReferencesPage.getCurrentPage();
+		List<User> list = userCollectionPage.getCurrentPage();
 		List<DcemUser> userList = new ArrayList<>(list.size());
 		String startsWith = null;
 		if (filter != null) {
@@ -245,14 +267,11 @@ public class DomainAzure implements DomainApi {
 				}
 			}
 		}
-		for (DirectoryObject directoryObject : list) {
-			if (startsWith != null) {
-				String displayName = directoryObject.getRawObject().get("displayName").getAsString().toLowerCase();
-				if (displayName.startsWith(startsWith) == false) {
-					continue;
-				}
+		for (User user : list) {
+			if (startsWith != null && user.displayName.startsWith(startsWith) == false) {
+				continue;
 			}
-			userList.add(createDcemUser(directoryObject.getRawObject()));
+			userList.add(createDcemUser(user));
 		}
 		return userList;
 	}
@@ -290,12 +309,12 @@ public class DomainAzure implements DomainApi {
 		// queryOption = new QueryOption("$filter", "memberOf eq '" + groupDn + "'");
 		// options.add(queryOption);
 		// }
-		IUserCollectionPage userCollectionPage = null;
+		UserCollectionPage userCollectionPage = null;
 		try {
 			userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).select(SELECT_USER_ATTRIBUTES_EXT).get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
-				graphClient = null;
+				graphServiceClient = null;
 				userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).select(SELECT_USER_ATTRIBUTES_EXT).get();
 			} else {
 				throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString());
@@ -306,6 +325,10 @@ public class DomainAzure implements DomainApi {
 
 		while (iterator.hasNext()) {
 			User user = iterator.next();
+
+			// AuthenticationMethodCollectionPage authenticationMethodCollectionPage =
+			// getSearchGraphClient().users(user.id).authentication().methods().buildRequest().get();
+
 			DcemUser dcemUser = createDcemUser(user);
 			userList.add(dcemUser);
 		}
@@ -317,36 +340,36 @@ public class DomainAzure implements DomainApi {
 		try {
 			ProfilePhotoStreamRequest request = (ProfilePhotoStreamRequest) getSearchGraphClient().users(dcemUser.getUserPrincipalName()).photo().content()
 					.buildRequest();
-			ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
 			InputStream inputStream = request.get();
+			ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
 			KaraUtils.copyStream(inputStream, arrayOutputStream);
 			byte[] photo = arrayOutputStream.toByteArray();
 			photo = DcemUtils.resizeImage(photo);
 			return photo;
 		} catch (GraphServiceException gse) {
-//			if (gse.getServiceError().code.equals("ImageNotFound")) {
-//				return null;
-//			}
-//			throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, "Phone", gse);
-			logger.debug("Couldn't retrieve photo for  " + dcemUser.getDisplayNameOrLoginId(), gse.toString());
+			// if (gse.getServiceError().code.equals("ImageNotFound")) {
+			// return null;
+			// }
+			// throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, "Phone", gse);
+			logger.info("Couldn't retrieve photo for  " + dcemUser.getDisplayNameOrLoginId(), gse.toString());
 			return null;
 		} catch (Exception e) {
 			throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, "Phone", e);
 		}
 	}
 
-	private DcemUser createDcemUser(JsonObject jsonObject) {
-		String userPrincipalName = jsonObject.get("userPrincipalName").getAsString();
-		DcemUser dcemUser = new DcemUser(domainEntity, jsonObject.get("id").getAsString(), userPrincipalName);
-		dcemUser.setDisplayName(jsonObject.get("displayName").getAsString());
-		dcemUser.setEmail((jsonObject.get("mail").isJsonNull()) ? null : jsonObject.get("mail").getAsString());
-		dcemUser.setMobileNumber((jsonObject.get("mobile") == null) ? null : jsonObject.get("mobile").getAsString());
-		JsonArray tele = jsonObject.get("businessPhones").getAsJsonArray();
-		if (tele.size() > 0) {
-			dcemUser.setTelephoneNumber(tele.get(0).getAsString());
-		}
-		return dcemUser;
-	}
+	// private DcemUser createDcemUser(JsonObject jsonObject) {
+	// String userPrincipalName = jsonObject.get("userPrincipalName").getAsString();
+	// DcemUser dcemUser = new DcemUser(domainEntity, jsonObject.get("id").getAsString(), userPrincipalName);
+	// dcemUser.setDisplayName(jsonObject.get("displayName").getAsString());
+	// dcemUser.setEmail((jsonObject.get("mail").isJsonNull()) ? null : jsonObject.get("mail").getAsString());
+	// dcemUser.setMobileNumber((jsonObject.get("mobile") == null) ? null : jsonObject.get("mobile").getAsString());
+	// JsonArray tele = jsonObject.get("businessPhones").getAsJsonArray();
+	// if (tele.size() > 0) {
+	// dcemUser.setTelephoneNumber(tele.get(0).getAsString());
+	// }
+	// return dcemUser;
+	// }
 
 	private DcemUser createDcemUser(User user) {
 		DcemUser dcemUser = new DcemUser(domainEntity, user.id, user.userPrincipalName);
@@ -358,6 +381,9 @@ public class DomainAzure implements DomainApi {
 		dcemLdapAttributes.setDisplayName(user.displayName);
 
 		dcemUser.setMobileNumber(user.mobilePhone);
+		dcemLdapAttributes.setMobile(user.mobilePhone);
+
+		dcemLdapAttributes.setDn(user.id);
 		if (user.businessPhones.size() > 0) {
 			dcemUser.setTelephoneNumber(user.businessPhones.get(0));
 			dcemLdapAttributes.setTelephone(user.businessPhones.get(0));
@@ -383,69 +409,52 @@ public class DomainAzure implements DomainApi {
 		return null;
 	}
 
-	private IGraphServiceClient getSearchGraphClient() throws DcemException {
-		if (graphClient == null) {
+	private GraphServiceClient<Request> getSearchGraphClient() throws DcemException {
+		if (graphServiceClient == null) {
 			try {
-				String token = AzureUtils.getAuthResultByClientCredentials(domainEntity).getAccessToken();
-				graphClient = getGraphClient(token);
-				getSearchGraphClient().getLogger().setLoggingLevel(LoggerLevel.ERROR);
-			} catch (DcemException e) {
-				throw e;
+				CompletableFuture<IAuthenticationResult> future = confidentialClientApplication.acquireToken(clientCredentialParam);
+				IAuthenticationResult auth = future.get();
+				String accessToken = auth.accessToken();
+				graphServiceClient = getGraphServiceClient(accessToken);
 			} catch (Exception e) {
 				throw new DcemException(DcemErrorCodes.AZURE_DOMAIN_NOT_AUTHORISED, "Could not create a graph client: " + e.getLocalizedMessage());
 			}
 		}
-		return graphClient;
+		return graphServiceClient;
 	}
 
-	// private String getDomainName() throws DcemException {
-	// if (domainName == null) {
-	// try {
-	// Organization org = getSearchGraphClient().organization(AzureUtils.getTenantID(domainEntity))
-	// .buildRequest().get();
-	// List<VerifiedDomain> domains = org.verifiedDomains;
-	// for (VerifiedDomain domain : domains) {
-	// if (domains.size() == 1 || domain.isDefault || domain.isInitial) {
-	// domainName = domain.name;
-	// }
-	// }
-	// } catch (DcemException e) {
-	// throw e;
-	// } catch (Exception e) {
-	// throw new DcemException(DcemErrorCodes.AZURE_DOMAIN_NOT_AUTHORISED,
-	// "Could not get azure domain name: " + e.getMessage());
-	// }
-	// }
-	// return domainName;
-	// }
+	private GraphServiceClient<Request> getUserGraphClient(DcemUser dcemUser, String password) throws DcemException {
 
-	private IGraphServiceClient getUserGraphClient(DcemUser dcemUser, String password) throws DcemException {
-		String userAccessToken = AzureUtils.getAuthResultByRopc(domainEntity, dcemUser.getUserPrincipalName(), password).getAccessToken();
-		return getGraphClient(userAccessToken);
-	}
-
-	private IGraphServiceClient getGraphClient(String accessToken) {
+		String userAccessToken = null;
 		try {
-			IAuthenticationProvider mAuthenticationProvider = new IAuthenticationProvider() {
-				// @Override
-				public void authenticateRequest(final IHttpRequest request) {
-					request.addHeader("Authorization", "Bearer " + accessToken);
-				}
-			};
-			IClientConfig mClientConfig = DefaultClientConfig.createWithAuthenticationProvider(mAuthenticationProvider);
-			return GraphServiceClient.fromConfig(mClientConfig);
+			IAuthenticationResult authenticationResult = getAuthResultByUserCredentials(dcemUser.getAccountName(), password);
+			userAccessToken = authenticationResult.accessToken();
+			return getGraphServiceClient(userAccessToken);
+		} catch (DcemException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DcemException(DcemErrorCodes.DOMAIN_WRONG_AUTHENTICATION, e.toString());
+		}
+
+	}
+
+	private GraphServiceClient<Request> getGraphServiceClient(String accessToken) {
+		try {
+			MsGraphSimpleAuthProvider simpleAuthProvider = new MsGraphSimpleAuthProvider(accessToken);
+			GraphServiceClient<Request> graphServiceClient = GraphServiceClient.builder().authenticationProvider(simpleAuthProvider).buildClient();
+			graphServiceClient.getLogger().setLoggingLevel(LoggerLevel.ERROR);
+			return graphServiceClient;
 		} catch (Exception e) {
 			throw new Error("Could not create a graph client: " + e.getLocalizedMessage());
 		}
 	}
 
-	
-
 	@Override
 	public Map<String, String> getUserAttributes(DcemUser dcemUser, List<String> attributeList) throws DcemException {
 		try {
 
-			// https://graph.microsoft.com/v1.0/users/{id | userPrincipalName}?$select=displayName,givenName,postalCode
+			// https://graph.microsoft.com/v1.0/users/{id |
+			// userPrincipalName}?$select=displayName,givenName,postalCode
 			StringBuffer sb = new StringBuffer();
 			sb.append("/users/");
 			sb.append(dcemUser.getUserDn());
@@ -458,12 +467,12 @@ public class DomainAzure implements DomainApi {
 				sb.append(attr);
 				firstOne = false;
 			}
-			JsonObject jsonObject = getSearchGraphClient().customRequest(sb.toString()).buildRequest().get();
+			JsonElement jsonElement = getSearchGraphClient().customRequest(sb.toString()).buildRequest().get();
 			Map<String, String> result = new HashMap<>();
 			for (String name : attributeList) {
-				JsonElement value = jsonObject.get(name);
-				if (value != null) {
-					result.put(name, value.getAsString());
+				// JsonElement value = jsonElement.get(name);
+				if (jsonElement != null) {
+					result.put(name, jsonElement.getAsString());
 				}
 			}
 			return result;
@@ -488,21 +497,59 @@ public class DomainAzure implements DomainApi {
 
 	@Override
 	public void changeUserPhotoProfile(DcemUser dcemUser, byte[] photo, String password) throws DcemException {
-		IGraphServiceClient userGraphClient = getSearchGraphClient();
 		byte[] stream = Base64.getDecoder().decode(photo);
-		userGraphClient.users().byId(dcemUser.getUserDn()).photo().content().buildRequest().put(stream);
+		getSearchGraphClient().users().byId(dcemUser.getUserDn()).photo().content().buildRequest().put(stream);
 	}
 
-	// private String getAccessTokenForUser(DcemUser dcemUser, String password) throws DcemException {
-	// try {
-	// return AzureUtils.getAuthResultByRopc(domainEntity, dcemUser.getEmail(), password).getAccessToken();
-	// } catch (Exception e) {
-	// throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Error while obtaining Access Token for user '" + dcemUser.getEmail() + "' : " +
-	// e.getMessage());
-	// }
-	// }
+	private IAuthenticationResult getAuthResultByClientCredentials() throws Exception {
+		ConfidentialClientApplication confidentialClientApplication = ConfidentialClientApplication
+				.builder(domainEntity.getClientId(), ClientCredentialFactory.createFromSecret(domainEntity.getClientSecret())).authority(authority).build();
+		ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(Collections.singleton(SCOPE)).build();
+		CompletableFuture<IAuthenticationResult> future = confidentialClientApplication.acquireToken(clientCredentialParam);
+		IAuthenticationResult authenticationResult = future.get();
+		return authenticationResult;
+	}
 
-	// private String getUsernameFromPrincipalName(String principalName) {
-	// return principalName.substring(0, principalName.lastIndexOf('@'));
-	// }
+	private IAuthenticationResult getAuthResultByUserCredentials(String userName, String password) throws Exception {
+		UserNamePasswordParameters userNamePasswordParameters = UserNamePasswordParameters.builder(SCOPE_USER_PASSWORD, userName, password.toCharArray())
+				.build();
+		try {
+			CompletableFuture<IAuthenticationResult> acquireToken = pca.acquireToken(userNamePasswordParameters);
+			IAuthenticationResult authenticationResult = acquireToken.join();
+			return authenticationResult;
+		} catch (Exception e) {
+			if (e.getCause() instanceof MsalInteractionRequiredException) {
+				if (e.getCause().getMessage().startsWith("AADSTS50076")) {
+					StringUtils.wipeString(password);
+					throw new DcemException(DcemErrorCodes.AZURE_NEEDS_MFA, userName);
+				}
+			}
+			throw e;
+		}
+	}
+	
+	public void sendAuthRedirect(ConnectionServicesType connectionServicesType) throws Exception {
+	        // state parameter to validate response from Authorization server and nonce parameter to validate idToken
+			ExternalContext ec= JsfUtils.getExternalContext();
+			HttpServletRequest httpRequest = (HttpServletRequest) ec.getRequest();
+			HttpServletResponse httpResponse = (HttpServletResponse) ec.getResponse();
+	        String state = UUID.randomUUID().toString();
+	        String nonce = UUID.randomUUID().toString();
+	        CookieHelper.setStateNonceCookies(httpRequest, httpResponse, state, nonce);
+	        httpResponse.setStatus(302);
+	        String redirectUrl = getRedirectUrl(httpRequest.getParameter("claims"), connectionServicesType,  state, nonce);
+	        ec.redirect(redirectUrl);
+	    }
+
+	private String getRedirectUrl(String claims, ConnectionServicesType connectionServicesType, String state, String nonce) throws Exception {
+
+		DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
+		String url = applicationBean.getServiceUrl(connectionServicesType);
+		String redirectUrl = authority + "/oauth2/v2.0/authorize?" + "response_type=code&" + "response_mode=form_post&" + "redirect_uri="
+				+ URLEncoder.encode(url, "UTF-8") + "&client_id=" + domainEntity.getClientId() + "&scope="
+				+ URLEncoder.encode("openid offline_access profile", "UTF-8") + (org.apache.commons.lang3.StringUtils.isEmpty(claims) ? "" : "&claims=" + claims)
+				+ "&prompt=select_account" + "&state=" + state + "&nonce=" + nonce;
+		return redirectUrl;
+	}
+
 }

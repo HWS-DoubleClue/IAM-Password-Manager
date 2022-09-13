@@ -173,6 +173,11 @@ public class DomainEntity extends EntityInterface implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Transient
+	public String getTenantId() {
+		return host;
+	}
 
 	public String getHost() {
 		return host;
@@ -188,6 +193,16 @@ public class DomainEntity extends EntityInterface implements Serializable {
 
 	public void setBaseDN(String baseDN) {
 		this.baseDN = baseDN;
+	}
+	
+	@Transient
+	public String getClientId() {
+		return searchAccount;
+	}
+	
+	@Transient
+	public String getClientSecret() {
+		return password;
 	}
 
 	public String getSearchAccount() {

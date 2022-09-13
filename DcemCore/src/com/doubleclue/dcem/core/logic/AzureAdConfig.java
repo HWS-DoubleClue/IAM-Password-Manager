@@ -3,8 +3,6 @@ package com.doubleclue.dcem.core.logic;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.microsoft.aad.adal4j.AuthenticationResult;
-
 @SuppressWarnings("serial")
 public class AzureAdConfig implements Serializable {
 
@@ -21,11 +19,7 @@ public class AzureAdConfig implements Serializable {
 		this.accessTokenExpiresOn = accessTokenExpiresOn;
 	}
 
-	public AzureAdConfig(AuthenticationResult authResult) {
-		accessToken = authResult.getAccessToken();
-		refreshToken = authResult.getRefreshToken();
-		accessTokenExpiresOn = authResult.getExpiresOnDate();
-	}
+
 
 	public String getAccessToken() {
 		return accessToken;

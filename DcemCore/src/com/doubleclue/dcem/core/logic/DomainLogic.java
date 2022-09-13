@@ -195,9 +195,7 @@ public class DomainLogic implements ReloadClassInterface {
 	}
 
 	private void updateDomainName(DomainEntity ldap, String newName) {
-
 		taskExecutor.execute(new ChangeUserDomanNameTask(ldap, ldap.getName(), newName, TenantIdResolver.getCurrentTenant()));
-
 		List<DcemGroup> groups = groupLogic.getGroupsByLdap(ldap);
 		for (DcemGroup group : groups) {
 			group.setName(replaceLdapName(group.getName(), newName));
@@ -254,6 +252,16 @@ public class DomainLogic implements ReloadClassInterface {
 			throw new DcemException(DcemErrorCodes.INVALID_DOMAIN_NAME, "No Domain Entities configured for " + domainName);
 		}
 		return domainApi;
+	}
+	
+	public DomainAzure getDomainAzure()  {
+		LinkedHashMap<String, DomainApi> domains = getDomains();
+		for (DomainApi domain : domains.values()) {
+			if (domain.getDomainEntity().getDomainType() == DomainType.Azure_AD) {
+				return (DomainAzure) domain;
+			}
+		}
+		return null;
 	}
 
 	public DomainApi getDomainFromEmail(String fqUserId, DomainType domainType) throws DcemException {

@@ -67,7 +67,6 @@ import com.doubleclue.dcem.core.logging.DcemLogLevel;
 import com.doubleclue.dcem.core.logging.LogUtils;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
 import com.doubleclue.dcem.core.logic.TenantLogic;
-import com.doubleclue.dcem.core.servlets.AzureCallbackServlet;
 import com.doubleclue.dcem.core.servlets.DcemFilter;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
@@ -494,10 +493,7 @@ public class DcemMain {
 						addServlet(context, DcemConstants.TEST_SP_SERVLET_NAME, DcemConstants.TEST_SP_SERVLET_CLASS, DcemConstants.TEST_SP_SERVLET_PATH);
 						addServlet(context, DcemConstants.LICENCE_SERVLET_NAME, DcemConstants.LICENCE_SERVLET_CLASS, DcemConstants.LICENCE_SERVLET_PATH);
 						break;
-					case AZURE_CALLBACK:
-						addServlet(context, DcemConstants.AZURE_CALLBACK_SERVLET_NAME, AzureCallbackServlet.class.getName(),
-								DcemConstants.AZURE_CALLBACK_SERVLET_PATH);
-						break;
+					
 					default:
 						break;
 					}

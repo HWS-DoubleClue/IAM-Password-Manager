@@ -362,7 +362,6 @@ public class ImportLdapUsersView extends DcemView {
 				} else {
 					existingUser = true;
 				}
-
 				dcemUser.sync(selectedUser.getDcemLdapAttributes());
 				userLogic.addOrUpdateUserWoAuditing(dcemUser);
 				byte[] photo = domainApi.getUserPhoto(dcemUser);

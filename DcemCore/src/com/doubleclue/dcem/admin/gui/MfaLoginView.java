@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
+import com.doubleclue.dcem.core.config.ConnectionServicesType;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
@@ -48,6 +49,7 @@ public class MfaLoginView extends LoginViewAbstract {
 		super.init();
 		progress = 0;
 		stopQrCode = true;
+		connectionServicesType = ConnectionServicesType.MANAGEMENT;
 	}
 
 	public void actionLogin() {

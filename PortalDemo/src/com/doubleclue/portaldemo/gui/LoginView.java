@@ -203,13 +203,6 @@ public class LoginView extends AbstractPortalView {
 
 		try {
 			AsClientRestApi.getInstance().cancelMessage(msgId);
-		} catch (DcemApiException exp) {
-			if (exp.getCode() != 34) {
-				JsfUtils.addErrorMessage(exp.toString());
-			}
-		} catch (ApiException exp) {
-
-			JsfUtils.addErrorMessage(exp.toString());
 		} catch (Exception exp) {
 			JsfUtils.addErrorMessage(exp.toString());
 		}

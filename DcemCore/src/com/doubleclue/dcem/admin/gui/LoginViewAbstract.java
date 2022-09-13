@@ -36,7 +36,6 @@ import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.admin.windowssso.WindowsSso;
 import com.doubleclue.dcem.admin.windowssso.WindowsSsoResult;
-import com.doubleclue.dcem.admin.windowssso.WindowsSsoResultType;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AsMessageResponse;
 import com.doubleclue.dcem.core.as.AsModuleApi;
@@ -49,6 +48,7 @@ import com.doubleclue.dcem.core.as.QrCodeResponse;
 import com.doubleclue.dcem.core.as.QueryLoginResponse;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.config.ClusterConfig;
+import com.doubleclue.dcem.core.config.ConnectionServicesType;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -58,6 +58,7 @@ import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.ListUserAccounts;
 import com.doubleclue.dcem.core.gui.UserAccount;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
+import com.doubleclue.dcem.core.logic.DomainAzure;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.utils.QrCodeUtils;
@@ -90,6 +91,8 @@ public abstract class LoginViewAbstract implements Serializable {
 
 	@Inject
 	WindowsSso windowsSso;
+	
+	ConnectionServicesType connectionServicesType;
 
 	public static Logger logger = LogManager.getLogger(LoginViewAbstract.class);
 
@@ -417,6 +420,22 @@ public abstract class LoginViewAbstract implements Serializable {
 			JsfUtils.addErrorMessage(e.getMessage());
 		}
 	}
+	
+	public void actionAzureLogin() {
+		DomainAzure domainAzure =  domainLogic.getDomainAzure();
+		
+		
+		try {
+			domainAzure.sendAuthRedirect (connectionServicesType);
+			JsfUtils.getFacesContext().responseComplete();
+		} catch (Exception e) {
+			JsfUtils.addErrorMessage(e.getMessage());
+		}
+	}
+	
+	public boolean isAzureLogin() {
+		return domainLogic.getDomainAzure() != null;
+	}
 
 	public void actionLogin() {
 		loggedIn = false;
@@ -473,11 +492,19 @@ public abstract class LoginViewAbstract implements Serializable {
 				JsfUtils.addErrorMessage(exp.getLocalizedMessage());
 				logger.warn("actionLogin error", exp);
 				break;
+			case AZURE_NEEDS_MFA:
+				logger.warn("AZURE_NEEDS_MFA", exp);
+				// We need to redirect
+				
+				
+				
+				
+				break;
 			default:
 				JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "DcemErrorCodes." + exp.getErrorCode());
 				break;
 			}
-			logger.info(exp);
+			logger.info("login failed", exp);
 			return;
 		} catch (Exception exp) {
 			JsfUtils.addErrorMessage(exp.toString());

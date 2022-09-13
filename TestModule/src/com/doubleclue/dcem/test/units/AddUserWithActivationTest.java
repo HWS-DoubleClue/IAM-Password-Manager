@@ -71,7 +71,7 @@ public class AddUserWithActivationTest extends AbstractTestUnit {
 		try {
 			apiUser = clientRestApi.getUser(user);
 		} catch (DcemApiException e) {
-			if (e.getCode() != DcemErrorCodes.INVALID_USERID.getErrorCode()) {
+			if (e.getCode().equals(DcemErrorCodes.INVALID_USERID.name()) == false) {
 				throw e;
 			}
 		}
