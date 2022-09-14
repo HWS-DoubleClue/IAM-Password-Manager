@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.Filter;
@@ -22,16 +23,33 @@ import org.spongycastle.crypto.io.InvalidCipherTextIOException;
 
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
+import com.doubleclue.dcem.core.logic.CookieHelper;
+import com.doubleclue.dcem.core.logic.DomainAzure;
+import com.doubleclue.dcem.core.logic.DomainLogic;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
+import com.doubleclue.dcem.core.logic.UserLogic;
+
 
 public abstract class DcemFilter implements Filter {
 
 	@Inject
 	protected DcemApplicationBean applicationBean;
+	
+	@Inject
+	protected DomainLogic domainLogic;
+	
+	@Inject
+	UserLogic userLogic;
+	
+	@Inject
+	OperatorSessionBean operatorSessionBean;
 
 	private static final Logger logger = LogManager.getLogger(DcemFilter.class);
+
 
 	private static final String FACES_REQUEST = "Faces-Request";
 	private static final String FACES_AJAX_REQUEST = "partial/ajax";
@@ -73,8 +91,7 @@ public abstract class DcemFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
@@ -94,9 +111,8 @@ public abstract class DcemFilter implements Filter {
 						httpServletRequest.getSession().invalidate();
 						httpServletResponse.sendRedirect(redirectUrl);
 						return;
-					} 
+					}
 				}
-
 			}
 		}
 
@@ -107,8 +123,7 @@ public abstract class DcemFilter implements Filter {
 			return;
 		}
 		if (remotePort != webPort) {
-			logger.warn("Wrong Port. WebPort=" + webPort + " RemotePort=" + remotePort + ", remoteAddress="
-					+ request.getRemoteAddr());
+			logger.warn("Wrong Port. WebPort=" + webPort + " RemotePort=" + remotePort + ", remoteAddress=" + request.getRemoteAddr());
 			httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
@@ -135,13 +150,11 @@ public abstract class DcemFilter implements Filter {
 				chain.doFilter(request, response);
 				return;
 			}
-			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession()
-					.getAttribute(DcemConstants.URL_TENANT_PARAMETER);
+			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession().getAttribute(DcemConstants.URL_TENANT_PARAMETER);
 			if (tenantEntity == null) {
 				tenantEntity = applicationBean.getTenantFromRequest(httpServletRequest);
 				if (tenantEntity == null) {
-					logger.error(
-							"!!! NO TENANT FOUND, we take now the master tenant. Please check the Cluster-Configuration 'Host Domain Name'");
+					logger.error("!!! NO TENANT FOUND, we take now the master tenant. Please check the Cluster-Configuration 'Host Domain Name'");
 					tenantEntity = TenantIdResolver.getMasterTenant();
 				}
 				httpServletRequest.getSession().setAttribute(DcemConstants.URL_TENANT_PARAMETER, tenantEntity);
@@ -150,6 +163,27 @@ public abstract class DcemFilter implements Filter {
 			if (path.endsWith(OPEN_SUFFIX) || allowedPaths.contains(path)) { // excemption
 				chain.doFilter(request, response);
 				return;
+			}
+			if (containsAuthenticationCode(httpServletRequest)) {
+				String currentUri = httpServletRequest.getRequestURL().toString();
+				String queryStr = httpServletRequest.getQueryString();
+                String fullUrl = currentUri + (queryStr != null ? "?" + queryStr : "");
+                DomainAzure domainAzure = domainLogic.getDomainAzure();
+                try {
+					DcemUser dcemUserAzure = domainAzure.processAuthenticationCodeRedirect(httpServletRequest, currentUri, fullUrl);
+					DcemUser dcemUser = userLogic.getDistinctUser(dcemUserAzure.getLoginId());
+					if (dcemUser == null) {
+						userLogic.addOrUpdateUserWoAuditing(dcemUserAzure);						
+					} else {
+						dcemUser.sync(dcemUserAzure.getDcemLdapAttributes());
+					}
+					operatorSessionBean.loggedInOperator(dcemUser, httpServletRequest);
+					redirect(httpServletRequest, response, "/mgt/index.xhtml", false);
+				} catch (Throwable e) {
+					logger.info ("", e);
+					redirect(httpServletRequest, response, redirectionPage, false);
+				}
+                CookieHelper.removeStateNonceCookies(httpServletResponse);
 			}
 		} catch (InvalidCipherTextIOException exp) { // should happen as now we have a JSF exception handler
 			logger.info("Could not decrypt downloaded file", exp.toString());
@@ -165,8 +199,7 @@ public abstract class DcemFilter implements Filter {
 		redirect(httpServletRequest, response, redirectionPage, false);
 	}
 
-	private void redirect(HttpServletRequest httpServletRequest, ServletResponse response, String redirectPage,
-			boolean encrpytionError) throws IOException {
+	private void redirect(HttpServletRequest httpServletRequest, ServletResponse response, String redirectPage, boolean encrpytionError) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(httpServletRequest.getContextPath());
 		sb.append(redirectPage);
@@ -213,8 +246,7 @@ public abstract class DcemFilter implements Filter {
 		if (requestPath == null)
 			return false;
 		String sessionControlStr = (String) httpServletRequest.getAttribute("isSessionControlRequired");
-		boolean isSessionControlRequired = (sessionControlStr == null || "true".equals(sessionControlStr)) ? true
-				: false;
+		boolean isSessionControlRequired = (sessionControlStr == null || "true".equals(sessionControlStr)) ? true : false;
 
 		return (requestPath.contains("expired") == false && isSessionControlRequired);
 
@@ -223,6 +255,18 @@ public abstract class DcemFilter implements Filter {
 	private boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
 		return (httpServletRequest.getRequestedSessionId() != null) && !httpServletRequest.isRequestedSessionIdValid();
 	}
+
+	boolean containsAuthenticationCode(HttpServletRequest httpRequest) {
+		Map<String, String[]> httpParameters = httpRequest.getParameterMap();
+
+		boolean isPostRequest = httpRequest.getMethod().equalsIgnoreCase("POST");
+		boolean containsErrorData = httpParameters.containsKey("error");
+		boolean containIdToken = httpParameters.containsKey("id_token");
+		boolean containsCode = httpParameters.containsKey("code");
+		return isPostRequest && containsErrorData || containsCode || containIdToken;
+	}
+	
+
 
 	// private Map<String, String> getHeadersInfo(HttpServletRequest request) {
 	// Map<String, String> map = new HashMap<String, String>();

@@ -2,6 +2,7 @@ package com.doubleclue.dcem.core.logic;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.faces.context.ExternalContext;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +43,7 @@ import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.StringUtils;
 //import com.doubleclue.utils.StringUtils;
 import com.google.gson.JsonElement;
+import com.microsoft.aad.msal4j.AuthorizationCodeParameters;
 import com.microsoft.aad.msal4j.ClientCredentialFactory;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
@@ -60,6 +64,12 @@ import com.microsoft.graph.requests.GraphServiceClient;
 import com.microsoft.graph.requests.GroupCollectionPage;
 import com.microsoft.graph.requests.ProfilePhotoStreamRequest;
 import com.microsoft.graph.requests.UserCollectionPage;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.oauth2.sdk.AuthorizationCode;
+import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
+import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
+import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
+import com.nimbusds.openid.connect.sdk.AuthenticationSuccessResponse;
 
 import okhttp3.Request;
 
@@ -67,6 +77,7 @@ public class DomainAzure implements DomainApi {
 
 	private static final Logger logger = LogManager.getLogger(DomainAzure.class);
 
+	private static final String AZURE_STATE = "state";
 	private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId";
 	private static final String SELECT_USER_ATTRIBUTES_EXT = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId, profilePhoto";
 	private static final String SCOPE = "https://graph.microsoft.com/.default";
@@ -120,9 +131,7 @@ public class DomainAzure implements DomainApi {
 
 		GraphServiceClient<Request> userGraphClient = getUserGraphClient(dcemUser, new String(password, DcemConstants.UTF_8));
 		AuthenticationMethodCollectionPage au = userGraphClient.me().authentication().methods().buildRequest().get();
-
 		User user = userGraphClient.me().buildRequest().get();
-		// List<AuthenticationMethod> list = user.authentication.methods.getCurrentPage();
 		return createDcemUser(user);
 	}
 
@@ -527,29 +536,92 @@ public class DomainAzure implements DomainApi {
 			throw e;
 		}
 	}
-	
+
 	public void sendAuthRedirect(ConnectionServicesType connectionServicesType) throws Exception {
-	        // state parameter to validate response from Authorization server and nonce parameter to validate idToken
-			ExternalContext ec= JsfUtils.getExternalContext();
-			HttpServletRequest httpRequest = (HttpServletRequest) ec.getRequest();
-			HttpServletResponse httpResponse = (HttpServletResponse) ec.getResponse();
-	        String state = UUID.randomUUID().toString();
-	        String nonce = UUID.randomUUID().toString();
-	        CookieHelper.setStateNonceCookies(httpRequest, httpResponse, state, nonce);
-	        httpResponse.setStatus(302);
-	        String redirectUrl = getRedirectUrl(httpRequest.getParameter("claims"), connectionServicesType,  state, nonce);
-	        ec.redirect(redirectUrl);
-	    }
+		// state parameter to validate response from Authorization server and nonce parameter to validate idToken
+		ExternalContext ec = JsfUtils.getExternalContext();
+		HttpServletRequest httpRequest = (HttpServletRequest) ec.getRequest();
+		HttpServletResponse httpResponse = (HttpServletResponse) ec.getResponse();
+		String state = UUID.randomUUID().toString();
+		String nonce = UUID.randomUUID().toString();
+		CookieHelper.setStateNonceCookies(httpRequest, httpResponse, state, nonce);
+		httpResponse.setStatus(302);
+		String redirectUrl = getRedirectUrl(httpRequest.getParameter("claims"), connectionServicesType, state, nonce);
+		ec.redirect(redirectUrl);
+	}
 
 	private String getRedirectUrl(String claims, ConnectionServicesType connectionServicesType, String state, String nonce) throws Exception {
-
 		DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
 		String url = applicationBean.getServiceUrl(connectionServicesType);
 		String redirectUrl = authority + "/oauth2/v2.0/authorize?" + "response_type=code&" + "response_mode=form_post&" + "redirect_uri="
 				+ URLEncoder.encode(url, "UTF-8") + "&client_id=" + domainEntity.getClientId() + "&scope="
-				+ URLEncoder.encode("openid offline_access profile", "UTF-8") + (org.apache.commons.lang3.StringUtils.isEmpty(claims) ? "" : "&claims=" + claims)
-				+ "&prompt=select_account" + "&state=" + state + "&nonce=" + nonce;
+				+ URLEncoder.encode("openid offline_access profile", "UTF-8")
+				+ (org.apache.commons.lang3.StringUtils.isEmpty(claims) ? "" : "&claims=" + claims) + "&prompt=select_account" + "&state=" + state + "&nonce="
+				+ nonce;
 		return redirectUrl;
+	}
+
+	/**
+	* @param httpRequest
+	* @param currentUri
+	* @param fullUrl
+	* @throws Throwable
+	*/
+	public DcemUser processAuthenticationCodeRedirect(HttpServletRequest httpRequest, String currentUri, String fullUrl) throws Throwable {
+
+		Map<String, List<String>> params = new HashMap<>();
+		for (String key : httpRequest.getParameterMap().keySet()) {
+			params.put(key, Collections.singletonList(httpRequest.getParameterMap().get(key)[0]));
+		}
+		// validate that state in response equals to state in request
+		String state = CookieHelper.getCookie(httpRequest, CookieHelper.MSAL_WEB_APP_STATE_COOKIE);
+		String cookieValue = params.get(AZURE_STATE).get(0);
+		if (state == null || state.isEmpty() || state.equals(cookieValue) == false) {
+			throw new DcemException(DcemErrorCodes.MSAL_INVALID_STATE, "could not validate state");
+		}
+
+		AuthenticationResponse authResponse = AuthenticationResponseParser.parse(new URI(fullUrl), params);
+		if (authResponse instanceof AuthenticationSuccessResponse) {
+			// succesfull login
+			AuthenticationSuccessResponse oidcResponse = (AuthenticationSuccessResponse) authResponse;
+			// validate that OIDC Auth Response matches Code Flow (contains only requested artifacts)
+			if (oidcResponse.getIDToken() != null || oidcResponse.getAccessToken() != null || oidcResponse.getAuthorizationCode() == null) {
+				throw new DcemException(DcemErrorCodes.MSAL_FAILED_TO_VALIDATE_MESSAGE, "unexpected set of artifacts received");
+			}
+			IAuthenticationResult result = getAuthResultByAuthCode(httpRequest, oidcResponse.getAuthorizationCode(), currentUri);
+			// validate nonce to prevent reply attacks (code maybe substituted to one with broader access)
+			cookieValue = CookieHelper.getCookie(httpRequest, CookieHelper.MSAL_WEB_APP_NONCE_COOKIE);
+			String nonce = (String) JWTParser.parse(result.idToken()).getJWTClaimsSet().getClaim("nonce");
+			if (nonce == null || nonce.isEmpty() || nonce.equals(cookieValue) == false) {
+				throw new DcemException(DcemErrorCodes.MSAL_FAILED_TO_VALIDATE_MESSAGE, "could not validate nonce");
+			}
+			GraphServiceClient<Request> userGraphClient = getGraphServiceClient(result.accessToken());
+			User user = userGraphClient.me().buildRequest().get();
+			return createDcemUser(user);
+		} else {
+			AuthenticationErrorResponse oidcResponse = (AuthenticationErrorResponse) authResponse;
+			throw new DcemException(DcemErrorCodes.MSAL_LOGIN_FAILED, String.format("Request for auth code failed: %s - %s",
+					oidcResponse.getErrorObject().getCode(), oidcResponse.getErrorObject().getDescription()));
+		}
+	}
+
+	IAuthenticationResult getAuthResultByAuthCode(HttpServletRequest httpServletRequest, AuthorizationCode authorizationCode, String currentUri)
+			throws Throwable {
+
+		IAuthenticationResult result;
+		try {
+			AuthorizationCodeParameters parameters = AuthorizationCodeParameters.builder(authorizationCode.getValue(), new URI(currentUri)).build();
+			Future<IAuthenticationResult> future = confidentialClientApplication.acquireToken(parameters);
+			result = future.get();
+		} catch (ExecutionException e) {
+			throw e.getCause();
+		}
+		if (result == null) {
+			throw new DcemException(DcemErrorCodes.MSAL_AUTH_NO_RESULT, "authentication result was null");
+		}
+		// TODO httpServletRequest.getSession().setAttribute(AuthHelper.TOKEN_CACHE_SESSION_ATTRIBUTE, tokenCache);
+	//	result.account().username();
+		return result;
 	}
 
 }

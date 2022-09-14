@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CookieHelper {
 
-	static final String MSAL_WEB_APP_STATE_COOKIE = "msal_web_app_auth_state";
-	static final String MSAL_WEB_APP_NONCE_COOKIE = "msal_web_app_auth_nonce";
+	public static final String MSAL_WEB_APP_STATE_COOKIE = "msal_web_app_auth_state";
+	public static final String MSAL_WEB_APP_NONCE_COOKIE = "msal_web_app_auth_nonce";
 
 	static void setStateNonceCookies(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String state, String nonce) {
 
@@ -20,7 +20,7 @@ public class CookieHelper {
 		httpResponse.addHeader("Set-Cookie", MSAL_WEB_APP_NONCE_COOKIE + "=" + nonce + "; secure; HttpOnly" + sameSiteCookieAttribute);
 	}
 
-	static void removeStateNonceCookies(HttpServletResponse httpResponse) {
+	public static void removeStateNonceCookies(HttpServletResponse httpResponse) {
 
 		Cookie stateCookie = new Cookie(MSAL_WEB_APP_STATE_COOKIE, "");
 		stateCookie.setMaxAge(0);
@@ -30,7 +30,7 @@ public class CookieHelper {
 		httpResponse.addCookie(nonceCookie);
 	}
 
-	static String getCookie(HttpServletRequest httpRequest, String cookieName) {
+	public static String getCookie(HttpServletRequest httpRequest, String cookieName) {
 		for (Cookie cookie : httpRequest.getCookies()) {
 			if (cookie.getName().equals(cookieName)) {
 				return cookie.getValue();
