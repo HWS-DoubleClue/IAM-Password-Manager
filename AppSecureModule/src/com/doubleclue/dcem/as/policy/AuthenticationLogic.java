@@ -52,7 +52,7 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.AttributeTypeEnum;
 import com.doubleclue.dcem.core.logic.ClaimAttribute;
 import com.doubleclue.dcem.core.logic.DbResourceBundle;
@@ -127,7 +127,7 @@ public class AuthenticationLogic {
 	AsFidoLogic fidoLogic;
 	
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	private static final Logger logger = LogManager.getLogger(AuthenticationLogic.class);
 
@@ -184,7 +184,7 @@ public class AuthenticationLogic {
 
 			dcemUser = userLogic.getUser(userLoginId);
 			if (dcemUser == null) {
-				dcemUser = createDomainAccount(userLoginId, password);
+				dcemUser = createDomainAccount(userLoginId, password, ignorePassword);
 				if (dcemUser == null) {
 					throw new DcemException(DcemErrorCodes.CREATE_ACCOUNT_INVALID_CREDENTIALS, "loginId: " + userLoginId);
 				}
@@ -200,7 +200,7 @@ public class AuthenticationLogic {
 				throw new DcemException(DcemErrorCodes.NO_AUTH_METHOD_FOUND, null);
 			}
 			if (authMethod != null) {
-				if (authMethod != AuthMethod.SESSION_RECONNECT && methods.contains(authMethod) == false
+				if (authMethod.getValue() != null && methods.contains(authMethod) == false
 						&& !(appEntity.getAuthApplication() == AuthApplication.WebServices && appEntity.getSubId() == 0)) {
 					throw new DcemException(DcemErrorCodes.AUTH_METHOD_NOT_ALLOWED, null);
 				}
@@ -595,24 +595,20 @@ public class AuthenticationLogic {
 		return new UserFingerprintEntity(fpId, sessionCookie, dcemPolicy.getRememberBrowserFingerPrint() * 60);
 	}
 
-	private DcemUser createDomainAccount(String userLoginId, String password) {
+	private DcemUser createDomainAccount(String userLoginId, String password, boolean ignorePassword) throws Exception {
 		/*
 		 * create user automatically if it is a domain user with correct password
 		 */
 		DcemUser dcemUser = null;
-		try {
+
 			DomainApi domainApi = domainLogic.getDomainFromEmail(userLoginId, null);
 			if (domainApi == null) {
 				String[] domainUser = userLoginId.split(DcemConstants.DOMAIN_SEPERATOR_REGEX);
 				if (domainUser.length > 1) {
 					domainUser[0] = domainUser[0].toUpperCase();
 					dcemUser = new DcemUser(domainUser[0], domainUser[1]);
-					try {
-						domainApi = domainLogic.getDomainApi(domainUser[0]);
-						dcemUser.setDomainEntity(domainApi.getDomainEntity());
-					} catch (Exception e) {
-						return null;
-					}
+					domainApi = domainLogic.getDomainApi(domainUser[0]);
+					dcemUser.setDomainEntity(domainApi.getDomainEntity());
 				} else {
 					return null;
 				}
@@ -621,14 +617,13 @@ public class AuthenticationLogic {
 				dcemUser.setUserPrincipalName(userLoginId);
 				dcemUser.setDisplayName(userLoginId);
 			}
-
-			domainLogic.verifyDomainLogin(dcemUser, password.getBytes(DcemConstants.CHARSET_UTF8));
+			if (ignorePassword == false) {
+                domainLogic.verifyDomainLogin(dcemUser, password.getBytes(DcemConstants.CHARSET_UTF8));
+            } else {
+                dcemUser = domainLogic.getUser(dcemUser.getDomainEntity().getName(), dcemUser.getAccountName());
+            }
 			dcemUser.setLanguage(adminModule.getPreferences().getUserDefaultLanguage());
 			userLogic.addOrUpdateUserWoAuditing(dcemUser);
-		} catch (Exception e) {
-			logger.debug("couldn't create the user automatically for: " + userLoginId, e);
-			return null;
-		}
 		return dcemUser;
 	}
 
@@ -637,13 +632,11 @@ public class AuthenticationLogic {
 		Map<String, String> attrMap = null;
 		if (user.isDomainUser()) {
 			List<String> domainAttributes = new ArrayList<String>();
-			// #if COMMUNITY_EDITION == false
 			for (ClaimAttribute claimAttribute : claimAttributes) {
 				if (claimAttribute.getAttributeTypeEnum() == AttributeTypeEnum.DOMAIN_ATTRIBUTE) {
 					domainAttributes.add(claimAttribute.getValue());
 				}
 			}
-			// #endif
 			if (domainAttributes.isEmpty() == false) {
 				try {
 					attrMap = domainLogic.getUserAttributes(user, domainAttributes);
@@ -685,7 +678,6 @@ public class AuthenticationLogic {
 							e);
 				}
 				break;
-			// #if COMMUNITY_EDITION == false
 			case AD_OBJECT_GUID:
 				claimAttribute.setValue(user.getObjectGuidString());
 				break;
@@ -706,7 +698,6 @@ public class AuthenticationLogic {
 			case POLICY:
 				claimAttribute.setValue(policyName);
 				break;
-				// #endif
 			case ACCOUNT_NAME:
 				claimAttribute.setValue(user.getAccountName());
 				break;

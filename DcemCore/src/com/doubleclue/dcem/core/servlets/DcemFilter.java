@@ -52,7 +52,7 @@ public abstract class DcemFilter implements Filter {
 	}
 
 	abstract public boolean isLoggedin(HttpServletRequest httpServletRequest);
-	
+
 	abstract public String getUserId();
 
 	abstract public void setTenant(TenantEntity tenantEntity);
@@ -73,12 +73,13 @@ public abstract class DcemFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		path = httpServletRequest.getServletPath();
-//		System.out.println("DcemFilter.doFilter() Path: " + path);
+		System.out.println("DcemFilter.doFilter() Path: " + path);
 		if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 			if (isSessionInvalid(httpServletRequest)) {
 				String redirectUrl = httpServletRequest.getContextPath() + webName + "/" + DcemConstants.EXPIRED_PAGE;
@@ -89,10 +90,13 @@ public abstract class DcemFilter implements Filter {
 					response.getWriter().append(redirectUrl);
 					response.getWriter().append("\"></redirect></partial-response>");
 				} else {
-					httpServletRequest.getSession().invalidate();
-					httpServletResponse.sendRedirect(redirectUrl);
+					if (httpServletRequest.getHeader("authorization") == null) {
+						httpServletRequest.getSession().invalidate();
+						httpServletResponse.sendRedirect(redirectUrl);
+						return;
+					} 
 				}
-				return;
+
 			}
 		}
 
@@ -103,7 +107,8 @@ public abstract class DcemFilter implements Filter {
 			return;
 		}
 		if (remotePort != webPort) {
-			logger.warn("Wrong Port. WebPort=" + webPort + " RemotePort=" + remotePort + ", remoteAddress=" + request.getRemoteAddr());
+			logger.warn("Wrong Port. WebPort=" + webPort + " RemotePort=" + remotePort + ", remoteAddress="
+					+ request.getRemoteAddr());
 			httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
@@ -130,11 +135,13 @@ public abstract class DcemFilter implements Filter {
 				chain.doFilter(request, response);
 				return;
 			}
-			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession().getAttribute(DcemConstants.URL_TENANT_PARAMETER);
+			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession()
+					.getAttribute(DcemConstants.URL_TENANT_PARAMETER);
 			if (tenantEntity == null) {
 				tenantEntity = applicationBean.getTenantFromRequest(httpServletRequest);
 				if (tenantEntity == null) {
-					logger.error("!!! NO TENANT FOUND, we take now the master tenant. Please check the Cluster-Configuration 'Host Domain Name'");
+					logger.error(
+							"!!! NO TENANT FOUND, we take now the master tenant. Please check the Cluster-Configuration 'Host Domain Name'");
 					tenantEntity = TenantIdResolver.getMasterTenant();
 				}
 				httpServletRequest.getSession().setAttribute(DcemConstants.URL_TENANT_PARAMETER, tenantEntity);
@@ -144,7 +151,7 @@ public abstract class DcemFilter implements Filter {
 				chain.doFilter(request, response);
 				return;
 			}
-		} catch (InvalidCipherTextIOException exp) {  // should happen as now we have a JSF exception handler
+		} catch (InvalidCipherTextIOException exp) { // should happen as now we have a JSF exception handler
 			logger.info("Could not decrypt downloaded file", exp.toString());
 			// try to redirect
 			redirect(httpServletRequest, response, "/userportal/welcome.xhtml?Error=" + exp.getMessage(), true);
@@ -158,7 +165,8 @@ public abstract class DcemFilter implements Filter {
 		redirect(httpServletRequest, response, redirectionPage, false);
 	}
 
-	private void redirect(HttpServletRequest httpServletRequest, ServletResponse response, String redirectPage, boolean encrpytionError) throws IOException {
+	private void redirect(HttpServletRequest httpServletRequest, ServletResponse response, String redirectPage,
+			boolean encrpytionError) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(httpServletRequest.getContextPath());
 		sb.append(redirectPage);
@@ -180,7 +188,8 @@ public abstract class DcemFilter implements Filter {
 		}
 	}
 
-	// protected void checkIfViewAllowed(HttpServletRequest request) throws Exception {
+	// protected void checkIfViewAllowed(HttpServletRequest request) throws
+	// Exception {
 	// return;
 	// }
 
@@ -204,7 +213,8 @@ public abstract class DcemFilter implements Filter {
 		if (requestPath == null)
 			return false;
 		String sessionControlStr = (String) httpServletRequest.getAttribute("isSessionControlRequired");
-		boolean isSessionControlRequired = (sessionControlStr == null || "true".equals(sessionControlStr)) ? true : false;
+		boolean isSessionControlRequired = (sessionControlStr == null || "true".equals(sessionControlStr)) ? true
+				: false;
 
 		return (requestPath.contains("expired") == false && isSessionControlRequired);
 
@@ -221,7 +231,8 @@ public abstract class DcemFilter implements Filter {
 	// String key = (String) headerNames.nextElement();
 	// String value = request.getHeader(key);
 	// map.put(key, value);
-	// // System.out.println("DcemFilter.getHeadersInfo() HTTP Header=" + key + " Value=" + value );
+	// // System.out.println("DcemFilter.getHeadersInfo() HTTP Header=" + key + "
+	// Value=" + value );
 	// }
 	//
 	// return map;

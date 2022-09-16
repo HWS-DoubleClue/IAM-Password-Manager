@@ -50,7 +50,7 @@ import com.doubleclue.dcem.core.jpa.DbFactoryProducer;
 import com.doubleclue.dcem.core.jpa.EntityManagerProducer;
 import com.doubleclue.dcem.core.jpa.JdbcUtils;
 import com.doubleclue.dcem.core.jpa.StatisticCounter;
-import com.doubleclue.dcem.core.licence.LicenceLogicInterface;
+import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logging.LogUtils;
 import com.doubleclue.dcem.core.logic.DiagConstants;
 import com.doubleclue.dcem.core.logic.DiagnosticLogic;
@@ -80,7 +80,7 @@ public class SystemModule extends DcemModule {
 	EntityManager em;
 
 	@Inject
-	LicenceLogicInterface licenceLogic;
+	LicenceLogic licenceLogic;
 
 	@Inject
 	DiagnosticLogic diagnosticLogic;
@@ -147,10 +147,8 @@ public class SystemModule extends DcemModule {
 		localConfig = LocalConfigProvider.getLocalConfig();
 		LogUtils.initLog4j(null, getPreferences().additionalLoggers, getPreferences().logLevel, DcemApplicationBean.debugMode);
 		initStaticValues();
-		// #if COMMUNITY_EDITION == false
 		emp.enableDbStatistics(getPreferences().enableDbStatistics);
 		updateMonitoring();
-		// #endif
 		updateHttpProxy();
 		SendEmail.setProperties(getPreferences());
 
@@ -239,11 +237,9 @@ public class SystemModule extends DcemModule {
 					|| previous.getAdditionalLoggers().equals(getPreferences().getAdditionalLoggers()) == false) {
 				LogUtils.initLog4j(null, getPreferences().getAdditionalLoggers(), getPreferences().getLogLevel(), DcemApplicationBean.debugMode);
 			}
-			// #if COMMUNITY_EDITION == false
 			if (previous.enableDbStatistics != getPreferences().enableDbStatistics) {
 				emp.enableDbStatistics(getPreferences().enableDbStatistics);
 			}
-			// #endif
 			try {
 				if (previous.getSmsProviderAccesKey() == null) {
 					previous.setSmsProviderAccesKey("");
@@ -259,11 +255,9 @@ public class SystemModule extends DcemModule {
 			} catch (Exception e) {
 				logger.error(e);
 			}
-			// #if COMMUNITY_EDITION == false
 			if ((previous.enableMonitoring != getPreferences().enableMonitoring) || (previous.monitoringInterval != getPreferences().monitoringInterval)) {
 				updateMonitoring();
 			}
-			// #endif
 			if (previous.nightlyTaskTime != getPreferences().nightlyTaskTime) {
 				updateNightlyTaskSchedule();
 			}
@@ -289,7 +283,6 @@ public class SystemModule extends DcemModule {
 
 	}
 
-	// #if COMMUNITY_EDITION == false
 	private void updateMonitoring() {
 		if (getPreferences().enableMonitoring) {
 			if (monitorSchedule != null) {
@@ -303,7 +296,6 @@ public class SystemModule extends DcemModule {
 			monitorSchedule = null;
 		}
 	}
-	// #endif
 
 	private void updateHttpProxy() {
 		SystemPreferences systemPreferences = getPreferences();
@@ -463,7 +455,6 @@ public class SystemModule extends DcemModule {
 
 	@Override
 	public void runNightlyTask() {
-		// #if COMMUNITY_EDITION == false
 		try {
 			// If it's Monday, send licence warnings as e-mails.
 			Calendar cal = Calendar.getInstance();
@@ -476,7 +467,6 @@ public class SystemModule extends DcemModule {
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		// #endif
 		DbFactoryProducer.getInstance();
 		if ((DbFactoryProducer.getDbType() == DatabaseTypes.DERBY) && (getPreferences().isRunEmbeddedDatabaseBackup() == true)
 				&& (getPreferences().getPathEmbeddedDatabaseBackup().isEmpty() == false)) {

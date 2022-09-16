@@ -464,9 +464,6 @@ public final class DcemConstants {
 
 	public static final int LICENCE_KEY_VERSION = 2;
 
-	public static final String LICENCE_POLICY_ENTERPRISE = "Enterprise-Edition";
-	public static final String LICENCE_POLICY_COMMUNITY = "Community-Edition";
-
 	public static final String USER_DEFAULT_PROFILE_PHOTO_PATH = "/com/doubleclue/dcem/images/user.png";
 
 	public static final String ACTION_GENERATE_SHIFTS_ENTRY = "generateShiftsEntry";

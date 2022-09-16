@@ -50,6 +50,7 @@ public class LdapView extends DcemView {
 		addAutoViewAction( DcemConstants.ACTION_ADD,  resourceBundle, domainDialogBean, DcemConstants.DOMAIN_DIALOG_PATH);
 		addAutoViewAction( DcemConstants.ACTION_EDIT,  resourceBundle, domainDialogBean, DcemConstants.DOMAIN_DIALOG_PATH);
 		addAutoViewAction( DcemConstants.ACTION_DELETE,  resourceBundle, domainDialogBean, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);
+		addAutoViewAction(DcemConstants.ACTION_COPY, resourceBundle, domainDialogBean, DcemConstants.DOMAIN_DIALOG_PATH);
 	}
 	
 	public void reload() {

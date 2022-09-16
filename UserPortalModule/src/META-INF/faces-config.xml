@@ -15,6 +15,11 @@
 		<from-view-id>/*</from-view-id>
 		<navigation-case>
 			<from-outcome>uplogin</from-outcome>
+			<to-view-id>/userportal/login.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>upPrelogin</from-outcome>
 			<to-view-id>/userportal/preLogin_.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>

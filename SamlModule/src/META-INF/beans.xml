@@ -5,15 +5,5 @@
 		<class>com.doubleclue.dcem.core.jpa.DcemTransactionInterceptor</class>
 	</interceptors>
 	
-	<!-- 
-	//#if COMMUNITY_EDITION == false 
-	-->
-
-	<alternatives>
-		<stereotype>com.doubleclue.dcem.core.licence.EnterpriseEdition</stereotype>
-	</alternatives>
-
-	<!-- 
-	//#endif 
-	-->
+	
 </beans>

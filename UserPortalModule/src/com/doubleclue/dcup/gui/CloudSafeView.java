@@ -1084,7 +1084,7 @@ public class CloudSafeView extends AbstractPortalView {
 	}
 
 	private boolean getExistingFileGroup(CloudSafeEntity cloudSafeEntityToGroup, DcemGroup currentOwnerGroup) {
-		if (cloudSafeEntityFiles == null) {
+		if (cloudSafeEntityFiles == null || currentOwnerGroup == null) {
 			return false;
 		}
 		for (CloudSafeEntity cloudSafeEntity : cloudSafeEntityFiles) {

@@ -14,7 +14,11 @@ public enum AuthMethod {
 	QRCODE_APPROVAL("Qr-Code Approval", "qrcode"),
 	SESSION_RECONNECT(null, null),
 	FIDO_U2F("FIDO Authentication", "fido");
+//	WINDOWS_SSO (null, null),;
 
+	/*
+	 * if value is null, then this auth method cannot be selected by user
+	 */
 	private String value;
 	private String abbreviation;
 	// private ThriftAuthMethod thriftAuthMethod;

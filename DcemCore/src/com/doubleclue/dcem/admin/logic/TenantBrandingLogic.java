@@ -1,4 +1,3 @@
-//#excludeif COMMUNITY_EDITION
 package com.doubleclue.dcem.admin.logic;
 
 import javax.enterprise.context.ApplicationScoped;

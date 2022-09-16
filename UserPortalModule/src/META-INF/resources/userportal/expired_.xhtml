@@ -10,34 +10,37 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 	</f:facet>
-	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
 	<title>#{adminModule.titleBannerTextUserPortal}</title>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
 	<h:outputStylesheet library="css" name="portalStyles.css" />
 	<h:outputStylesheet library="css" name="media.css" />
 </h:head>
+<f:view locale="#{portalSessionBean.locale}">
+	<h:body>
+		<ui:include src="titleLogin.xhtml" />
 
-<h:body>
-	<ui:include src="titleLogin.xhtml" />
-	<div id="container" style="width: auto; height: 93vh; position: relative;">
+		<div id="container" style="width: auto; height: 93vh; position: relative;">
 			<div class="box" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
 				<p:graphicImage cache="true" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.backgroundImg != null}" />
 			</div>
-			
-		<div class="box" style="width: 100%; height: 100%;position: absolute;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
-	
-	
-	<div class="ui-fluid" style="margin-left: 2em; margin-top: 2em;">
-		<h:form>
-			<p />
-			<br />
-			<h:outputLabel class="fa fa-hourglass-end" style="font-size: 2.0em; color: #fff " />
-			<h:outputText  styleClass="LogoffTxt" style="font-size: large;color: #fff " value="#{DcupMsg['message.sessionExpired']}. " />
-			<p:spacer width="4em" />
-			<h:link styleClass="loginLinkExpired" value="#{DcupMsg['label.toUserPortal']}" outcome="uplogin" />
-	</h:form>
-	
-	</div>
-	</div>
-	</div>
-</h:body>
+
+			<div class="box" style="width: 100%; height: 100%; position: absolute; top: 3.5em; left: 0; #{adminModule.loginBackgroundColor};">
+				<div class="ui-fluid" style="padding-left: 5em; padding-top: 1em; text-align: left; height: 1em;"></div>
+				<p></p>
+				<h:form>
+					<p></p>
+					<h:outputLabel class="fa fa-hourglass-end" style="font-size: 1.4em; color: #fff; margin-left: 100px; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
+					<h:outputText styleClass="LogoffTxt" style="font-size: 1.4em;  color: #fff;" value="#{DcupMsg['message.sessionExpired']}" />
+					<p></p>
+					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.login']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso eq false}" />
+					<p></p>
+					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso}" />
+					<p></p>
+					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="uplogin" rendered="#{adminModule.windowsSso}" />
+					<p></p>		
+				</h:form>
+			</div>
+		</div>
+	</h:body>
+</f:view>
 </html>

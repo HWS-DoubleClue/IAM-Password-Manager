@@ -1,7 +1,5 @@
 package com.doubleclue.dcem.admin.gui;
 
-import java.io.ByteArrayOutputStream;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +10,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tomcat.util.http.parser.MediaType;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
@@ -30,7 +27,6 @@ import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.DomainType;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.utils.DcemUtils;
-import com.doubleclue.dcem.core.utils.SecureServerUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.system.logic.SystemModule;
 
@@ -172,7 +168,9 @@ public class DomainDialogBean extends DcemDialog {
 			domainEntity.setHost("");
 			break;
 		default:
-			domainEntity.setHost("ldap://");
+			if (domainEntity.getHost() == null) {
+				domainEntity.setHost("ldap://");
+			}
 			break;
 		}
 	}
@@ -184,6 +182,11 @@ public class DomainDialogBean extends DcemDialog {
 		domainType = domainEntity.getDomainType().name();
 		domainEntity.getDomainConfig();
 		azureRedirectUrl = null;
+		String action = this.getAutoViewAction().getDcemAction().getAction();
+		if (action.equals(DcemConstants.ACTION_COPY)) {
+			domainEntity.setName(domainEntity.getName() + "-COPY");
+	//		domainEntity.setId(null);
+		}
 	}
 
 	public boolean isRenderAzureAuthPanel() {

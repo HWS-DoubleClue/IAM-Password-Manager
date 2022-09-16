@@ -5,11 +5,9 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 import com.doubleclue.dcem.core.gui.DcemGui;
@@ -65,17 +63,27 @@ public class AdminPreferences extends ModulePreferences {
 
 	@DcemGui()
 	String alertsNotificationGroup = null;
+	
+	@DcemGui(help = "Windows Single Sign On works only if DoubleClue is istalled on Windows Server")
+	boolean useWindowsSSO;
 
-	// #if COMMUNITY_EDITION == false
 	@DcemGui(separator = "Location", choose = { "None", "IP", "City" })
-	// #endif
 	String locationInformation = "None";
-
-	// #if COMMUNITY_EDITION == false
-	// our key is "d7927d18c88c40c380a3daefdced4ffb"
+	
 	@DcemGui(style = "width: 18em", password = true)
-	// #endif
 	String locationApiKey;
+	
+	@DcemGui(separator = "Reporting")
+	boolean reportErrorsOnly = false;
+
+	@DcemGui()
+	@Min(10)
+	@Max(value = 10000)
+	int maxExport = 1000;
+
+	@DcemGui()
+	int durationForReportArchive = 0;
+	
 	
 	public String getLocationInformation() {
 		return locationInformation;
@@ -92,19 +100,6 @@ public class AdminPreferences extends ModulePreferences {
 	public void setLocationApiKey(String locationApiKey) {
 		this.locationApiKey = locationApiKey;
 	}
-	
-
-
-	@DcemGui(separator = "Reporting")
-	boolean reportErrorsOnly = false;
-
-	@DcemGui()
-	@Min(10)
-	@Max(value = 10000)
-	int maxExport = 1000;
-
-	@DcemGui()
-	int durationForReportArchive = 0;
 
 	public int getUserPasswordLength() {
 		return userPasswordLength;
@@ -178,8 +173,6 @@ public class AdminPreferences extends ModulePreferences {
 		this.defaultPhoneCountryCode = defaultPhoneCountryCode;
 	}
 
-	
-
 	public String getAlertsNotificationGroup() {
 		return alertsNotificationGroup;
 	}
@@ -219,5 +212,12 @@ public class AdminPreferences extends ModulePreferences {
 	public void setMaxExport(int maxExport) {
 		this.maxExport = maxExport;
 	}
+	
+	public boolean isUseWindowsSSO() {
+		return useWindowsSSO;
+	}
 
+	public void setUseWindowsSSO(boolean useWindowsSSO) {
+		this.useWindowsSSO = useWindowsSSO;
+	}
 }

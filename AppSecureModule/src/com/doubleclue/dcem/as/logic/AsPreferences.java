@@ -124,9 +124,7 @@ public class AsPreferences extends ModulePreferences {
 	@DcemGui(help = "If checked, PasswordSafe is enabled for users who do not have specified space limit set.")
 	boolean passwordSafeEnabledByDefault = true;
 	
-	// #if COMMUNITY_EDITION == false
 	@DcemGui()
-	// #endif
 	boolean enableAuditUser = false;
 
 	public MsgStoragePolicy getMessageStorePolicy() {

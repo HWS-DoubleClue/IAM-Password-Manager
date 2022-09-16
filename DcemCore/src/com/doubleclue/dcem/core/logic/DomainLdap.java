@@ -416,9 +416,11 @@ public class DomainLdap implements DomainApi {
 		try {
 			map = getSearchTry(tree, sb.toString(), null, defaultUserReturnedAtts, pageSize);
 			List<DcemUser> users = new ArrayList<>(map.size());
+			String dn;
 			if (map != null) {
-				for (String dn : map.keySet()) {
+				for (String key : map.keySet()) {
 					try {
+
 						Attributes attributes = map.get(dn);
 						DcemUser dcemUser = new DcemUser(domainEntity, dn + domainEntity.getBaseDN(),
 								attributes.get(domainEntity.getLoginAttribute()).get().toString());

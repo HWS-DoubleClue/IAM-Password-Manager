@@ -193,7 +193,8 @@ public class DomainAzure implements DomainApi {
 				graphClient = null;
 				collection = getSearchGraphClient().users().byId(dcemUser.getUserDn()).memberOf().buildRequest().top(pageSize).select("displayName").get();
 			} else {
-				throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString(), e);
+		//		throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString(), e);
+				return new HashSet<>();
 			}
 		}
 
@@ -387,7 +388,8 @@ public class DomainAzure implements DomainApi {
 	private IGraphServiceClient getSearchGraphClient() throws DcemException {
 		if (graphClient == null) {
 			try {
-				graphClient = getGraphClient(getAccessToken());
+				String token = AzureUtils.getAuthResultByClientCredentials(domainEntity).getAccessToken();
+				graphClient = getGraphClient(token);
 				getSearchGraphClient().getLogger().setLoggingLevel(LoggerLevel.ERROR);
 			} catch (DcemException e) {
 				throw e;
@@ -439,14 +441,7 @@ public class DomainAzure implements DomainApi {
 		}
 	}
 
-	private String getAccessToken() throws DcemException {
-		try {
-			return AzureUtils.getAuthResultByClientCredentials(domainEntity).getAccessToken();
-		} catch (Exception e) {
-			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR,
-					"Error while obtaining Access Token for domain '" + domainEntity.getName() + "': " + e.getMessage());
-		}
-	}
+	
 
 	@Override
 	public Map<String, String> getUserAttributes(DcemUser dcemUser, List<String> attributeList) throws DcemException {

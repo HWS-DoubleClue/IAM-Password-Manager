@@ -47,8 +47,13 @@
 		<display-name>MGT_LOGIN</display-name>
 		<from-view-id>/mgt/*</from-view-id>
 		<navigation-case>
-			<from-outcome>mgtLogin</from-outcome>
+			<from-outcome>mgtPreLogin</from-outcome>
 			<to-view-id>/mgt/preLogin_.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mgtLogin</from-outcome>
+			<to-view-id>/mgt/login.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
@@ -82,7 +87,7 @@
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<display-name>ERROR</display-name>
 		<from-view-id>/*</from-view-id>
@@ -93,7 +98,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-	
+
 
 
 </faces-config>

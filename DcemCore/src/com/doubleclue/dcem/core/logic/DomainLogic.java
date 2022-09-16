@@ -126,7 +126,7 @@ public class DomainLogic implements ReloadClassInterface {
 			if (detachedDomainEntity.getMapEmailDomains() != null) {
 				String[] emails = detachedDomainEntity.getMapEmailDomains().split(";");
 				for (String suffix : emails) {
-					emailSuffixs.add(suffix.trim());
+					emailSuffixs.add(suffix.trim().toLowerCase());
 				}
 			}
 			ldapDomains.put(detachedDomainEntity.getName().toLowerCase(), domainApi);
@@ -172,7 +172,7 @@ public class DomainLogic implements ReloadClassInterface {
 	public void addOrUpdateDcemLdap(DomainEntity ldapEntity, DcemAction dcemAction) {
 		String changeInfo = null;
 		ldapEntity.setName(ldapEntity.getName().toLowerCase());
-		if (dcemAction.getAction().equals(DcemConstants.ACTION_ADD)) {
+		if (dcemAction.getAction().equals(DcemConstants.ACTION_ADD) || dcemAction.getAction().equals(DcemConstants.ACTION_COPY)) {
 			ldapEntity.setId(null);
 			ldapEntity.serializeDomainConfig();
 			em.persist(ldapEntity);
@@ -265,7 +265,7 @@ public class DomainLogic implements ReloadClassInterface {
 		if (ind == -1) {
 			return null;
 		}
-		String mailSuffix = fqUserId.substring(ind + 1);
+		String mailSuffix = fqUserId.substring(ind + 1).toLowerCase();
 		for (DomainApi domainApi : getDomains().values()) {
 			if (domainApi.getDomainEntity().getSetOfEmailDomains().contains(mailSuffix)) {
 				if (domainType == null) {
@@ -394,27 +394,6 @@ public class DomainLogic implements ReloadClassInterface {
 		return list;
 	}
 
-	// public List<String> getSelectedLdapTree(ActiveDomain ldapDomain, String tree,
-	// int pageSize) throws DcemException
-	// {
-	// String searchFilter =
-	// "(|(objectClass=container)(objectClass=organizationalUnit))";
-	// try {
-	// return getSearchTree(ldapDomain, searchFilter, tree, pageSize);
-	// } catch (DcemException exp) {
-	// if (exp.getErrorCode() == DcemErrorCodes.LDAP_CONNECTION_FAILED) {
-	// logger.info("LDAP-Connection failed, trying again");
-	// try {
-	// ldapDomain.closeSearchLdapContext();
-	// } catch (NamingException e) {
-	// logger.info("Couldn't close LdapContext");
-	// }
-	// return getSearchTree(ldapDomain, searchFilter, tree, pageSize);
-	// } else {
-	// throw exp;
-	// }
-	// }
-	// }
 
 	public LinkedHashMap<String, DomainApi> getDomains() {
 		return adminModule.getAdminTenantData().getDomains();

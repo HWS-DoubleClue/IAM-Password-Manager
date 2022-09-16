@@ -93,24 +93,26 @@ public class ActionLogic {
 		for (DcemModule module : moduleList) {
 			int counter = 0;
 			SortedSet<SubjectAbs> subjectSet = applicationBean.getModuleSubjects(module);
-			for (SubjectAbs subject : subjectSet) {
-				try {
-					if (subject.getModuleId().equals(SystemModule.MODULE_ID) && tenantEntity.isMaster() == false) {
-						continue;
+			if (subjectSet != null) {
+				for (SubjectAbs subject : subjectSet) {
+					try {
+						if (subject.getModuleId().equals(SystemModule.MODULE_ID) && tenantEntity.isMaster() == false) {
+							continue;
+						}
+					} catch (Exception e) {
+						logger.warn("", e);
 					}
-				} catch (Exception e) {
-					logger.warn("", e);
-				}
-				for (RawAction rawAction : subject.getRawActions()) {
-					if (rawAction.isMasterOnly() && tenantEntity.isMaster() == false) {
-						continue;
-					}
-					DcemAction dcemAction = new DcemAction(subject.getModuleId(), subject.getName(),
-							rawAction.getName());
-					if (dcemActionList.contains(dcemAction) == false) {
-						counter++;
-						addDcemAction(dcemAction);
-						roleLogic.addActionToRoles(dcemAction, rawAction);
+					for (RawAction rawAction : subject.getRawActions()) {
+						if (rawAction.isMasterOnly() && tenantEntity.isMaster() == false) {
+							continue;
+						}
+						DcemAction dcemAction = new DcemAction(subject.getModuleId(), subject.getName(),
+								rawAction.getName());
+						if (dcemActionList.contains(dcemAction) == false) {
+							counter++;
+							addDcemAction(dcemAction);
+							roleLogic.addActionToRoles(dcemAction, rawAction);
+						}
 					}
 				}
 			}

@@ -1534,5 +1534,9 @@ public class DcemUtils {
 		Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		return Date.from(instant);
 	}
-
+	
+	public static boolean isWindows() {
+		String os = System.getProperty("os.name").toLowerCase();
+		return os.contains("win");
+	}
 }

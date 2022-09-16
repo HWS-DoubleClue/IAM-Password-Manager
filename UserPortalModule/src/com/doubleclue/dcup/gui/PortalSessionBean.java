@@ -358,6 +358,9 @@ public class PortalSessionBean implements Serializable {
 	}
 
 	public String getUserLoginId() {
+		if (dcemUser == null) {
+			return null;
+		}
 		return dcemUser.getLoginId().replace("\\", "\\\\");
 	}
 
