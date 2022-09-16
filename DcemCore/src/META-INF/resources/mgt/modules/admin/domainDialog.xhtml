@@ -81,6 +81,9 @@
 
 						<p:outputLabel for="mobileAttribute" value="#{AdminMsg['Domain.mobileAttribute']}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
 						<p:inputText id="mobileAttribute" value="#{domainDialog.actionObject.mobileAttribute}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+						
+						<p:outputLabel for="groupAttribute" value="Group Attribute" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
+						<p:inputText id="groupAttribute" value="#{domainDialog.actionObject.domainConfig.groupAttribute}" rendered="#{domainDialog.domainType == 'Generic_LDAP'}" />
 
 						<p:outputLabel for="emailDomains" value="#{AdminMsg['Domain.mapEmailDomains']}" />
 						<h:panelGroup>

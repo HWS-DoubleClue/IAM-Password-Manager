@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.directory.Attributes;
+
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.DomainEntity;
@@ -32,6 +34,8 @@ public interface DomainApi {
 	List<DcemUser> getUsers(String tree, DcemGroup dcemGroup, String userName, int pageSize) throws DcemException;
 
 	public List<DcemUser> getGroupMembers(DcemGroup group, String filter) throws DcemException;
+	
+	public Map<String, Attributes> customSearchAttributeMap(String filter, String baseDn, int pAGE_SIZE) throws DcemException;
 
 	public DomainEntity getDomainEntity();
 
@@ -44,5 +48,6 @@ public interface DomainApi {
 	public void changeUserPhotoProfile(DcemUser dcemUser, byte[] photo, String password) throws DcemException;
 	
 	public byte []  getUserPhoto (DcemUser dcemUser) throws DcemException;
+
 
 }

@@ -15,6 +15,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.naming.directory.Attributes;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
@@ -298,7 +299,18 @@ public class DomainLogic implements ReloadClassInterface {
 		}
 		return domainApi.getUsers(tree, dcemGroup, userFilter, PAGE_SIZE);
 	}
-
+	
+	public Map<String, Attributes> customSearch(String domainName, String baseDn, String filter, int pageSize) throws DcemException {
+		if (domainName == null) {
+			throw new DcemException(DcemErrorCodes.INVALID_DOMAIN_NAME, null);
+		}
+		DomainApi domainApi = getDomains().get(domainName.toLowerCase());
+		if (domainApi == null) {
+			throw new DcemException(DcemErrorCodes.INVALID_DOMAIN_NAME, domainName);
+		}
+		return domainApi.customSearchAttributeMap(filter, baseDn, PAGE_SIZE);
+	}
+	
 	public List<DcemGroup> getGroups(String domainName, String filter, int pageSize) throws DcemException {
 		DomainApi domainApi = getDomainApi(domainName);
 		return domainApi.getGroups(filter, pageSize);
@@ -350,7 +362,6 @@ public class DomainLogic implements ReloadClassInterface {
 	}
 
 	public List<DcemUser> getMembers(DcemGroup dcemGroup) throws DcemException {
-		em.merge(dcemGroup);
 		DomainApi domainApi = getDomainApi(dcemGroup.getDomainEntity().getName());
 		if (domainApi == null) {
 			throw new DcemException(DcemErrorCodes.DOMAIN_DISABLED, dcemGroup.getDomainEntity().getName());
