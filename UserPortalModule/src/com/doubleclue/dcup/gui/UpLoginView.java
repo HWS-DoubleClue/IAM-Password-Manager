@@ -25,6 +25,7 @@ import com.doubleclue.dcem.as.policy.AuthenticationLogic;
 import com.doubleclue.dcem.as.policy.PolicyLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AuthApplication;
+import com.doubleclue.dcem.core.config.ConnectionServicesType;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.userportal.logic.UserPortalModule;
@@ -75,15 +76,13 @@ public class UpLoginView extends LoginViewAbstract {
 
 	private String latestView;
 	private String flag;
-	private boolean hideTutorial = false;
 	private boolean qrCodeUseState = false;
-
-	private boolean doNotRedirectToTutorial;
 
 	@PostConstruct
 	public void init() {
 		super.init();
 		setAuthApplication(AuthApplication.USER_PORTAL);
+		setConnectionServicesType(ConnectionServicesType.USER_PORTAL);
 	}
 
 	public String actionRequestRegister() {
@@ -94,19 +93,14 @@ public class UpLoginView extends LoginViewAbstract {
 	public String actionForgotPassword() {
 		return DcupConstants.JSF_PAGE_FORGOT_PASSWORD_REQUEST + DcemConstants.FACES_REDIRECT;
 	}
+	
+	public String actionGotoPrelogin() {
+		return DcupConstants.PRE_LOGIN_PAGE + DcemConstants.FACES_REDIRECT;
+	}
 
 	public String actionGotoLogin() {
 		// registerView.endConversation();
 		return DcupConstants.LOGIN_PAGE + DcemConstants.FACES_REDIRECT;
-	}
-
-	public void actionTutorialtoLogin() {
-		try {
-			doNotRedirectToTutorial = true;
-			FacesContext.getCurrentInstance().getExternalContext().redirect("preLogin_.xhtm");
-		} catch (IOException e) {
-			logger.error("Could not redirect to Login", e);
-		}
 	}
 
 	public void actionRedirectionToDCEM() {
@@ -199,14 +193,7 @@ public class UpLoginView extends LoginViewAbstract {
 		PrimeFaces.current().ajax().update("loginForm");
 	}
 
-	public boolean isHideTutorial() {
-		return hideTutorial;
-	}
-
-	public void setHideTutorial(boolean hideTutorial) {
-		this.hideTutorial = hideTutorial;
-	}
-
+	
 	@Override
 	public String actionPreLoginOk() {
 

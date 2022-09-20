@@ -61,6 +61,7 @@ public abstract class DcemFilter implements Filter {
 	protected String path;
 
 	protected String webName;
+	protected String welcomePage;
 	protected List<String> allowedPaths;
 	protected String redirectionPage;
 	protected String redirectPort;
@@ -96,7 +97,7 @@ public abstract class DcemFilter implements Filter {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		path = httpServletRequest.getServletPath();
-		System.out.println("DcemFilter.doFilter() Path: " + path);
+//		System.out.println("DcemFilter.doFilter() Path: " + path);
 		if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 			if (isSessionInvalid(httpServletRequest)) {
 				String redirectUrl = httpServletRequest.getContextPath() + webName + "/" + DcemConstants.EXPIRED_PAGE;
@@ -138,14 +139,10 @@ public abstract class DcemFilter implements Filter {
 				httpServletRequest.getSession().invalidate();
 			}
 			if (loggedIn == true) {
-				if (path.equals("/mgt/")) {
-					httpServletResponse.sendRedirect("index.xhtml");
+				if (path.equals(webName)) {
+					httpServletResponse.sendRedirect(welcomePage);
 					return;
-				}
-				if (path.equals("/userportal/")) {
-					httpServletResponse.sendRedirect("welcome.xhtml");
-					return;
-				}
+				}				
 				ThreadContext.put(DcemConstants.MDC_USER_ID, getUserId());
 				chain.doFilter(request, response);
 				return;
@@ -178,7 +175,7 @@ public abstract class DcemFilter implements Filter {
 						dcemUser.sync(dcemUserAzure.getDcemLdapAttributes());
 					}
 					operatorSessionBean.loggedInOperator(dcemUser, httpServletRequest);
-					redirect(httpServletRequest, response, "/mgt/index.xhtml", false);
+					redirect(httpServletRequest, response, webName + "/" + welcomePage, false);
 				} catch (Throwable e) {
 					logger.info ("", e);
 					redirect(httpServletRequest, response, redirectionPage, false);

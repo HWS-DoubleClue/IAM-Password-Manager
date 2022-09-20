@@ -74,6 +74,13 @@ body {
 	vertical-align: middle;
 }
 
+.logoutInverseText {
+	color: #C0C0C0;
+	mix-blend-mode: difference !Important;
+	font-size: 1.2em;	
+} 
+
+
 .ui-fileupload {
 	border: none;
 	display: inline;

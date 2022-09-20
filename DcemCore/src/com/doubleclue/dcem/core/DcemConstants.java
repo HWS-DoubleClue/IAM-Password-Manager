@@ -28,6 +28,7 @@ public final class DcemConstants {
 
 	public final static String AUTO_VIEW_PATH = "/autoView.xhtml";
 	public final static String WELCOME_VIEW_PATH = "/welcome.xhtml";
+	public final static String WELCOME_INDEX_PAGE = "index.xhtml";
 	public final static String AUTO_DIALOG_PATH = "/autoDialog.xhtml";
 	public final static String AUTO_CONFIRM_DIALOG_PATH = "/autoConfirmDialog.xhtml";
 	public final static String PRIVILEGE_VIEW_PATH = "/modules/admin/privilege.xhtml";

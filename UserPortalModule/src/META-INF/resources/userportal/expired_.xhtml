@@ -14,6 +14,7 @@
 	<h:outputStylesheet library="webjars" name="font-awesome/6.1.0/css/all-jsf.css" />
 	<h:outputStylesheet library="css" name="portalStyles.css" />
 	<h:outputStylesheet library="css" name="media.css" />
+	<h:outputStylesheet library="css" name="systemStyles.css" />
 </h:head>
 <f:view locale="#{portalSessionBean.locale}">
 	<h:body>
@@ -28,16 +29,24 @@
 				<div class="ui-fluid" style="padding-left: 5em; padding-top: 1em; text-align: left; height: 1em;"></div>
 				<p></p>
 				<h:form>
-					<p></p>
-					<h:outputLabel class="fa fa-hourglass-end" style="font-size: 1.4em; color: #fff; margin-left: 100px; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
-					<h:outputText styleClass="LogoffTxt" style="font-size: 1.4em;  color: #fff;" value="#{DcupMsg['message.sessionExpired']}" />
-					<p></p>
-					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.login']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso eq false}" />
-					<p></p>
-					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso}" />
-					<p></p>
-					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="uplogin" rendered="#{adminModule.windowsSso}" />
-					<p></p>		
+					<div style="margin: 100px">
+						<h:outputLabel class="fa fa-hourglass-end" style="font-size: 1.4em;" />
+						<p:outputLabel styleClass="logoutInverseText" value="#{DcupMsg['message.sessionExpired']}" />
+						<p></p>
+						<br></br>
+						
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso eq false}" />
+						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.login']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso eq false}" />
+						<p></p>
+						
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso}" />
+						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso}" />
+							
+						<p></p>
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in"  />
+						<p:link styleClass="logoutInverseText" icon="fa fa-sign-in" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="uplogin" />
+						<p></p>
+					</div>
 				</h:form>
 			</div>
 		</div>

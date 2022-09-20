@@ -49,6 +49,7 @@ public class EmbeddedUserPortalFilter extends DcemFilter {
 		webName = DcupConstants.WEB_USER_PORTAL_CONTEXT;
 		allowedPaths.add(LOGIN_URL);
 		redirectionPage = PRE_LOGIN_URL;
+		welcomePage = DcupConstants.WELCOME_PAGE;
 	}
 
 	@Override

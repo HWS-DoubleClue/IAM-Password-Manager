@@ -126,6 +126,10 @@
 									<p:commandButton styleClass="btnOfLogin" id="requestQrCode" value="#{DcupMsg['button.requestNewQrCode']}" rendered="#{upLoginView.stopQrCode}"
 										style="width: 88%;" action="#{upLoginView.requestNewQrCode()}" icon="fa fa-qrcode" update="qrcodePanel"
 										onclick="setLocalStorageValue('qrCodeUseState',true);" />
+
+									<p></p>
+									<p:commandButton id="azureLogin" styleClass="btnOfLogin" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{upLoginView.actionAzureLogin}"
+										style="width: 88%;" ajax="false" async="true" icon="fa fa-sign-in" rendered="#{upLoginView.azureLogin}" />
 								</p:panel>
 
 								<!-- change password panel -->
@@ -181,6 +185,10 @@
 								<p:commandLink id="forgotPassword" action="#{upLoginView.actionForgotPassword}" ajax="false">
 									<h:outputText style="font-size: medium" />
 									<p:outputLabel style="font-size: medium; cursor: pointer" value="#{DcupMsg['button.forgotPassword']}" />
+								</p:commandLink>
+								<br />
+								<p:commandLink id="tutorial" action="#{upLoginView.actiontutorial}" ajax="false">
+									<p:outputLabel style="font-size: medium; cursor: pointer" value="#{DcupMsg['button.tutorial']}" />
 								</p:commandLink>
 							</p:panel>
 						</p:panel>
@@ -279,7 +287,7 @@
 			</div>
 		</div>
 		<p:growl id="msgs" showDetail="false" sticky="true">
-				<p:autoUpdate />
+			<p:autoUpdate />
 		</p:growl>
 		<h:outputScript>
 		var x = setInterval(function() {

@@ -58,6 +58,7 @@ public class LoginWebFilter extends DcemFilter {
 		webName = DcemConstants.WEB_MGT_CONTEXT;
 		allowedPaths.add(LOGIN_URL);
 		redirectionPage = PRE_LOGIN_URL;
+		welcomePage = DcemConstants.WELCOME_INDEX_PAGE;
 	}
 
 	@Override

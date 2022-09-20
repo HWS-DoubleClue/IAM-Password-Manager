@@ -94,6 +94,14 @@ public abstract class LoginViewAbstract implements Serializable {
 	
 	ConnectionServicesType connectionServicesType;
 
+	public ConnectionServicesType getConnectionServicesType() {
+		return connectionServicesType;
+	}
+
+	public void setConnectionServicesType(ConnectionServicesType connectionServicesType) {
+		this.connectionServicesType = connectionServicesType;
+	}
+
 	public static Logger logger = LogManager.getLogger(LoginViewAbstract.class);
 
 	private String username;
@@ -493,12 +501,9 @@ public abstract class LoginViewAbstract implements Serializable {
 				logger.warn("actionLogin error", exp);
 				break;
 			case AZURE_NEEDS_MFA:
-				logger.warn("AZURE_NEEDS_MFA", exp);
+				logger.warn("AZURE_NEEDS_MFA ");
 				// We need to redirect
-				
-				
-				
-				
+				JsfUtils.addErrorMessage(exp.getLocalizedMessage());
 				break;
 			default:
 				JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "DcemErrorCodes." + exp.getErrorCode());
