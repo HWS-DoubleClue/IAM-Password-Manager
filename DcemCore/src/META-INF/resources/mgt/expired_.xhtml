@@ -31,7 +31,8 @@
 				<h:form>
 					<div style="margin: 100px">
 						<p></p>
-						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso eq false}" />
+						<p:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
 						<p></p>
 						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso}" />
 						<p:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />

@@ -36,11 +36,11 @@
 						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso eq false}" />
 						<h:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
 						<p></p>
-						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" />
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso}"  />
 						<h:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
 						<p></p>
-						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" />
-						<h:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" rendered="#{adminModule.windowsSso}" />
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in"  />
+						<h:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin"  />
 						<p></p>
 						<h:panelGroup rendered="#{mfaLoginView.azureLogin}">
 							<p></p>
