@@ -77,9 +77,8 @@ body {
 .logoutInverseText {
 	color: #C0C0C0;
 	mix-blend-mode: difference !Important;
-	font-size: 1.2em;	
-} 
-
+	font-size: 1.2em;
+}
 
 .ui-fileupload {
 	border: none;
@@ -250,14 +249,13 @@ ul.ui-menu-child {
 	width: 200px !important;
 }
 
-
-.labelLogin{
+.labelLogin {
 	font-size: 1em !important;
-}  
+}
 
 .closebtn {
-	font-size:2em !important;
-	color:#fff;
+	font-size: 2em !important;
+	color: #fff;
 }
 
 .rowErrorClass {
@@ -273,12 +271,18 @@ ul.ui-menu-child {
 }
 
 .ui-datagrid.applicationGridAdmin .ui-datagrid-header {
-	background:none !important;
+	background: none !important;
 }
 
-.ui-password.ui-password-masked .ui-password-icon, .ui-password.ui-password-unmasked .ui-password-icon:before{
+.ui-password.ui-password-masked .ui-password-icon, .ui-password.ui-password-unmasked .ui-password-icon:before
+	{
 	margin-left: 0.2em;
 }
 
+.ui-icon-azure {
+	background: url("#{resource['pictures/azure.png']}") no-repeat !important;
+	margin-top: -12px !important;
+	width: 32px !important;
+	height: 32px !important;
+}
 
-        

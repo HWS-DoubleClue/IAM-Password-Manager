@@ -1153,8 +1153,12 @@ public abstract class LoginViewAbstract implements Serializable {
 
 	private boolean validateInput() {
 		boolean valid = true;
+		if(username == null) {
+			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "mfalogin.userNameMissing");
+			return false;
+		}
 		username = username.trim();
-		if (username == null || username.isEmpty()) {
+		if (username.isEmpty()) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "mfalogin.userNameMissing");
 			valid = false;
 		} else if (password == null || password.isEmpty()) {
