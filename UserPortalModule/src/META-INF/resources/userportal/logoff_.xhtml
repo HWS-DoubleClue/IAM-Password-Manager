@@ -47,6 +47,12 @@
 						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" />
 						<p:link styleClass="logoutInverseText" icon="fa fa-sign-in" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="uplogin" />
 						<p></p>
+						<h:panelGroup rendered="#{upLoginView.azureLogin}">
+							<p></p>
+							<img src="#{resource['pictures/azure.png']}"> </img>
+							<p:commandLink styleClass="logoutInverseText" ajax="false" icon="ui-icon-azure" value="#{AdminMsg['mfalogin.azureLogin.button']}"
+								action="#{upLoginView.actionAzureLogin}" />
+						</h:panelGroup>
 					</div>
 
 

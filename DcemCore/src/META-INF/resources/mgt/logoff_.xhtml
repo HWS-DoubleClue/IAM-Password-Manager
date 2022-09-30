@@ -28,16 +28,27 @@
 				<div style="padding-left: 5em; padding-top: 2em; text-align: left; height: 2em; font-size: 27px;"></div>
 				<p></p>
 				<h:form>
-					<p></p>
-					<h:outputLabel class="fa fa-sign-out" style="font-size: 1.4em; color: #445686; margin-left: 100px; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
-					<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.logoff.text']}" />
-					<p></p>
-					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
-					<p></p>
-					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
-					<p></p>
-					<h:link style="font-size: 1.2em; margin-left: 100px" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" rendered="#{adminModule.windowsSso}"/>
-					<p></p>
+					<div style="margin: 100px">
+						<p></p>
+						<h:outputLabel class="fa fa-sign-out" style="font-size: 1.4em; color: #445686; margin-right: 8px; margin-top: 20px;" />
+						<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.logoff.text']}" />
+						<p></p>
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso eq false}" />
+						<h:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
+						<p></p>
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" />
+						<h:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
+						<p></p>
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" />
+						<h:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" rendered="#{adminModule.windowsSso}" />
+						<p></p>
+						<h:panelGroup rendered="#{mfaLoginView.azureLogin}">
+							<p></p>
+							<img src="#{resource['pictures/azure.png']}" /> 
+							<p:commandLink styleClass="logoutInverseText" ajax="false" value=" #{AdminMsg['mfalogin.azureLogin.button']}"
+								action="#{mfaLoginView.actionAzureLogin}" />
+						</h:panelGroup>
+					</div>
 				</h:form>
 			</div>
 		</div>

@@ -34,17 +34,23 @@
 						<p:outputLabel styleClass="logoutInverseText" value="#{DcupMsg['message.sessionExpired']}" />
 						<p></p>
 						<br></br>
-						
+
 						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso eq false}" />
 						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.login']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso eq false}" />
 						<p></p>
-						
+
 						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso}" />
 						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="upPrelogin" rendered="#{adminModule.windowsSso}" />
-							
+
 						<p></p>
-						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in"  />
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" />
 						<p:link styleClass="logoutInverseText" icon="fa fa-sign-in" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="uplogin" />
+						<p></p>
+						<h:panelGroup rendered="#{upLoginView.azureLogin}">
+							<p></p>
+							 <img src="#{resource['pictures/azure.png']}"> </img>
+							<p:commandLink styleClass="logoutInverseText" ajax="false" icon="ui-icon-azure" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{upLoginView.actionAzureLogin}" />
+						</h:panelGroup>
 						<p></p>
 					</div>
 				</h:form>

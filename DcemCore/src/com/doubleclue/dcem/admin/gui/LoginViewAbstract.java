@@ -431,8 +431,6 @@ public abstract class LoginViewAbstract implements Serializable {
 	
 	public void actionAzureLogin() {
 		DomainAzure domainAzure =  domainLogic.getDomainAzure();
-		
-		
 		try {
 			domainAzure.sendAuthRedirect (connectionServicesType);
 			JsfUtils.getFacesContext().responseComplete();

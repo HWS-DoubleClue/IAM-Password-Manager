@@ -33,10 +33,18 @@
 						<p></p>
 						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
 						<p></p>
-						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso}" />
+						<p:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
 						<p></p>
-						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" />
+						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" />
+						<p:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" />
 						<p></p>
+						<h:panelGroup rendered="#{mfaLoginView.azureLogin}">
+							<p></p>
+							<img src="#{resource['pictures/azure.png']}"> </img>
+							<p:commandLink styleClass="logoutInverseText" ajax="false" icon="ui-icon-azure" value="#{AdminMsg['mfalogin.azureLogin.button']}"
+								action="#{mfaLoginView.actionAzureLogin}" />
+						</h:panelGroup>
 					</div>
 				</h:form>
 			</div>
