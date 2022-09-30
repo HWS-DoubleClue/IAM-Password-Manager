@@ -600,7 +600,6 @@ public class AuthenticationLogic {
 		 * create user automatically if it is a domain user with correct password
 		 */
 		DcemUser dcemUser = null;
-
 			DomainApi domainApi = domainLogic.getDomainFromEmail(userLoginId, null);
 			if (domainApi == null) {
 				String[] domainUser = userLoginId.split(DcemConstants.DOMAIN_SEPERATOR_REGEX);

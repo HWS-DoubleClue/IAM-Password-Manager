@@ -129,7 +129,7 @@
 
 									<p></p>
 									<p:commandButton id="azureLogin" styleClass="btnOfLogin" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{upLoginView.actionAzureLogin}"
-										style="width: 88%;" ajax="false" async="true" icon="fa fa-sign-in" rendered="#{upLoginView.azureLogin}" />
+										style="width: 88%;" ajax="false" async="true" icon="ui-icon-azure" rendered="#{upLoginView.azureLogin}" />
 								</p:panel>
 
 								<!-- change password panel -->
@@ -186,8 +186,8 @@
 									<h:outputText style="font-size: medium" />
 									<p:outputLabel style="font-size: medium; cursor: pointer" value="#{DcupMsg['button.forgotPassword']}" />
 								</p:commandLink>
-								<br />
-								<p:commandLink id="tutorial" action="#{upLoginView.actiontutorial}" ajax="false">
+								<p />
+								<p:commandLink id="tutorial" action="#{upLoginView.actionTutorial}" ajax="false">
 									<p:outputLabel style="font-size: medium; cursor: pointer" value="#{DcupMsg['button.tutorial']}" />
 								</p:commandLink>
 							</p:panel>

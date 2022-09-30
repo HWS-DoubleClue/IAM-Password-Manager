@@ -1268,6 +1268,8 @@ public class AppServices {
 				case USER_DISABLED:
 					throw new ExceptionReporting(new DcemReporting(reportAction, dcemUser, AppErrorCodes.USER_DISABLED, location, null),
 							appSession.wsSession.getRemoteAddress(), exp);
+				case AZURE_NEEDS_MFA:
+					break;
 				case DOMAIN_WRONG_AUTHENTICATION:
 					if (appSession.device != null) {
 						deviceLogic.incRetryCounter(appSession.device);

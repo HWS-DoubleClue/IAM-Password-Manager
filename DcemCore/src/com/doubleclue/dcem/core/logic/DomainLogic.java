@@ -274,7 +274,7 @@ public class DomainLogic implements ReloadClassInterface {
 		}
 		String mailSuffix = fqUserId.substring(ind + 1).toLowerCase();
 		for (DomainApi domainApi : getDomains().values()) {
-			if (domainApi.getDomainEntity().getSetOfEmailDomains().contains(mailSuffix)) {
+			if (domainApi.getDomainEntity().getSetOfEmailDomains().contains(mailSuffix.toLowerCase())) {
 				if (domainType == null) {
 					return domainApi;
 				} else if (domainType == domainApi.getDomainEntity().getDomainType()) {

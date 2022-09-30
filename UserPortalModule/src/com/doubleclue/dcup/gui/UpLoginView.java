@@ -111,6 +111,10 @@ public class UpLoginView extends LoginViewAbstract {
 			logger.error("Could not redirect to DCEM", e);
 		}
 	}
+	
+	public String actionTutorial() {
+		return DcupConstants.HTML_PAGE_TUTORIAL;
+	}
 
 	public void actionLocale() {
 		super.setNewLocale(portalSessionBean.getLocale());

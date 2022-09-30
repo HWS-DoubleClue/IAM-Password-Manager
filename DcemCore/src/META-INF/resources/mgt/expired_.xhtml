@@ -29,13 +29,15 @@
 				<h:outputLabel class="fa fa-hourglass-end" style="font-size: 1.4em; color: #445686; margin-left: 100px; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
 				<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.error.label.expired']}" />
 				<h:form>
-					<p></p>
-					<p:link style="font-size: 1.4em; margin-left: 100px"   value="#{CoreMsg['view.login.button.login']}"  outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
-					<p></p>
-					<p:link style="font-size: 1.4em; margin-left: 100px" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
-					<p></p>
-					<p:link style="font-size: 1.4em; margin-left: 100px" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" />
-					<p></p>
+					<div style="margin: 100px">
+						<p></p>
+						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
+						<p></p>
+						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.withWindowsSso']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso}" />
+						<p></p>
+						<p:link styleClass="logoutInverseText" value="#{CoreMsg['view.login.button.withOtherUser']}" outcome="mgtLogin" />
+						<p></p>
+					</div>
 				</h:form>
 			</div>
 		</div>
