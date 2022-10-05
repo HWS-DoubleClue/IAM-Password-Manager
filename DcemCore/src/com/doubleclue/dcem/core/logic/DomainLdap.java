@@ -944,7 +944,7 @@ public class DomainLdap implements DomainApi {
 		return new DcemException(DcemErrorCodes.DOMAIN_WRONG_AUTHENTICATION, "Wrong Authentication for " + dn, exp);
 	}
 
-	private static String convertSidToStringSid(byte[] sid) {
+	public static String convertSidToStringSid(byte[] sid) {
 		int offset, size;
 		// sid[0] is the Revision, we allow only version 1, because it's the
 		// only that exists right now.
