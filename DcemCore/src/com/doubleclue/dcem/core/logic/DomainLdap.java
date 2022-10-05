@@ -46,6 +46,7 @@ import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
+import com.doubleclue.dcem.core.entities.DomainConfig;
 import com.doubleclue.dcem.core.entities.DomainEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -68,6 +69,7 @@ public class DomainLdap implements DomainApi {
 	private static final String AD_USER_BINARY_OBJECTS = AD_USER_OBJECT_GUID + " " + AD_USER_OBJECT_SID;
 	private static final String MEMBER = "member";
 	private static final String GROUP_NAME = "name";
+	private static final String CN = "cn";
 
 	private static final String AD_ERROR_DATA = ", data ";
 	private static final String AD_ERROR_USER_DISABLED = "533,";
@@ -277,8 +279,8 @@ public class DomainLdap implements DomainApi {
 		env.put(Context.SECURITY_PRINCIPAL, domainEntity.getSearchAccount());
 		env.put(Context.SECURITY_CREDENTIALS, domainEntity.getPassword());
 		env.put(Context.PROVIDER_URL, domainEntity.getHost());
-		env.put(Context.REFERRAL, "follow");
-		// env.put("com.sun.jndi.ldap.connect.pool", "true");
+		// env.put(Context.REFERRAL, "follow");
+		env.put("com.sun.jndi.ldap.connect.pool", "false");
 		try {
 			LdapContext ctx = new InitialLdapContext(env, null);
 			searchLdapContext = ctx;
@@ -398,11 +400,10 @@ public class DomainLdap implements DomainApi {
 
 		StringBuffer sb = new StringBuffer();
 		if (hasUserAccountControl) {
-			sb.append("(&(objectclass=person)(UserAccountControl:1.2.840.113556.1.4.803:=512)" + "(!(UserAccountControl:1.2.840.113556.1.4.803:=2))");
+			sb.append("(&(objectclass=person)");
+			// sb.append("(&(objectclass=person)(UserAccountControl:1.2.840.113556.1.4.803:=512)" + "(!(UserAccountControl:1.2.840.113556.1.4.803:=2))");
 		} else {
-			if (domainEntity.getDomainType() == DomainType.Active_Directory) {
-				sb.append("(&(objectclass=person)");
-			}
+			sb.append("(&(objectclass=person)");
 		}
 		if (user != null && user.isEmpty() == false) {
 			sb.append("(" + domainEntity.getLoginAttribute() + "=" + user + ")");
@@ -410,10 +411,8 @@ public class DomainLdap implements DomainApi {
 		if (dcemGroup != null && dcemGroup.getGroupDn() != null) {
 			sb.append("(memberOf=" + dcemGroup.getGroupDn() + ")");
 		}
-		if (domainEntity.getDomainType() == DomainType.Active_Directory) {
-			sb.append(")");
-		}
-		// String searchFilter = "(&(objectclass=person)(memberOf=" +groupDn+"))";
+		sb.append(")");
+
 		Map<String, Attributes> map;
 
 		try {
@@ -424,13 +423,11 @@ public class DomainLdap implements DomainApi {
 				for (String key : map.keySet()) {
 					try {
 						Attributes attributes = map.get(key);
-						if (attributes.get(PROPERTY_DISTINGUISHED_NAME) != null) {
-							dn = attributes.get(PROPERTY_DISTINGUISHED_NAME).get().toString();
-						} else {
-							dn = key + domainEntity.getBaseDN();
-						}
-						DcemUser dcemUser = new DcemUser(domainEntity, dn, attributes.get(domainEntity.getLoginAttribute()).get().toString());
+						DcemUser dcemUser = new DcemUser(domainEntity, key + domainEntity.getBaseDN(),
+								attributes.get(domainEntity.getLoginAttribute()).get().toString());
+						dcemUser.ldapSync(getDcemLdapAttributes(attributes));
 						dcemUser.setDcemLdapAttributes(getDcemLdapAttributes(attributes));
+						System.out.println(dcemUser.getObjectGuidString());
 						users.add(dcemUser);
 					} catch (NamingException e) {
 						logger.info(e);
@@ -449,10 +446,14 @@ public class DomainLdap implements DomainApi {
 				map = getSearchTry(tree, sb.toString(), null, defaultUserReturnedAtts, pageSize);
 				List<DcemUser> users = new ArrayList<>(map.size());
 				if (map != null) {
-					for (Attributes attributes : map.values()) {
+					for (String key : map.keySet()) {
 						try {
-							users.add(new DcemUser(domainEntity, attributes.get(PROPERTY_DISTINGUISHED_NAME).get().toString(),
-									attributes.get("name").get().toString()));
+							Attributes attributes = map.get(key);
+							DcemUser dcemUser = new DcemUser(domainEntity, key + domainEntity.getBaseDN(),
+									attributes.get(domainEntity.getLoginAttribute()).get().toString());
+							dcemUser.ldapSync(getDcemLdapAttributes(attributes));
+							dcemUser.setDcemLdapAttributes(getDcemLdapAttributes(attributes));
+							users.add(dcemUser);
 						} catch (NamingException e) {
 							logger.info(e);
 						}
@@ -513,9 +514,10 @@ public class DomainLdap implements DomainApi {
 		} catch (InvalidNameException | NameNotFoundException ne) {
 			throw new DcemException(DcemErrorCodes.DOMAIN_INVALID_NAME, ne.getMessage());
 		} catch (PartialResultException exp) {
-			throw new DcemException(DcemErrorCodes.LDAP_CONNECTION_FAILED,
-					"LDAP Connection failed due to PartialResultException. Try to make the 'Base DN' more specific or user port 3269");
-		} catch (Exception exp) {
+			// throw new DcemException(DcemErrorCodes.LDAP_CONNECTION_FAILED,
+			// "LDAP Connection failed due to PartialResultException. Try to make the 'Base DN' more specific or user port 3269");
+			logger.info("PartialResultException got ignored");
+		} catch (Throwable exp) {
 			if (exp.getClass() == javax.naming.CommunicationException.class) {
 				throw new DcemException(DcemErrorCodes.LDAP_CONNECTION_FAILED, "LDAP Connection failed.", exp);
 			}
@@ -630,6 +632,12 @@ public class DomainLdap implements DomainApi {
 			userList.add(dcemUser2);
 		}
 		return userList;
+	}
+
+	@Override
+	public Map<String, Attributes> customSearchAttributeMap(String tree, String searchFilter, String baseDn, String[] returnedAttributes, int pageSize)
+			throws DcemException {
+		return getSearchTry(null, searchFilter, baseDn, null, pageSize);
 	}
 
 	@Override
@@ -781,13 +789,20 @@ public class DomainLdap implements DomainApi {
 
 	@Override
 	public List<DcemGroup> getGroups(String filter, int pageSize) throws DcemException {
+		if (domainEntity.getDomainType() == DomainType.Generic_LDAP) {
+			return getLdapGroups("cn", filter, pageSize);
+		}
 		return getLdapGroups("name", filter, pageSize);
 	}
 
 	private List<DcemGroup> getLdapGroups(String filterName, String filter, int pageSize) throws DcemException {
 		filter = filter.replace("\\,", "\\\\2c");
-		String searchFilter = "(&(objectClass=group)(" + filterName + "=" + filter + "))";
-		String returnedAtts[] = { GROUP_NAME, PROPERTY_DISTINGUISHED_NAME };
+		String searchFilter = "(&(objectClass=" + domainEntity.getDomainConfig().getGroupAttribute() + ")(" + filterName + "=" + filter + "))";
+		String name = GROUP_NAME;
+		if (domainEntity.getDomainType() == DomainType.Generic_LDAP) {
+			name = CN;
+		}
+		String returnedAtts[] = { name, PROPERTY_DISTINGUISHED_NAME };
 		Map<String, Attributes> map;
 		try {
 			map = getSearchTry(null, searchFilter, null, returnedAtts, pageSize);
@@ -802,10 +817,15 @@ public class DomainLdap implements DomainApi {
 		}
 		List<DcemGroup> groups = new ArrayList<>(map.size());
 		if (map != null) {
-			for (Attributes attributes : map.values()) {
+			for (String dn : map.keySet()) {
 				try {
-					groups.add(
-							new DcemGroup(domainEntity, attributes.get(PROPERTY_DISTINGUISHED_NAME).get().toString(), attributes.get("name").get().toString()));
+					Attributes attributes = map.get(dn);
+					if (domainEntity.getDomainType() == DomainType.Generic_LDAP) {
+						groups.add(new DcemGroup(domainEntity, dn + "," + domainEntity.getBaseDN(), attributes.get(CN).get().toString()));
+					} else {
+						groups.add(new DcemGroup(domainEntity, dn + "," + domainEntity.getBaseDN(), attributes.get(GROUP_NAME).get().toString()));
+
+					}
 				} catch (NamingException e) {
 					logger.info(e);
 				}
@@ -924,7 +944,7 @@ public class DomainLdap implements DomainApi {
 		return new DcemException(DcemErrorCodes.DOMAIN_WRONG_AUTHENTICATION, "Wrong Authentication for " + dn, exp);
 	}
 
-	private static String convertSidToStringSid(byte[] sid) {
+	public static String convertSidToStringSid(byte[] sid) {
 		int offset, size;
 		// sid[0] is the Revision, we allow only version 1, because it's the
 		// only that exists right now.

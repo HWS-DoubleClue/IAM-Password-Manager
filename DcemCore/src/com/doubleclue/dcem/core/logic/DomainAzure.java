@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.naming.directory.Attributes;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,7 +52,7 @@ import com.microsoft.graph.requests.extensions.IUserCollectionPage;
 import com.microsoft.graph.requests.extensions.ProfilePhotoStreamRequest;
 
 public class DomainAzure implements DomainApi {
-	
+
 	private static final Logger logger = LogManager.getLogger(DomainAzure.class);
 
 	private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId";
@@ -191,7 +193,7 @@ public class DomainAzure implements DomainApi {
 				graphClient = null;
 				collection = getSearchGraphClient().users().byId(dcemUser.getUserDn()).memberOf().buildRequest().top(pageSize).select("displayName").get();
 			} else {
-		//		throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString(), e);
+				// throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString(), e);
 				return new HashSet<>();
 			}
 		}
@@ -324,10 +326,10 @@ public class DomainAzure implements DomainApi {
 			photo = DcemUtils.resizeImage(photo);
 			return photo;
 		} catch (GraphServiceException gse) {
-//			if (gse.getServiceError().code.equals("ImageNotFound")) {
-//				return null;
-//			}
-//			throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, "Phone", gse);
+			// if (gse.getServiceError().code.equals("ImageNotFound")) {
+			// return null;
+			// }
+			// throw new DcemException(DcemErrorCodes.AZURE_UNEXPECTED_ERROR, "Phone", gse);
 			logger.debug("Couldn't retrieve photo for  " + dcemUser.getDisplayNameOrLoginId(), gse.toString());
 			return null;
 		} catch (Exception e) {
@@ -439,8 +441,6 @@ public class DomainAzure implements DomainApi {
 		}
 	}
 
-	
-
 	@Override
 	public Map<String, String> getUserAttributes(DcemUser dcemUser, List<String> attributeList) throws DcemException {
 		try {
@@ -491,6 +491,15 @@ public class DomainAzure implements DomainApi {
 		IGraphServiceClient userGraphClient = getSearchGraphClient();
 		byte[] stream = Base64.getDecoder().decode(photo);
 		userGraphClient.users().byId(dcemUser.getUserDn()).photo().content().buildRequest().put(stream);
+	}
+
+	@Override
+	public Map<String, Attributes> customSearchAttributeMap(String tree, String searchFilter, String baseDn, String[] returnedAttributes, int pageSize)
+			throws DcemException {
+		// TODO Auto-generated method stub
+		// used for customSearch in Ldap
+
+		return null;
 	}
 
 	// private String getAccessTokenForUser(DcemUser dcemUser, String password) throws DcemException {
