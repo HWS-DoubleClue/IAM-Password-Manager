@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.faces.context.ExternalContext;
+import javax.naming.directory.Attributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -622,6 +623,14 @@ public class DomainAzure implements DomainApi {
 		// TODO httpServletRequest.getSession().setAttribute(AuthHelper.TOKEN_CACHE_SESSION_ATTRIBUTE, tokenCache);
 	//	result.account().username();
 		return result;
+	}
+
+	// this is not supported by azure
+	@Override
+	public Map<String, Attributes> customSearchAttributeMap(String tree, String searchFilter, String baseDn, String[] returnedAttributes, int pageSize)
+			throws DcemException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
