@@ -610,7 +610,7 @@ public class AsModule extends DcemModule {
 	public void initializeTenant(TenantEntity tenantEntity) throws DcemException {
 
 		String tenantName = tenantEntity.getName();
-		logger.debug("Strart initializeTenant " + tenantName);
+		logger.debug("Start initializeTenant " + tenantName);
 		AsTenantData tenantData = new AsTenantData();
 		super.initializeTenant(tenantEntity, tenantData);
 		DcemCluster dcemCluster = DcemCluster.getInstance();
