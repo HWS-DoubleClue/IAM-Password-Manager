@@ -38,38 +38,25 @@ public class FingerprintLogic {
 		return false;
 	}
 
-	// public boolean verifyFingerprint(Integer userId, PolicyAppEntity appEntity, String fingerprint) {
-	// UserFingerprintEntity userFingerprintEntity = getFingerprint(userId, appEntity);
-	// if (userFingerprintEntity == null) {
-	// return false;
-	// }
-	// if (fingerprint != null) {
-	// if (userFingerprintEntity.getFingerprint() == null) {
-	// return false;
-	// }
-	// if (new Date().before(userFingerprintEntity.getTimestamp()) && userFingerprintEntity.getFingerprint().equals(fingerprint)) {
-	// return true;
-	// }
-	// } else if (new Date().before(userFingerprintEntity.getTimestamp())) {
-	// return true;
-	// }
-	// return false;
-	// }
-
+	
 	@DcemTransactional
-	public void updateFingerprint(UserFingerprintEntity userFingerprintEntity, boolean full) {
+	public void updateFingerprint(UserFingerprintEntity userFingerprintEntity) {
 		UserFingerprintEntity existingUserFingerprintEntity = em.find(UserFingerprintEntity.class, userFingerprintEntity.getId());
 		if (existingUserFingerprintEntity == null) { // add
 			em.persist(userFingerprintEntity);
-			existingUserFingerprintEntity = userFingerprintEntity;
-		} else { // update
-			if (full) {
-				existingUserFingerprintEntity.setFingerprint(userFingerprintEntity.getFingerprint());
-				existingUserFingerprintEntity.setTimestamp(userFingerprintEntity.getTimestamp());
-			}
+		} else {   // update
+			existingUserFingerprintEntity.setTimestamp(userFingerprintEntity.getTimestamp());
 			userFingerprintEntity.setFingerprint(existingUserFingerprintEntity.getFingerprint());
 		}
 	}
+	
+	
+	public UserFingerprintEntity getFingerprint(FingerprintId fingerprintId) {
+		return em.find(UserFingerprintEntity.class, fingerprintId);
+	}
+	
+	
+	
 
 	@DcemTransactional
 	public void deleteFingerPrint(Integer userId, PolicyAppEntity appEntity) {

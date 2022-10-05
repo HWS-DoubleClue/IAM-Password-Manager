@@ -305,7 +305,7 @@ public class AuthenticationLogic {
 				FingerprintId fpId = new FingerprintId(dcemUser.getId(), appEntity);
 				UserFingerprintEntity userFingerprintEntity = createFingerPrint(fpId, policyEntity.getDcemPolicy());
 				if (userFingerprintEntity != null && authenticateResponse.isStayLoggedInAllowed() == true) {
-					fingerprintLogic.updateFingerprint(userFingerprintEntity, authMethod != AuthMethod.SESSION_RECONNECT);
+					fingerprintLogic.updateFingerprint(userFingerprintEntity);
 					authenticateResponse.setSessionCookie(userFingerprintEntity.getFingerprint());
 					authenticateResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().getTime() / 1000));
 				}
@@ -556,7 +556,7 @@ public class AuthenticationLogic {
 				if (dcemPolicy != null) {
 					UserFingerprintEntity userFingerprintEntity = createFingerPrint(fpId, dcemPolicy);
 					if (userFingerprintEntity != null && dcemPolicy.isEnableSessionAuthentication() == true) {
-						fingerprintLogic.updateFingerprint(userFingerprintEntity, true);
+						fingerprintLogic.updateFingerprint(userFingerprintEntity);
 						apiMessageResponse.setSessionCookie(userFingerprintEntity.getFingerprint());
 						apiMessageResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().getTime() / 1000));
 						apiMessageResponse.setStayLoggedInAllowed(dcemPolicy.isEnableSessionAuthentication());
@@ -585,7 +585,7 @@ public class AuthenticationLogic {
 			if (dcemPolicy.isRefrain2FaWithInTime() == true) {
 				createFp = true;
 			} else if (dcemPolicy.isEnableSessionAuthentication() == true) {
-				sessionCookie = RandomUtils.generateRandomAlphaNumericString(32);
+				sessionCookie = RandomUtils.generateRandomAlphaNumericString(48);
 				createFp = true;
 			}
 		}

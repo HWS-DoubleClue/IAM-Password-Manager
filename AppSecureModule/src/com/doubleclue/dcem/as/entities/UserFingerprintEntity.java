@@ -40,6 +40,7 @@ public class UserFingerprintEntity implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
 
+	
 	String fingerprint;
 
 	public UserFingerprintEntity() {

@@ -548,7 +548,7 @@ public class AppServices {
 					sessionCookie = RandomUtils.generateRandomAlphaNumericString(32);
 				}
 				UserFingerprintEntity fingerprintEntity = new UserFingerprintEntity(fpId, sessionCookie, asModule.getModulePreferences().getAppReLoginWithin());
-				fingerprintLogic.updateFingerprint(fingerprintEntity, true);
+				fingerprintLogic.updateFingerprint(fingerprintEntity);
 				loginResponse.setSessionCookie(sessionCookie);
 				loginResponse.setSessionCookieExpiresOn((int) (fingerprintEntity.getTimestamp().getTime() / 1000));
 			} else {
