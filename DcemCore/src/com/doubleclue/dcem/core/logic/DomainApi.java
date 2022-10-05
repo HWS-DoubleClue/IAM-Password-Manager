@@ -35,7 +35,7 @@ public interface DomainApi {
 
 	public List<DcemUser> getGroupMembers(DcemGroup group, String filter) throws DcemException;
 	
-	public Map<String, Attributes> customSearchAttributeMap(String filter, String baseDn, int pAGE_SIZE) throws DcemException;
+	public Map<String, Attributes> customSearchAttributeMap(String tree, String searchFilter, String baseDn, String[]returnedAttributes, int pageSize) throws DcemException;
 
 	public DomainEntity getDomainEntity();
 

@@ -299,8 +299,9 @@ public class DomainLogic implements ReloadClassInterface {
 		}
 		return domainApi.getUsers(tree, dcemGroup, userFilter, PAGE_SIZE);
 	}
-	
-	public Map<String, Attributes> customSearch(String domainName, String baseDn, String filter, int pageSize) throws DcemException {
+
+	public Map<String, Attributes> customSearch(String domainName, String tree, String searchFilter, String baseDn, String[] returnedAttributes)
+			throws DcemException {
 		if (domainName == null) {
 			throw new DcemException(DcemErrorCodes.INVALID_DOMAIN_NAME, null);
 		}
@@ -308,9 +309,9 @@ public class DomainLogic implements ReloadClassInterface {
 		if (domainApi == null) {
 			throw new DcemException(DcemErrorCodes.INVALID_DOMAIN_NAME, domainName);
 		}
-		return domainApi.customSearchAttributeMap(filter, baseDn, PAGE_SIZE);
+		return domainApi.customSearchAttributeMap(tree, searchFilter, baseDn, returnedAttributes, PAGE_SIZE);
 	}
-	
+
 	public List<DcemGroup> getGroups(String domainName, String filter, int pageSize) throws DcemException {
 		DomainApi domainApi = getDomainApi(domainName);
 		return domainApi.getGroups(filter, pageSize);
@@ -393,7 +394,6 @@ public class DomainLogic implements ReloadClassInterface {
 		}
 		return list;
 	}
-
 
 	public LinkedHashMap<String, DomainApi> getDomains() {
 		return adminModule.getAdminTenantData().getDomains();
