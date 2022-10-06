@@ -86,8 +86,17 @@
 	height: 6vh;
 }
 
+.upDialogTitle {
+	color:white !important;
+	font-size: 1.6em;
+	vertical-align: middle;
+	margin-left: 0.5em;
+	text-decoration: none;
+	background-color: none !important;
+}
+
 .dialogTitle {
-	color: #fff !important;
+	color:white !important;
 	font-size: 1.6em;
 	vertical-align: middle;
 	margin-left: 0.5em;

@@ -44,7 +44,6 @@ import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
-import com.doubleclue.dcem.core.entities.DomainConfig;
 import com.doubleclue.dcem.core.entities.DomainEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -414,7 +413,6 @@ public class DomainLdap implements DomainApi {
 		try {
 			map = getSearchTry(tree, sb.toString(), null, defaultUserReturnedAtts, pageSize);
 			List<DcemUser> users = new ArrayList<>(map.size());
-			String dn;
 			if (map != null) {
 				for (String key : map.keySet()) {
 					try {

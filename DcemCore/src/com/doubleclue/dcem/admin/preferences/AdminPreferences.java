@@ -64,7 +64,12 @@ public class AdminPreferences extends ModulePreferences {
 	@DcemGui()
 	String alertsNotificationGroup = null;
 	
-	@DcemGui(help = "Windows Single Sign On works only if DoubleClue is istalled on Windows Server")
+	@DcemGui(separator = "Login With")
+	boolean enableAzureLogin;
+	
+	
+
+	@DcemGui()
 	boolean useWindowsSSO;
 
 	@DcemGui(separator = "Location", choose = { "None", "IP", "City" })
@@ -219,5 +224,13 @@ public class AdminPreferences extends ModulePreferences {
 
 	public void setUseWindowsSSO(boolean useWindowsSSO) {
 		this.useWindowsSSO = useWindowsSSO;
+	}
+
+	public boolean isEnableAzureLogin() {
+		return enableAzureLogin;
+	}
+
+	public void setEnableAzureLogin(boolean enableAzureLogin) {
+		this.enableAzureLogin = enableAzureLogin;
 	}
 }

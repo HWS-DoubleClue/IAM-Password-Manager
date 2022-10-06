@@ -229,11 +229,11 @@
 				<h:form id="authMethodForm">
 					<p:dialog id="authMethodDialog" widgetVar="authMethodDialog" modal="true" resizable="false" style="border: none !important;">
 						<f:facet name="header">
-							<h:outputLabel value="#{DcupMsg['title.chooseAuthMethod']}" class="dialogTitle" />
+							<h:outputLabel value="#{DcupMsg['title.chooseAuthMethod']}" class="upDialogTitle" />
 						</f:facet>
 						<p />
 						<h:panelGroup>
-							<p:dataTable value="#{upLoginView.authMethodGuis}" var="amethod" style="margin:auto; padding: 20px 0px 10px 0px; width: 70%;"
+							<p:dataTable value="#{upLoginView.authMethodGuis}" var="amethod" style="margin:auto; padding: 20px 0px 10px 0px; width: 90%;"
 								styleClass="borderlessMFALogin">
 								<p:column style="text-align: center;">
 									<p:commandLink action="#{upLoginView.actionAuthMethodChosen(amethod.method)}" ajax="true" async="true">

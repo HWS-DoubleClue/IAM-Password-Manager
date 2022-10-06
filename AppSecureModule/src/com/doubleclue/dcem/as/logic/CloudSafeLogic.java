@@ -1424,13 +1424,13 @@ public class CloudSafeLogic {
 		CloudSafeLimitEntity limitEntity = getCloudSafeLimitEntity(user.getId());
 
 		// 1. Check expiry dates
-		Date expiryDate = limitEntity != null ? limitEntity.getExpiryDate() : null;
-		if (expiryDate != null && now.after(expiryDate)) {
-			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_USER_EXPIRY_DATE_REACHED,
-					"This user cannot use CloudSafe because the expiry date has passed: " + getStringFromDate(expiryDate));
-		} else if (now.after(licenceKeyContent.getExpiresOn())) {
-			throw new DcemException(DcemErrorCodes.LICENCE_EXPIRED, "This user cannot use CloudSafe because the licence has expired");
-		}
+//		Date expiryDate = limitEntity != null ? limitEntity.getExpiryDate() : null;
+//		if (expiryDate != null && now.after(expiryDate)) {
+//			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_USER_EXPIRY_DATE_REACHED,
+//					"This user cannot use CloudSafe because the expiry date has passed: " + getStringFromDate(expiryDate));
+//		} else if (now.after(licenceKeyContent.getExpiresOn())) {
+//			throw new DcemException(DcemErrorCodes.LICENCE_EXPIRED, "This user cannot use CloudSafe because the licence has expired");
+//		}
 
 		// 2. Check against user's Cloud Safe limit
 		long userLimit = limitEntity != null ? limitEntity.getLimit() : getDefaultUserLimit();

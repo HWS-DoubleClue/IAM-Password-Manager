@@ -33,23 +33,21 @@ import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
 
-
 public abstract class DcemFilter implements Filter {
 
 	@Inject
 	protected DcemApplicationBean applicationBean;
-	
+
 	@Inject
 	protected DomainLogic domainLogic;
-	
+
 	@Inject
 	UserLogic userLogic;
-	
+
 	@Inject
 	OperatorSessionBean operatorSessionBean;
 
 	private static final Logger logger = LogManager.getLogger(DcemFilter.class);
-
 
 	private static final String FACES_REQUEST = "Faces-Request";
 	private static final String FACES_AJAX_REQUEST = "partial/ajax";
@@ -97,7 +95,7 @@ public abstract class DcemFilter implements Filter {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		path = httpServletRequest.getServletPath();
-//		System.out.println("DcemFilter.doFilter() Path: " + path);
+		// System.out.println("DcemFilter.doFilter() Path: " + path);
 		if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 			if (isSessionInvalid(httpServletRequest)) {
 				String redirectUrl = httpServletRequest.getContextPath() + webName + "/" + DcemConstants.EXPIRED_PAGE;
@@ -110,7 +108,12 @@ public abstract class DcemFilter implements Filter {
 				} else {
 					if (httpServletRequest.getHeader("authorization") == null) {
 						httpServletRequest.getSession().invalidate();
-						httpServletResponse.sendRedirect(redirectUrl);
+						if (path.endsWith(OPEN_SUFFIX) || allowedPaths.contains(path)) { // excemption
+							chain.doFilter(request, response);
+							return;
+						} else {
+							httpServletResponse.sendRedirect(redirectUrl);
+						}
 						return;
 					}
 				}
@@ -142,7 +145,7 @@ public abstract class DcemFilter implements Filter {
 				if (path.equals(webName)) {
 					httpServletResponse.sendRedirect(welcomePage);
 					return;
-				}				
+				}
 				ThreadContext.put(DcemConstants.MDC_USER_ID, getUserId());
 				chain.doFilter(request, response);
 				return;
@@ -164,23 +167,23 @@ public abstract class DcemFilter implements Filter {
 			if (containsAuthenticationCode(httpServletRequest)) {
 				String currentUri = httpServletRequest.getRequestURL().toString();
 				String queryStr = httpServletRequest.getQueryString();
-                String fullUrl = currentUri + (queryStr != null ? "?" + queryStr : "");
-                DomainAzure domainAzure = domainLogic.getDomainAzure();
-                try {
+				String fullUrl = currentUri + (queryStr != null ? "?" + queryStr : "");
+				DomainAzure domainAzure = domainLogic.getDomainAzure();
+				try {
 					DcemUser dcemUserAzure = domainAzure.processAuthenticationCodeRedirect(httpServletRequest, currentUri, fullUrl);
 					DcemUser dcemUser = userLogic.getDistinctUser(dcemUserAzure.getLoginId());
 					if (dcemUser == null) {
-						userLogic.addOrUpdateUserWoAuditing(dcemUserAzure);						
+						userLogic.addOrUpdateUserWoAuditing(dcemUserAzure);
 					} else {
 						dcemUser.sync(dcemUserAzure.getDcemLdapAttributes());
 					}
 					operatorSessionBean.loggedInOperator(dcemUser, httpServletRequest);
 					redirect(httpServletRequest, response, webName + "/" + welcomePage, false);
 				} catch (Throwable e) {
-					logger.info ("", e);
+					logger.info("", e);
 					redirect(httpServletRequest, response, redirectionPage, false);
 				}
-                CookieHelper.removeStateNonceCookies(httpServletResponse);
+				CookieHelper.removeStateNonceCookies(httpServletResponse);
 			}
 		} catch (InvalidCipherTextIOException exp) { // should happen as now we have a JSF exception handler
 			logger.info("Could not decrypt downloaded file", exp.toString());
@@ -262,8 +265,6 @@ public abstract class DcemFilter implements Filter {
 		boolean containsCode = httpParameters.containsKey("code");
 		return isPostRequest && containsErrorData || containsCode || containIdToken;
 	}
-	
-
 
 	// private Map<String, String> getHeadersInfo(HttpServletRequest request) {
 	// Map<String, String> map = new HashMap<String, String>();
