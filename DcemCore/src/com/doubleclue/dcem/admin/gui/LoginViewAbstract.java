@@ -501,7 +501,7 @@ public abstract class LoginViewAbstract implements Serializable {
 				JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "DcemErrorCodes." + exp.getErrorCode());
 				break;
 			}
-			logger.info("login failed", exp);
+			logger.info("login failed for " + userLoginId + ", Cause: " +  exp.getLocalizedMessage());
 			return;
 		} catch (Exception exp) {
 			JsfUtils.addErrorMessage(exp.toString());
