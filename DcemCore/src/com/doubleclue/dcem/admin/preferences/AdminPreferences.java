@@ -65,8 +65,11 @@ public class AdminPreferences extends ModulePreferences {
 	String alertsNotificationGroup = null;
 	
 	@DcemGui(separator = "Login With")
-	boolean enableAzureLogin;
+	boolean enableAzureDirectLogin;
 	
+	@DcemGui()
+	boolean useOnlyAzureDirectLogin;
+
 	
 
 	@DcemGui()
@@ -214,8 +217,16 @@ public class AdminPreferences extends ModulePreferences {
 		return maxExport;
 	}
 
-	public void setMaxExport(int maxExport) {
-		this.maxExport = maxExport;
+	public boolean isEnableAzureDirectLogin() {
+		return enableAzureDirectLogin;
+	}
+
+	public void setEnableAzureDirectLogin(boolean enableAzureDirectLogin) {
+		this.enableAzureDirectLogin = enableAzureDirectLogin;
+	}
+
+	public void setMaxExport(int maxExport) {	
+		this.maxExport = maxExport;	
 	}
 	
 	public boolean isUseWindowsSSO() {
@@ -226,11 +237,13 @@ public class AdminPreferences extends ModulePreferences {
 		this.useWindowsSSO = useWindowsSSO;
 	}
 
-	public boolean isEnableAzureLogin() {
-		return enableAzureLogin;
+	public boolean isUseOnlyAzureDirectLogin() {
+		return useOnlyAzureDirectLogin;
 	}
 
-	public void setEnableAzureLogin(boolean enableAzureLogin) {
-		this.enableAzureLogin = enableAzureLogin;
+	public void setUseOnlyAzureDirectLogin(boolean useOnlyAzureDirectLogin) {
+		this.useOnlyAzureDirectLogin = useOnlyAzureDirectLogin;
 	}
+
+
 }

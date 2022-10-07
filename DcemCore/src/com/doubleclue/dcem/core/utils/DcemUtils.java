@@ -179,9 +179,12 @@ public class DcemUtils {
 		if (resourceBundle != null) {
 			try {
 				displayName = resourceBundle.getString(viewName + "." + fieldName);
-				helpText = resourceBundle.getString(viewName + "." + DcemConstants.PREF_HELP_RESOURCE + "." + fieldName);
 			} catch (MissingResourceException mrex) {
-
+			}
+			try {
+				helpText = resourceBundle.getString(viewName + "." + DcemConstants.PREF_HELP_RESOURCE + "." + fieldName);
+			} catch (MissingResourceException e) {
+				helpText = dcemGui.help();
 			}
 		}
 		if (displayName == null || displayName.startsWith(JsfUtils.NO_RESOURCE_FOUND)) {
@@ -382,7 +385,7 @@ public class DcemUtils {
 				UIComponent input = getHtmlInput(eFactory, "#{" + bindObject + "." + viewVariable.getId() + "}", viewVariable, object, dcemDialog);
 				input.setId(viewVariable.getId().replace('.', '_'));
 				htmlPanelGroup.getChildren().add(input);
-				if (withHelp && viewVariable.getHelpText() != null) {
+				if (withHelp && viewVariable.getHelpText() != null && viewVariable.getHelpText().isEmpty() == false) {
 					HtmlOutputText helpButton = new HtmlOutputText();
 					helpButton.setEscape(false);
 					helpButton.setValue("<i class=\"fa fa-question-circle\" aria-hidden=\"true\"></i>");
@@ -1500,41 +1503,40 @@ public class DcemUtils {
 			throw exp;
 		}
 	}
-	
+
 	public static TimeZone getTimeZoneFromCountry(String country) {
 		TimeZone timeZone;
 		if (country == null || country.isEmpty()) {
 			return TimeZone.getDefault();
 		}
 		switch (country) {
-			case "DE":
-			case "FR":
-			case "IT":
-			case "MT":
-				timeZone = TimeZone.getTimeZone("Europe/Berlin");
-				break;
-			case "GB":
-				timeZone = TimeZone.getTimeZone("Europe/London");
-				break;
-			default:
-				timeZone = TimeZone.getDefault();
-				break;
+		case "DE":
+		case "FR":
+		case "IT":
+		case "MT":
+			timeZone = TimeZone.getTimeZone("Europe/Berlin");
+			break;
+		case "GB":
+			timeZone = TimeZone.getTimeZone("Europe/London");
+			break;
+		default:
+			timeZone = TimeZone.getDefault();
+			break;
 		}
 		return timeZone;
 
-		
 	}
 
 	public static Date getDayEnd(LocalDate localDate) {
 		Instant instant = Instant.from(localDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()));
 		return Date.from(instant);
 	}
-	
-	public static Date getDayBegin(LocalDate localDate) {	
+
+	public static Date getDayBegin(LocalDate localDate) {
 		Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		return Date.from(instant);
 	}
-	
+
 	public static boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
 		return os.contains("win");

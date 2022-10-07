@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.config.ConnectionServicesType;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
+import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.servlets.DcemFilter;
 import com.doubleclue.dcem.oauth.logic.OAuthModuleConstants;
@@ -65,5 +68,10 @@ public class OAuthWebFilter extends DcemFilter {
 	@Override
 	public String getUserId() {
 		return null;
+	}
+	
+	@Override
+	public void logUserIn(DcemUser dcmeUser, HttpServletRequest httpServletRequest) throws DcemException {
+		throw new DcemException(DcemErrorCodes.NOT_IMPLEMENTED, null);
 	}
 }

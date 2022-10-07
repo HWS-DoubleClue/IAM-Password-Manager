@@ -16,7 +16,6 @@ import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 
-
 @ApplicationScoped
 public class UserPortalProfileLogic {
 
@@ -28,7 +27,7 @@ public class UserPortalProfileLogic {
 
 	@Inject
 	AuditingLogic auditingLogic;
-	
+
 	@Inject
 	EntityManager em;
 
@@ -49,8 +48,22 @@ public class UserPortalProfileLogic {
 		dcemUser.setMobileNumber(clonedUser.getMobile());
 		dcemUser.setPrivateMobileNumber(clonedUser.getPrivateMobileNumber());
 		dcemUser.setLanguage(clonedUser.getLanguage());
-		userLogic.updateDcemUserExtension(dcemUser, dcemUserExtension);
-		auditingLogic.addAudit(new DcemAction(userSubject, DcemConstants.ACTION_EDIT), dcemUser, changeInfo);
+		DcemUserExtension dcemUserExtensionDb = em.find(DcemUserExtension.class, dcemUser.getId());
+		if (dcemUserExtensionDb == null) {
+			dcemUserExtension.setId(dcemUser.getId());
+			em.persist(dcemUserExtension);
+			dcemUser.setDcemUserExt(dcemUserExtension);
+		} else {
+			if (dcemUserExtension.getPhoto() != null) {
+				dcemUserExtensionDb.setPhoto(dcemUserExtension.getPhoto());
+			}
+			dcemUserExtensionDb.setCountry(dcemUserExtension.getCountry());
+			dcemUserExtensionDb.setTimezone(dcemUserExtension.getTimezone());
+		}
+		// userLogic.updateDcemUserExtension(dcemUser, dcemUserExtension);
+		if (changeInfo != null || changeInfo.isEmpty() == false) {
+			auditingLogic.addAudit(new DcemAction(userSubject, DcemConstants.ACTION_EDIT), dcemUser, changeInfo);
+		}
 	}
 
 }

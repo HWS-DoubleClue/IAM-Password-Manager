@@ -239,6 +239,10 @@ public class DomainLogic implements ReloadClassInterface {
 				dcemUser.setLanguage(synchUser.getLanguage());
 			}
 		} catch (DcemException exp) {
+			if (exp.getErrorCode() == DcemErrorCodes.AZURE_NEEDS_MFA) {
+				logger.debug("Azure request MFA for " + dcemUser.getAccountName() );
+				return;
+			}
 			if (exp.getErrorCode() == DcemErrorCodes.LDAP_LOGIN_USER_FAILED) {
 				logger.info(exp);
 			}

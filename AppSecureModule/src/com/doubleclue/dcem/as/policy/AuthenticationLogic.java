@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.jni.User;
 
 import com.doubleclue.comm.thrift.CloudSafeOwner;
 import com.doubleclue.dcem.admin.logic.AdminModule;
@@ -58,6 +59,7 @@ import com.doubleclue.dcem.core.logic.ClaimAttribute;
 import com.doubleclue.dcem.core.logic.DbResourceBundle;
 import com.doubleclue.dcem.core.logic.DomainApi;
 import com.doubleclue.dcem.core.logic.DomainLogic;
+import com.doubleclue.dcem.core.logic.DomainType;
 import com.doubleclue.dcem.core.logic.GroupLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
@@ -191,6 +193,13 @@ public class AuthenticationLogic {
 			}
 			authenticateResponse.setFqUserLoginId(dcemUser.getLoginId());
 			authenticateResponse.setDcemUser(dcemUser);
+			if (dcemUser.getDomainEntity() != null && dcemUser.getDomainEntity().getDomainType() == DomainType.Azure_AD) {
+				if (adminModule.getPreferences().isUseOnlyAzureDirectLogin()) {
+					throw new DcemException(DcemErrorCodes.MUST_USE_AZURE_DIRECT_LOGIN, "loginId: " + userLoginId);
+				}
+			}
+							
+			
 			String networkAddress = requestParam.getNetworkAddress();
 			
 			PolicyEntity policyEntity = policyLogic.getPolicy(authApplication, subId, dcemUser);

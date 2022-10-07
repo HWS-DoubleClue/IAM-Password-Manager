@@ -160,7 +160,7 @@ public class DcemRole extends EntityInterface implements Serializable {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && object instanceof DcemRole) {
-			return this.id == ((DcemRole) object).id;
+			return this.getId() == ((DcemRole) object).getId();
 		}
 		return false;
 	}

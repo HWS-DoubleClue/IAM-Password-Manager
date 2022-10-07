@@ -12,11 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.config.ConnectionServicesType;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.servlets.DcemFilter;
-import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.userportal.logic.UserPortalModule;
 import com.doubleclue.dcup.gui.PortalSessionBean;
 import com.doubleclue.dcup.logic.DcupConstants;
@@ -79,6 +80,12 @@ public class EmbeddedUserPortalFilter extends DcemFilter {
 			return portalSessionBean.getDcemUser().getLoginId();
 		}
 		return null;
+	}
+
+	@Override
+	public void logUserIn(DcemUser dcmeUser, HttpServletRequest httpServletRequest) throws DcemException {
+		portalSessionBean.setDcemUser(dcmeUser);
+		portalSessionBean.setLoggedIn(true);
 	}
 
 //	@Override

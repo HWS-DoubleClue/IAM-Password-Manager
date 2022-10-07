@@ -15,7 +15,9 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.config.ConnectionServicesType;
 import com.doubleclue.dcem.core.config.LocalConfigProvider;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.ErrorDisplayBean;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
@@ -88,5 +90,10 @@ public class LoginWebFilter extends DcemFilter {
 			return operatorSession.getDcemUser().getLoginId();
 		}
 		return null;
+	}
+
+	@Override
+	public void logUserIn(DcemUser dcemUser, HttpServletRequest httpServletRequest) throws DcemException {
+		operatorSession.loggedInOperator(dcemUser, httpServletRequest);
 	}
 }

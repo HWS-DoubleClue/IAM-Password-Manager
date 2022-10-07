@@ -25,6 +25,7 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.CookieHelper;
@@ -43,9 +44,6 @@ public abstract class DcemFilter implements Filter {
 
 	@Inject
 	UserLogic userLogic;
-
-	@Inject
-	OperatorSessionBean operatorSessionBean;
 
 	private static final Logger logger = LogManager.getLogger(DcemFilter.class);
 
@@ -73,6 +71,8 @@ public abstract class DcemFilter implements Filter {
 	abstract public String getUserId();
 
 	abstract public void setTenant(TenantEntity tenantEntity);
+	
+	abstract public void logUserIn (DcemUser dcmeUser, HttpServletRequest httpServletRequest) throws DcemException;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -177,7 +177,7 @@ public abstract class DcemFilter implements Filter {
 					} else {
 						dcemUser.sync(dcemUserAzure.getDcemLdapAttributes());
 					}
-					operatorSessionBean.loggedInOperator(dcemUser, httpServletRequest);
+					logUserIn(dcemUser, httpServletRequest);
 					redirect(httpServletRequest, response, webName + "/" + welcomePage, false);
 				} catch (Throwable e) {
 					logger.info("", e);

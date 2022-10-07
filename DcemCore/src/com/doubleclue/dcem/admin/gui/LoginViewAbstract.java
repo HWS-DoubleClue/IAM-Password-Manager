@@ -436,7 +436,7 @@ public abstract class LoginViewAbstract implements Serializable {
 	}
 
 	public boolean isAzureLogin() {
-		return adminModule.getPreferences().isEnableAzureLogin() && domainLogic.getDomainAzure() != null;
+		return adminModule.getPreferences().isEnableAzureDirectLogin() && domainLogic.getDomainAzure() != null;
 	}
 
 	public void actionLogin() {
@@ -493,7 +493,7 @@ public abstract class LoginViewAbstract implements Serializable {
 				logger.warn("actionLogin error", exp);
 				break;
 			case AZURE_NEEDS_MFA:
-				logger.warn("AZURE_NEEDS_MFA ");
+				logger.debug ("AZURE_NEEDS_MFA for: " +  userLoginId );
 				// We need to redirect
 				JsfUtils.addErrorMessage(exp.getLocalizedMessage());
 				break;

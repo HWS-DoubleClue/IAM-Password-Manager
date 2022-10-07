@@ -30,20 +30,22 @@
 							mode="simple" skinSimple="true" immediate="true" auto="true" multiple="false" update="profileFoto" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/"
 							fileLimit="1" />
 
-						<h:outputLabel for="name" value="#{DcupMsg['label.username']}" rendered="#{userProfileView.user.domainUser == false}" />
-						<p:inputText id="name" value="#{userProfileView.user.loginId}" required="true" redisplay="true" rendered="#{userProfileView.user.domainUser == false}"
-							styleClass="profileInputText" />
+						<h:outputLabel  value="#{DcupMsg['label.userLoginId']}" rendered="#{userProfileView.user.domainUser == true}" />
+						<h:outputLabel value="#{userProfileView.user.loginId}" required="true" redisplay="true" rendered="#{userProfileView.user.domainUser == true}"
+							 />
+
+						<h:outputLabel for="name" value="#{DcupMsg['label.label.userLoginId']}" rendered="#{userProfileView.user.domainUser == false}" />
+						<p:inputText id="name"   value="#{userProfileView.user.loginId}" required="true" redisplay="true" rendered="#{userProfileView.user.domainUser == false}" />
 
 						<h:outputLabel for="displayname" value="#{DcupMsg['label.fullName']}" rendered="#{userProfileView.user.domainUser == false}" />
-						<p:inputText id="displayname" value="#{userProfileView.user.displayName}" redisplay="true" rendered="#{userProfileView.user.domainUser == false}"
-							styleClass="profileInputText" />
-
+						<p:inputText id="displayname" value="#{userProfileView.user.displayName}" redisplay="true" rendered="#{userProfileView.user.domainUser == false}" />
+						
 						<h:outputLabel for="mail" value="#{DcupMsg['label.emailAddress']}" rendered="#{userProfileView.user.domainUser == false}" />
-						<p:inputText id="mail" value="#{userProfileView.user.email}" redisplay="true" required="true" requiredMessage="#{DcupMsg['registration.missingEmail']}"
-							rendered="#{userProfileView.user.domainUser == false}" styleClass="profileInputText" />
+						<p:inputText id="mail" style="width: 25em" value="#{userProfileView.user.email}" redisplay="true" required="true" requiredMessage="#{DcupMsg['registration.missingEmail']}"
+							rendered="#{userProfileView.user.domainUser == false}"  />
 
 						<h:outputLabel for="privateMail" value="#{DcupMsg['label.privateEmailAdress']}" />
-						<p:inputText id="privateMail" value="#{userProfileView.user.privateEmail}" redisplay="true" styleClass="profileInputText" />
+						<p:inputText id="privateMail" style="width: 25em" value="#{userProfileView.user.privateEmail}" redisplay="true"  />
 
 						<h:outputLabel for="phone" value="#{DcupMsg['label.phoneNumber']}" rendered="#{userProfileView.user.domainUser == false}" />
 						<p:inputText id="phone" value="#{userProfileView.user.telephoneNumber}" redisplay="true" rendered="#{userProfileView.user.domainUser == false}" />
