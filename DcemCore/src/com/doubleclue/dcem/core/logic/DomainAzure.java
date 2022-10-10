@@ -554,10 +554,10 @@ public class DomainAzure implements DomainApi {
 	private String getRedirectUrl(String claims, ConnectionServicesType connectionServicesType, String state, String nonce) throws Exception {
 		DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
 		String url = applicationBean.getServiceUrl(connectionServicesType);
-		String redirectUrl = authority + "/oauth2/v2.0/authorize?" + "response_type=code&" + "response_mode=form_post&" + "redirect_uri="
+		String redirectUrl = authority + "/oauth2/v2.0/authorize?response_type=code&response_mode=form_post&redirect_uri="
 				+ URLEncoder.encode(url, "UTF-8") + "&client_id=" + domainEntity.getClientId() + "&scope="
 				+ URLEncoder.encode("openid offline_access profile", "UTF-8")
-				+ (org.apache.commons.lang3.StringUtils.isEmpty(claims) ? "" : "&claims=" + claims) + "&prompt=select_account" + "&state=" + state + "&nonce="
+				+ (org.apache.commons.lang3.StringUtils.isEmpty(claims) ? "" : "&claims=" + claims) + "&prompt=select_account&state=" + state + "&nonce="
 				+ nonce;
 		return redirectUrl;
 	}
