@@ -24,7 +24,6 @@
 
 
 			<div class="languageSelectChild">
-
 				<p:selectOneMenu  styleClass="languageSelect" id="language" value="#{portalSessionBean.loginPageLanguage}">
 					<p:ajax event="change" listener="#{upLoginView.actionLocale}" update="@form" />
 					<f:selectItems value="#{userPortalModule.supportedLanguages}" />

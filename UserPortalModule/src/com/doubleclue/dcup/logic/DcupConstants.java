@@ -58,6 +58,7 @@ public class DcupConstants {
 	public static final String KEEPASS_PROPERTY_PASSWORD = "Password";
 	public static final String KEEPASS_PROPERTY_TITLE = "Title";
 	public static final String HTML_PAGE_TUTORIAL = "tutorial_.xhtml";
+	public static final String HTML_PAGE_TUTORIAL_DE = "tutorial_de_.xhtml";
 	public static final String HTML_PAGE_USERSTORAGE = "userStorage_.xhtml";
 	public static final String PRE_LOGIN_PAGE = "preLogin_.xhtml";
 

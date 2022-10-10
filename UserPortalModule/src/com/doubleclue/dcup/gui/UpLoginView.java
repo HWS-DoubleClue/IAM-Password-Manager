@@ -1,6 +1,7 @@
 package com.doubleclue.dcup.gui;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
@@ -93,7 +94,7 @@ public class UpLoginView extends LoginViewAbstract {
 	public String actionForgotPassword() {
 		return DcupConstants.JSF_PAGE_FORGOT_PASSWORD_REQUEST + DcemConstants.FACES_REDIRECT;
 	}
-	
+
 	public String actionGotoPrelogin() {
 		return DcupConstants.PRE_LOGIN_PAGE + DcemConstants.FACES_REDIRECT;
 	}
@@ -103,21 +104,28 @@ public class UpLoginView extends LoginViewAbstract {
 		return DcupConstants.LOGIN_PAGE + DcemConstants.FACES_REDIRECT;
 	}
 
+	public String actionTutorialtoLogin() {
+		return (DcupConstants.PRE_LOGIN_PAGE);
+	}
+
 	public void actionRedirectionToDCEM() {
 		try {
-			FacesContext.getCurrentInstance().getExternalContext()
-					.redirect(DcupConstants.DCEM_PAGE + DcemConstants.FACES_REDIRECT);
+			FacesContext.getCurrentInstance().getExternalContext().redirect(DcupConstants.DCEM_PAGE + DcemConstants.FACES_REDIRECT);
 		} catch (IOException e) {
 			logger.error("Could not redirect to DCEM", e);
 		}
 	}
-	
+
 	public String actionTutorial() {
+		if (portalSessionBean.getLocale().equals(Locale.GERMAN)) {
+			return DcupConstants.HTML_PAGE_TUTORIAL_DE;
+		}
 		return DcupConstants.HTML_PAGE_TUTORIAL;
 	}
 
 	public void actionLocale() {
 		super.setNewLocale(portalSessionBean.getLocale());
+		PrimeFaces.current().ajax().update("loginForm");
 	}
 
 	@Override
@@ -145,12 +153,11 @@ public class UpLoginView extends LoginViewAbstract {
 			((HttpServletRequest) ec.getRequest()).changeSessionId(); // avoid session hijacking
 			if (latestView != null && latestView.isEmpty() == false) {
 				portalSessionBean.setLatestView(latestView);
-//					DcupViewEnum dcupViewEnum = DcupViewEnum.valueOf(latestView);
-//					portalSessionBean.gotoView(latestView);
-//					portalSessionBean.changeCurrentIndex(dcupViewEnum.ordinal());
+				// DcupViewEnum dcupViewEnum = DcupViewEnum.valueOf(latestView);
+				// portalSessionBean.gotoView(latestView);
+				// portalSessionBean.changeCurrentIndex(dcupViewEnum.ordinal());
 			}
-			ec.redirect(ec.getApplicationContextPath() + DcupConstants.WEB_USER_PORTAL_CONTEXT + "/"
-					+ DcupConstants.HTML_PAGE_USERSTORAGE);
+			ec.redirect(ec.getApplicationContextPath() + DcupConstants.WEB_USER_PORTAL_CONTEXT + "/" + DcupConstants.HTML_PAGE_USERSTORAGE);
 		} catch (Exception e) {
 			logger.warn("finishlogin()", e);
 			JsfUtils.addErrorMessage(e.getMessage());
@@ -197,7 +204,6 @@ public class UpLoginView extends LoginViewAbstract {
 		PrimeFaces.current().ajax().update("loginForm");
 	}
 
-	
 	@Override
 	public String actionPreLoginOk() {
 

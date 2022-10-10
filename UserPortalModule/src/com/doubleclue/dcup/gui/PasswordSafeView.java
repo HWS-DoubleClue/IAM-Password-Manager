@@ -214,7 +214,11 @@ public class PasswordSafeView extends AbstractPortalView {
 		cloudSafeSharedList = null;
 		applications = null;
 		currentEntry = null;
-		if (getAvailableOwnedPasswordSafeFiles().isEmpty()) {
+		List<SdkCloudSafe> list = getAvailableOwnedPasswordSafeFiles();
+		if (list == null) {
+			return;
+		}
+		if (list.isEmpty()) {
 			passwordSafePages = PasswordSafePages.INFO;
 			return;
 		}
@@ -1823,7 +1827,7 @@ public class PasswordSafeView extends AbstractPortalView {
 		return result;
 	}
 
-	public List<SdkCloudSafe> getAvailableOwnedPasswordSafeFiles() {
+	public List<SdkCloudSafe> getAvailableOwnedPasswordSafeFiles()  {
 		if (cloudSafeList != null) {
 			return cloudSafeList;
 		}
