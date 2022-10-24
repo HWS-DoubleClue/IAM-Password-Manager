@@ -909,6 +909,9 @@ public class JsfUtils {
 
 	public static ResourceBundle getApplicationBundle() {
 		FacesContext ctx = getFacesContext();
+		if (ctx == null) {
+			return null;
+		}
 		UIViewRoot uiRoot = ctx.getViewRoot();
 		Locale locale = uiRoot.getLocale();
 		return ResourceBundle.getBundle(ctx.getApplication().getMessageBundle(), locale, new ResourceBundleUtf8Control());

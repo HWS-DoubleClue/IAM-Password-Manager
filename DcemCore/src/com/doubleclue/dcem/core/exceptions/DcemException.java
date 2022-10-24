@@ -1,6 +1,9 @@
 package com.doubleclue.dcem.core.exceptions;
 
+import java.util.ResourceBundle;
+
 import com.doubleclue.dcem.core.gui.JsfUtils;
+import com.doubleclue.dcem.system.logic.SystemModule;
 
 /**
  * 
@@ -28,7 +31,11 @@ public class DcemException extends Exception {
 
 	public String getLocalizedMessage() {
 		try {
-			String error =  JsfUtils.getStringFromBundle(DcemErrorCodes.class.getSimpleName() + "." + errorCode.name());
+			ResourceBundle bundle = JsfUtils.getApplicationBundle();
+			if (bundle == null) {
+				bundle = ResourceBundle.getBundle(SystemModule.RESOUCE_NAME);
+			}
+			String error =  JsfUtils.getStringSafely(bundle, DcemErrorCodes.class.getSimpleName() + "." + errorCode.name());
 			if (error.startsWith("???")) {
 				return this.toString();
 			} 

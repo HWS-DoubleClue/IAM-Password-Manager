@@ -72,7 +72,7 @@ public abstract class DcemFilter implements Filter {
 
 	abstract public void setTenant(TenantEntity tenantEntity);
 	
-	abstract public void logUserIn (DcemUser dcmeUser, HttpServletRequest httpServletRequest) throws DcemException;
+	abstract public void logUserIn (DcemUser dcmeUser, HttpServletRequest httpServletRequest) throws Exception;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -179,6 +179,8 @@ public abstract class DcemFilter implements Filter {
 					}
 					logUserIn(dcemUser, httpServletRequest);
 					redirect(httpServletRequest, response, webName + "/" + welcomePage, false);
+				} catch (DcemException e) {
+					redirect(httpServletRequest, response, redirectionPage, false);
 				} catch (Throwable e) {
 					logger.info("", e);
 					redirect(httpServletRequest, response, redirectionPage, false);

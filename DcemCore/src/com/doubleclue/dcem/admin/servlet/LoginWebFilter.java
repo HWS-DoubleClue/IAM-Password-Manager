@@ -11,6 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.doubleclue.dcem.admin.gui.MfaLoginView;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.config.ConnectionServicesType;
@@ -52,6 +53,9 @@ public class LoginWebFilter extends DcemFilter {
 
 	@Inject
 	DcemApplicationBean applicationBean;
+	
+	@Inject
+	MfaLoginView mfaLoginView;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -93,7 +97,12 @@ public class LoginWebFilter extends DcemFilter {
 	}
 
 	@Override
-	public void logUserIn(DcemUser dcemUser, HttpServletRequest httpServletRequest) throws DcemException {
-		operatorSession.loggedInOperator(dcemUser, httpServletRequest);
+	public void logUserIn(DcemUser dcemUser, HttpServletRequest httpServletRequest) throws Exception {
+		try {
+			operatorSession.loggedInOperator(dcemUser, httpServletRequest);
+		} catch (DcemException e) {
+			mfaLoginView.setPreLoginMessage(e.getLocalizedMessage());
+			throw e;
+		}
 	}
 }

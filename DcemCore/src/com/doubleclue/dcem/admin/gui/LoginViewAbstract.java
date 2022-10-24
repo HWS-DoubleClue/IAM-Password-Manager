@@ -117,10 +117,6 @@ public abstract class LoginViewAbstract implements Serializable {
 
 	String preLoginMessage;
 
-	public String getPreLoginMessage() {
-		return preLoginMessage;
-	}
-
 	protected DcemUser dcemUser;
 	private boolean useAlternativeAuthMethods;
 	private boolean stayLoggedIn = false;
@@ -1272,6 +1268,14 @@ public abstract class LoginViewAbstract implements Serializable {
 
 	public void setPasswordRepeat(String passwordRepeat) {
 		this.passwordRepeat = passwordRepeat;
+	}
+
+	public String getPreLoginMessage() {
+		return preLoginMessage;
+	}
+
+	public void setPreLoginMessage(String preLoginMessage) {
+		this.preLoginMessage = preLoginMessage;
 	}
 
 }
