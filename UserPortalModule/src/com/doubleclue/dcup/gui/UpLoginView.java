@@ -105,7 +105,7 @@ public class UpLoginView extends LoginViewAbstract {
 	}
 
 	public String actionTutorialtoLogin() {
-		return (DcupConstants.PRE_LOGIN_PAGE);
+		return (DcupConstants.PRE_LOGIN_PAGE + DcemConstants.FACES_REDIRECT);
 	}
 
 	public void actionRedirectionToDCEM() {
