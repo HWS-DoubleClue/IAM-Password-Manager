@@ -16,14 +16,7 @@
 	.loginPanelContainer, .panelLoginChild {
 		width: 97% !important;
 	}
-	.inputTextLgoin {
-		font-size: 1em !important;
-		width: 80% !important;
-	}
-	.btnOfLogin {
-		font-size: 1em !important;
-		width: 84% !important;
-	}
+
 	.textChild {
 		display: inline-block;
 		float: left;
@@ -107,10 +100,7 @@
 	.labelLogin {
 		font-size: 1em !important;
 	}
-	.btnOfLogin {
-		font-size: 1em;
-		width: 89%;
-	}
+
 	.refresh {
 		font-size: small;
 	}

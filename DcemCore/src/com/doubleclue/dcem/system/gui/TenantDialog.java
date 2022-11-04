@@ -220,8 +220,9 @@ public class TenantDialog extends DcemDialog {
 			request.getSession().setAttribute(DcemConstants.URL_TENANT_PARAMETER, tenantEntity);
 			request.getSession().setAttribute(DcemConstants.URL_TENANT_SWITCH, tenantEntity);
 			HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-			response.sendRedirect("/dcem/mgt/" );
+			response.sendRedirect("/dcem/mgt/index.xhtml" );
 			auditingLogic.addAudit(this.getAutoViewAction().getDcemAction(), tenantEntity.getName());
+		//	JsfUtils.getFacesContext().responseComplete();
 			return null;
 		} catch (Exception e) {
 			logger.warn("Coundn't swithc to tenant ", e);

@@ -105,4 +105,9 @@ public class LoginWebFilter extends DcemFilter {
 			throw e;
 		}
 	}
+	
+	@Override
+	public void setPreLoginMessage(String text) {
+		mfaLoginView.setPreLoginMessage(text);
+	}
 }

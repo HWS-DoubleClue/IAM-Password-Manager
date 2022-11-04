@@ -540,7 +540,6 @@
 	display: inline-block;
 	float: right;
 	vertical-align: middle;
-	
 	font-size: 1.0em !important;
 }
 
@@ -555,7 +554,7 @@
 	margin: 0 auto;
 	border: none;
 	font-size: 1.2em;
-	margin-left: 2em;
+	margin-left: 1em;
 }
 
 .panelLoginChildCheckBoxes {
@@ -563,12 +562,11 @@
 	margin: 0 auto;
 	border: none;
 	font-size: 1.2em;
-	margin-left: 2em;
-	padding-left: 1em !important;
+	margin-left: 1em;
 }
 
-.inputTextLgoin {
-	width: 85%;
+.inputTextLogin {
+	width: 90%;
 }
 
 .profileInputText {
