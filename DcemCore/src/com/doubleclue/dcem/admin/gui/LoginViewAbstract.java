@@ -422,6 +422,13 @@ public abstract class LoginViewAbstract implements Serializable {
 	}
 
 	public void actionAzureLogin() {
+		try {
+			switchTenant();
+		} catch (DcemException e) {
+			JsfUtils.addErrorMessage(e.getLocalizedMessage());
+			logger.info(e.getLocalizedMessage());
+			return;
+		}
 		DomainAzure domainAzure = domainLogic.getDomainAzure();
 		try {
 			domainAzure.sendAuthRedirect(connectionServicesType);
@@ -519,7 +526,6 @@ public abstract class LoginViewAbstract implements Serializable {
 		randomCode = null;
 
 		AuthRequestParam requestParam = new AuthRequestParam();
-
 		requestParam.setNetworkAddress(JsfUtils.getRemoteIpAddress());
 		// requestParam.setBrowserFingerPrint(browserFingerprint);
 		requestParam.setIgnorePassword(ignorePassword);
@@ -634,7 +640,6 @@ public abstract class LoginViewAbstract implements Serializable {
 		if (availableAuthMethods != null) {
 			for (AuthMethod method : availableAuthMethods) {
 				if (method == AuthMethod.QRCODE_APPROVAL || method.getValue() == null) {
-					System.out.println("LoginViewAbstract.getAuthMethodGuis()  " + method.getValue());
 					continue;
 				}
 				authMethodGuis.add(new AuthMethodGui(method, getResounceBundleModule()));
@@ -858,7 +863,6 @@ public abstract class LoginViewAbstract implements Serializable {
 	 * @return
 	 */
 	public String actionPreLoginOk() {
-		System.out.println("LoginViewAbstract.actionPreLoginOk()");
 		if (serializedAccounts != null && serializedAccounts.length() > 8) {
 			listUserAccounts = deserializeAccounts(serializedAccounts);
 			int myTime = (int) ((System.currentTimeMillis() / 1000));
@@ -939,7 +943,6 @@ public abstract class LoginViewAbstract implements Serializable {
 			} catch (Exception e) {
 				logger.info("WindowsSSO", e);
 			}
-			System.out.println("LoginViewAbstract.actionPreLoginOk() PAGE " + page);
 			return page;
 		}
 
@@ -961,7 +964,6 @@ public abstract class LoginViewAbstract implements Serializable {
 			authenticateUser(true, true);
 			return DcemConstants.HTML_PAGE_LOGIN;
 		} catch (DcemException exp) {
-			System.out.println("LoginViewAbstract.windowsSsologin() " + exp);
 			switch (exp.getErrorCode()) {
 			case WINDOWS_SSO_NOT_IN_DOMAIN:
 			case INVALID_DOMAIN_NAME:

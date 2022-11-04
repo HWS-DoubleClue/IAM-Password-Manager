@@ -59,7 +59,6 @@ import com.microsoft.graph.models.Group;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.models.UserChangePasswordParameterSet;
 import com.microsoft.graph.options.QueryOption;
-import com.microsoft.graph.requests.AuthenticationMethodCollectionPage;
 import com.microsoft.graph.requests.DirectoryObjectCollectionWithReferencesPage;
 import com.microsoft.graph.requests.GraphServiceClient;
 import com.microsoft.graph.requests.GroupCollectionPage;
@@ -79,15 +78,15 @@ public class DomainAzure implements DomainApi {
 	private static final Logger logger = LogManager.getLogger(DomainAzure.class);
 
 	private static final String AZURE_STATE = "state";
-	private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId";
+//	private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId";
 	private static final String SELECT_USER_ATTRIBUTES_EXT = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId, profilePhoto";
 	private static final String SCOPE = "https://graph.microsoft.com/.default";
 	private final DomainEntity domainEntity;
 	private final static Set<String> SCOPE_USER_PASSWORD = Collections.singleton("");
 
 	private GraphServiceClient<Request> graphServiceClient = null;
-	private static ConfidentialClientApplication confidentialClientApplication;
-	PublicClientApplication pca;
+	private ConfidentialClientApplication confidentialClientApplication;
+	PublicClientApplication publicClientApplication;
 	ClientCredentialParameters clientCredentialParam;
 	private String authority = null;
 
@@ -107,7 +106,7 @@ public class DomainAzure implements DomainApi {
 			confidentialClientApplication = ConfidentialClientApplication
 					.builder(domainEntity.getClientId(), ClientCredentialFactory.createFromSecret(domainEntity.getClientSecret())).authority(authority).build();
 			clientCredentialParam = ClientCredentialParameters.builder(Collections.singleton(SCOPE)).build();
-			pca = PublicClientApplication.builder(domainEntity.getClientId()).authority(authority)
+			publicClientApplication = PublicClientApplication.builder(domainEntity.getClientId()).authority(authority)
 					// .setTokenCacheAccessAspect(tokenCacheAspect)
 					.build();
 			graphServiceClient = null;
@@ -131,7 +130,7 @@ public class DomainAzure implements DomainApi {
 	public DcemUser verifyLogin(DcemUser dcemUser, byte[] password) throws DcemException {
 
 		GraphServiceClient<Request> userGraphClient = getUserGraphClient(dcemUser, new String(password, DcemConstants.UTF_8));
-		AuthenticationMethodCollectionPage au = userGraphClient.me().authentication().methods().buildRequest().get();
+	//	AuthenticationMethodCollectionPage au = userGraphClient.me().authentication().methods().buildRequest().get();
 		User user = userGraphClient.me().buildRequest().get();
 		return createDcemUser(user);
 	}
@@ -398,9 +397,6 @@ public class DomainAzure implements DomainApi {
 			dcemUser.setTelephoneNumber(user.businessPhones.get(0));
 			dcemLdapAttributes.setTelephone(user.businessPhones.get(0));
 		}
-		if (user.memberOf != null) {
-			System.out.println("DomainAzure.getUsers()");
-		}
 		// user.otherMails.size();
 		dcemUser.setEmail(user.userPrincipalName);
 		dcemLdapAttributes.setEmail(user.userPrincipalName);
@@ -524,7 +520,7 @@ public class DomainAzure implements DomainApi {
 		UserNamePasswordParameters userNamePasswordParameters = UserNamePasswordParameters.builder(SCOPE_USER_PASSWORD, userName, password.toCharArray())
 				.build();
 		try {
-			CompletableFuture<IAuthenticationResult> acquireToken = pca.acquireToken(userNamePasswordParameters);
+			CompletableFuture<IAuthenticationResult> acquireToken = publicClientApplication.acquireToken(userNamePasswordParameters);
 			IAuthenticationResult authenticationResult = acquireToken.join();
 			return authenticationResult;
 		} catch (Exception e) {
@@ -548,6 +544,9 @@ public class DomainAzure implements DomainApi {
 		CookieHelper.setStateNonceCookies(httpRequest, httpResponse, state, nonce);
 		httpResponse.setStatus(302);
 		String redirectUrl = getRedirectUrl(httpRequest.getParameter("claims"), connectionServicesType, state, nonce);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Azure Redirect URL" + redirectUrl);
+		}
 		ec.redirect(redirectUrl);
 	}
 
@@ -580,7 +579,6 @@ public class DomainAzure implements DomainApi {
 		if (state == null || state.isEmpty() || state.equals(cookieValue) == false) {
 			throw new DcemException(DcemErrorCodes.MSAL_INVALID_STATE, "could not validate state");
 		}
-
 		AuthenticationResponse authResponse = AuthenticationResponseParser.parse(new URI(fullUrl), params);
 		if (authResponse instanceof AuthenticationSuccessResponse) {
 			// succesfull login

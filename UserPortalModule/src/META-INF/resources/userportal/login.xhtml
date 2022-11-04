@@ -81,7 +81,7 @@
 					<h:panelGroup>
 
 						<!-- Login Form -->
-						<p:panel id="basic" style="width: 35em; margin: 0 auto; border: none;" styleClass="loginPanelContainer">
+						<p:panel id="basic" style="width: 40em; margin: 0 auto; border: none;" styleClass="loginPanelContainer">
 							<p:panel id="loginPanel" widgetVar="loginPanel" style="border:none;">
 								<p:commandLink id="register" action="#{upLoginView.actionRequestRegister}" rendered="#{userPortalModule.modulePreferences.createAccountEnabled}"
 									ajax="false" style="float:right;text-decoration: none;">
@@ -112,25 +112,25 @@
 
 									<p:outputLabel styleClass="labelLogin" value="#{DcupMsg['label.username']}" />
 									<br></br>
-									<p:inputText id="name" value="#{upLoginView.userName}" size="40" style="width: 85%;" styleClass="inputTextLgoin" />
+									<p:inputText id="name" value="#{upLoginView.userName}" styleClass="inputTextLogin" />
 
 									<p />
 									<p:outputLabel styleClass="labelLogin" value="#{DcupMsg['label.passwordLogin']}" />
 									<br></br>
-									<p:password id="password" maxlength="64" value="#{upLoginView.password}" redisplay="true" styleClass="inputTextLgoin" toggleMask="true" />
+									<p:password id="password" maxlength="64" value="#{upLoginView.password}" redisplay="true" styleClass="inputTextLogin" toggleMask="true" />
 
 									<p />
-									<p:commandButton styleClass="btnOfLogin" id="login" value="#{DcupMsg['button.login']}" action="#{upLoginView.actionLogin}"
-										style="width: 88%; margin:0px" update="" ajax="true" async="true" icon="fa fa-sign-in" onclick="removeLocalStorage('qrCodeUseState')" />
+									<p:commandButton  id="login" value="#{DcupMsg['button.login']}" action="#{upLoginView.actionLogin}"
+										styleClass="inputTextLogin" update="" ajax="true" async="true" icon="fa fa-sign-in" onclick="removeLocalStorage('qrCodeUseState')" />
 
 									<p />
-									<p:commandButton styleClass="btnOfLogin" id="requestQrCode" value="#{DcupMsg['button.requestNewQrCode']}" rendered="#{upLoginView.stopQrCode}"
-										style="width: 88%;" action="#{upLoginView.requestNewQrCode()}" icon="fa fa-qrcode" update="qrcodePanel"
+									<p:commandButton styleClass="inputTextLogin" id="requestQrCode" value="#{DcupMsg['button.requestNewQrCode']}" rendered="#{upLoginView.stopQrCode}"
+										action="#{upLoginView.requestNewQrCode()}" icon="fa fa-qrcode" update="qrcodePanel"
 										onclick="setLocalStorageValue('qrCodeUseState',true);" />
 
 									<p></p>
-									<p:commandButton id="azureLogin" styleClass="btnOfLogin" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{upLoginView.actionAzureLogin}"
-										style="width: 88%;" ajax="false" async="true" icon="ui-icon-azure" rendered="#{upLoginView.azureLogin}" />
+									<p:commandButton id="azureLogin" styleClass="inputTextLogin" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{upLoginView.actionAzureLogin}"
+										 ajax="false" async="true" icon="ui-icon-azure" rendered="#{upLoginView.azureLogin}" />
 								</p:panel>
 
 								<!-- change password panel -->

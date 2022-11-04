@@ -71,8 +71,8 @@ public abstract class DcemFilter implements Filter {
 	abstract public String getUserId();
 
 	abstract public void setTenant(TenantEntity tenantEntity);
-	
-	abstract public void logUserIn (DcemUser dcmeUser, HttpServletRequest httpServletRequest) throws Exception;
+
+	abstract public void logUserIn(DcemUser dcmeUser, HttpServletRequest httpServletRequest) throws Exception;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -95,7 +95,7 @@ public abstract class DcemFilter implements Filter {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		path = httpServletRequest.getServletPath();
-		// System.out.println("DcemFilter.doFilter() Path: " + path);
+		// System.out.println("DcemFilter.doFilter() Path: " + path + "  WebName: " + webName);
 		if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 			if (isSessionInvalid(httpServletRequest)) {
 				String redirectUrl = httpServletRequest.getContextPath() + webName + "/" + DcemConstants.EXPIRED_PAGE;
@@ -143,13 +143,14 @@ public abstract class DcemFilter implements Filter {
 			}
 			if (loggedIn == true) {
 				if (path.equals(webName)) {
-					httpServletResponse.sendRedirect(welcomePage);
+					redirect(httpServletRequest, response, path + "/" + welcomePage, false);
 					return;
 				}
 				ThreadContext.put(DcemConstants.MDC_USER_ID, getUserId());
 				chain.doFilter(request, response);
 				return;
 			}
+			ThreadContext.put(DcemConstants.MDC_USER_ID, "");
 			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession().getAttribute(DcemConstants.URL_TENANT_PARAMETER);
 			if (tenantEntity == null) {
 				tenantEntity = applicationBean.getTenantFromRequest(httpServletRequest);
@@ -183,6 +184,7 @@ public abstract class DcemFilter implements Filter {
 					redirect(httpServletRequest, response, redirectionPage, false);
 				} catch (Throwable e) {
 					logger.info("", e);
+					setPreLoginMessage (e.toString());
 					redirect(httpServletRequest, response, redirectionPage, false);
 				}
 				CookieHelper.removeStateNonceCookies(httpServletResponse);
@@ -266,6 +268,10 @@ public abstract class DcemFilter implements Filter {
 		boolean containIdToken = httpParameters.containsKey("id_token");
 		boolean containsCode = httpParameters.containsKey("code");
 		return isPostRequest && containsErrorData || containsCode || containIdToken;
+	}
+
+	public void setPreLoginMessage(String text) {
+		// dummy to be overridden
 	}
 
 	// private Map<String, String> getHeadersInfo(HttpServletRequest request) {

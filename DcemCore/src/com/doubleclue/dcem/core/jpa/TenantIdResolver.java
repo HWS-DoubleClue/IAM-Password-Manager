@@ -40,9 +40,9 @@ public class TenantIdResolver implements CurrentTenantIdentifierResolver {
 			tenantEntity = masterTenant;
 		}
 		currentTenant.set(tenantEntity);
-		if (tenantEntity.isMaster() == false) {
+	//	if (tenantEntity.isMaster() == false) {
 			ThreadContext.put(DcemConstants.MDC_TENANT, tenantEntity.getName());
-		}
+	//	}
 	}
 
 	public static TenantEntity getCurrentTenant() {
