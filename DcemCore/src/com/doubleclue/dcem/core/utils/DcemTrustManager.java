@@ -95,19 +95,20 @@ public class DcemTrustManager extends X509ExtendedTrustManager {
 		if (!(chain.length > 0)) {
 			throw new IllegalArgumentException("checkServerTrusted: X509Certificate is empty");
 		}
-		if (issuers == null || issuers.length == 0 ) {
-			
+//		if (issuers == null || issuers.length == 0 ) {
 			if (defaultTrustManager != null) {
 				try {
 					defaultTrustManager.checkServerTrusted(chain, authType);
 					return;
 				} catch (Exception e) {
-					throw new CertificateException("Certificate not trusted von System as well: " + chain[0].getSubjectDN().getName().toString());
+					logger.debug("Could not verify Certificate using default trustManager");
+				//	throw new CertificateException("Certificate not trusted von System as well: " + chain[0].getSubjectDN().getName().toString());
 				}
-			} else {
-				throw new CertificateException("No trusted CA issuers found");
-			}			
-		}
+			}
+//			} else {
+//				throw new CertificateException("No trusted CA issuers found");
+//			}			
+	//	}
 		if (chain[0].equals(issuers[0]) == false) {
 			int i;
 			for (i = 0; i < issuers.length; i++) {
@@ -121,7 +122,6 @@ public class DcemTrustManager extends X509ExtendedTrustManager {
 			if (i >= issuers.length) {
 				throw new CertificateException("Certificate not trusted");
 			}
-
 		}
 		try {
 			chain[0].checkValidity();
@@ -150,6 +150,14 @@ public class DcemTrustManager extends X509ExtendedTrustManager {
 
 	public X509Certificate[] getServerChainCertificates() {
 		return serverChainCertificates;
+	}
+
+	public boolean isSaveServerChainCertificates() {
+		return saveServerChainCertificates;
+	}
+
+	public void setSaveServerChainCertificates(boolean saveServerChainCertificates) {
+		this.saveServerChainCertificates = saveServerChainCertificates;
 	}
 
 

@@ -130,7 +130,6 @@ public class ProxyCommClient implements WebSocketApiListener {
 				state = ReverseProxyState.Disabled;
 				return;
 			}
-
 		} catch (Exception exp) {
 			logger.error("ReverseProxy initiate failed", exp);
 			addReport(new RpReport(RpClientAction.Initialize, false, exp.toString()));
@@ -138,7 +137,6 @@ public class ProxyCommClient implements WebSocketApiListener {
 			return;
 		}
 		state = ReverseProxyState.Initialized;
-
 		addReport(new RpReport(RpClientAction.Initialize, true,
 				"URL: " + sdkConfigDcem.getSdkConfig().getServerUrl() + ", Using Http-Proxy: " + withProxy()));
 		try {
@@ -204,7 +202,6 @@ public class ProxyCommClient implements WebSocketApiListener {
 		if (rpConfig.isEnableRp() == false) {
 			return false;
 		}
-
 		try {
 			sdkConfigDcem = KaraUtils.parseSdkConfig(rpConfig.getSdkConfigContent());
 		} catch (KaraException e1) {
@@ -214,9 +211,7 @@ public class ProxyCommClient implements WebSocketApiListener {
 		appVersion = new AppVersion(productVersion.getVersionInt(), productVersion.getAppName(),
 				productVersion.getState());
 		osVersion = System.getProperty("os.version");
-
 		tyrusClientWebsocket = new TyrusClientWebsocket();
-
 		try {
 			tyrusClientWebsocket.init(this,
 					new URI(sdkConfigDcem.getSdkConfig().getServerUrl() + "?key="
@@ -225,7 +220,6 @@ public class ProxyCommClient implements WebSocketApiListener {
 		} catch (Exception e1) {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, null, e1);
 		}
-
 		transport = new TClientAtoS_WsTransport(tyrusClientWebsocket);
 		TProtocol tProtocol = new TJSONProtocol(transport);
 		appToServerClient = new AppToServer.Client(tProtocol);
@@ -262,7 +256,6 @@ public class ProxyCommClient implements WebSocketApiListener {
 
 	String withProxy() {
 		int port = systemModule.getPreferences().getHttpProxyPort();
-
 		String host = systemModule.getPreferences().getHttpProxyHost();
 		if (port == 0 || host.isEmpty()) {
 			return "no";
@@ -277,7 +270,6 @@ public class ProxyCommClient implements WebSocketApiListener {
 
 		loginParam.setDeviceId(rpConfig.getReverseProxyProperties().deviceId);
 		String reverseProxyPassword = rpConfig.getPassword();
-
 		loginParam.setLocale(Locale.getDefault().getLanguage());
 		byte[] encPassword = SecureUtils.encryptData(sdkConfigDcem.getConnectionKey(),
 				reverseProxyPassword.getBytes(DcemConstants.CHARSET_UTF8));

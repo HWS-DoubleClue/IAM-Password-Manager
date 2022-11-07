@@ -94,6 +94,8 @@ public class TyrusClientWebsocket extends Endpoint {
 			}
 		}
 		DcemTrustManager trustManager = new DcemTrustManager(certs);
+		trustManager.addDefaultTrustManager();
+		trustManager.setSaveServerChainCertificates(true);
 		context = SSLContext.getInstance("TLS");
 		context.init(null, new TrustManager[] { trustManager }, null);
 		this.passwordEnryptionKey = passwordEnryptionKey;

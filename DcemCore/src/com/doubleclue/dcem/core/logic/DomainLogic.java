@@ -141,7 +141,6 @@ public class DomainLogic implements ReloadClassInterface {
 						logger.debug(ex);
 					}
 				}
-
 				logger.error("Couldn't initialize Domain : " + detachedDomainEntity.getName() + " Exception: " + e.toString());
 				if (sb.length() > 0) {
 					sb.append(", ");

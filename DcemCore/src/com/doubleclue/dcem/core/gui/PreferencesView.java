@@ -163,7 +163,7 @@ public class PreferencesView extends DcemView {
 		try {
 			viewNavigator.getActiveModule().preferencesValidation(modulePreferencesClone);
 		} catch (DcemException exp) {
-			JsfUtils.addWarningMessage(DcemConstants.CORE_RESOURCE, "preferencesView.save.warning", exp.toString());
+			JsfUtils.addWarningMessage(DcemConstants.CORE_RESOURCE, "preferencesView.save.warning", exp.getLocalizedMessage());
 		} catch (Exception exp) {
 			logger.error("Couldn't save preferencese", exp);
 			JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "preferencesView.save.warning", exp.toString());
