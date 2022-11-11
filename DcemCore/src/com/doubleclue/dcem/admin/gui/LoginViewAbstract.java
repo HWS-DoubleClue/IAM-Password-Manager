@@ -966,7 +966,7 @@ public abstract class LoginViewAbstract implements Serializable {
 		} catch (DcemException exp) {
 			switch (exp.getErrorCode()) {
 			case WINDOWS_SSO_NOT_IN_DOMAIN:
-			case INVALID_DOMAIN_NAME:
+	//		case INVALID_DOMAIN_NAME:
 				preLoginMessage = null;
 				break;
 			default:

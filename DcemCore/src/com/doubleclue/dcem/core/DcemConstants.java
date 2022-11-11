@@ -70,6 +70,7 @@ public final class DcemConstants {
 	public static final String ACTION_PUSH_NOTIFICATION = "configPushNotification";
 	public static final String ACTION_SHOW_PN_TOKEN = "showPushNotificationToken";
 	public final static String ACTION_EXCEL_EXPORT_ALL = "excelExportAll";
+	public static final String ACTION_START = "start";
 
 	public final static String AUTO_DIALOG_ID = "AUTO_DIALOG";
 
@@ -488,6 +489,7 @@ public final class DcemConstants {
 	public static final String COUNTRY_CODE_GERMAN = "DE";
 	public static final String COUNTRY_CODE_MALTA = "MT";
 	public static final String COUNTRY_CODE_INDIA = "IN";
+
 
 	
 
