@@ -28,6 +28,7 @@ public class UserPortalPreferences extends ModulePreferences {
 	private Map<ActionItem, Boolean> visibleActions;
 	private Map<ActionItem, Boolean> twoFactorRequiredActions;
 	private NotificationType notificationType = NotificationType.BOTH;
+	String tutorialUrl = "https://doubleclue.com/userPortalTutorial.html";
 
 	public UserPortalPreferences() {
 		visibleViews = new HashMap<>();
@@ -167,5 +168,13 @@ public class UserPortalPreferences extends ModulePreferences {
 		thisPortalPreferences.setVisibleViews(clonedVisibleViews);
 		thisPortalPreferences.setVisibleActions(clonedVisibleActions);
 		return thisPortalPreferences;
+	}
+
+	public String getTutorialUrl() {
+		return tutorialUrl;
+	}
+
+	public void setTutorialUrl(String tutorialUrl) {
+		this.tutorialUrl = tutorialUrl;
 	}
 }

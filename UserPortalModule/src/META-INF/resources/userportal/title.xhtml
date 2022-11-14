@@ -2,11 +2,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
 
 	<link id="favicon" rel="icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
 	<link rel="shortcut icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
+	
 
 	<h:form id="titleId">
 		<div class="containerBanner" style="#{adminModule.bannerStyleCSSUserPortal}">
@@ -29,6 +31,11 @@
 
 				<div class="refresh">
 					<div style="display: inline-block; vertical-align: middle; padding-top: 0.4em;">
+						<p:button style="background-color: inherit !important; font-size: 1em !important;; border: none !important;" icon="fa fa-book" target="_blank"
+							id="helpBtn" href="#{portalSessionBean.tutorialUrl}" />
+						<p:tooltip for="helpBtn" value="#{CoreMsg['readUserManual']}" showEffect="clip" hideEffect="fold" />
+					</div>
+					<div style="display: inline-block; vertical-align: middle; padding-top: 0.4em;">
 						<p:commandLink action="#{upLoginView.actionRedirectionToDCEM}" rendered="#{portalSessionBean.userRoleManagment}"
 							title="#{DcupMsg['title.switchToManagement']}">
 							<i class="fa fa-exchange" id="exchangebtn" style="padding: 0; font-size: 1.2em !important;" />
@@ -39,6 +46,8 @@
 							<i class="fa fa-refresh" id="refreshbtn" style="margin: 0;"></i>
 						</h:commandLink>
 					</div>
+
+
 
 					<div id="subIlements" style="display: inline-block; vertical-align: middle; color: black;">
 						<p:commandLink id="profile">
@@ -82,7 +91,8 @@
 							</p:overlayPanel>
 							<div style="display: inline-block; vertical-align: middle; margin-top: -4px;">
 								<h:panelGroup style="padding-left: 0.5em;">
-									<p:avatar id="avatarProfile" label="#{portalSessionBean.dcemUser.displayName}" style="vertical-align: middle;" styleClass="p-mr-2" size="xlarge" shape="circle">
+									<p:avatar id="avatarProfile" label="#{portalSessionBean.dcemUser.displayName}" style="vertical-align: middle;" styleClass="p-mr-2" size="xlarge"
+										shape="circle">
 										<p:graphicImage value="#{portalSessionBean.getFotoProfileUser()}" stream="false" />
 									</p:avatar>
 								</h:panelGroup>

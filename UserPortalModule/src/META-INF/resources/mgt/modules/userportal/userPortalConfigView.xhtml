@@ -33,6 +33,10 @@
 					<p:tooltip for="urlTokenTimeout" showEvent="focus" hideEvent="blur" value="#{DcupMsg['label.urlTokenTimeout.tooltip']}" />
 					<p:outputLabel value=" #{DcupMsg['label.minutes']}" />
 				</h:panelGroup>
+				
+				<p:outputLabel value="#{CoreMsg['readUserManual']}" />
+				<p:inputText value="#{userPortalConfigView.userPortalConfig.tutorialUrl}" style="width: 35em" />
+				
 			</h:panelGrid>
 			<p />
 			<p:panel id="visibleViewsAndActions" style="border:none">

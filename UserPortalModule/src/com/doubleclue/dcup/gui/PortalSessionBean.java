@@ -132,6 +132,17 @@ public class PortalSessionBean implements Serializable {
 	public String userProfile() {
 		return "userProfileView.xhtml";
 	}
+	
+	public String getTutorialUrl() {
+		String url = userPortalModule.getModulePreferences().getTutorialUrl();
+		if (getLocale().equals(Locale.GERMAN)) {
+			return url.substring(0, url.length()-5) + "_de.html";
+		} else {
+			return url;
+		}
+	}
+	
+	
 
 	public String changePassword() {
 		return "changePasswordView.xhtml";

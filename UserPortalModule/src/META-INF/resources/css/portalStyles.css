@@ -68,6 +68,12 @@
 	position: relative;
 }
 
+#helpBtn.fa-book {
+	font-size: 1.9em Importnt!;
+	width: 1.6em;
+	height: 1.2em;
+}
+
 .textChild {
 	display: inline-block;
 	margin-left: 2% em;
