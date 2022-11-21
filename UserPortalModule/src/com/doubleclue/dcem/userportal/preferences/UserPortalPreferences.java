@@ -28,7 +28,7 @@ public class UserPortalPreferences extends ModulePreferences {
 	private Map<ActionItem, Boolean> visibleActions;
 	private Map<ActionItem, Boolean> twoFactorRequiredActions;
 	private NotificationType notificationType = NotificationType.BOTH;
-	String tutorialUrl = "https://doubleclue.com/userPortalTutorial.html";
+	String tutorialUrl = "https://doubleclue.com/files/UserPortal_Manual.pdf";
 
 	public UserPortalPreferences() {
 		visibleViews = new HashMap<>();

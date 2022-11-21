@@ -177,7 +177,7 @@ public class ViewNavigator implements Serializable {
 		try {
 			activeView = CdiUtils.getReference(viewName);
 		} catch (Exception e) {
-			logger.warn("Invalid View Name " + viewName + " user:" + operatorSessionBean.getDcemUser().getLoginId());
+			logger.warn("Invalid View Name " + viewName, e);
 			return;
 		}
 		activeModule = module;

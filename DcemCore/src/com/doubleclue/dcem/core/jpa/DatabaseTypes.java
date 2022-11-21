@@ -66,7 +66,7 @@ public enum DatabaseTypes {
 			"Oracle DB Server",
 			"jdbc:oracle:thin",
 			"oracle.jdbc.driver.OracleDriver",
-			"org.hibernate.dialect.Oracle10gDialect",
+			"org.hibernate.dialect.Oracle12cDialect",
 			false,
 			"ALTER SESSION SET CURRENT_SCHEMA = ",
 			"select 1 from sys.dual",

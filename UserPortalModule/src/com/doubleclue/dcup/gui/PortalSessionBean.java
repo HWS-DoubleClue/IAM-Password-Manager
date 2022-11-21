@@ -136,7 +136,11 @@ public class PortalSessionBean implements Serializable {
 	public String getTutorialUrl() {
 		String url = userPortalModule.getModulePreferences().getTutorialUrl();
 		if (getLocale().equals(Locale.GERMAN)) {
-			return url.substring(0, url.length()-5) + "_de.html";
+			int ind = url.lastIndexOf(".");
+			if (ind != -1) {
+				return url.substring(0, ind) + "_de." + url.substring(ind + 1);
+			}
+			return url;
 		} else {
 			return url;
 		}

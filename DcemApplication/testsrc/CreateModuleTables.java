@@ -33,7 +33,7 @@ import com.doubleclue.dcem.core.logging.DcemLogLevel;
 import com.doubleclue.dcem.core.logging.LogUtils;
 
 public class CreateModuleTables {
-	
+
 	private static Logger logger;
 
 	public static void main(String[] args) {
@@ -41,7 +41,7 @@ public class CreateModuleTables {
 		// PersistenceXmlParser parser = new PersistenceXmlParser(new ClassLoaderServiceImpl(),
 		// PersistenceUnitTransactionType.RESOURCE_LOCAL);
 		// List<ParsedPersistenceXmlDescriptor> allDescriptors = parser.doResolve(new HashMap<>());
-		
+
 		DcemLogLevel dcemLogLevel = DcemLogLevel.INFO;
 		LogUtils.initLog4j(null, null, dcemLogLevel, true);
 		logger = LogManager.getLogger(DcemMain.class);
@@ -54,7 +54,7 @@ public class CreateModuleTables {
 			System.err.println("Please specify the Modules Name in the command parameters");
 		}
 		int ind = modulePath.lastIndexOf(File.separator);
-		modulePath = modulePath.substring(0, ind+1);
+		modulePath = modulePath.substring(0, ind + 1);
 		modulePath += args[0];
 
 		String outputDir = modulePath + File.separator + "target" + File.separator + "tables";
@@ -62,9 +62,13 @@ public class CreateModuleTables {
 		String persistencePath = modulePath + File.separator + "src" + File.separator + "META-INF" + File.separator + "persistence.xml";
 		File persistenceFile = new File(persistencePath);
 		if (persistenceFile.exists() == false) {
-			System.err.println("ERROR: 'persistence.xml' NOT FOUND In " + persistencePath);
-			System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
-			System.exit(-1);
+			persistencePath = modulePath + File.separator + "src/main/java" + File.separator + "META-INF" + File.separator + "persistence.xml";
+			persistenceFile = new File(persistencePath);
+			if (persistenceFile.exists() == false) {
+				System.err.println("ERROR: 'persistence.xml' NOT FOUND In " + persistencePath);
+				System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
+				System.exit(-1);
+			}
 		}
 		System.out.println("CreateTables.main() Path=" + persistencePath);
 		for (DatabaseTypes databaseType : DatabaseTypes.values()) {
