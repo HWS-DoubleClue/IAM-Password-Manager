@@ -1,7 +1,30 @@
-create sequence pd_agent_seq start with 1 increment by  4;
-create sequence pd_group_seq start with 1 increment by  4;
-create sequence pd_query_seq start with 1 increment by  4;
-create sequence pd_service_seq start with 1 increment by  4;
+
+    create table appo_timeEvent (
+       id number(19,0) generated as identity,
+        tp_end timestamp,
+        tp_start timestamp,
+        userInfo long,
+        userappo number(10,0) not null,
+        timeEvent number(19,0) not null,
+        primary key (id)
+    );
+
+    create table appo_timetable (
+       dc_id number(19,0) generated as identity,
+        dc_description varchar2(255 char),
+        dc_enabled number(1,0),
+        dc_name varchar2(255 char),
+        slotTimeMinutes number(10,0) not null,
+        primary key (dc_id)
+    );
+
+    create table appo_timetableEvent (
+       dc_id number(19,0) generated as identity,
+        dc_end timestamp,
+        dc_start timestamp,
+        timeEvent number(19,0) not null,
+        primary key (dc_id)
+    );
 
     create table core_action (
        dc_id number(10,0) not null,
@@ -76,9 +99,9 @@ create sequence pd_service_seq start with 1 increment by  4;
 
     insert into core_seq(seq_name, seq_value) values ('LDAP.ID',1);
 
-    insert into core_seq(seq_name, seq_value) values ('SEM_ACTION.ID',1);
-
     insert into core_seq(seq_name, seq_value) values ('CORE_GROUP.ID',1);
+
+    insert into core_seq(seq_name, seq_value) values ('SEM_ACTION.ID',1);
 
     insert into core_seq(seq_name, seq_value) values ('CORE_USER.ID',1);
 
@@ -86,92 +109,37 @@ create sequence pd_service_seq start with 1 increment by  4;
        dc_id number(10,0) not null,
         acSuspendedTill timestamp,
         disabled number(1,0) not null,
-        displayName varchar2(128 char),
+        displayName varchar2(255 char),
         email varchar2(255 char),
         failActivations number(10,0) not null,
         hashPassword long raw,
-        hmac raw(32) not null,
+        hmac blob not null,
         jpaVersion number(10,0) not null,
         locale number(10,0),
         lastLogin timestamp,
-        loginId varchar2(64 char) not null,
+        loginId varchar2(255 char) not null,
         mobileNumber varchar2(255 char),
-        objectGuid raw(255),
+        objectGuid blob,
         passCounter number(10,0) not null,
+        privateEmail varchar2(255 char),
         prvMobile varchar2(32 char),
-        dc_salt raw(32),
+        dc_salt blob,
         saveit long raw,
         dc_tel varchar2(255 char),
         userDn varchar2(255 char),
-        userPrincipalName varchar2(128 char),
+        userPrincipalName varchar2(255 char),
         dc_role number(10,0) not null,
+        userext number(10,0),
         dc_ldap number(10,0),
         primary key (dc_id)
     );
 
-    create table pd_agent (
-       dc_id number(10,0) not null,
-        dc_enabled number(1,0) not null,
-        serviceAgentId varchar2(255 char) not null,
-        serviceAgentName varchar2(255 char) not null,
-        dc_user number(10,0) not null,
-        pd_services number(10,0) not null,
-        primary key (dc_id)
-    );
-
-    create table pd_cache (
-       dc_id number(19,0) not null,
-        endDate timestamp not null,
-        period number(10,0),
-        queryType number(10,0) not null,
-        startDate timestamp not null,
-        pd_group number(10,0),
-        primary key (dc_id)
-    );
-
-    create table pd_cache_value (
-       dc_id number(19,0) not null,
-        additionalData long,
-        cacheValue number(10,0) not null,
-        result number(10,0) not null,
-        pd_agent number(10,0),
-        pd_record number(19,0) not null,
-        primary key (dc_id)
-    );
-
-    create table pd_group (
-       dc_id number(10,0) not null,
-        dc_enabled number(1,0) not null,
-        serviceGroupId varchar2(255 char) not null,
-        serviceGroupName varchar2(255 char) not null,
-        pd_services number(10,0) not null,
-        primary key (dc_id)
-    );
-
-    create table pd_query (
-       dc_id number(10,0) not null,
-        queryAgent long,
-        queryGroup long,
-        queryType number(10,0) not null,
-        pd_services number(10,0) not null,
-        primary key (dc_id)
-    );
-
-    create table pd_ref_agent_group (
-       group_id number(10,0) not null,
-        agent_id number(10,0) not null
-    );
-
-    create table pd_service (
-       dc_id number(10,0) not null,
-        backgroundTaskTimeMinutes number(10,0) not null,
-        dc_enabled number(1,0) not null,
-        serviceName varchar2(255 char) not null,
-        servicePassword long raw not null,
-        serviceType number(10,0) not null,
-        serviceUsername varchar2(255 char) not null,
-        serviceUrl varchar2(255 char) not null,
-        primary key (dc_id)
+    create table core_userext (
+       dc_userext_id number(10,0) not null,
+        dc_country varchar2(255 char),
+        photo blob,
+        dc_timezone varchar2(255 char),
+        primary key (dc_userext_id)
     );
 
     alter table core_action 
@@ -189,20 +157,20 @@ create sequence pd_service_seq start with 1 increment by  4;
     alter table core_user 
        add constraint UK_APP_USER unique (loginId);
 
-    alter table pd_agent 
-       add constraint UK_PD_AGENT unique (pd_services, serviceAgentId);
+    alter table appo_timeEvent 
+       add constraint FK_USER_APPOINTMENTS 
+       foreign key (userappo) 
+       references core_user;
 
-    alter table pd_group 
-       add constraint UK_PD_SERVICE_GROUP_ID unique (serviceGroupId, pd_services);
+    alter table appo_timeEvent 
+       add constraint FK_EVENT_TIMETABLE 
+       foreign key (timeEvent) 
+       references appo_timetableEvent;
 
-    alter table pd_query 
-       add constraint UK_PD_QUERIES_SERVICE unique (pd_services, queryType);
-
-    alter table pd_ref_agent_group 
-       add constraint UK_GROUP_MEMBERS unique (group_id, agent_id);
-
-    alter table pd_service 
-       add constraint UK_PD_SERVICE unique (serviceName);
+    alter table appo_timetableEvent 
+       add constraint FK_EVENT_TIMETABLE 
+       foreign key (timeEvent) 
+       references appo_timetable;
 
     alter table core_group 
        add constraint FK_GROUP_ROLE 
@@ -240,57 +208,11 @@ create sequence pd_service_seq start with 1 increment by  4;
        references core_role;
 
     alter table core_user 
+       add constraint FK_USER_EXTENSION 
+       foreign key (userext) 
+       references core_userext;
+
+    alter table core_user 
        add constraint FK_USER_LDAP 
        foreign key (dc_ldap) 
        references core_ldap;
-
-    alter table pd_agent 
-       add constraint FK_AGENT_USER 
-       foreign key (dc_user) 
-       references core_user 
-       on delete cascade;
-
-    alter table pd_agent 
-       add constraint FK_AGENT_SERVICES 
-       foreign key (pd_services) 
-       references pd_service 
-       on delete cascade;
-
-    alter table pd_cache 
-       add constraint FK_RECORD_GROUP 
-       foreign key (pd_group) 
-       references pd_group 
-       on delete cascade;
-
-    alter table pd_cache_value 
-       add constraint FK_CACHE_VALUE_AGENT 
-       foreign key (pd_agent) 
-       references pd_agent;
-
-    alter table pd_cache_value 
-       add constraint FK_CACHE_VALUE_RECORD 
-       foreign key (pd_record) 
-       references pd_cache;
-
-    alter table pd_group 
-       add constraint FK_GROUP_SERVICES 
-       foreign key (pd_services) 
-       references pd_service 
-       on delete cascade;
-
-    alter table pd_query 
-       add constraint FK_QUERY_SERVICES 
-       foreign key (pd_services) 
-       references pd_service 
-       on delete cascade;
-
-    alter table pd_ref_agent_group 
-       add constraint FK_GROUP_AGENT 
-       foreign key (agent_id) 
-       references pd_agent;
-
-    alter table pd_ref_agent_group 
-       add constraint FK_AGENT_GROUP 
-       foreign key (group_id) 
-       references pd_group 
-       on delete cascade;

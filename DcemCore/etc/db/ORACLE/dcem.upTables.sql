@@ -1,4 +1,3 @@
-create sequence up_apphubseq start with 1 increment by  4;
 
     create table core_action (
        dc_id number(10,0) not null,
@@ -87,17 +86,17 @@ create sequence up_apphubseq start with 1 increment by  4;
         email varchar2(255 char),
         failActivations number(10,0) not null,
         hashPassword long raw,
-        hmac raw(32) not null,
+        hmac blob not null,
         jpaVersion number(10,0) not null,
         locale number(10,0),
         lastLogin timestamp,
         loginId varchar2(255 char) not null,
         mobileNumber varchar2(255 char),
-        objectGuid raw(255),
+        objectGuid blob,
         passCounter number(10,0) not null,
         privateEmail varchar2(255 char),
         prvMobile varchar2(32 char),
-        dc_salt raw(32),
+        dc_salt blob,
         saveit long raw,
         dc_tel varchar2(255 char),
         userDn varchar2(255 char),
@@ -111,7 +110,7 @@ create sequence up_apphubseq start with 1 increment by  4;
     create table core_userext (
        dc_userext_id number(10,0) not null,
         dc_country varchar2(255 char),
-        photo long raw,
+        photo blob,
         dc_timezone varchar2(255 char),
         primary key (dc_userext_id)
     );
@@ -119,7 +118,7 @@ create sequence up_apphubseq start with 1 increment by  4;
     create table up_applicationhub (
        up_id number(10,0) not null,
         application long not null,
-        logo long raw,
+        logo blob,
         up_name varchar2(255 char) not null,
         primary key (up_id)
     );

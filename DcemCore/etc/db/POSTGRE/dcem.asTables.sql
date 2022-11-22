@@ -273,7 +273,7 @@
     create table core_template (
        dc_id int4 not null,
         active boolean not null,
-        content text,
+        content oid,
         defaultTemplate boolean not null,
         inUse boolean not null,
         jpaVersion int4 not null,

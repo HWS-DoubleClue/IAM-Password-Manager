@@ -1,4 +1,31 @@
 
+    create table appo_timeEvent (
+       id bigint not null auto_increment,
+        tp_end datetime,
+        tp_start datetime,
+        userInfo varchar(4096),
+        userappo integer not null,
+        timeEvent bigint not null,
+        primary key (id)
+    ) engine=InnoDB;
+
+    create table appo_timetable (
+       dc_id bigint not null auto_increment,
+        dc_description varchar(255),
+        dc_enabled bit,
+        dc_name varchar(255),
+        slotTimeMinutes integer not null,
+        primary key (dc_id)
+    ) engine=InnoDB;
+
+    create table appo_timetableEvent (
+       dc_id bigint not null auto_increment,
+        dc_end datetime,
+        dc_start datetime,
+        timeEvent bigint not null,
+        primary key (dc_id)
+    ) engine=InnoDB;
+
     create table core_action (
        dc_id integer not null,
         action varchar(128) not null,
@@ -72,9 +99,9 @@
 
     insert into core_seq(seq_name, seq_value) values ('LDAP.ID',1);
 
-    insert into core_seq(seq_name, seq_value) values ('SEM_ACTION.ID',1);
-
     insert into core_seq(seq_name, seq_value) values ('CORE_GROUP.ID',1);
+
+    insert into core_seq(seq_name, seq_value) values ('SEM_ACTION.ID',1);
 
     insert into core_seq(seq_name, seq_value) values ('CORE_USER.ID',1);
 
@@ -82,7 +109,7 @@
        dc_id integer not null,
         acSuspendedTill datetime,
         disabled bit not null,
-        displayName varchar(128),
+        displayName varchar(255),
         email varchar(255),
         failActivations integer not null,
         hashPassword mediumblob,
@@ -90,109 +117,30 @@
         jpaVersion integer not null,
         locale integer,
         lastLogin datetime,
-        loginId varchar(64) not null,
+        loginId varchar(255) not null,
         mobileNumber varchar(255),
         objectGuid tinyblob,
         passCounter integer not null,
+        privateEmail varchar(255),
         prvMobile varchar(32),
         dc_salt tinyblob,
         saveit mediumblob,
         dc_tel varchar(255),
         userDn varchar(255),
-        userPrincipalName varchar(128),
+        userPrincipalName varchar(255),
         dc_role integer not null,
+        userext integer,
         dc_ldap integer,
         primary key (dc_id)
     ) engine=InnoDB;
 
-    create table pd_agent (
-       dc_id integer not null,
-        dc_enabled bit not null,
-        serviceAgentId varchar(255) not null,
-        serviceAgentName varchar(255) not null,
-        dc_user integer not null,
-        pd_services integer not null,
-        primary key (dc_id)
+    create table core_userext (
+       dc_userext_id integer not null,
+        dc_country varchar(255),
+        photo blob,
+        dc_timezone varchar(255),
+        primary key (dc_userext_id)
     ) engine=InnoDB;
-
-    create table pd_agent_seq (
-       next_val bigint
-    ) engine=InnoDB;
-
-    insert into pd_agent_seq values ( 1 );
-
-    create table pd_cache (
-       dc_id bigint not null,
-        endDate datetime not null,
-        period integer,
-        queryType integer not null,
-        startDate datetime not null,
-        pd_group integer,
-        primary key (dc_id)
-    ) engine=InnoDB;
-
-    create table pd_cache_value (
-       dc_id bigint not null,
-        additionalData varchar(8192),
-        cacheValue integer not null,
-        result integer not null,
-        pd_agent integer,
-        pd_record bigint not null,
-        primary key (dc_id)
-    ) engine=InnoDB;
-
-    create table pd_group (
-       dc_id integer not null,
-        dc_enabled bit not null,
-        serviceGroupId varchar(255) not null,
-        serviceGroupName varchar(255) not null,
-        pd_services integer not null,
-        primary key (dc_id)
-    ) engine=InnoDB;
-
-    create table pd_group_seq (
-       next_val bigint
-    ) engine=InnoDB;
-
-    insert into pd_group_seq values ( 1 );
-
-    create table pd_query (
-       dc_id integer not null,
-        queryAgent varchar(4095),
-        queryGroup varchar(4095),
-        queryType integer not null,
-        pd_services integer not null,
-        primary key (dc_id)
-    ) engine=InnoDB;
-
-    create table pd_query_seq (
-       next_val bigint
-    ) engine=InnoDB;
-
-    insert into pd_query_seq values ( 1 );
-
-    create table pd_ref_agent_group (
-       group_id integer not null,
-        agent_id integer not null
-    ) engine=InnoDB;
-
-    create table pd_service (
-       dc_id integer not null,
-        backgroundTaskTimeMinutes integer not null,
-        dc_enabled bit not null,
-        serviceName varchar(255) not null,
-        servicePassword mediumblob not null,
-        serviceType integer not null,
-        serviceUsername varchar(255) not null,
-        serviceUrl varchar(255) not null,
-        primary key (dc_id)
-    ) engine=InnoDB;
-
-    create table pd_service_seq (
-       next_val bigint
-    ) engine=InnoDB;
-
-    insert into pd_service_seq values ( 1 );
 
     alter table core_action 
        add constraint UK_SEM_ACTION unique (moduleId, subject, action);
@@ -209,20 +157,20 @@
     alter table core_user 
        add constraint UK_APP_USER unique (loginId);
 
-    alter table pd_agent 
-       add constraint UK_PD_AGENT unique (pd_services, serviceAgentId);
+    alter table appo_timeEvent 
+       add constraint FK_USER_APPOINTMENTS 
+       foreign key (userappo) 
+       references core_user (dc_id);
 
-    alter table pd_group 
-       add constraint UK_PD_SERVICE_GROUP_ID unique (serviceGroupId, pd_services);
+    alter table appo_timeEvent 
+       add constraint FK_EVENT_TIMETABLE 
+       foreign key (timeEvent) 
+       references appo_timetableEvent (dc_id);
 
-    alter table pd_query 
-       add constraint UK_PD_QUERIES_SERVICE unique (pd_services, queryType);
-
-    alter table pd_ref_agent_group 
-       add constraint UK_GROUP_MEMBERS unique (group_id, agent_id);
-
-    alter table pd_service 
-       add constraint UK_PD_SERVICE unique (serviceName);
+    alter table appo_timetableEvent 
+       add constraint FK_EVENT_TIMETABLE 
+       foreign key (timeEvent) 
+       references appo_timetable (dc_id);
 
     alter table core_group 
        add constraint FK_GROUP_ROLE 
@@ -260,57 +208,11 @@
        references core_role (dc_id);
 
     alter table core_user 
+       add constraint FK_USER_EXTENSION 
+       foreign key (userext) 
+       references core_userext (dc_userext_id);
+
+    alter table core_user 
        add constraint FK_USER_LDAP 
        foreign key (dc_ldap) 
        references core_ldap (dc_id);
-
-    alter table pd_agent 
-       add constraint FK_AGENT_USER 
-       foreign key (dc_user) 
-       references core_user (dc_id) 
-       on delete cascade;
-
-    alter table pd_agent 
-       add constraint FK_AGENT_SERVICES 
-       foreign key (pd_services) 
-       references pd_service (dc_id) 
-       on delete cascade;
-
-    alter table pd_cache 
-       add constraint FK_RECORD_GROUP 
-       foreign key (pd_group) 
-       references pd_group (dc_id) 
-       on delete cascade;
-
-    alter table pd_cache_value 
-       add constraint FK_CACHE_VALUE_AGENT 
-       foreign key (pd_agent) 
-       references pd_agent (dc_id);
-
-    alter table pd_cache_value 
-       add constraint FK_CACHE_VALUE_RECORD 
-       foreign key (pd_record) 
-       references pd_cache (dc_id);
-
-    alter table pd_group 
-       add constraint FK_GROUP_SERVICES 
-       foreign key (pd_services) 
-       references pd_service (dc_id) 
-       on delete cascade;
-
-    alter table pd_query 
-       add constraint FK_QUERY_SERVICES 
-       foreign key (pd_services) 
-       references pd_service (dc_id) 
-       on delete cascade;
-
-    alter table pd_ref_agent_group 
-       add constraint FK_GROUP_AGENT 
-       foreign key (agent_id) 
-       references pd_agent (dc_id);
-
-    alter table pd_ref_agent_group 
-       add constraint FK_AGENT_GROUP 
-       foreign key (group_id) 
-       references pd_group (dc_id) 
-       on delete cascade;

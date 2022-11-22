@@ -1,4 +1,31 @@
 
+    create table appo_timeEvent (
+       id bigint identity not null,
+        tp_end datetime2,
+        tp_start datetime2,
+        userInfo varchar(4096),
+        userappo int not null,
+        timeEvent bigint not null,
+        primary key (id)
+    );
+
+    create table appo_timetable (
+       dc_id bigint identity not null,
+        dc_description varchar(255),
+        dc_enabled bit,
+        dc_name varchar(255),
+        slotTimeMinutes int not null,
+        primary key (dc_id)
+    );
+
+    create table appo_timetableEvent (
+       dc_id bigint identity not null,
+        dc_end datetime2,
+        dc_start datetime2,
+        timeEvent bigint not null,
+        primary key (dc_id)
+    );
+
     create table core_action (
        dc_id int not null,
         action varchar(128) not null,
@@ -82,7 +109,7 @@
        dc_id int not null,
         acSuspendedTill datetime2,
         disabled bit not null,
-        displayName varchar(128),
+        displayName varchar(255),
         email varchar(255),
         failActivations int not null,
         hashPassword varbinary(MAX),
@@ -90,46 +117,29 @@
         jpaVersion int not null,
         locale int,
         lastLogin datetime2,
-        loginId varchar(64) not null,
+        loginId varchar(255) not null,
         mobileNumber varchar(255),
         objectGuid varbinary(255),
         passCounter int not null,
+        privateEmail varchar(255),
         prvMobile varchar(32),
         dc_salt varbinary(32),
         saveit varbinary(MAX),
         dc_tel varchar(255),
         userDn varchar(255),
-        userPrincipalName varchar(128),
+        userPrincipalName varchar(255),
         dc_role int not null,
+        userext int,
         dc_ldap int,
         primary key (dc_id)
     );
 
-    create table up_apphub_group (
-       apphub_up_id int not null,
-        group_dc_id int not null
-    );
-
-    create table up_apphubseq (
-       next_val bigint
-    );
-
-    insert into up_apphubseq values ( 1 );
-
-    create table up_applicationhub (
-       up_id int not null,
-        application varchar(MAX) not null,
-        included bit not null,
-        logo varbinary(MAX),
-        up_name varchar(255) not null,
-        primary key (up_id)
-    );
-
-    create table up_applicationhubdashboard (
-       up_application int not null,
-        up_user int not null,
-        up_index int,
-        primary key (up_application, up_user)
+    create table core_userext (
+       dc_userext_id int not null,
+        dc_country varchar(255),
+        photo varbinary(MAX),
+        dc_timezone varchar(255),
+        primary key (dc_userext_id)
     );
 
     alter table core_action 
@@ -147,8 +157,20 @@
     alter table core_user 
        add constraint UK_APP_USER unique (loginId);
 
-    alter table up_applicationhub 
-       add constraint UK_APPHUB_NAME unique (up_name);
+    alter table appo_timeEvent 
+       add constraint FK_USER_APPOINTMENTS 
+       foreign key (userappo) 
+       references core_user;
+
+    alter table appo_timeEvent 
+       add constraint FK_EVENT_TIMETABLE 
+       foreign key (timeEvent) 
+       references appo_timetableEvent;
+
+    alter table appo_timetableEvent 
+       add constraint FK_EVENT_TIMETABLE 
+       foreign key (timeEvent) 
+       references appo_timetable;
 
     alter table core_group 
        add constraint FK_GROUP_ROLE 
@@ -186,26 +208,11 @@
        references core_role;
 
     alter table core_user 
+       add constraint FK_USER_EXTENSION 
+       foreign key (userext) 
+       references core_userext;
+
+    alter table core_user 
        add constraint FK_USER_LDAP 
        foreign key (dc_ldap) 
        references core_ldap;
-
-    alter table up_apphub_group 
-       add constraint FK_APPHUB_GROUP 
-       foreign key (group_dc_id) 
-       references core_group;
-
-    alter table up_apphub_group 
-       add constraint FK1wkg76ssvji8w1pag3w0atcw4 
-       foreign key (apphub_up_id) 
-       references up_applicationhub;
-
-    alter table up_applicationhubdashboard 
-       add constraint FK_REF_APPHUB 
-       foreign key (up_application) 
-       references up_applicationhub;
-
-    alter table up_applicationhubdashboard 
-       add constraint FK_REF_USER 
-       foreign key (up_user) 
-       references core_user;

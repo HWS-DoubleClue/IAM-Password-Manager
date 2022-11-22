@@ -1,9 +1,7 @@
-create sequence up_apphubseq start with 1 increment by  4;
-
 create table up_applicationhub (
 up_id number(10,0) not null,
 application long not null,
-logo long raw,
+logo blob,
 up_name varchar2(255 char) not null,
 primary key (up_id)
 );

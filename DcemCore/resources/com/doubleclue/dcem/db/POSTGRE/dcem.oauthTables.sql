@@ -5,7 +5,7 @@ client_secret varchar(255) not null,
 dc_disabled boolean not null,
 display_name varchar(255) not null,
 idp_settings varchar(4096),
-dc_metadata text,
+dc_metadata oid,
 redirect_uris varchar(255),
 primary key (dc_id)
 );

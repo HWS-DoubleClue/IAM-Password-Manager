@@ -74,11 +74,17 @@
 
     insert into core_seq(seq_name, seq_value) values ('shifts_assignments.ID',1);
 
+    insert into core_seq(seq_name, seq_value) values ('shifts_roster_user.ID',1);
+
     insert into core_seq(seq_name, seq_value) values ('ROLE.ID',1);
 
     insert into core_seq(seq_name, seq_value) values ('shifts_type.ID',1);
 
+    insert into core_seq(seq_name, seq_value) values ('shifts_roster.ID',1);
+
     insert into core_seq(seq_name, seq_value) values ('LDAP.ID',1);
+
+    insert into core_seq(seq_name, seq_value) values ('shifts_roster_shift.ID',1);
 
     insert into core_seq(seq_name, seq_value) values ('shifts_team.ID',1);
 
@@ -96,7 +102,7 @@
        dc_id int not null,
         acSuspendedTill datetime2,
         disabled bit not null,
-        displayName varchar(128),
+        displayName varchar(255),
         email varchar(255),
         failActivations int not null,
         hashPassword varbinary(MAX),
@@ -104,19 +110,29 @@
         jpaVersion int not null,
         locale int,
         lastLogin datetime2,
-        loginId varchar(64) not null,
+        loginId varchar(255) not null,
         mobileNumber varchar(255),
         objectGuid varbinary(255),
         passCounter int not null,
+        privateEmail varchar(255),
         prvMobile varchar(32),
         dc_salt varbinary(32),
         saveit varbinary(MAX),
         dc_tel varchar(255),
         userDn varchar(255),
-        userPrincipalName varchar(128),
+        userPrincipalName varchar(255),
         dc_role int not null,
+        userext int,
         dc_ldap int,
         primary key (dc_id)
+    );
+
+    create table core_userext (
+       dc_userext_id int not null,
+        dc_country varchar(255),
+        photo varbinary(MAX),
+        dc_timezone varchar(255),
+        primary key (dc_userext_id)
     );
 
     create table shifts_absence (
@@ -147,6 +163,39 @@
         startDate date,
         dc_team int not null,
         dc_type int not null,
+        primary key (dc_id)
+    );
+
+    create table shifts_roster (
+       dc_id int not null,
+        endDate datetime2,
+        rosterName varchar(255),
+        rosterType int,
+        skipWeekends bit not null,
+        startDate datetime2,
+        primary key (dc_id)
+    );
+
+    create table shifts_roster_shift (
+       dc_id int not null,
+        numbering int not null,
+        resources int not null,
+        roster_shift int not null,
+        dc_team int not null,
+        dc_type int not null,
+        primary key (dc_id)
+    );
+
+    create table shifts_roster_shifts_roster_shift (
+       ShiftsRosterEntity_dc_id int not null,
+        shiftsRosterTypeEntity_dc_id int not null
+    );
+
+    create table shifts_roster_user (
+       dc_id int not null,
+        dc_offset int,
+        dc_user int not null,
+        shifts_roster int not null,
         primary key (dc_id)
     );
 
@@ -201,9 +250,12 @@
         availableOn date,
         exitDate date,
         dc_external bit not null,
+        federalState varchar(255),
         onCallAllowed bit not null,
         onCallNumber varchar(255),
+        userSettings varchar(4096),
         dc_user int not null,
+        dc_team int,
         primary key (dc_id)
     );
 
@@ -270,6 +322,11 @@
        references core_role;
 
     alter table core_user 
+       add constraint FK_USER_EXTENSION 
+       foreign key (userext) 
+       references core_userext;
+
+    alter table core_user 
        add constraint FK_USER_LDAP 
        foreign key (dc_ldap) 
        references core_ldap;
@@ -280,12 +337,12 @@
        references shifts_user;
 
     alter table shifts_assignments 
-       add constraint FKioty4hgetv6s1kr17rf0sa33u 
+       add constraint FK_SHIFTS_ID_USER 
        foreign key (shifts_user_id) 
        references shifts_user;
 
     alter table shifts_assignments 
-       add constraint FK1kg14y068bxsqfehje32vqx9y 
+       add constraint FK_SHIFTS_ID_SHIFTS 
        foreign key (shifts_shift_id) 
        references shifts_shift;
 
@@ -299,13 +356,48 @@
        foreign key (dc_type) 
        references shifts_type;
 
+    alter table shifts_roster_shift 
+       add constraint FK_SHIFTS_ROSTER_SHIFT 
+       foreign key (roster_shift) 
+       references shifts_roster;
+
+    alter table shifts_roster_shift 
+       add constraint FK_SHIFTS_TEAM_ROSTER 
+       foreign key (dc_team) 
+       references shifts_team;
+
+    alter table shifts_roster_shift 
+       add constraint FK_SHIFTS_TYPE_ROSTER 
+       foreign key (dc_type) 
+       references shifts_type;
+
+    alter table shifts_roster_shifts_roster_shift 
+       add constraint FK9enfuq6l2blh36xm24vxse7yr 
+       foreign key (shiftsRosterTypeEntity_dc_id) 
+       references shifts_roster_shift;
+
+    alter table shifts_roster_shifts_roster_shift 
+       add constraint FK_SHIFTS_ROSTER_TYPE 
+       foreign key (ShiftsRosterEntity_dc_id) 
+       references shifts_roster;
+
+    alter table shifts_roster_user 
+       add constraint FK_SHIFTS_ROSTER_USER 
+       foreign key (dc_user) 
+       references shifts_user;
+
+    alter table shifts_roster_user 
+       add constraint FK_SHIFTS_ROSTER 
+       foreign key (shifts_roster) 
+       references shifts_roster;
+
     alter table shifts_shift 
        add constraint FK_SHIFTS_ENTRY_SHIFT 
        foreign key (dc_shiftentry) 
        references shifts_entry;
 
     alter table shifts_ShiftUsers_Types 
-       add constraint FK6oxqea21h6fulncfp55k59nl2 
+       add constraint FK_SHIFTS_TYPE_USERS 
        foreign key (shiftstype_id) 
        references shifts_type;
 
@@ -315,7 +407,7 @@
        references shifts_user;
 
     alter table shifts_type_days 
-       add constraint FKb1keg8dwmv5i1dmo4hc5gxl4x 
+       add constraint FK_SHIFTS_TYPE_DAYS 
        foreign key (ShiftsTypeEntity_dc_id) 
        references shifts_type;
 
@@ -324,12 +416,17 @@
        foreign key (dc_user) 
        references core_user;
 
+    alter table shifts_user 
+       add constraint FK_USER_TEAM 
+       foreign key (dc_team) 
+       references shifts_team;
+
     alter table shifts_users_skills 
-       add constraint FK54uax9oju7j5l5a76qs607s4a 
+       add constraint FK_SHIFTS_SKILL_SKILLS 
        foreign key (shiftsskills_id) 
        references shifts_skills;
 
     alter table shifts_users_skills 
-       add constraint FKn3704yqfl7rghxok589294ejj 
+       add constraint FK_SHIFTS_SKILL_SKILLS 
        foreign key (shiftsuser_id) 
        references shifts_user;

@@ -1,4 +1,3 @@
-create sequence up_apphubseq start 1 increment 4;
 
     create table core_action (
        dc_id int4 not null,

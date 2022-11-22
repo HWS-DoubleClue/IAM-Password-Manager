@@ -8,7 +8,7 @@ primary key (dc_id)
 
 create table core_auditing (
 dc_id int4 not null,
-details text,
+details oid,
 auditTimeStamp timestamp,
 actionId int4,
 audituserId int4,
@@ -142,7 +142,7 @@ insert into core_seq(seq_name, seq_value) values ('TENANT.ID',1);
 
 create table core_statistic (
 dc_id int4 not null,
-dc_data text not null,
+dc_data oid not null,
 dc_timestamp timestamp not null,
 nodeId int4,
 primary key (dc_id)
@@ -151,7 +151,7 @@ primary key (dc_id)
 create table core_template (
 dc_id int4 not null,
 active boolean not null,
-content text,
+content oid,
 defaultTemplate boolean not null,
 inUse boolean not null,
 jpaVersion int4 not null,
