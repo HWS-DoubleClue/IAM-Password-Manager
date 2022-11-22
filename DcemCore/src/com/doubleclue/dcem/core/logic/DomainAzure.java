@@ -78,7 +78,8 @@ public class DomainAzure implements DomainApi {
 	private static final Logger logger = LogManager.getLogger(DomainAzure.class);
 
 	private static final String AZURE_STATE = "state";
-//	private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId";
+	// private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails,
+	// onPremisesImmutableId";
 	private static final String SELECT_USER_ATTRIBUTES_EXT = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId, profilePhoto";
 	private static final String SCOPE = "https://graph.microsoft.com/.default";
 	private final DomainEntity domainEntity;
@@ -128,11 +129,18 @@ public class DomainAzure implements DomainApi {
 
 	@Override
 	public DcemUser verifyLogin(DcemUser dcemUser, byte[] password) throws DcemException {
-
-		GraphServiceClient<Request> userGraphClient = getUserGraphClient(dcemUser, new String(password, DcemConstants.UTF_8));
-	//	AuthenticationMethodCollectionPage au = userGraphClient.me().authentication().methods().buildRequest().get();
-		User user = userGraphClient.me().buildRequest().get();
-		return createDcemUser(user);
+		User user;
+		try {
+			GraphServiceClient<Request> userGraphClient = getUserGraphClient(dcemUser, new String(password, DcemConstants.UTF_8));
+			// AuthenticationMethodCollectionPage au = userGraphClient.me().authentication().methods().buildRequest().get();
+			user = userGraphClient.me().buildRequest().get();
+			return createDcemUser(user);
+		} catch (DcemException e) {
+			if (e.getErrorCode() == DcemErrorCodes.AZURE_NEEDS_MFA) {
+				return getUser(dcemUser.getAccountName());
+			}
+			throw e;
+		}
 	}
 
 	// private String getAzureUsername(DcemUser dcemUser) throws DcemException {
@@ -200,9 +208,12 @@ public class DomainAzure implements DomainApi {
 	public List<DcemGroup> getUserGroups(DcemUser dcemUser, int pagesize) throws DcemException {
 		DirectoryObjectCollectionWithReferencesPage collection = null;
 		List<DcemGroup> groupList = new LinkedList<>();
-
+		String userId = dcemUser.getUserDn();
+		if (userId == null) {
+			userId = dcemUser.getAccountName();
+		}
 		try {
-			collection = getSearchGraphClient().users(dcemUser.getUserDn()).memberOf().buildRequest().get();
+			collection = getSearchGraphClient().users(userId).memberOf().buildRequest().get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
 				graphServiceClient = null;
@@ -433,12 +444,17 @@ public class DomainAzure implements DomainApi {
 
 		String userAccessToken = null;
 		try {
-			IAuthenticationResult authenticationResult = getAuthResultByUserCredentials(dcemUser.getAccountName(), password);
+			UserNamePasswordParameters userNamePasswordParameters = UserNamePasswordParameters.builder(SCOPE_USER_PASSWORD, dcemUser.getAccountName(), password.toCharArray())
+					.build();
+			CompletableFuture<IAuthenticationResult> acquireToken = publicClientApplication.acquireToken(userNamePasswordParameters);
+			IAuthenticationResult authenticationResult = acquireToken.join();
 			userAccessToken = authenticationResult.accessToken();
 			return getGraphServiceClient(userAccessToken);
-		} catch (DcemException e) {
-			throw e;
 		} catch (Exception e) {
+			if (e.getCause() instanceof MsalInteractionRequiredException && e.getCause().getMessage().startsWith("AADSTS50076")) {
+				StringUtils.wipeString(password);
+				throw new DcemException(DcemErrorCodes.AZURE_NEEDS_MFA, dcemUser.getAccountName());
+			}
 			throw new DcemException(DcemErrorCodes.DOMAIN_WRONG_AUTHENTICATION, e.toString());
 		}
 
@@ -516,23 +532,6 @@ public class DomainAzure implements DomainApi {
 		return authenticationResult;
 	}
 
-	private IAuthenticationResult getAuthResultByUserCredentials(String userName, String password) throws Exception {
-		UserNamePasswordParameters userNamePasswordParameters = UserNamePasswordParameters.builder(SCOPE_USER_PASSWORD, userName, password.toCharArray())
-				.build();
-		try {
-			CompletableFuture<IAuthenticationResult> acquireToken = publicClientApplication.acquireToken(userNamePasswordParameters);
-			IAuthenticationResult authenticationResult = acquireToken.join();
-			return authenticationResult;
-		} catch (Exception e) {
-			if (e.getCause() instanceof MsalInteractionRequiredException) {
-				if (e.getCause().getMessage().startsWith("AADSTS50076")) {
-					StringUtils.wipeString(password);
-					throw new DcemException(DcemErrorCodes.AZURE_NEEDS_MFA, userName);
-				}
-			}
-			throw e;
-		}
-	}
 
 	public void sendAuthRedirect(ConnectionServicesType connectionServicesType) throws Exception {
 		// state parameter to validate response from Authorization server and nonce parameter to validate idToken
@@ -553,9 +552,8 @@ public class DomainAzure implements DomainApi {
 	private String getRedirectUrl(String claims, ConnectionServicesType connectionServicesType, String state, String nonce) throws Exception {
 		DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
 		String url = applicationBean.getServiceUrl(connectionServicesType);
-		String redirectUrl = authority + "/oauth2/v2.0/authorize?response_type=code&response_mode=form_post&redirect_uri="
-				+ URLEncoder.encode(url, "UTF-8") + "&client_id=" + domainEntity.getClientId() + "&scope="
-				+ URLEncoder.encode("openid offline_access profile", "UTF-8")
+		String redirectUrl = authority + "/oauth2/v2.0/authorize?response_type=code&response_mode=form_post&redirect_uri=" + URLEncoder.encode(url, "UTF-8")
+				+ "&client_id=" + domainEntity.getClientId() + "&scope=" + URLEncoder.encode("openid offline_access profile", "UTF-8")
 				+ (org.apache.commons.lang3.StringUtils.isEmpty(claims) ? "" : "&claims=" + claims) + "&prompt=select_account&state=" + state + "&nonce="
 				+ nonce;
 		return redirectUrl;
@@ -619,7 +617,7 @@ public class DomainAzure implements DomainApi {
 			throw new DcemException(DcemErrorCodes.MSAL_AUTH_NO_RESULT, "authentication result was null");
 		}
 		// TODO httpServletRequest.getSession().setAttribute(AuthHelper.TOKEN_CACHE_SESSION_ATTRIBUTE, tokenCache);
-	//	result.account().username();
+		// result.account().username();
 		return result;
 	}
 

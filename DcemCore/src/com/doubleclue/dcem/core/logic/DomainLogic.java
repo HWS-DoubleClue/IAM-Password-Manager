@@ -226,26 +226,15 @@ public class DomainLogic implements ReloadClassInterface {
 	@DcemTransactional
 	public void verifyDomainLogin(DcemUser dcemUser, byte[] password) throws DcemException {
 		DomainApi domainApi = getDomainApi(dcemUser.getDomainEntity().getName());
-		try {
-			DcemUser synchUser = domainApi.verifyLogin(dcemUser, password);
-			dcemUser.setMobileNumber(synchUser.getMobileNumber());
-			dcemUser.setTelephoneNumber(synchUser.getTelephoneNumber());
-			dcemUser.setDisplayName(synchUser.getDisplayName());
-			dcemUser.setEmail(synchUser.getEmail());
-			dcemUser.setUserDn(synchUser.getUserDn());
-			dcemUser.setLoginId(synchUser.getLoginId());
-			if (synchUser.getLanguage() != null) {
-				dcemUser.setLanguage(synchUser.getLanguage());
-			}
-		} catch (DcemException exp) {
-			if (exp.getErrorCode() == DcemErrorCodes.AZURE_NEEDS_MFA) {
-				logger.debug("Azure request MFA for " + dcemUser.getAccountName() );
-				return;
-			}
-			if (exp.getErrorCode() == DcemErrorCodes.LDAP_LOGIN_USER_FAILED) {
-				logger.info(exp);
-			}
-			throw exp;
+		DcemUser synchUser = domainApi.verifyLogin(dcemUser, password);
+		dcemUser.setMobileNumber(synchUser.getMobileNumber());
+		dcemUser.setTelephoneNumber(synchUser.getTelephoneNumber());
+		dcemUser.setDisplayName(synchUser.getDisplayName());
+		dcemUser.setEmail(synchUser.getEmail());
+		dcemUser.setUserDn(synchUser.getUserDn());
+		dcemUser.setLoginId(synchUser.getLoginId());
+		if (synchUser.getLanguage() != null) {
+			dcemUser.setLanguage(synchUser.getLanguage());
 		}
 	}
 
@@ -257,8 +246,8 @@ public class DomainLogic implements ReloadClassInterface {
 		}
 		return domainApi;
 	}
-	
-	public DomainAzure getDomainAzure()  {
+
+	public DomainAzure getDomainAzure() {
 		LinkedHashMap<String, DomainApi> domains = getDomains();
 		for (DomainApi domain : domains.values()) {
 			if (domain.getDomainEntity().getDomainType() == DomainType.Azure_AD) {
