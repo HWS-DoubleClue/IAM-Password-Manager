@@ -1,4 +1,4 @@
-create sequence up_apphubseq start with 1 increment by 4;
+create sequence up_apphubseq start with 1 increment by 1;
 
 create table up_applicationhub (
 up_id integer not null,
