@@ -476,7 +476,7 @@ public class SystemModule extends DcemModule {
 				executionTime = JdbcUtils.backUpEmbeddedDatabase(databaseConfig, getPreferences().getPathEmbeddedDatabaseBackup());
 				logger.info("Embedded-Databse was backup at: " + getPreferences().getPathEmbeddedDatabaseBackup());
 				addCounter("EmbeddedDatabaseBackup", executionTime);
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				logger.error("ERROR: Couldn't  run backup for embedded database!", e);
 			}
 		}
@@ -489,7 +489,7 @@ public class SystemModule extends DcemModule {
 		// return 8; // set to 7 for DCEM 2.4.4
 		return DATABASE_VERSION; // set to 8 for DCEM 2.5
 	}
-
+	
 	public void initializeTenant(TenantEntity tenantEntity) throws DcemException {
 		SystemTenantData coreTenantData = (SystemTenantData) getModuleTenantData();
 		if (coreTenantData == null) {
@@ -509,6 +509,8 @@ public class SystemModule extends DcemModule {
 			return auth;
 		}
 	}
+	
+
 
 	class DcemProxySelector extends ProxySelector {
 

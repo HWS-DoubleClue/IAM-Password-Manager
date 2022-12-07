@@ -361,7 +361,7 @@ public class UserApiServiceImpl {
 			if (dcemUser == null) {
 				throw new DcemException(DcemErrorCodes.INVALID_USERID, urlToken.getUsername());
 			}
-			UrlTokenEntity entity = urlTokenLogic.addUrlTokenToDb(urlToken.getUrl(), usage, urlToken.getValidMinutes(), urlToken.getToken(), dcemUser.getId().toString());
+			UrlTokenEntity entity = urlTokenLogic.addUrlTokenToDb(usage, urlToken.getValidMinutes(), urlToken.getToken(), dcemUser.getId().toString());
 			urlTokenLogic.sendUrlTokenByEmail(dcemUser, urlToken.getUrl(), entity);
 			return Response.ok().build();
 		} catch (DcemException exp) {

@@ -49,7 +49,7 @@ public class JdbcUtils {
 
 	private final static Logger logger = LogManager.getLogger(JdbcUtils.class);
 
-	public static Connection getJdbcConnectionWithSchema(DatabaseConfig databaseConfig, String adminName, String adminPassword) throws SQLException {
+	public static Connection getJdbcConnectionWithSchema(DatabaseConfig databaseConfig, String adminName, String adminPassword) throws Exception {
 		Connection conn = getJdbcConnection(databaseConfig, adminName, adminPassword);
 		if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == false) {
 			DatabaseTypes databaseType = DatabaseTypes.valueOf(databaseConfig.getDatabaseType());
@@ -58,7 +58,7 @@ public class JdbcUtils {
 		return conn;
 	}
 
-	public static Connection getJdbcConnection(DatabaseConfig databaseConfig, String adminName, String adminPassword) throws SQLException {
+	public static Connection getJdbcConnection(DatabaseConfig databaseConfig, String adminName, String adminPassword) throws Exception {
 		Connection conn = null;
 		UrlDriverName urlDriverName = DatabaseUtils.getUrlAndDriverName(databaseConfig);
 		while (true) {
@@ -75,13 +75,23 @@ public class JdbcUtils {
 				} catch (DcemException exp) {
 					logger.error(exp);
 				}
-				conn = DriverManager.getConnection(urlDriverName.url);
+				try {
+					conn = DriverManager.getConnection(urlDriverName.url);
+				} catch (Exception e) {
+					logger.error("JDBC Connection failed URL : " + urlDriverName.url, e);
+					throw e;
+				}
 			} else {
 				if (adminName == null) {
 					adminName = databaseConfig.getAdminName();
 					adminPassword = databaseConfig.getAdminPassword();
 				}
-				conn = DriverManager.getConnection(urlDriverName.url, adminName, adminPassword);
+				try {
+					conn = DriverManager.getConnection(urlDriverName.url, adminName, adminPassword);
+				} catch (Exception e) {
+					logger.error("JDBC Connection failed URL : " + urlDriverName.url, e);
+					throw e;
+				}
 			}
 			break;
 		}
@@ -315,7 +325,7 @@ public class JdbcUtils {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static long backUpEmbeddedDatabase(DatabaseConfig databaseConfig, String backupdirectory) throws SQLException {
+	public static long backUpEmbeddedDatabase(DatabaseConfig databaseConfig, String backupdirectory) throws Exception {
 		long start = System.currentTimeMillis();
 		Connection conn = null;
 		try {
@@ -477,7 +487,7 @@ public class JdbcUtils {
 		stmt.close();
 		return list;
 	}
-	
+
 	public void deleteTenantDatabase(TenantEntity tenantEntity) throws Exception {
 		Connection connection = null;
 		PreparedStatement stmt = null;
