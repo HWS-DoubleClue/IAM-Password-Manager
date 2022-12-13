@@ -17,7 +17,7 @@ public class TestScriptRunner {
 		Connection connection = null;
 		try {
 			 connection = JdbcUtils.getJdbcConnection(databaseConfig, "root", "root");
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(1);

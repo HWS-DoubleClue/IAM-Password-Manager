@@ -43,7 +43,7 @@ public class ApplicationHubEntity extends EntityInterface implements Serializabl
 	@Id
 	@Column(name = "up_id")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "up_apphubseq")
-	@SequenceGenerator(name = "up_apphubseq", allocationSize = 4)
+	@SequenceGenerator(name = "up_apphubseq", allocationSize = 1)
 	private Integer id;
 
 	@Column(nullable = false, length = 10000, updatable = true, insertable = true)
