@@ -170,7 +170,9 @@ public class ConvertSqlFiles {
 						copyLines = true;
 					} else if (trimZeile.contains(" on crm_")) { // Search for on Shifts
 						copyLines = true;
-					} else if (trimZeile.contains(" on up_")) { // Search for on userportal
+					} else if (trimZeile.contains(" on up_")) {  // Search for on userportal
+						copyLines = true;
+					} else if (trimZeile.contains(" on ftp_")) { // Search for on userportal
 						copyLines = true;
 					}
 
@@ -180,7 +182,9 @@ public class ConvertSqlFiles {
 							|| trimZeile.startsWith("create table petshop_") || trimZeile.startsWith("create table up_")
 							|| trimZeile.startsWith("create table crm_")
 							|| trimZeile.startsWith("create table pd_")
+							|| trimZeile.startsWith("create table ftp_")
 							|| trimZeile.startsWith("create sequence up_")
+							|| trimZeile.startsWith("create sequence ftp_")
 							|| trimZeile.startsWith("create table shifts_") ||trimZeile.startsWith("create table saml_")) {
 						copyLines = true;
 					}
@@ -199,6 +203,7 @@ public class ConvertSqlFiles {
 							|| trimZeile.startsWith("alter table shifts") && createTableFound == true // Search for alter table user portal
 							|| trimZeile.startsWith("alter table crm") && createTableFound == true  // Search for alter table saml
 							|| trimZeile.startsWith("alter table pd") && createTableFound == true // Search for alter table performance deck
+							|| trimZeile.startsWith("alter table ftp") && createTableFound == true // Search for alter table performance deck
 							|| trimZeile.startsWith("alter table saml") && createTableFound == true) { // Search for alter table saml
 						copyLines = true;
 					} else if (trimZeile.startsWith("create table core_") || trimZeile.startsWith("alter table sys_")
