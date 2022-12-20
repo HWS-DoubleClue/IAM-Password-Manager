@@ -50,7 +50,7 @@ public class ApplicationHubEntity extends EntityInterface implements Serializabl
 	@Convert(converter = DbJsonConverterAppHub.class)
 	private AppHubApplication application;
 
-	@Column(length = 42000, updatable = true, insertable = true)
+	@Column(length = 32000, updatable = true, insertable = true)
 	private byte[] logo;
 
 	@Column(name = "up_name", nullable = false, length = 255, updatable = true, insertable = true)
