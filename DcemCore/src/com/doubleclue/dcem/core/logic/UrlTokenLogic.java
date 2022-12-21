@@ -36,7 +36,7 @@ public class UrlTokenLogic {
 	// private static final Logger logger = LogManager.getLogger(UrlTokenLogic.class);
 
 	@DcemTransactional
-	public UrlTokenEntity addUrlTokenToDb(String url, UrlTokenType urlTokenUsage, int validMinutes, String urlToken, String objectIdentifier) throws DcemException {
+	public UrlTokenEntity addUrlTokenToDb(UrlTokenType urlTokenUsage, int validMinutes, String urlToken, String objectIdentifier) throws DcemException {
 		UrlTokenEntity entity = new UrlTokenEntity();
 		if (urlToken == null) {
 			urlToken = java.util.UUID.randomUUID().toString();

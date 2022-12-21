@@ -50,6 +50,7 @@ public abstract class DcemFilter implements Filter {
 	private static final String FACES_REQUEST = "Faces-Request";
 	private static final String FACES_AJAX_REQUEST = "partial/ajax";
 	private static final String OPEN_SUFFIX = "_.xhtml";
+	private static final String HTTP = "http://";
 
 	protected boolean enabled = true;
 
@@ -167,6 +168,9 @@ public abstract class DcemFilter implements Filter {
 			}
 			if (containsAuthenticationCode(httpServletRequest)) {
 				String currentUri = httpServletRequest.getRequestURL().toString();
+				if (currentUri.startsWith(HTTP)) {
+					currentUri = "https://" + currentUri.substring(HTTP.length());
+				}
 				String queryStr = httpServletRequest.getQueryString();
 				String fullUrl = currentUri + (queryStr != null ? "?" + queryStr : "");
 				DomainAzure domainAzure = domainLogic.getDomainAzure();

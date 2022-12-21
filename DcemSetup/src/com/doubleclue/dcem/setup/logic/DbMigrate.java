@@ -85,7 +85,7 @@ public class DbMigrate {
 
 	private static final Logger logger = LogManager.getLogger(DbMigrate.class);
 
-	public void startMigration(LocalConfig localConfig, String schemaAdmin, String schemaPassword) throws SQLException, DcemException {
+	public void startMigration(LocalConfig localConfig, String schemaAdmin, String schemaPassword) throws Exception {
 		DatabaseConfig databaseConfig = localConfig.getDatabase();
 		DatabaseTypes dbType = DatabaseTypes.valueOf(databaseConfig.getDatabaseType());
 		Connection conn = JdbcUtils.getJdbcConnectionWithSchema(databaseConfig, schemaAdmin, schemaPassword);

@@ -52,6 +52,7 @@ public class CreateModuleTables {
 
 		if (args.length < 1) {
 			System.err.println("Please specify the Modules Name in the command parameters");
+
 		}
 		int ind = modulePath.lastIndexOf(File.separator);
 		modulePath = modulePath.substring(0, ind + 1);
@@ -65,9 +66,13 @@ public class CreateModuleTables {
 			persistencePath = modulePath + File.separator + "src/main/java" + File.separator + "META-INF" + File.separator + "persistence.xml";
 			persistenceFile = new File(persistencePath);
 			if (persistenceFile.exists() == false) {
-				System.err.println("ERROR: 'persistence.xml' NOT FOUND In " + persistencePath);
-				System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
-				System.exit(-1);
+				persistencePath = modulePath + File.separator + "src/main/resources" + File.separator + "META-INF" + File.separator + "persistence.xml";
+				persistenceFile = new File(persistencePath);
+				if (persistenceFile.exists() == false) {
+					System.err.println("ERROR: 'persistence.xml' NOT FOUND In " + persistencePath);
+					System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
+					System.exit(-1);
+				}
 			}
 		}
 		System.out.println("CreateTables.main() Path=" + persistencePath);

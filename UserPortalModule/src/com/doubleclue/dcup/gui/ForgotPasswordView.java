@@ -96,7 +96,7 @@ public class ForgotPasswordView extends AbstractPortalView {
 					return null;
 				}
 			}
-			UrlTokenEntity entity = urlTokenLogic.addUrlTokenToDb(userPortalModule.getServletUrl(), UrlTokenType.ResetPassword,
+			UrlTokenEntity entity = urlTokenLogic.addUrlTokenToDb(UrlTokenType.ResetPassword,
 					userPortalModule.getModulePreferences().getUrlTokenTimeout(), null, dcemUser.getId().toString());
 			urlTokenLogic.sendUrlTokenByEmail(dcemUser, userPortalModule.getServletUrl(), entity);
 			endMessageView.setError(false);

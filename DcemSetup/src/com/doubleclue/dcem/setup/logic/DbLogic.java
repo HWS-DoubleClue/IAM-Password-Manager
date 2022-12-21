@@ -166,7 +166,7 @@ public class DbLogic {
 
 		try {
 			conn = JdbcUtils.getJdbcConnection(databaseConfig, null, null);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			dbState = DbState.No_Connection;
 			list.add("Connection failed. Reason: " + e.getMessage());
 			if (databaseType == DatabaseTypes.POSTGRE && e.getMessage().startsWith("No suitable driver found")) {
@@ -290,7 +290,7 @@ public class DbLogic {
 	 * @throws Exception
 	 */
 	public void setupCreateTables(LocalConfig localConfig, String createTablesAdmin, String createTablesPassword)
-			throws DcemException, SQLException, IOException {
+			throws Exception {
 		Connection conn = JdbcUtils.getJdbcConnection(localConfig.getDatabase(), createTablesAdmin, createTablesPassword);
 		if (isTablesAvailable(conn, localConfig.getDatabase())) {
 			conn.close();

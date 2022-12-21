@@ -746,7 +746,7 @@ public class UserLogic {
 	public String registerUser(DcemUser dcemUser, String url, int timeout) throws DcemException {
 		addOrUpdateUser(dcemUser, new DcemAction(userSubject, DcemConstants.ACTION_ADD), true, false, adminModule.getPreferences().getUserPasswordLength(),
 				false);
-		UrlTokenEntity urlTokenEntity = urlTokenLogic.addUrlTokenToDb(url, UrlTokenType.VerifyEmail, timeout, null, dcemUser.getId().toString());
+		UrlTokenEntity urlTokenEntity = urlTokenLogic.addUrlTokenToDb(UrlTokenType.VerifyEmail, timeout, null, dcemUser.getId().toString());
 		urlTokenLogic.sendUrlTokenByEmail(dcemUser, url, urlTokenEntity);
 		String recoveryKey = null;
 		if (asModuleApi != null) {

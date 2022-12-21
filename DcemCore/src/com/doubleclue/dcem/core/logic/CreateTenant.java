@@ -114,7 +114,7 @@ public class CreateTenant {
 	}
 
 	public void createTenant(TenantEntity tenantEntity, String superAdminPassword, String superAdminPhone, String superAdminEmail,
-			SupportedLanguage supportedLanguage, String loginId, String displayName, TimeZone timeZone) throws SQLException, DcemException, IOException {
+			SupportedLanguage supportedLanguage, String loginId, String displayName, TimeZone timeZone) throws Exception {
 		DatabaseConfig databaseConfig = LocalConfigProvider.getLocalConfig().getDatabase();
 		createSchema(tenantEntity.getSchema(), databaseConfig.getAdminName(), databaseConfig.getAdminPassword());
 		createTables(DbFactoryProducer.getDbType(), tenantEntity.getSchema(), databaseConfig.getAdminName(), databaseConfig.getAdminPassword(), false);
@@ -239,7 +239,7 @@ public class CreateTenant {
 	 * @throws Exception
 	 */
 	public void createTables(DatabaseTypes dbType, String schemaName, String createTablesAdmin, String createTablesPassword, boolean masterTenant)
-			throws DcemException, SQLException, IOException {
+			throws Exception {
 		// UrlDriverName urlDriverName =
 		// DatabaseUtils.getUrlAndDriverName(LocalConfigProvider.getLocalConfig().getDatabase());
 

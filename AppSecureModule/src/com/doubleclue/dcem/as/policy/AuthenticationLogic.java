@@ -69,6 +69,7 @@ import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.system.send.MessageBird;
 import com.doubleclue.utils.RandomUtils;
 import com.doubleclue.utils.StringUtils;
+import com.microsoft.graph.http.GraphServiceException;
 
 @ApplicationScoped
 @Named("authenticationLogic")
@@ -626,7 +627,13 @@ public class AuthenticationLogic {
 				dcemUser.setDisplayName(userLoginId);
 			}
 			if (ignorePassword == false) {
+				try {
                 domainLogic.verifyDomainLogin(dcemUser, password.getBytes(DcemConstants.CHARSET_UTF8));
+			} catch (DcemException exp) {
+					if ((exp.getErrorCode() == DcemErrorCodes.DB_TRANSACTION_ERROR) && (exp.getCause() instanceof GraphServiceException)) {
+						throw new DcemException(DcemErrorCodes.CREATE_ACCOUNT_INVALID_CREDENTIALS, null, exp.getCause());
+					}
+				}
             } else {
                 dcemUser = domainLogic.getUser(dcemUser.getDomainEntity().getName(), dcemUser.getAccountName());
             }
