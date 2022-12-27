@@ -1030,7 +1030,7 @@
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast</artifactId>
-				<version>3.12.1</version>
+				<version>3.12.13</version>
 			</dependency>
 
 			<dependency>
