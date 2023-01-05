@@ -1,3 +1,4 @@
+
 create table saml_sp_metadata (
 dc_id integer not null,
 acs_location varchar(255) not null,

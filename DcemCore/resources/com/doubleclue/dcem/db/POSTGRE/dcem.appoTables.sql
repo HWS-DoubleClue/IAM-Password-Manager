@@ -1,17 +1,28 @@
 
-create table up_applicationhub (
-up_id int4 not null,
-application varchar(10000) not null,
-logo bytea,
-up_name varchar(255) not null,
-primary key (up_id)
+create table appo_timeEvent (
+id  bigserial not null,
+tp_end timestamp,
+tp_start timestamp,
+userInfo varchar(4096),
+userappo int4 not null,
+timeEvent int8 not null,
+primary key (id)
 );
 
-create table up_keepassentry (
-dc_id varchar(255) not null,
-application varchar(10000),
-up_name varchar(255) not null,
-appEntity int4,
+create table appo_timetable (
+dc_id  bigserial not null,
+dc_description varchar(255),
+dc_enabled boolean,
+dc_name varchar(255),
+slotTimeMinutes int4 not null,
+primary key (dc_id)
+);
+
+create table appo_timetableEvent (
+dc_id  bigserial not null,
+dc_end timestamp,
+dc_start timestamp,
+timeEvent int8 not null,
 primary key (dc_id)
 );
 
@@ -30,8 +41,20 @@ add constraint UK_ROLE_NAME unique (dc_name);
 alter table core_user
 add constraint UK_APP_USER unique (loginId);
 
-alter table up_applicationhub
-add constraint UK_APPHUB_NAME unique (up_name);
+alter table appo_timeEvent
+add constraint FK_USER_APPOINTMENTS
+foreign key (userappo)
+references core_user;
+
+alter table appo_timeEvent
+add constraint FK_EVENT_TIMETABLE
+foreign key (timeEvent)
+references appo_timetableEvent;
+
+alter table appo_timetableEvent
+add constraint FK_EVENT_TIMETABLE
+foreign key (timeEvent)
+references appo_timetable;
 
 alter table core_group
 add constraint FK_GROUP_ROLE
@@ -77,8 +100,3 @@ alter table core_user
 add constraint FK_USER_LDAP
 foreign key (dc_ldap)
 references core_ldap;
-
-alter table up_keepassentry
-add constraint FK_KEEPASS_APP
-foreign key (appEntity)
-references up_applicationhub;

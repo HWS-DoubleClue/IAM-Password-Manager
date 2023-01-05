@@ -1,3 +1,4 @@
+
 create table as_activationcode (
 dc_id int not null,
 activationCode varbinary(MAX) not null,
@@ -300,4 +301,3 @@ alter table as_version
 add constraint FK_APP_VERSION_USER
 foreign key (user_dc_id)
 references core_user;
-

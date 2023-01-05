@@ -1,3 +1,4 @@
+
 create table core_action (
 dc_id number(10,0) not null,
 action varchar2(128 char) not null,
