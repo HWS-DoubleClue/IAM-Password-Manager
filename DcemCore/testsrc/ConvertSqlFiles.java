@@ -81,7 +81,6 @@ public class ConvertSqlFiles {
 
 		BufferedReader bufferedReader = null;
 		FileReader fileReader = null;
-		boolean coreFile = false;
 		boolean systemFile = false;
 		// boolean testFile = false;
 		try {
@@ -92,31 +91,29 @@ public class ConvertSqlFiles {
 			System.exit(-1);
 		}
 
-		if (inputFile.getPath().indexOf("dcem.system") > 0) {
+		if (inputFile.getPath().indexOf("dcem.systemTables") > 0) {
 			systemFile = true;
-		}
-
-		if (inputFile.getPath().indexOf("dcem.core") > 0) {
-			coreFile = true;
 		}
 		if (outputFile.equals(inputFile)) {
 			System.err.println("Outputfile is the same as Inputfile");
-
 			System.exit(-1);
 		}
+		String lineSeparator = System.getProperty("line.separator");
 		try {
 			FileWriter filewriter = new FileWriter(outputFile, false);
 			BufferedWriter bufferedwriter = new BufferedWriter(filewriter);
-
 			if (outputFile.equals(inputFile)) {
 				System.err.println("Outputfile is the same as Inputfile");
 				System.exit(-1);
 			}
-
 			String zeile = "";
 			String trimZeile;
 			boolean copyLines = false;
 			boolean createTableFound = false;
+
+//			if (inputFile.getPath().indexOf("dcem.time") > 0) {
+//				System.out.println("ConvertSqlFiles.convertFile() as");
+//			}
 
 			while (true) {
 				zeile = bufferedReader.readLine();
@@ -124,100 +121,41 @@ public class ConvertSqlFiles {
 					break;
 				}
 				trimZeile = zeile.trim();
-
-				if (true) {
-					if (trimZeile.indexOf("clob(255)") > 0) {
-						trimZeile = trimZeile.replaceAll("clob\\(255\\)", "clob(10M)");
-
-					}
+				if (trimZeile.isEmpty()) {
+					continue;
 				}
-
-				if (coreFile || systemFile) {
-					if (trimZeile.startsWith("create table ")) { // Search for first line
-						copyLines = true;
-					}
-				} else {
-					if (trimZeile.startsWith("create table ")) { // Search for first line
-						createTableFound = true;
-					}
-
-					if (trimZeile.contains(" on sys_") && coreFile == false) { // Search for on sys_
+				if (trimZeile.indexOf("clob(255)") > 0) {
+					trimZeile = trimZeile.replaceAll("clob\\(255\\)", "clob(10M)");
+				}
+				if (trimZeile.startsWith("create table ") || trimZeile.startsWith("alter table ") || trimZeile.startsWith("insert into ")) { // Search for first
+					if ((systemFile == false) && (trimZeile.contains(" on sys_") || trimZeile.contains(" on core_") || trimZeile.contains(" table core_")
+							|| trimZeile.contains(" table sys_") || trimZeile.startsWith("insert into core_") || trimZeile.startsWith(" insert into sys_"))) {
 						copyLines = false;
-					} else if ((trimZeile.contains(" on as_") || trimZeile.contains(" on radiuss_")) && coreFile == false) { // Search for on as_ , if no
-																																// coreFile
-						copyLines = true;
-					} else if (trimZeile.contains(" on core_") && coreFile == false) { // Search for on_core , if no coreFile
-						copyLines = false;
-					} else if ((trimZeile.contains(" on as_") || trimZeile.contains(" on radiuss_")) && coreFile == true) { // Search for on_as , if no coreFile
-						copyLines = false;
-					} else if (trimZeile.contains(" on core_") && coreFile == true) { // Search for on_core, if no coreFile
-						copyLines = true;
-					} else if (trimZeile.contains(" on licence_")) { // Search for on_licence
-						copyLines = true;
-					} else if (trimZeile.contains(" on dispatcher_")) { // Search for on_licence
-						copyLines = true;
-					} else if (trimZeile.contains(" on saml_")) { // Search for on saml
-						copyLines = true;
-					} else if (trimZeile.contains(" on otp_")) { // Search for on saml
-						copyLines = true;
-					} else if (trimZeile.contains(" on oauth_")) { // Search for on saml
-						copyLines = true;
-					} else if (trimZeile.contains(" on petshop_")) { // Search for on saml
-						copyLines = true;
-					} else if (trimZeile.contains(" on shifts_")) { // Search for on Shifts
-						copyLines = true;
-					} else if (trimZeile.contains(" on pd_")) { // Search for on Performance Deck
-						copyLines = true;
-					} else if (trimZeile.contains(" on crm_")) { // Search for on Shifts
-						copyLines = true;
-					} else if (trimZeile.contains(" on up_")) {  // Search for on userportal
-						copyLines = true;
-					} else if (trimZeile.contains(" on ftp_")) { // Search for on userportal
+					} else {
+						filewriter.write(lineSeparator);
 						copyLines = true;
 					}
 
-					if (trimZeile.startsWith("create table as_") || trimZeile.startsWith("create table test_") || trimZeile.startsWith("create table radius_")
-							|| trimZeile.startsWith("create table dispatcher_") || trimZeile.startsWith("create table licence_")
-							|| trimZeile.startsWith("create table otp_") || trimZeile.startsWith("create table oauth_")
-							|| trimZeile.startsWith("create table petshop_") || trimZeile.startsWith("create table up_")
-							|| trimZeile.startsWith("create table crm_")
-							|| trimZeile.startsWith("create table pd_")
-							|| trimZeile.startsWith("create table ftp_")
-							|| trimZeile.startsWith("create sequence up_")
-							|| trimZeile.startsWith("create sequence ftp_")
-							|| trimZeile.startsWith("create table shifts_") ||trimZeile.startsWith("create table saml_")) {
-						copyLines = true;
-					}
+					// if (trimZeile.startsWith("create table as_") || trimZeile.startsWith("create table test_") || trimZeile.startsWith("create table
+					// radius_")
+					// || trimZeile.startsWith("create table dispatcher_") || trimZeile.startsWith("create table licence_")
+					// || trimZeile.startsWith("create table otp_") || trimZeile.startsWith("create table oauth_")
+					// || trimZeile.startsWith("create table petshop_") || trimZeile.startsWith("create table up_")
+					// || trimZeile.startsWith("create table crm_") || trimZeile.startsWith("create table pd_")
+					// || trimZeile.startsWith("create table ftp_") || trimZeile.startsWith("create sequence up_")
+					// || trimZeile.startsWith("create sequence ftp_") || trimZeile.startsWith("create table shifts_")
+					// || trimZeile.startsWith("create table saml_")) {
+					// copyLines = true;
+					// }
 					if (trimZeile.startsWith("alter table if exists")) { // most probably Postgre
 						trimZeile = trimZeile.replace("alter table if exists", "alter table");
 					}
 
-					if ((trimZeile.startsWith("alter table as") || trimZeile.startsWith("alter table radius")) && createTableFound == true
-							|| trimZeile.startsWith("alter table test") && createTableFound == true // Search for alter table test
-							|| trimZeile.startsWith("alter table dispatcher") && createTableFound == true // Search for alter table test
-							|| trimZeile.startsWith("alter table licence") && createTableFound == true // Search for alter table licence
-							|| trimZeile.startsWith("alter table otp") && createTableFound == true // Search for alter table otp
-							|| trimZeile.startsWith("alter table oauth") && createTableFound == true // Search for alter table oauth
-							|| trimZeile.startsWith("alter table petshop") && createTableFound == true // Search for alter table oauth
-							|| trimZeile.startsWith("alter table up") && createTableFound == true // Search for alter table user portal
-							|| trimZeile.startsWith("alter table shifts") && createTableFound == true // Search for alter table user portal
-							|| trimZeile.startsWith("alter table crm") && createTableFound == true  // Search for alter table saml
-							|| trimZeile.startsWith("alter table pd") && createTableFound == true // Search for alter table performance deck
-							|| trimZeile.startsWith("alter table ftp") && createTableFound == true // Search for alter table performance deck
-							|| trimZeile.startsWith("alter table saml") && createTableFound == true) { // Search for alter table saml
-						copyLines = true;
-					} else if (trimZeile.startsWith("create table core_") || trimZeile.startsWith("alter table sys_")
-							|| trimZeile.startsWith("alter table core_")) {
-						// Search for create table core_ or alter table sys_ or alter table core_
-						copyLines = false;
-					}
 				}
 
 				if (copyLines == true) { // Transfer lines
 					filewriter.write(trimZeile + System.lineSeparator());
-
 				}
-
 			}
 			filewriter.close();
 			bufferedwriter.close();
@@ -226,7 +164,9 @@ public class ConvertSqlFiles {
 
 		}
 
-		catch (Exception e) {
+		catch (
+
+		Exception e) {
 			// TODO Auto-generated catch block
 			System.err.print("Couldn't convert files");
 			e.printStackTrace();
