@@ -120,12 +120,6 @@ public abstract class DcemModule implements Serializable {
 	public ModulePreferences getModulePreferences() {
 		return getModuleTenantData().getModulePreferences();
 	}
-	
-	
-
-	// abstract public HashMap<Integer, String> getAuditActions ();
-	//
-	// abstract public HashMap<Integer, String> getAuditSubjects ();
 
 	abstract public String getName();
 
@@ -135,11 +129,8 @@ public abstract class DcemModule implements Serializable {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-
 		sb.append("Id=");
 		sb.append(getId());
-
-		// TODO add the rest.
 		return sb.toString();
 	}
 
@@ -154,23 +145,6 @@ public abstract class DcemModule implements Serializable {
 	public LinkedList<RawAction> getRawActions() {
 		return rawActions;
 	}
-
-	// public List<DcemAction> getDcemActions() {
-	// return dcemActions;
-	// }
-
-	// public DcemAction getDcemAction (String action) {
-	// for (DcemAction dcemAction : dcemActions) {
-	// if (dcemAction.getAction().equals(action)) {
-	// return dcemAction;
-	// }
-	// }
-	// return null;
-	// }
-
-	// public void setDcemActions(List<DcemAction> dcemActions) {
-	// this.dcemActions = dcemActions;
-	// }
 
 	public List<String> getTextResourceKeys() {
 		return null;

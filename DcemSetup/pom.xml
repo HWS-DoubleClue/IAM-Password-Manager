@@ -19,7 +19,6 @@
 		<dependency>
 			<groupId>org.codehaus.woodstox</groupId>
 			<artifactId>woodstox-core-asl</artifactId>
-			<version>4.2.0</version>
 		</dependency>
 
 
@@ -55,13 +54,13 @@
 		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
 			</dependency> -->
 
-		<!-- <dependency>
+		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>DcemCore</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
- -->
+ 
 
 		<dependency>
 			<artifactId>AppSecureModule</artifactId>

@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.EnumSet;
@@ -51,13 +52,25 @@ public class CreateModuleTables {
 		System.out.println("Current absolute path is: " + modulePath);
 
 		if (args.length < 1) {
-			System.err.println("Please specify the Modules Name in the command parameters");
-
+			System.err.println("Please specify the Module's directory in the command parameters");
 		}
 		int ind = modulePath.lastIndexOf(File.separator);
 		modulePath = modulePath.substring(0, ind + 1);
 		modulePath += args[0];
-
+		
+		File moduleFile = new File(modulePath);
+		try {
+			modulePath = moduleFile.getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+			modulePath = moduleFile.getAbsolutePath();
+		}
+		if (moduleFile.exists() == false) {
+			System.err.println("ERROR: The Module directory does not exists. " + modulePath);
+			System.exit(-2);
+		} 
+		
+        String outputResources = "resources";
 		String outputDir = modulePath + File.separator + "target" + File.separator + "tables";
 		System.out.println("Output Directory = " + outputDir);
 		String persistencePath = modulePath + File.separator + "src" + File.separator + "META-INF" + File.separator + "persistence.xml";
@@ -68,6 +81,7 @@ public class CreateModuleTables {
 			if (persistenceFile.exists() == false) {
 				persistencePath = modulePath + File.separator + "src/main/resources" + File.separator + "META-INF" + File.separator + "persistence.xml";
 				persistenceFile = new File(persistencePath);
+				outputResources = "src/main/resources";
 				if (persistenceFile.exists() == false) {
 					System.err.println("ERROR: 'persistence.xml' NOT FOUND In " + persistencePath);
 					System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
@@ -177,7 +191,7 @@ public class CreateModuleTables {
 		}
 		System.out.println("Tables created, now improving the sql scripts");
 		File inputDirectory = new File(outputDir);
-		File outputDirectory = new File(modulePath + File.separator + "resources" + File.separator + "DB-Tables");
+		File outputDirectory = new File(modulePath + File.separator + outputResources + File.separator + "DB-Tables");
 		try {
 			System.out.println("						Input directory:		" + inputDirectory.getPath());
 			System.out.println("						Output directory:		" + outputDirectory.getPath());
