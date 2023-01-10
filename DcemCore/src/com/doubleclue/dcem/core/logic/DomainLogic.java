@@ -51,7 +51,7 @@ public class DomainLogic implements ReloadClassInterface {
 	public final static String MEMBER_OF = "memberOf";
 	public final static String MEMBER = "member";
 	public final static String GROUP_NAME = "name";
-	public static int PAGE_SIZE = 1000;
+	public static int PAGE_SIZE = 2000;
 
 	@Inject
 	EntityManager em;
