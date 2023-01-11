@@ -79,10 +79,10 @@ public class DcemTrustManager extends X509ExtendedTrustManager {
 	public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine arg2) throws CertificateException {
 		if (saveServerChainCertificates) {
 			serverChainCertificates = chain;
-			if (logger.isDebugEnabled() == true) {
+			if (logger.isTraceEnabled() == true) {
 				for (X509Certificate certificate : chain) {
-					logger.debug("Server Certificate: " + certificate.getSubjectDN().getName().toString());
-					logger.debug("-----BEGIN CERTIFICATE-----\n" + java.util.Base64.getEncoder().encodeToString(certificate.getEncoded()) + "\n-----END CERTIFICATE-----");
+					logger.trace("Server Certificate: " + certificate.getSubjectDN().getName().toString());
+					logger.trace("-----BEGIN CERTIFICATE-----\n" + java.util.Base64.getEncoder().encodeToString(certificate.getEncoded()) + "\n-----END CERTIFICATE-----");
 				}
 			}
 		}
