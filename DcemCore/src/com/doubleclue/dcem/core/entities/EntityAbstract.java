@@ -20,6 +20,10 @@ public abstract class EntityAbstract  {
 		this.jpaVersion = jpaVersion;
 	}
 	
+	public String getRowStyle() {
+		return null;
+	}
+	
 	
 
 //	@Override

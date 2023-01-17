@@ -724,6 +724,7 @@ public class DcemApplicationBean implements Serializable {
 		if (path.startsWith(DcemConstants.EMBEDDED_USER_PORTAL_PATH)) {
 			return DcemConstants.DCEM_PORTAL_THEME;
 		}
+		//return "Luna-Blue";
 		return DcemConstants.DCEM_THEME;
 	}
 

@@ -72,8 +72,6 @@ public class DomainLdap implements DomainApi {
 	private static final String AD_ERROR_USER_ACCOUNT_LOCKED = "775,";
 	private static final String AD_ERROR_USER_PASSWORD_EXPIRED = "532,";
 	// private static final String AD_ERROR_INVALID_CREDENTIALS = "52e,";
-
-	private static int PAGE_SIZE = 500;
 	private static Hashtable<String, Object> ldapEnvironment;
 
 	private String[] defaultUserReturnedAtts;
@@ -164,7 +162,7 @@ public class DomainLdap implements DomainApi {
 		String dn = dcemUser.getUserDn();
 		String userAccountName = dcemUser.getAccountName();
 		if (dn == null || dcemUser.getImmutableId() == null) {
-			Map<String, Attributes> map = getUsersAttributeMap(null, null, null, userAccountName, defaultUserReturnedAtts, PAGE_SIZE);
+			Map<String, Attributes> map = getUsersAttributeMap(null, null, null, userAccountName, defaultUserReturnedAtts, DomainLogic.PAGE_SIZE);
 			if (map.size() != 1) {
 				throw new DcemException(DcemErrorCodes.LDAP_SEARCH_USER_FAILED, "User not found: " + dcemUser.getLoginId());
 			}
@@ -177,7 +175,7 @@ public class DomainLdap implements DomainApi {
 			login(dn, password, true);
 		} catch (DcemException exp) {
 			if (exp.getErrorCode() == DcemErrorCodes.DOMAIN_WRONG_AUTHENTICATION) {
-				Map<String, Attributes> map = getUsersAttributeMap(null, null, null, userAccountName, defaultUserReturnedAtts, PAGE_SIZE);
+				Map<String, Attributes> map = getUsersAttributeMap(null, null, null, userAccountName, defaultUserReturnedAtts, DomainLogic.PAGE_SIZE);
 				if (map.size() != 1) {
 					throw new DcemException(DcemErrorCodes.DOMAIN_WRONG_AUTHENTICATION, "User not found: " + userAccountName, exp);
 				}
@@ -194,7 +192,7 @@ public class DomainLdap implements DomainApi {
 			throw new DcemException(DcemErrorCodes.DOMAIN_WRONG_AUTHENTICATION, "generic exception for user: " + userAccountName, exp);
 		}
 		logger.debug("Login Successful");
-		Map<String, Attributes> map = getUsersAttributeMap(null, null, dn, userAccountName, defaultUserReturnedAtts, PAGE_SIZE);
+		Map<String, Attributes> map = getUsersAttributeMap(null, null, dn, userAccountName, defaultUserReturnedAtts, DomainLogic.PAGE_SIZE);
 		Attribute attribute = null;
 		if (map.isEmpty() == false) {
 			dcemLdapAttributes = getDcemLdapAttributes(map.values().iterator().next());
@@ -607,7 +605,7 @@ public class DomainLdap implements DomainApi {
 	@Override
 	public List<DcemUser> getGroupMembers(DcemGroup dcemGroup, String filter) throws DcemException {
 
-		Map<String, Attributes> map = getUsersAttributeMap(null, dcemGroup.getGroupDn(), null, null, defaultUserReturnedAtts, PAGE_SIZE);
+		Map<String, Attributes> map = getUsersAttributeMap(null, dcemGroup.getGroupDn(), null, null, defaultUserReturnedAtts, DomainLogic.PAGE_SIZE);
 		List<DcemUser> userList = new ArrayList<>(map.size());
 		Attributes attributes;
 		String loginId;
@@ -636,7 +634,7 @@ public class DomainLdap implements DomainApi {
 
 	@Override
 	public DcemUser getUser(String loginId) throws DcemException {
-		Map<String, Attributes> map = getUsersAttributeMap(null, null, null, loginId, defaultUserReturnedAtts, PAGE_SIZE);
+		Map<String, Attributes> map = getUsersAttributeMap(null, null, null, loginId, defaultUserReturnedAtts, DomainLogic.PAGE_SIZE);
 		if (map.size() == 1) {
 			try {
 				Attributes attributes = map.values().iterator().next();
