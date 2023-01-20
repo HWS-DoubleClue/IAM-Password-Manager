@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -395,46 +396,27 @@ public class JpaSelectProducer<T> implements Serializable {
 				break;
 
 			case DATE: {
-				Expression<Date> expressionDate = preFrom.<Date> get((SingularAttribute<Object, Date>) attribute);
 				if (filterProperty.getValue() == null) {
 					continue;
 				}
-				Date date;
-				if (filterProperty.getValue() instanceof LocalDate) {
-					Instant instant = ((LocalDate) filterProperty.getValue()).atStartOfDay(ZoneId.systemDefault()).toInstant();
-					date = Date.from(instant);
+				if (attribute.getJavaType().getSimpleName().equals("LocalDateTime")) {
+					Expression<LocalDateTime> expressionLocalDate = preFrom.<LocalDateTime> get((SingularAttribute<Object, LocalDateTime>) attribute);
+					List<LocalDate> dates = (List<LocalDate>) filterProperty.getValue();
+					if (dates.size() > 1) {
+						LocalDateTime localDateTimeMin = LocalDateTime.of(dates.get(0), LocalTime.MIN);
+						LocalDateTime localDateTimeMax = LocalDateTime.of(dates.get(1), LocalTime.MAX);
+						predicates.add(cb.between(expressionLocalDate, localDateTimeMin, localDateTimeMax));
+					}
 				} else {
+					Expression<Date> expressionDate = preFrom.<Date> get((SingularAttribute<Object, Date>) attribute);
 					List<LocalDate> dates = (List<LocalDate>) filterProperty.getValue();
 					if (dates.size() > 1) {
 						predicates.add(cb.between(expressionDate, DcemUtils.getDayBegin(dates.get(0)), DcemUtils.getDayEnd(dates.get(1))));
 					}
-					
-					filterProperty.setValue(null);
 				}
-				// switch (filterProperty.getFilterOperator()) {
-				// case EQUALS:
-				// predicates.add(cb.between(expressionDate, DcemUtils.setDayBegin(date), DcemUtils.setDayEnd(date)));
-				// break;
-				// case LESSER:
-				// predicates.add(cb.lessThan(expressionDate, DcemUtils.setDayBegin(date)));
-				// break;
-				// case GREATER:
-				// predicates.add(cb.greaterThan(expressionDate, DcemUtils.setDayEnd(date)));
-				// break;
-				// case BETWEEN:
-				// Date toDate = (Date) filterProperty.getToValue();
-				// if (toDate == null) {
-				// logger.warn("Filter-Operator is BETWEEN, but toValue is missing");
-				// break;
-				// }
-				// predicates.add(cb.between(expressionDate, DcemUtils.setDayBegin(date), DcemUtils.setDayEnd(toDate)));
-				// break;
-				// default:
-				// break;
-				// }
-
-				break;
+				filterProperty.setValue(null);
 			}
+				break;
 
 			case DATE_TIME: {
 				Expression<Date> expressionDate = preFrom.<Date> get((SingularAttribute<Object, Date>) attribute);

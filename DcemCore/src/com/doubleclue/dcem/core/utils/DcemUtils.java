@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -273,7 +274,7 @@ public class DcemUtils {
 			if (dcemGui.filterToValue().isEmpty() == false) {
 				filterToValue = Boolean.parseBoolean(dcemGui.filterToValue());
 			}
-		} else if ((cls.equals(Date.class)) || (cls.equals(Timestamp.class)) || (cls.equals(java.sql.Date.class))) {
+		} else if ((cls.equals(Date.class)) || (cls.equals(Timestamp.class)) || (cls.equals(java.sql.Date.class) || (cls.equals(LocalDateTime.class)))) {
 			Convert convert = field.getAnnotation(Convert.class);
 			if (convert != null && convert.converter().equals(EpochDateConverter.class)) {
 				variableType = VariableType.EPOCH_DATE;
