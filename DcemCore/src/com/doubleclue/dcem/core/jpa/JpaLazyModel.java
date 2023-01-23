@@ -338,7 +338,7 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 			return dataSize;
 		} catch (Exception exp) {
 			logger.warn("jpaSelectProducer.createCountCriteriaQuery", exp);
-			JsfUtils.addErrorMessage(exp.toString());
+			JsfUtils.addErrorMessage(exp.toString() +  "For " + dcemView.getSubject().getKlass());
 			return 0;
 		}
 	}

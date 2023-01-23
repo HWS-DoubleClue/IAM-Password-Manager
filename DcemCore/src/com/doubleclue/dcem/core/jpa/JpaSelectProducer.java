@@ -247,6 +247,9 @@ public class JpaSelectProducer<T> implements Serializable {
 			}
 
 			int length = filterProperty.getAttributes().size();
+			if (filterProperty.getAttributes() == null || filterProperty.getAttributes().size() == 0) {
+				throw new DcemException (DcemErrorCodes.MISSING_META_DATA_ATRIBUTES, filterProperty.toString());
+			}
 			SingularAttribute<?, ?> attribute = filterProperty.getAttributes().get(length - 1);
 
 			From<?, ?> from = null;
