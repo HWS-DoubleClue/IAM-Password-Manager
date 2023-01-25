@@ -20,7 +20,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="bin" path="resources">
+	<classpathentry kind="src" output="bin" path="resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>

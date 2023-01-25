@@ -23,5 +23,7 @@ rt_expires_on timestamp,
 scope varchar(255),
 primary key (client_id, user_id)
 );
+
 create unique index UK_OAUTH_CLIENT_ENTITYID on oauth_client (client_id);
+
 create unique index UK_OAUTH_CLIENT_DISPLAY_NAME on oauth_client (display_name);

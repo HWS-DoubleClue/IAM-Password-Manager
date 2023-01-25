@@ -283,6 +283,7 @@ add constraint UK_ROLE_NAME unique (dc_name);
 
 alter table core_rolerestriction
 add constraint UK_ROLE_RESTRICTION unique (dc_role, moduleId, viewName, variableName);
+
 create index statisticTimestamp on core_statistic (dc_timestamp);
 
 alter table core_template

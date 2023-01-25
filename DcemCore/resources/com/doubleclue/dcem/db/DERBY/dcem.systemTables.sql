@@ -265,19 +265,33 @@ dc_name varchar(32) not null,
 dc_schema varchar(32),
 primary key (dc_id)
 );
+
 create unique index UK_SEM_ACTION on core_action (moduleId, subject, action);
+
 create unique index UK_CONFIG_NAME on core_config (moduleId, dc_key);
+
 create unique index UK_APP_GROUP on core_group (dc_name);
+
 create unique index UK_LDAP_NAME on core_ldap (name);
+
 create unique index UK_ROLE_NAME on core_role (dc_name);
+
 create unique index UK_ROLE_RESTRICTION on core_rolerestriction (dc_role, moduleId, viewName, variableName);
+
 create index statisticTimestamp on core_statistic (dc_timestamp);
+
 create unique index UK_APP_TEMPLATE on core_template (dc_name, language, dc_version);
+
 create unique index UK_RESOURCE_MESSAGE_KEY on core_textMessage (dc_key, textResourceBundle);
+
 create unique index UK_RESOURCE_LOCALE_BASENAME on core_textResourceBundle (locale, basename);
+
 create unique index UK_APP_USER on core_user (loginId);
+
 create unique index UK_NODE_NAME on sys_node (dc_name);
+
 create unique index UK_TENANT_NAME on sys_tenant (dc_name);
+
 create unique index UK_TENANT_SCHEMA on sys_tenant (dc_schema);
 
 alter table core_auditing
