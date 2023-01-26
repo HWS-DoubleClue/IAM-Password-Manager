@@ -19,9 +19,9 @@
 	position: relative;
 	padding: 0;
 	margin: 0;
-	line-height:5vh;
+	line-height: 5vh;
 	vertical-align: middle;
- }
+}
 
 .menuRightbtn {
 	position: static;
@@ -93,7 +93,7 @@
 }
 
 .upDialogTitle {
-	color:white !important;
+	color: white !important;
 	font-size: 1.6em;
 	vertical-align: middle;
 	margin-left: 0.5em;
@@ -102,7 +102,7 @@
 }
 
 .dialogTitle {
-	color:white !important;
+	color: white !important;
 	font-size: 1.6em;
 	vertical-align: middle;
 	margin-left: 0.5em;
@@ -307,13 +307,14 @@
 	.welcomeTableCellImage:hover, #refreshbtn:hover, .recentFileLink:hover,
 	.LogoffLink:hover, .loginLinkExpired:hover, .addNewDeviceText:hover,
 	.iconsButtons:hover, .closeDialog.ui-commandlink:hover, .ui-breadcrumb .ui-menuitem-text:hover,
-	.iconHelpBtn:hover, .iconCloseHelpBtn:hover, .applicationHoverBtn:hover, .actionBarButtons:hover,.portalMenuItems.ui-commandlink:hover,.portalMenuText:hover
-	{
+	.iconHelpBtn:hover, .iconCloseHelpBtn:hover, .applicationHoverBtn:hover,
+	.actionBarButtons:hover, .portalMenuItems.ui-commandlink:hover,
+	.portalMenuText:hover {
 	cursor: pointer;
 	color: #EA5079 !important;
 }
 
-.portalMenuItems.ui-commandlink{
+.portalMenuItems.ui-commandlink {
 	text-decoration: none;
 }
 
@@ -650,8 +651,8 @@
 }
 
 .ui-dataview.myApplicationGrid .ui-dataview-row {
-	width: 100%;
-	margin: 0 auto;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .ui-selectlistbox-listcontainer {
@@ -676,7 +677,7 @@
 .ui-selectlistbox-filter.ui-inputfield {
 	border: 1px solid #C3C3C3 !important;
 	width: 81% !important;
-    padding-left: 15px !important;
+	padding-left: 15px !important;
 }
 
 .iconHelpBtn {
@@ -709,7 +710,7 @@
 	left: 80%;
 }
 
- .applicationButtonView{
+.applicationButtonView {
 	display: inherit !important;
 	width: 1.6em !important;
 	height: 1.6em !important;
@@ -721,7 +722,8 @@
 	left: 80%;
 }
 
-.applicationButtonClose:hover, .applicationButtonEdit:hover, .applicationButtonView:hover  {
+.applicationButtonClose:hover, .applicationButtonEdit:hover,
+	.applicationButtonView:hover {
 	background-color: #fff !important;
 }
 
@@ -786,7 +788,7 @@
 	margin: 0 auto 8%;
 }
 
-.toggleable-panel .ui-panel-title{
+.toggleable-panel .ui-panel-title {
 	cursor: pointer;
 }
 
@@ -795,13 +797,14 @@
 	padding: 0.5em;
 }
 
-.imageProfileUser{
+.imageProfileUser {
 	border: 1px solid #005078;
-	height: 8em;width: 8em;
+	height: 8em;
+	width: 8em;
 	border-radius: 4em;
 }
 
-.ui-password.ui-password-masked .ui-password-icon, .ui-password.ui-password-unmasked .ui-password-icon:before{
+.ui-password.ui-password-masked .ui-password-icon, .ui-password.ui-password-unmasked .ui-password-icon:before
+	{
 	margin-left: 0.2em;
 }
-
