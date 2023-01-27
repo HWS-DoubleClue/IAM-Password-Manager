@@ -112,9 +112,9 @@ public class ConvertSqlFiles {
 			boolean copyLines = false;
 			boolean createTableFound = false;
 
-			if (inputFile.getPath().contains("POSTGRE") && inputFile.getPath().contains("asTable")) {
-				System.out.println("ConvertSqlFiles.convertFile() as");
-			}
+//			if (inputFile.getPath().contains("POSTGRE") && inputFile.getPath().contains("asTable")) {
+//				System.out.println("ConvertSqlFiles.convertFile() as");
+//			}
 
 			while (true) {
 				zeile = bufferedReader.readLine();
@@ -129,7 +129,7 @@ public class ConvertSqlFiles {
 					trimZeile = trimZeile.replaceAll("clob\\(255\\)", "clob(10M)");
 				}
 				if (trimZeile.startsWith("create table ") || trimZeile.startsWith("alter table ") || trimZeile.startsWith("insert into ")
-						|| trimZeile.startsWith("create index ") || trimZeile.startsWith("create unique ")) { 
+						|| trimZeile.startsWith("create index ") || trimZeile.startsWith("create unique ") || trimZeile.startsWith("create sequence ") ) { 
 					// Search for first
 					System.out.println("ConvertSqlFiles.convertFile() LINE " + trimZeile);
 					if ((systemFile == false) && (trimZeile.contains(" on sys_") || trimZeile.contains(" core_") 
