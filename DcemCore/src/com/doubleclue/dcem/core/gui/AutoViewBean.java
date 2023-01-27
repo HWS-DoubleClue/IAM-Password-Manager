@@ -1,6 +1,7 @@
 package com.doubleclue.dcem.core.gui;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +23,7 @@ import org.primefaces.model.SortOrder;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
+import com.doubleclue.dcem.core.logic.module.ModulePreferences;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 
 @Named("autoView")
@@ -32,7 +34,7 @@ public class AutoViewBean implements Serializable {
 
 	@Inject
 	ViewNavigator viewNavigator;
-	
+
 	@Inject
 	OperatorSessionBean sessionBean;
 
@@ -94,9 +96,24 @@ public class AutoViewBean implements Serializable {
 		if (viewNavigator.getActiveView() == null) {
 			return null;
 		}
+
+		ModulePreferences preferences = viewNavigator.getActiveModule().getModulePreferences();
+		try {
+			Method method = preferences.getClass().getMethod("getManualsLink", (Class[]) null);
+			String methodLink = (String) method.invoke(preferences, (Object[]) null);
+			if (methodLink != null && methodLink.startsWith("http")) {
+				// if (methodLink.endsWith("pdf") && sessionBean.getDcemUser().getLanguage() == SupportedLanguage.German) {
+				// methodLink = methodLink.substring(getCount());
+				// }
+				// Internationalization missing
+				return methodLink;
+			}
+			System.out.println("AutoViewBean.getHelpResource() Link  " + methodLink);
+		} catch (Exception e) {
+		}
 		String manualsPath;
 		String page;
-		
+
 		switch (sessionBean.getDcemUser().getLanguage()) {
 		case German:
 			manualsPath = DcemConstants.MANUALS_URL_LOCATION + Locale.GERMAN.toString().toUpperCase() + DcemConstants.PDF_EXT;

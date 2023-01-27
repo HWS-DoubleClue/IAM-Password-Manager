@@ -139,7 +139,7 @@ public class UserPortalModule extends DcemModule {
 			if (visibleActions.get(actionItem) == null) {
 				visibleActions.put(actionItem, false);
 			}
-		}		
+		}
 	}
 
 	@Override
@@ -148,6 +148,10 @@ public class UserPortalModule extends DcemModule {
 
 	public boolean isEnableCaptcha() {
 		return dcemApplicationBean.isCaptchaOn() && getModulePreferences().isEnableCaptcha();
+	}
+
+	public boolean isEnableSwitchToUserportal() {
+		return getModulePreferences().isEnableSwitchToUserportal();
 	}
 
 	public SupportedLanguage[] getSupportedLanguages() {

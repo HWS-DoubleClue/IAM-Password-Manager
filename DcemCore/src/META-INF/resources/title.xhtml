@@ -19,7 +19,8 @@
 				<td id="sidebarbtn" style="text-align: left; padding-left: 0.5em"><span class="fa fa-bars" style="cursor: pointer; font-size: 1.8em;"
 					onclick="openNav()" onmousedown="setLocalStorageValue('sideMenuOpen',true);removeLocalStorage('sideMenuClose')"></span></td>
 
-				<td><h:outputText value="#{adminModule.titleEnterpriseManagment} " /> <h:outputText class="fa fa-shuffle" style="color: white; font-size: 1.6em" rendered="#{operatorSession.masterAdminGuest}" /></td>
+				<td><h:outputText value="#{adminModule.titleEnterpriseManagment} " /> <h:outputText class="fa fa-shuffle" style="color: white; font-size: 1.6em"
+						rendered="#{operatorSession.masterAdminGuest}" /></td>
 				<td><p:ajaxStatus id="ajaxStatus">
 						<f:facet name="start">
 							<h:graphicImage library="pictures" name="waiting-icon.gif" style="border: 0; height: 32px" />
@@ -31,7 +32,8 @@
 					<div style="display: block; vertical-align: middle;">
 						<h:panelGroup>
 							<div style="display: inline-block; vertical-align: middle;">
-								<p:commandLink action="#{adminModule.actionRedirectionToUserPortal}" title="#{DcupMsg['title.switchToUserportal']}">
+								<p:commandLink action="#{adminModule.actionRedirectionToUserPortal}" title="#{DcupMsg['title.switchToUserportal']}"
+									rendered="#{userPortalModule.enableSwitchToUserportal}">
 									<i class="fa fa-exchange" style="color: white; font-size: 1.2em" />
 								</p:commandLink>
 							</div>
@@ -50,9 +52,9 @@
 											<h:outputText value="#{CoreMsg['menu.logoff']}" icon="fa fa-sign-out" />
 										</p:commandLink>
 									</p:overlayPanel>
-									<p:avatar dynamicColor="true" styleClass="p-mr-2" size="xlarge"
-										shape="circle">
-										<p:graphicImage value="#{operatorSession.getFotoProfileUser()}" stream="false" title="#{operatorSession.dcemUser.displayName} at #{dcemApplication.nodeName}" />
+									<p:avatar dynamicColor="true" styleClass="p-mr-2" size="xlarge" shape="circle">
+										<p:graphicImage value="#{operatorSession.getFotoProfileUser()}" stream="false"
+											title="#{operatorSession.dcemUser.displayName} at #{dcemApplication.nodeName}" />
 									</p:avatar>
 								</p:commandLink>
 							</div>
