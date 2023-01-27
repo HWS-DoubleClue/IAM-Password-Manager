@@ -15,68 +15,8 @@ appEntity int4,
 primary key (dc_id)
 );
 
-alter table core_action
-add constraint UK_SEM_ACTION unique (moduleId, subject, action);
-
-alter table core_group
-add constraint UK_APP_GROUP unique (dc_name);
-
-alter table core_ldap
-add constraint UK_LDAP_NAME unique (name);
-
-alter table core_role
-add constraint UK_ROLE_NAME unique (dc_name);
-
-alter table core_user
-add constraint UK_APP_USER unique (loginId);
-
 alter table up_applicationhub
 add constraint UK_APPHUB_NAME unique (up_name);
-
-alter table core_group
-add constraint FK_GROUP_ROLE
-foreign key (dc_role)
-references core_role;
-
-alter table core_group
-add constraint FK_GROUP_LDAP
-foreign key (dc_ldap)
-references core_ldap;
-
-alter table core_ref_user_group
-add constraint FK_GROUP_USER
-foreign key (user_id)
-references core_user;
-
-alter table core_ref_user_group
-add constraint FK_USER_GROUP
-foreign key (group_id)
-references core_group;
-
-alter table core_role_core_action
-add constraint FK_ROLE_ACTION
-foreign key (actions_dc_id)
-references core_action;
-
-alter table core_role_core_action
-add constraint FKm8fcladhxpesfv9gs7r0leqqg
-foreign key (core_role_dc_id)
-references core_role;
-
-alter table core_user
-add constraint FK_USER_ROLE
-foreign key (dc_role)
-references core_role;
-
-alter table core_user
-add constraint FK_USER_EXTENSION
-foreign key (userext)
-references core_userext;
-
-alter table core_user
-add constraint FK_USER_LDAP
-foreign key (dc_ldap)
-references core_ldap;
 
 alter table up_keepassentry
 add constraint FK_KEEPASS_APP

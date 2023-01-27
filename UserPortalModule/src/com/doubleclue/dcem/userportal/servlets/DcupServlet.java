@@ -35,6 +35,7 @@ import com.doubleclue.dcup.gui.CloudSafeView;
 import com.doubleclue.dcup.gui.EndMessageView;
 import com.doubleclue.dcup.gui.ForgotPasswordView;
 import com.doubleclue.dcup.gui.PortalSessionBean;
+import com.doubleclue.dcup.gui.RegisterView;
 import com.doubleclue.dcup.logic.DcupConstants;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ResourceBundleUtf8Control;
@@ -71,6 +72,9 @@ public class DcupServlet extends HttpServlet {
 
 	@Inject
 	CloudSafeLogic cloudSafeLogic;
+	
+	@Inject
+	RegisterView registerView;
 
 	private static final Logger logger = LogManager.getLogger(DcupServlet.class);
 
@@ -143,23 +147,21 @@ public class DcupServlet extends HttpServlet {
 				if (token == null) {
 					throw new Exception("no token received");
 				}
-				UrlTokenEntity urlTokenEntity = new UrlTokenEntity();
-				urlTokenEntity.setUrlTokenType(tokenType);
-				urlTokenEntity.setUrlToken(token);
-				String objectIdentifier = urlTokenLogic.verifyUrlToken(urlTokenEntity.getUrlToken(), tokenType.name());
+				UrlTokenEntity urlTokenEntity = urlTokenLogic.verifyUrlToken(token, tokenType.name());
 				DcemUser dcemUser;
 				if (tokenType != null) {
 					switch (tokenType) {
 					case ResetPassword:
-						dcemUser = userLogic.getUser(Integer.valueOf(objectIdentifier));
+						dcemUser = userLogic.getUser(Integer.valueOf(urlTokenEntity.getObjectIdentifier()));
 						portalSessionBean.setDcemUser(dcemUser);
 						forgotPasswordView.setUsername(dcemUser.getLoginId());
 						respondHttpRequest(true, request, response);
 						break;
 					case VerifyEmail:
-						dcemUser = userLogic.getUser(Integer.valueOf(objectIdentifier));
+						dcemUser = userLogic.getUser(Integer.valueOf(urlTokenEntity.getObjectIdentifier()));
 						userLogic.enableUserWoAuditing(dcemUser);
 						portalSessionBean.setDcemUser(dcemUser);
+						registerView.setUrlTokenEntity(urlTokenEntity);
 						response.sendRedirect(request.getContextPath() + DcupConstants.WEB_USER_PORTAL_CONTEXT + "/" + DcupConstants.JSF_NOTIFICATION_PAGE);
 						break;
 					}

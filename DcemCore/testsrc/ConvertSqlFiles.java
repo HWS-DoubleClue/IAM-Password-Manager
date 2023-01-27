@@ -98,6 +98,7 @@ public class ConvertSqlFiles {
 			System.err.println("Outputfile is the same as Inputfile");
 			System.exit(-1);
 		}
+		System.out.println("ConvertSqlFiles: " + inputFile);
 		String lineSeparator = System.getProperty("line.separator");
 		try {
 			FileWriter filewriter = new FileWriter(outputFile, false);
@@ -111,9 +112,9 @@ public class ConvertSqlFiles {
 			boolean copyLines = false;
 			boolean createTableFound = false;
 
-			// if (inputFile.getPath().indexOf("dcem.time") > 0) {
-			// System.out.println("ConvertSqlFiles.convertFile() as");
-			// }
+			if (inputFile.getPath().contains("POSTGRE") && inputFile.getPath().contains("asTable")) {
+				System.out.println("ConvertSqlFiles.convertFile() as");
+			}
 
 			while (true) {
 				zeile = bufferedReader.readLine();
@@ -128,9 +129,11 @@ public class ConvertSqlFiles {
 					trimZeile = trimZeile.replaceAll("clob\\(255\\)", "clob(10M)");
 				}
 				if (trimZeile.startsWith("create table ") || trimZeile.startsWith("alter table ") || trimZeile.startsWith("insert into ")
-						|| trimZeile.startsWith("create index ") || trimZeile.startsWith("create unique ")) { // Search for first
-					if ((systemFile == false) && (trimZeile.contains(" on sys_") || trimZeile.contains(" on core_") || trimZeile.contains(" table core_")
-							|| trimZeile.contains(" table sys_") || trimZeile.startsWith("insert into core_") || trimZeile.startsWith(" insert into sys_"))) {
+						|| trimZeile.startsWith("create index ") || trimZeile.startsWith("create unique ")) { 
+					// Search for first
+					System.out.println("ConvertSqlFiles.convertFile() LINE " + trimZeile);
+					if ((systemFile == false) && (trimZeile.contains(" on sys_") || trimZeile.contains(" core_") 
+							|| trimZeile.contains(" sys_") || trimZeile.startsWith("insert into core_") || trimZeile.startsWith(" insert into sys_"))) {
 						copyLines = false;
 					} else {
 						filewriter.write(lineSeparator);

@@ -324,8 +324,8 @@ public class UserApiServiceImpl {
 
 	public Response verifyUrlToken(AsApiUrlToken urlToken, SecurityContext securityContext) {
 		try {
-			String objectIdentitifier  = urlTokenLogic.verifyUrlToken(urlToken.getToken(), urlToken.getUrlTokenUsage().toString());
-			DcemUser dcemUser = userLogic.getUser(Integer.parseInt(objectIdentitifier));
+			UrlTokenEntity urlTokenEntity  = urlTokenLogic.verifyUrlToken(urlToken.getToken(), urlToken.getUrlTokenUsage().toString());
+			DcemUser dcemUser = userLogic.getUser(Integer.parseInt(urlTokenEntity.getObjectIdentifier()));
 			AsApiUser asApiUser = new AsApiUser();
 			DcemUtils.copyObject(dcemUser, asApiUser);
 			if (dcemUser.getLanguage() != null) {

@@ -58,8 +58,7 @@ public class UrlTokenLogic {
 		return entity;
 	}
 
-	@DcemTransactional
-	public String verifyUrlToken(String urlToken, String type) throws DcemException {
+	public UrlTokenEntity verifyUrlToken(String urlToken, String type) throws DcemException {
 		UrlTokenEntity entity = em.find(UrlTokenEntity.class, urlToken);
 		if (entity == null) {
 			if (logger.isDebugEnabled()) {
@@ -68,17 +67,20 @@ public class UrlTokenLogic {
 			throw new DcemException(DcemErrorCodes.URL_TOKEN_INVALID, null);
 		}
 		if (entity.getExpiryDate().getTime() < new Date().getTime()) {
-			em.remove(entity);
 			throw new DcemException(DcemErrorCodes.URT_TOKEN_OUT_OF_DATE, null);
 		}
 		if (entity.getUrlTokenType().toString().equals(type) == false) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("URL Token wrong Type: " + urlToken + " Type: " + type);
-			}
 			throw new DcemException(DcemErrorCodes.URL_TOKEN_INVALID, null);
 		}
-		em.remove(entity);
-		return entity.getObjectIdentifier();
+		return entity;
+	}
+
+	@DcemTransactional
+	public void deleteUrlToken(UrlTokenEntity entity) {
+		UrlTokenEntity entity2 = em.find(UrlTokenEntity.class, entity.getUrlToken());
+		if (entity2 != null) {
+			em.remove(entity2);
+		}
 	}
 
 	public void sendUrlTokenByEmail(DcemUser dcemUser, String url, UrlTokenEntity urlTokenEntity) throws DcemException {
