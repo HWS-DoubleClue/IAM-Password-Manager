@@ -35,6 +35,7 @@ import com.doubleclue.dcup.gui.CloudSafeView;
 import com.doubleclue.dcup.gui.EndMessageView;
 import com.doubleclue.dcup.gui.ForgotPasswordView;
 import com.doubleclue.dcup.gui.PortalSessionBean;
+import com.doubleclue.dcup.gui.RegisterView;
 import com.doubleclue.dcup.logic.DcupConstants;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ResourceBundleUtf8Control;
