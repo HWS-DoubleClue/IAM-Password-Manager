@@ -108,7 +108,6 @@ public class AutoViewBean implements Serializable {
 				// Internationalization missing
 				return methodLink;
 			}
-			System.out.println("AutoViewBean.getHelpResource() Link  " + methodLink);
 		} catch (Exception e) {
 		}
 		String manualsPath;
