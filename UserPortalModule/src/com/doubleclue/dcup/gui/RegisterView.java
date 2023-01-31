@@ -103,6 +103,7 @@ public class RegisterView implements Serializable {
 	private String recoveryKey;
 	private String userLoginName;
 	private String activationCode = "";
+	UrlTokenEntity urlTokenEntity;
 
 	@PostConstruct
 	public void init() {
@@ -118,6 +119,9 @@ public class RegisterView implements Serializable {
 	}
 
 	public String actionGotoLogin() {
+		if (urlTokenEntity != null) {
+			urlTokenLogic.deleteUrlToken(urlTokenEntity);
+		}
 		endConversation();
 		return DcupConstants.LOGIN_PAGE + DcemConstants.FACES_REDIRECT;
 	}
@@ -549,6 +553,14 @@ public class RegisterView implements Serializable {
 			text = portalSessionBean.getResourceBundle().getString("registration.userInfoLocal");
 		}
 		return text;
+	}
+
+	public UrlTokenEntity getUrlTokenEntity() {
+		return urlTokenEntity;
+	}
+
+	public void setUrlTokenEntity(UrlTokenEntity urlTokenEntity) {
+		this.urlTokenEntity = urlTokenEntity;
 	}
 
 }
