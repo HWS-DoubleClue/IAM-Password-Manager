@@ -31,8 +31,9 @@ import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.CookieHelper;
 import com.doubleclue.dcem.core.logic.DomainAzure;
 import com.doubleclue.dcem.core.logic.DomainLogic;
-import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
+import com.doubleclue.dcem.system.logic.SystemModule;
+import com.doubleclue.dcem.system.logic.SystemPreferences;
 
 public abstract class DcemFilter implements Filter {
 
@@ -44,6 +45,9 @@ public abstract class DcemFilter implements Filter {
 
 	@Inject
 	UserLogic userLogic;
+	
+	@Inject
+	SystemModule systemModule;
 
 	private static final Logger logger = LogManager.getLogger(DcemFilter.class);
 
@@ -51,6 +55,26 @@ public abstract class DcemFilter implements Filter {
 	private static final String FACES_AJAX_REQUEST = "partial/ajax";
 	private static final String OPEN_SUFFIX = "_.xhtml";
 	private static final String HTTP = "http://";
+
+	// HSTS
+	private static final String HSTS_HEADER_NAME = "Strict-Transport-Security";
+	private final static String hstsHeaderValue = "max-age=63072000;includeSubDomains;preload";
+	private boolean strictTransportSecurityEnabled;
+
+	// Click-jacking protection
+	private static final String ANTI_CLICK_JACKING_HEADER_NAME = "X-Frame-Options";
+	private boolean antiClickJackingEnabled;
+	private String antiClickJackingHeaderValue = "SAMEORIGIN";
+
+	// Block content sniffing
+	private static final String BLOCK_CONTENT_TYPE_SNIFFING_HEADER_NAME = "X-Content-Type-Options";
+	private static final String BLOCK_CONTENT_TYPE_SNIFFING_HEADER_VALUE = "nosniff";
+	private boolean blockContentTypeSniffingEnabled;
+
+	// Cross-site scripting filter protection
+	private static final String XSS_PROTECTION_HEADER_NAME = "X-XSS-Protection";
+	private static final String XSS_PROTECTION_HEADER_VALUE = "1; mode=block";
+	private boolean xssProtectionEnabled;
 
 	protected boolean enabled = true;
 
@@ -88,15 +112,23 @@ public abstract class DcemFilter implements Filter {
 		} else {
 			redirectPort = null;
 		}
+		SystemPreferences preferences = systemModule.getPreferences();
+		strictTransportSecurityEnabled = preferences.isStrictTransportSecurityEnabled();
+		xssProtectionEnabled = preferences.isXssProtectionEnabled();
+		blockContentTypeSniffingEnabled = preferences.isBlockContentTypeSniffingEnabled();
+		antiClickJackingEnabled = preferences.isAntiClickJackingEnabled();
+		
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		path = httpServletRequest.getServletPath();
-		// System.out.println("DcemFilter.doFilter() Path: " + path + "  WebName: " + webName);
+		// System.out.println("DcemFilter.doFilter() Path: " + path + " WebName: " +
+		// webName);
 		if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 			if (isSessionInvalid(httpServletRequest)) {
 				String redirectUrl = httpServletRequest.getContextPath() + webName + "/" + DcemConstants.EXPIRED_PAGE;
@@ -128,7 +160,8 @@ public abstract class DcemFilter implements Filter {
 			return;
 		}
 		if (remotePort != webPort) {
-			logger.warn("Wrong Port. WebPort=" + webPort + " RemotePort=" + remotePort + ", remoteAddress=" + request.getRemoteAddr());
+			logger.warn("Wrong Port. WebPort=" + webPort + " RemotePort=" + remotePort + ", remoteAddress="
+					+ request.getRemoteAddr());
 			httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
@@ -148,15 +181,20 @@ public abstract class DcemFilter implements Filter {
 					return;
 				}
 				ThreadContext.put(DcemConstants.MDC_USER_ID, getUserId());
+				secureHeaderREsponse (httpServletResponse);
 				chain.doFilter(request, response);
+				
 				return;
 			}
+			secureHeaderREsponse (httpServletResponse);
 			ThreadContext.put(DcemConstants.MDC_USER_ID, "");
-			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession().getAttribute(DcemConstants.URL_TENANT_PARAMETER);
+			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession()
+					.getAttribute(DcemConstants.URL_TENANT_PARAMETER);
 			if (tenantEntity == null) {
 				tenantEntity = applicationBean.getTenantFromRequest(httpServletRequest);
 				if (tenantEntity == null) {
-					logger.error("!!! NO TENANT FOUND, we take now the master tenant. Please check the Cluster-Configuration 'Host Domain Name'");
+					logger.error(
+							"!!! NO TENANT FOUND, we take now the master tenant. Please check the Cluster-Configuration 'Host Domain Name'");
 					tenantEntity = TenantIdResolver.getMasterTenant();
 				}
 				httpServletRequest.getSession().setAttribute(DcemConstants.URL_TENANT_PARAMETER, tenantEntity);
@@ -175,7 +213,8 @@ public abstract class DcemFilter implements Filter {
 				String fullUrl = currentUri + (queryStr != null ? "?" + queryStr : "");
 				DomainAzure domainAzure = domainLogic.getDomainAzure();
 				try {
-					DcemUser dcemUserAzure = domainAzure.processAuthenticationCodeRedirect(httpServletRequest, currentUri, fullUrl);
+					DcemUser dcemUserAzure = domainAzure.processAuthenticationCodeRedirect(httpServletRequest,
+							currentUri, fullUrl);
 					DcemUser dcemUser = userLogic.getDistinctUser(dcemUserAzure.getLoginId());
 					if (dcemUser == null) {
 						userLogic.addOrUpdateUserWoAuditing(dcemUserAzure);
@@ -188,7 +227,7 @@ public abstract class DcemFilter implements Filter {
 					redirect(httpServletRequest, response, redirectionPage, false);
 				} catch (Throwable e) {
 					logger.info("", e);
-					setPreLoginMessage (e.toString());
+					setPreLoginMessage(e.toString());
 					redirect(httpServletRequest, response, redirectionPage, false);
 				}
 				CookieHelper.removeStateNonceCookies(httpServletResponse);
@@ -207,7 +246,25 @@ public abstract class DcemFilter implements Filter {
 		redirect(httpServletRequest, response, redirectionPage, false);
 	}
 
-	private void redirect(HttpServletRequest httpServletRequest, ServletResponse response, String redirectPage, boolean encrpytionError) throws IOException {
+	private void secureHeaderREsponse (HttpServletResponse httpResponse) {
+		if (strictTransportSecurityEnabled) {
+			httpResponse.setHeader(HSTS_HEADER_NAME, hstsHeaderValue);
+		}
+		if (antiClickJackingEnabled) {
+			httpResponse.setHeader(ANTI_CLICK_JACKING_HEADER_NAME, antiClickJackingHeaderValue);
+		}
+		// Block content type sniffing
+		if (blockContentTypeSniffingEnabled) {
+			httpResponse.setHeader(BLOCK_CONTENT_TYPE_SNIFFING_HEADER_NAME, BLOCK_CONTENT_TYPE_SNIFFING_HEADER_VALUE);
+		}
+		// cross-site scripting filter protection
+		if (xssProtectionEnabled) {
+			httpResponse.setHeader(XSS_PROTECTION_HEADER_NAME, XSS_PROTECTION_HEADER_VALUE);
+		}
+	}
+
+	private void redirect(HttpServletRequest httpServletRequest, ServletResponse response, String redirectPage,
+			boolean encrpytionError) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(httpServletRequest.getContextPath());
 		sb.append(redirectPage);
@@ -254,7 +311,8 @@ public abstract class DcemFilter implements Filter {
 		if (requestPath == null)
 			return false;
 		String sessionControlStr = (String) httpServletRequest.getAttribute("isSessionControlRequired");
-		boolean isSessionControlRequired = (sessionControlStr == null || "true".equals(sessionControlStr)) ? true : false;
+		boolean isSessionControlRequired = (sessionControlStr == null || "true".equals(sessionControlStr)) ? true
+				: false;
 
 		return (requestPath.contains("expired") == false && isSessionControlRequired);
 

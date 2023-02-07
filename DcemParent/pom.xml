@@ -1019,7 +1019,12 @@
 			<dependency>
 				<groupId>org.primefaces</groupId>
 				<artifactId>primefaces</artifactId>
-				<version>11.0.0</version>
+				<version>12.0.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.webjars.npm</groupId>
+				<artifactId>primeflex</artifactId>
+				<version>3.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.webjars</groupId>
