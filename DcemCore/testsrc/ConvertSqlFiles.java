@@ -111,9 +111,9 @@ public class ConvertSqlFiles {
 			boolean copyLines = false;
 			boolean createTableFound = false;
 
-//			if (inputFile.getPath().indexOf("dcem.time") > 0) {
-//				System.out.println("ConvertSqlFiles.convertFile() as");
-//			}
+			if (inputFile.getPath().indexOf("POSTGRE") > 0) {
+				System.out.println("ConvertSqlFiles.convertFile() as");
+			}
 
 			while (true) {
 				zeile = bufferedReader.readLine();
@@ -127,9 +127,19 @@ public class ConvertSqlFiles {
 				if (trimZeile.indexOf("clob(255)") > 0) {
 					trimZeile = trimZeile.replaceAll("clob\\(255\\)", "clob(10M)");
 				}
+				
+				if (trimZeile.contains("ts core_")) {
+					System.out.println("ConvertSqlFiles.convertFile()");
+				}
+					
+					
 				if (trimZeile.startsWith("create table ") || trimZeile.startsWith("alter table ") || trimZeile.startsWith("insert into ")) { // Search for first
 					if ((systemFile == false) && (trimZeile.contains(" on sys_") || trimZeile.contains(" on core_") || trimZeile.contains(" table core_")
-							|| trimZeile.contains(" table sys_") || trimZeile.startsWith("insert into core_") || trimZeile.startsWith(" insert into sys_"))) {
+							|| trimZeile.contains(" table sys_") || trimZeile.startsWith("insert into core_") 
+							|| trimZeile.startsWith(" insert into sys_")
+							|| trimZeile.contains("if exists core_")
+							|| trimZeile.contains("if exists sys_")							
+							)) {
 						copyLines = false;
 					} else {
 						filewriter.write(lineSeparator);
