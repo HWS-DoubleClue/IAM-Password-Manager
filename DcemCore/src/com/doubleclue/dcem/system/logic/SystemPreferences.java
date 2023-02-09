@@ -122,9 +122,7 @@ public class SystemPreferences extends ModulePreferences {
 	boolean blockContentTypeSniffingEnabled = true;
 	
 	@DcemGui()
-	boolean xssProtectionEnabled = true;
-	
-	
+	boolean xssProtectionEnabled = true;	
 
 	@DcemGui(separator = "Embedded Database", help = "If you use the Embedded Database, this will do a backup of the Embedded Database on every 'Nightly task'. During the backup process,"
 			+ " writing into the database will be blocked!")
@@ -141,6 +139,9 @@ public class SystemPreferences extends ModulePreferences {
 
 	@DcemGui(style = "width: 500px", help = "Please do not enter any data here if not instructed to do so by the DoubleClue support team.")
 	String specialProperties;
+	
+	@DcemGui (help = "If on, all outgoing API calls will be traced in the debug logger.")
+	boolean traceRestApi;
 
 	public String getAdditionalLoggers() {
 		return additionalLoggers;
@@ -360,6 +361,14 @@ public class SystemPreferences extends ModulePreferences {
 
 	public void setXssProtectionEnabled(boolean xssProtectionEnabled) {
 		this.xssProtectionEnabled = xssProtectionEnabled;
+	}
+
+	public boolean isTraceRestApi() {
+		return traceRestApi;
+	}
+
+	public void setTraceRestApi(boolean traceRestApi) {
+		this.traceRestApi = traceRestApi;
 	}
 
 }

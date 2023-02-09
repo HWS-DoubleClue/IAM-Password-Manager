@@ -28,11 +28,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 
 @ApplicationScoped
 @Named("clientRestApi")
 public class ClientRestApi {
-
+	
+	boolean traceRestApi; 
+	
 	enum HttpVerb {
 		HTTP_GET, HTTP_PUT, HTTP_DELETE, HTTP_POST;
 	}
@@ -72,6 +75,7 @@ public class ClientRestApi {
 
 	private CloseableHttpResponse getResponse(String url, boolean closeConnection, HttpVerb httpVerb, String authHeader, String body,
 			String contentType, String accept, boolean unsecure, int timeoutSeconds) throws Exception {
+		long start = System.currentTimeMillis();
 		CloseableHttpResponse response = null;
 
 		HttpUriRequest request = null;
@@ -144,6 +148,35 @@ public class ClientRestApi {
 			} catch (IOException e) {
 				logger.warn("Failed to close response", e);
 			}
+		}
+		if (traceRestApi == true && logger.isDebugEnabled()) {
+			StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+			StringBuffer sb = new StringBuffer();
+			sb.append(" URL=");
+			sb.append(url);
+			sb.append(System.lineSeparator());
+			sb.append("Time (msec): ");
+			sb.append(System.currentTimeMillis()- start);
+			sb.append(System.lineSeparator());
+			for (StackTraceElement element : stacktrace) {
+				String className = element.getClassName();
+				if (className.startsWith("java.lang")) {
+					continue;
+				}
+				if (className.endsWith("ClientRestApi")) {
+					continue;
+				}
+				if (className.startsWith("com.doubleclue")) {
+					sb.append(className);
+					sb.append (":");
+					sb.append(element.getMethodName());
+					sb.append(System.lineSeparator());
+				} else {
+					break;
+				}
+			}
+			sb.append(System.lineSeparator());
+			logger.debug("REST API, " + sb.toString());
 		}
 		return response;
 	}
@@ -232,5 +265,13 @@ public class ClientRestApi {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public boolean isTraceRestApi() {
+		return traceRestApi;
+	}
+
+	public void setTraceRestApi(boolean traceRestApi) {
+		this.traceRestApi = traceRestApi;
 	}
 }
