@@ -155,7 +155,7 @@ public class ClientRestApi {
 			sb.append(" URL=");
 			sb.append(url);
 			sb.append(System.lineSeparator());
-			sb.append("Time (msec): ");
+			sb.append("Response-Time (msec): ");
 			sb.append(System.currentTimeMillis()- start);
 			sb.append(System.lineSeparator());
 			for (StackTraceElement element : stacktrace) {
