@@ -10,6 +10,9 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.entities.DcemUser;
@@ -33,7 +36,7 @@ public class UrlTokenLogic {
 	@Inject
 	TemplateLogic templateLogic;
 
-	// private static final Logger logger = LogManager.getLogger(UrlTokenLogic.class);
+	private static final Logger logger = LogManager.getLogger(UrlTokenLogic.class);
 
 	@DcemTransactional
 	public UrlTokenEntity addUrlTokenToDb(UrlTokenType urlTokenUsage, int validMinutes, String urlToken, String objectIdentifier) throws DcemException {
@@ -55,25 +58,29 @@ public class UrlTokenLogic {
 		return entity;
 	}
 
-	@DcemTransactional
-	public String verifyUrlToken(String urlToken, String type) throws DcemException {
-		UrlTokenEntity entity = getUrlToken(urlToken);
+	public UrlTokenEntity verifyUrlToken(String urlToken, String type) throws DcemException {
+		UrlTokenEntity entity = em.find(UrlTokenEntity.class, urlToken);
 		if (entity == null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL Token not found: " + urlToken + " Type: " + type);
+			}
 			throw new DcemException(DcemErrorCodes.URL_TOKEN_INVALID, null);
 		}
 		if (entity.getExpiryDate().getTime() < new Date().getTime()) {
-			em.remove(entity);
 			throw new DcemException(DcemErrorCodes.URT_TOKEN_OUT_OF_DATE, null);
 		}
-		if (!entity.getUrlTokenType().toString().equals(type)) {
+		if (entity.getUrlTokenType().toString().equals(type) == false) {
 			throw new DcemException(DcemErrorCodes.URL_TOKEN_INVALID, null);
 		}
-		em.remove(entity);
-		return entity.getObjectIdentifier();
+		return entity;
 	}
 
-	private UrlTokenEntity getUrlToken(String urlToken) {
-		return em.find(UrlTokenEntity.class, urlToken);
+	@DcemTransactional
+	public void deleteUrlToken(UrlTokenEntity entity) {
+		UrlTokenEntity entity2 = em.find(UrlTokenEntity.class, entity.getUrlToken());
+		if (entity2 != null) {
+			em.remove(entity2);
+		}
 	}
 
 	public void sendUrlTokenByEmail(DcemUser dcemUser, String url, UrlTokenEntity urlTokenEntity) throws DcemException {

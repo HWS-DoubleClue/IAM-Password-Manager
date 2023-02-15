@@ -43,21 +43,7 @@
 					</h:commandLink>
 				</div>
 				<p:panelMenu model="#{viewNavigator.menuModel}" widgetVar="hbPanelMenu" id="hbPanelMenu" stateful="true"   />
-
-				<h:outputScript>
-                    jQuery(document).ready(setTimeout(function () {
-                        PF('hbPanelMenu').headers.click(function () {
-                            var currHeader = $(this);
-                            PF('hbPanelMenu').headers.each(function () {
-                                var header = $(this);
-                                if (header.text() !== currHeader.text()) {
-                                    PF('hbPanelMenu').collapseRootSubmenu(header);
-                                    header.removeClass('ui-state-hover');
-                                }
-                            });
-                        });
-                    }, 400))
-                </h:outputScript>
+		
 			</h:form>
 			<div class="header6" style="margin-top: 30px">
 				<h:outputLabel value="Version: #{dcemApplication.version}" />

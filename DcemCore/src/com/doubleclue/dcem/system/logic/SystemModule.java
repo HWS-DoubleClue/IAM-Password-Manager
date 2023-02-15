@@ -60,6 +60,7 @@ import com.doubleclue.dcem.core.logic.module.ModulePreferences;
 import com.doubleclue.dcem.core.tasks.MonitoringTask;
 import com.doubleclue.dcem.core.tasks.NightlyTask;
 import com.doubleclue.dcem.core.tasks.TaskExecutor;
+import com.doubleclue.dcem.core.utils.ClientRestApi;
 import com.doubleclue.dcem.core.utils.JsonConverter;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.system.send.MessageBird;
@@ -75,6 +76,9 @@ public class SystemModule extends DcemModule {
 
 	@Inject
 	EntityManagerProducer emp;
+	
+	@Inject
+	ClientRestApi clientRestApi;
 
 	@Inject
 	EntityManager em;
@@ -277,6 +281,7 @@ public class SystemModule extends DcemModule {
 			if (getSpecialPropery(DcemConstants.SPECIAL_PROPERTY_RUN_NIGHTLY_TASK) != null) {
 				taskExecutor.execute(new NightlyTask());
 			}
+			clientRestApi.setTraceRestApi(systemPreferences.isTraceRestApi());
 		} catch (Exception e) {
 			logger.warn("checkPreferenceChanges", e);
 		}

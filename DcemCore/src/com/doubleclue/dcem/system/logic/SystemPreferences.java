@@ -111,6 +111,18 @@ public class SystemPreferences extends ModulePreferences {
 
 	@DcemGui(style = "width: 500px", password = true)
 	String captchaPublicKey;
+	
+	@DcemGui(separator = "HTTP Protection. Changes will require a restart.")
+	boolean strictTransportSecurityEnabled = true;
+	
+	@DcemGui()
+	boolean antiClickJackingEnabled = true;
+	
+	@DcemGui()
+	boolean blockContentTypeSniffingEnabled = true;
+	
+	@DcemGui()
+	boolean xssProtectionEnabled = true;	
 
 	@DcemGui(separator = "Embedded Database", help = "If you use the Embedded Database, this will do a backup of the Embedded Database on every 'Nightly task'. During the backup process,"
 			+ " writing into the database will be blocked!")
@@ -127,6 +139,9 @@ public class SystemPreferences extends ModulePreferences {
 
 	@DcemGui(style = "width: 500px", help = "Please do not enter any data here if not instructed to do so by the DoubleClue support team.")
 	String specialProperties;
+	
+	@DcemGui (help = "If on, all outgoing API calls will be traced in the debug logger.")
+	boolean traceRestApi;
 
 	public String getAdditionalLoggers() {
 		return additionalLoggers;
@@ -314,6 +329,46 @@ public class SystemPreferences extends ModulePreferences {
 
 	public void seteMailProtocol(String eMailProtocol) {
 		this.eMailProtocol = eMailProtocol;
+	}
+
+	public boolean isStrictTransportSecurityEnabled() {
+		return strictTransportSecurityEnabled;
+	}
+
+	public void setStrictTransportSecurityEnabled(boolean strictTransportSecurityEnabled) {
+		this.strictTransportSecurityEnabled = strictTransportSecurityEnabled;
+	}
+
+	public boolean isAntiClickJackingEnabled() {
+		return antiClickJackingEnabled;
+	}
+
+	public void setAntiClickJackingEnabled(boolean antiClickJackingEnabled) {
+		this.antiClickJackingEnabled = antiClickJackingEnabled;
+	}
+
+	public boolean isBlockContentTypeSniffingEnabled() {
+		return blockContentTypeSniffingEnabled;
+	}
+
+	public void setBlockContentTypeSniffingEnabled(boolean blockContentTypeSniffingEnabled) {
+		this.blockContentTypeSniffingEnabled = blockContentTypeSniffingEnabled;
+	}
+
+	public boolean isXssProtectionEnabled() {
+		return xssProtectionEnabled;
+	}
+
+	public void setXssProtectionEnabled(boolean xssProtectionEnabled) {
+		this.xssProtectionEnabled = xssProtectionEnabled;
+	}
+
+	public boolean isTraceRestApi() {
+		return traceRestApi;
+	}
+
+	public void setTraceRestApi(boolean traceRestApi) {
+		this.traceRestApi = traceRestApi;
 	}
 
 }
