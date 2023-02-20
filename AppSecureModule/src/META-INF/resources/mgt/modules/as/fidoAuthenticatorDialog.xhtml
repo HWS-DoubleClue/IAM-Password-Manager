@@ -80,7 +80,7 @@
 					<p:outputLabel for="user" value="Domain: " rendered="#{viewNavigator.addAction}" />
 					<p:selectOneMenu id="domain" value="#{asFidoAuthenticatorDialog.domainName}" style="vertical-align: middle;"
 						rendered="#{viewNavigator.addAction}">
-						<f:selectItem itemValue="" itemLabel="{local}" />
+						<f:selectItem itemValue="" itemLabel="" />
 						<f:selectItems value="#{domainLogic.domainNames}" />
 						<p:ajax process="@this" listener="#{asFidoAuthenticatorDialog.changeDomain}" update="user"></p:ajax>
 					</p:selectOneMenu>

@@ -29,7 +29,7 @@
 				</p:messages>
 				<p:outputLabel for="user" value="#{CoreMsg['domain']} " render="#{viewNavigator.addAction}" />
 				<p:selectOneMenu id="domain" value="#{asMessageDialog.domainName}" style="vertical-align: middle;" render="#{viewNavigator.addAction}">
-					<f:selectItem itemValue="" itemLabel="{local}" />
+					<f:selectItem itemValue="" itemLabel="" />
 					<f:selectItems value="#{domainLogic.domainNames}" />
 					<p:ajax process="@this" listener="#{asMessageDialog.changeDomain}" update="user"></p:ajax>
 				</p:selectOneMenu>

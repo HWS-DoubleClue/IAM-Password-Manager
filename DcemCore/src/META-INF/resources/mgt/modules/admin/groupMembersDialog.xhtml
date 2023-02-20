@@ -62,7 +62,7 @@
 				<h:panelGrid columns="2" cellpadding="4">
 					<p:outputLabel for="user" value="Domain: " />
 					<p:selectOneMenu id="domain" value="#{groupMembersDialog.domainName}" style="vertical-align: middle;">
-						<f:selectItem itemValue="" itemLabel="{local}" />
+						<f:selectItem itemValue="" itemLabel="" />
 						<f:selectItems value="#{domainLogic.domainNames}" />
 						<p:ajax process="@this" listener="#{groupMembersDialog.changeDomain}" update="user"></p:ajax>
 					</p:selectOneMenu>

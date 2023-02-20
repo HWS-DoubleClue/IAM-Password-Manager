@@ -41,7 +41,7 @@
 
 					<p:outputLabel for="user" value="Domain "  />
 					<p:selectOneMenu id="domain" value="#{policyDialog.domainName}" style="vertical-align: middle;">
-						<f:selectItem itemValue="" itemLabel="{local}" />
+						<f:selectItem itemValue="" itemLabel="" />
 						<f:selectItems value="#{domainLogic.domainNames}" />
 						<p:ajax process="@this" listener="#{policyDialog.changeDomain}" update="user"></p:ajax>
 					</p:selectOneMenu>

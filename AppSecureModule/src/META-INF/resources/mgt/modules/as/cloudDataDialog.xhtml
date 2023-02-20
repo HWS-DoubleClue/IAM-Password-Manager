@@ -45,7 +45,7 @@
 					<p:outputLabel for="user" value="#{CoreMsg['domain']}: " />
 					<p:selectOneMenu id="domain" value="#{asCloudSafeDialog.domainName}" style="vertical-align: middle;"
 						disabled="#{asCloudSafeDialog.cloudDataEntity.owner.name() eq 'GLOBAL'}">
-						<f:selectItem itemValue="" itemLabel="{local}" />
+						<f:selectItem itemValue="" itemLabel="" />
 						<f:selectItems value="#{domainLogic.domainNames}" />
 						<p:ajax process="@this"></p:ajax>
 					</p:selectOneMenu>

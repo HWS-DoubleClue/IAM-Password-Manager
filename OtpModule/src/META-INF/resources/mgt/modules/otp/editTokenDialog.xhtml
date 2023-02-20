@@ -50,7 +50,7 @@
 					<p:outputLabel for="user" value="#{otpMsg['domain']}: " />
 					<p:selectOneMenu id="domain" value="#{otpTokenDialog.domainName}" style="vertical-align: middle;"
 						disabled="#{otpTokenDialog.assignToken == false}">
-						<f:selectItem itemValue="" itemLabel="{local}" />
+						<f:selectItem itemValue="" itemLabel="" />
 						<f:selectItems value="#{domainLogic.domainNames}" />
 						<p:ajax update="@form"></p:ajax>
 					</p:selectOneMenu>
