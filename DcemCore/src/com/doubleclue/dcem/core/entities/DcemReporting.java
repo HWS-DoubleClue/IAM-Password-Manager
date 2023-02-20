@@ -1,7 +1,8 @@
 package com.doubleclue.dcem.core.entities;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,8 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.primefaces.model.SortOrder;
 
@@ -33,15 +32,15 @@ import com.hazelcast.nio.serialization.DataSerializable;
  */
 @Entity
 @Table(name = "core_reporting")
-@NamedQueries({ @NamedQuery(name = DcemReporting.GET_AFTER, query = "SELECT rp FROM DcemReporting rp where rp.time < ?1"),
-		@NamedQuery(name = DcemReporting.DELETE_AFTER, query = "DELETE FROM DcemReporting rp where rp.time < ?1"),
+@NamedQueries({ @NamedQuery(name = DcemReporting.GET_AFTER, query = "SELECT rp FROM DcemReporting rp where rp.localDateTime < ?1"),
+		@NamedQuery(name = DcemReporting.DELETE_AFTER, query = "DELETE FROM DcemReporting rp where rp.localDateTime < ?1"),
 		@NamedQuery(name = DcemReporting.DELETE_USER_REPORTS, query = "DELETE FROM DcemReporting rp where rp.user = ?1"),
-		@NamedQuery(name = DcemReporting.GET_ALL_REPORTS_COUNT, query = "SELECT COUNT(rp) FROM DcemReporting rp where rp.time >= ?1 AND rp.time <= ?2 AND rp.action >= ?3 AND rp.action <= ?4 AND rp.errorCode IS NULL"),
-		@NamedQuery(name = DcemReporting.GET_REPORTS_COUNT, query = "SELECT COUNT(rp) FROM DcemReporting rp where rp.time >= ?1 AND rp.time <= ?2 AND rp.action = ?3"),
+		@NamedQuery(name = DcemReporting.GET_ALL_REPORTS_COUNT, query = "SELECT COUNT(rp) FROM DcemReporting rp where rp.localDateTime >= ?1 AND rp.localDateTime <= ?2 AND rp.action >= ?3 AND rp.action <= ?4 AND rp.errorCode IS NULL"),
+		@NamedQuery(name = DcemReporting.GET_REPORTS_COUNT, query = "SELECT COUNT(rp) FROM DcemReporting rp where rp.localDateTime >= ?1 AND rp.localDateTime <= ?2 AND rp.action = ?3"),
 		@NamedQuery(name = DcemReporting.GET_ALL_DASHBOARD_REPORTS, query = "SELECT rp FROM DcemReporting rp where rp.showOnDashboard = true"),
 		@NamedQuery(name = DcemReporting.CLOSE_DASHBOARD_REPORT, query = "UPDATE DcemReporting rp SET rp.showOnDashboard = false where rp.id = ?1"),
 		@NamedQuery(name = DcemReporting.GET_DASHBOARD_REPORT, query = "select rp FROM DcemReporting rp where rp.showOnDashboard = true AND rp.source = ?1 AND rp.severity = ?2 AND rp.errorCode = ?3 AND (?4 is null or rp.info = ?4)"),
-		@NamedQuery(name = DcemReporting.GET_ALL_AUTH_METHODS_COUNT, query = "SELECT NEW com.doubleclue.dcem.core.logic.AuthMethodsActivityDto(rp.action, COUNT(rp)) FROM DcemReporting rp where rp.time >= ?1 AND rp.time <= ?2 AND rp.action >= ?3 AND rp.action <= ?4 AND rp.errorCode IS NULL GROUP BY rp.action") })
+		@NamedQuery(name = DcemReporting.GET_ALL_AUTH_METHODS_COUNT, query = "SELECT NEW com.doubleclue.dcem.core.logic.AuthMethodsActivityDto(rp.action, COUNT(rp)) FROM DcemReporting rp where rp.localDateTime >= ?1 AND rp.localDateTime <= ?2 AND rp.action >= ?3 AND rp.action <= ?4 AND rp.errorCode IS NULL GROUP BY rp.action") })
 public class DcemReporting extends EntityInterface implements DataSerializable {
 
 	public final static String GET_AFTER = "DcemReporting.getAfter";
@@ -61,7 +60,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 	public DcemReporting(String source, ReportAction action, DcemUser user, String errorCode, String location, String info, AlertSeverity severity,
 			boolean showOnDashboard) {
 		super();
-		time = new Date();
+		localDateTime = LocalDateTime.now();
 		this.source = source;
 		this.action = action;
 		this.user = user;
@@ -74,7 +73,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 
 	public DcemReporting(String source, ReportAction action, DcemUser user, String errorCode, String location, String info, AlertSeverity severity) {
 		super();
-		time = new Date();
+		localDateTime = LocalDateTime.now();
 		this.source = source;
 		this.action = action;
 		this.user = user;
@@ -88,7 +87,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 	public DcemReporting(ReportAction action, DcemUser user, AppErrorCodes errorcode, String location, String info, AlertSeverity severity,
 			boolean showOnDashboard) {
 		super();
-		time = new Date();
+		localDateTime = LocalDateTime.now();
 		this.action = action;
 		this.user = user;
 		if (errorcode != null) {
@@ -100,7 +99,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 
 	public DcemReporting(ReportAction action, DcemUser user, AppErrorCodes errorcode, String location, String info) {
 		super();
-		time = new Date();
+		localDateTime = LocalDateTime.now();
 		this.action = action;
 		this.user = user;
 		if (errorcode != null) {
@@ -116,10 +115,9 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 	@Column(name = "dc_id")
 	private Long id;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dc_time", nullable = false)
 	@DcemGui(sortOrder = SortOrder.DESCENDING)
-	private Date time;
+	private LocalDateTime localDateTime;
 
 	@Enumerated(EnumType.ORDINAL)
 	@DcemGui
@@ -155,13 +153,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 	@DcemGui(name = "On Dashboard", visible = false)
 	private boolean showOnDashboard;
 
-	public Date getTime() {
-		return time;
-	}
-
-	public void setTime(Date time) {
-		this.time = time;
-	}
+	
 
 	public ReportAction getAction() {
 		return action;
@@ -192,7 +184,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 
 	@Override
 	public String toString() {
-		return "DcemReporting [time=" + time + ", action=" + action + ",  user=" + user + ", errorCode=" + errorCode + ", info=" + info + "]";
+		return "DcemReporting [time=" + localDateTime + ", action=" + action + ",  user=" + user + ", errorCode=" + errorCode + ", info=" + info + "]";
 	}
 
 	public String getErrorCode() {
@@ -263,7 +255,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 	@Override
 	public void writeData(ObjectDataOutput out) throws IOException {
 		out.writeLong(id);
-		out.writeLong(time.getTime());
+		out.writeLong(localDateTime.toEpochSecond(ZoneOffset.UTC));
 		out.writeInt(user == null ? -1 : user.getId());
 		out.writeInt(action.ordinal());
 		out.writeUTF(errorCode);
@@ -280,7 +272,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 	@Override
 	public void readData(ObjectDataInput in) throws IOException {
 		id = in.readLong();
-		time = new Date(in.readLong());
+		localDateTime = LocalDateTime.ofEpochSecond(in.readLong(), 0, ZoneOffset.UTC); 
 		int userId = in.readInt();
 		if (userId == -1) {
 			user = null;
@@ -298,7 +290,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 	}
 
 	public String getAlertDisplayString() {
-		return severity + " : " + info + "<br>ErrorCode: " + errorCode + "<br>Date: " + time;
+		return severity + " : " + info + "<br>ErrorCode: " + errorCode + "<br>Date: " + localDateTime;
 	}
 
 	@Override
@@ -311,5 +303,13 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 			return "rowWarningClass";
 		}
 		return null;
+	}
+
+	public LocalDateTime getLocalDateTime() {
+		return localDateTime;
+	}
+
+	public void setLocalDateTime(LocalDateTime localDateTime) {
+		this.localDateTime = localDateTime;
 	}
 }

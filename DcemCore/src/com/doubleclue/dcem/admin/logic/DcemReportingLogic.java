@@ -1,8 +1,10 @@
 package com.doubleclue.dcem.admin.logic;
 
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import javax.persistence.TypedQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.doubleclue.dcem.admin.gui.WelcomeView.SelectedFormat;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AuthApplication;
 import com.doubleclue.dcem.core.entities.DcemGroup;
@@ -77,7 +80,7 @@ public class DcemReportingLogic {
 		}
 	}
 
-	public Long getAllAuthenticationEvents(Date resultFrom, Date resultTo) {
+	public Long getAllAuthenticationEvents(LocalDateTime resultFrom, LocalDateTime resultTo) {
 		TypedQuery<Long> query = em.createNamedQuery(DcemReporting.GET_ALL_REPORTS_COUNT, Long.class);
 		query.setParameter(1, resultFrom);
 		query.setParameter(2, resultTo);
@@ -90,7 +93,7 @@ public class DcemReportingLogic {
 		}
 	}
 
-	public List<AuthMethodsActivityDto> getAllAuthMethodsEvents(Date resultFrom, Date resultTo) {
+	public List<AuthMethodsActivityDto> getAllAuthMethodsEvents(LocalDateTime resultFrom, LocalDateTime resultTo) {
 		TypedQuery<AuthMethodsActivityDto> query = em.createNamedQuery(DcemReporting.GET_ALL_AUTH_METHODS_COUNT, AuthMethodsActivityDto.class);
 		query.setParameter(1, resultFrom);
 		query.setParameter(2, resultTo);
@@ -103,7 +106,7 @@ public class DcemReportingLogic {
 		}
 	}
 
-	public Long getFailedAuthenticationEvents(Date resultFrom, Date resultTo) {
+	public Long getFailedAuthenticationEvents(LocalDateTime resultFrom, LocalDateTime resultTo) {
 		TypedQuery<Long> query = em.createNamedQuery(DcemReporting.GET_REPORTS_COUNT, Long.class);
 		query.setParameter(1, resultFrom);
 		query.setParameter(2, resultTo);
@@ -187,7 +190,7 @@ public class DcemReportingLogic {
 		alertMessage.setInfo(message);
 		alertMessage.setSeverity(severity);
 		alertMessage.setErrorCode(errorCode.toString());
-		alertMessage.setTime(new Date());
+		alertMessage.setLocalDateTime(LocalDateTime.now());
 
 		if ((checkExists && welcomeViewAlertExists(alertMessage)) == false) {
 			addWelcomeViewAlert(category, alertMessage);
@@ -268,5 +271,68 @@ public class DcemReportingLogic {
 			logger.debug("Error while checking if alert exists", e);
 		}
 		return false;
+	}
+
+	public HashMap<LocalDateTime, Long> getUserActivityData(LocalDateTime localDateTime, SelectedFormat dateFormat, boolean validLogins) {
+		HashMap<LocalDateTime, Long> result = new HashMap<>();
+		LocalDateTime localDateTimeStart;
+		LocalDateTime localDateTimeEnd;
+		switch (dateFormat) {
+		case YEAR:
+			for (int month = 1; month <= 12; month++) {
+				localDateTimeStart = localDateTime.toLocalDate().withMonth(month).withDayOfMonth(1).atTime(LocalTime.MIN);
+				localDateTimeEnd = localDateTime.toLocalDate().withMonth(month).with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
+				result.put(localDateTimeStart, getUserActivityCount(localDateTimeStart, localDateTimeEnd, validLogins));
+			}
+			break;
+		case MONTH:
+			int lastDayOfMonth = localDateTime.toLocalDate().lengthOfMonth();
+			for (int day = 1; day <= lastDayOfMonth; day++) {
+				localDateTimeStart = localDateTime.toLocalDate().withDayOfMonth(day).atTime(LocalTime.MIN);
+				localDateTimeEnd = localDateTime.toLocalDate().withDayOfMonth(day).atTime(LocalTime.MAX);
+				result.put(localDateTimeStart, getUserActivityCount(localDateTimeStart, localDateTimeEnd, validLogins));
+			}
+			break;
+		default:  // DAY
+			for (int hour = 0; hour <= 23; hour++) {
+				localDateTimeStart = localDateTime.toLocalDate().atTime(LocalTime.of(hour, 0));
+				localDateTimeEnd = localDateTime.toLocalDate().atTime(LocalTime.of(hour, 59, 59));
+				result.put(localDateTimeStart, getUserActivityCount(localDateTimeStart, localDateTimeEnd, validLogins));
+			}
+			break;
+		}
+		return result;
+	}
+
+	public Long getUserActivityCount(LocalDateTime dateFrom, LocalDateTime dateTo, boolean validLogin) {
+		if (validLogin) {
+			return getAllAuthenticationEvents(dateFrom, dateTo);
+		} else {
+			return getFailedAuthenticationEvents(dateFrom, dateTo);
+		}
+	}
+
+	public HashMap<Integer, Long> getAuthMethodActivityData(LocalDateTime startDateTime, SelectedFormat format) {
+		HashMap<Integer, Long> result = new HashMap<Integer, Long>();
+		LocalDateTime localDateTimeStart;
+		LocalDateTime localDateTimeEnd;
+		switch (format) {
+		case MONTH:
+			localDateTimeStart = startDateTime.toLocalDate().with(TemporalAdjusters.firstDayOfMonth()).atTime(LocalTime.MIN);
+			localDateTimeEnd = startDateTime.toLocalDate().with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
+			break;
+		case YEAR:
+			localDateTimeStart = startDateTime.toLocalDate().with(TemporalAdjusters.firstDayOfYear()).atTime(LocalTime.MIN);
+			localDateTimeEnd = startDateTime.toLocalDate().with(TemporalAdjusters.lastDayOfYear()).atTime(LocalTime.MAX);
+			break;
+		default:
+			localDateTimeStart = startDateTime.toLocalDate().atTime(LocalTime.MIN);
+			localDateTimeEnd = startDateTime.toLocalDate().atTime(LocalTime.MAX);
+			break;
+		}
+		for (AuthMethodsActivityDto authMethodCount : getAllAuthMethodsEvents(localDateTimeStart, localDateTimeEnd)) {
+			result.put(authMethodCount.getId().ordinal(), authMethodCount.getCount());
+		}
+		return result;
 	}
 }

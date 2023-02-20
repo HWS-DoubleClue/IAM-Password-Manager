@@ -2,7 +2,8 @@ package com.doubleclue.dcem.core.logic;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,6 +26,7 @@ import org.primefaces.model.chart.PieChartModel;
 
 import com.doubleclue.dcem.admin.gui.WelcomeView.SelectedFormat;
 import com.doubleclue.dcem.admin.logic.AdminModule;
+import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AsModuleApi;
 import com.doubleclue.dcem.core.gui.JsfUtils;
@@ -37,14 +39,15 @@ public class DashboardLogic {
 	private static Logger logger = LogManager.getLogger(DashboardLogic.class);
 	private static final String RESOURCE_PREFIX = "dashboardLogic.";
 
-	AsModuleApi asModuleApi;
-
 	@Inject
 	OperatorSessionBean operatorSessionBean;
+	
+	@Inject
+	DcemReportingLogic dcemReportingLogic;
 
 	@PostConstruct
 	public void init() {
-		asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
+		
 	}
 
 	public enum SelectedReportAction {
@@ -76,13 +79,12 @@ public class DashboardLogic {
 		}
 	};
 
-	public BarChartModel getUserActivityBarChart(Date startDate, SelectedFormat selectedDateFormat, ResourceBundle resourceBundle) {
+	public BarChartModel getUserActivityBarChart(LocalDateTime startDate, SelectedFormat selectedDateFormat, ResourceBundle resourceBundle) {
 		try {
 			BarChartModel userActivityBarChart = new BarChartModel();
 
-			HashMap<Date, Long> userActivityList = asModuleApi.getUserActivityData(startDate, selectedDateFormat, true);
-
-			HashMap<Date, Long> userFailedAuthenticationList = asModuleApi.getUserActivityData(startDate, selectedDateFormat, false);
+			HashMap<LocalDateTime, Long> userActivityList = dcemReportingLogic.getUserActivityData(startDate, selectedDateFormat, true);
+			HashMap<LocalDateTime, Long> userFailedAuthenticationList = dcemReportingLogic.getUserActivityData(startDate, selectedDateFormat, false);
 
 			ChartSeries seriesUserActivity = getBarSeries(userActivityList, JsfUtils.getStringSafely(resourceBundle, RESOURCE_PREFIX + "successfulLogins"),
 					selectedDateFormat);
@@ -113,31 +115,31 @@ public class DashboardLogic {
 		}
 	}
 
-	private ChartSeries getBarSeries(HashMap<Date, Long> userActivityList, String label, SelectedFormat selectedDateFormat) {
-		DateFormat dateFormat;
+	private ChartSeries getBarSeries(HashMap<LocalDateTime, Long> userActivityList, String label, SelectedFormat selectedDateFormat) {
+		DateTimeFormatter  dateTimeFormatter;
 		ChartSeries series = new ChartSeries();
 		series.setLabel(label);
-		Map<Date, Long> sortedMap = new TreeMap<Date, Long>(userActivityList);
+		Map<LocalDateTime, Long> sortedMap = new TreeMap<LocalDateTime, Long>(userActivityList);
 		if (selectedDateFormat == SelectedFormat.DAY) {
-			dateFormat = new SimpleDateFormat("HH:mm", operatorSessionBean.getLocale());
+			dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm", operatorSessionBean.getLocale());
 		} else if (selectedDateFormat == SelectedFormat.YEAR) {
-			dateFormat = new SimpleDateFormat("MMM", operatorSessionBean.getLocale());
+			dateTimeFormatter = DateTimeFormatter.ofPattern("MMM", operatorSessionBean.getLocale());
 		} else {
-			dateFormat = new SimpleDateFormat("dd");
+			dateTimeFormatter = DateTimeFormatter.ofPattern("dd", operatorSessionBean.getLocale());
 		}
-		for (Entry<Date, Long> set : sortedMap.entrySet()) {
-			series.set(dateFormat.format(set.getKey()), set.getValue());
+		for (Entry<LocalDateTime, Long> set : sortedMap.entrySet()) {
+			series.set(set.getKey().format(dateTimeFormatter), set.getValue());
 		}
 		return series;
 	}
 
-	public PieChartModel getAuthMethodsPieChart(Date startDate, SelectedFormat format, ResourceBundle resourceBundle) {
+	public PieChartModel getAuthMethodsPieChart(LocalDateTime startDate, SelectedFormat format, ResourceBundle resourceBundle) {
 		AsModuleApi asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
 		if (asModuleApi != null) {
 			try {
 				PieChartModel authMethodsPieChart = new PieChartModel();
 
-				HashMap<Integer, Long> authMethodActivityList = asModuleApi.getAuthMethodActivityData(startDate, format);
+				HashMap<Integer, Long> authMethodActivityList = dcemReportingLogic.getAuthMethodActivityData(startDate, format);
 				for (Entry<Integer, Long> set : authMethodActivityList.entrySet()) {
 					if (set.getKey() == SelectedReportAction.PASSWORD.getValue()) {
 						authMethodsPieChart.set(SelectedReportAction.PASSWORD.getLabel(), set.getValue());

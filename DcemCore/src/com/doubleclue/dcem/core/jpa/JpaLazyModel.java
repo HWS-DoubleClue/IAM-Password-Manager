@@ -7,7 +7,8 @@ package com.doubleclue.dcem.core.jpa;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -21,7 +22,6 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -42,21 +42,15 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 	JpaSelectProducer<T> jpaSelectProducer;
 	List<FilterProperty> preFilterProperties;
 
-	DcemView dcemView;
+	List<FilterProperty> filterProperties;
 
-	int previousOffset;
-	int previousPageSize;
+	DcemView dcemView;
 
 	public JpaLazyModel(EntityManager entityManager, DcemView dcemView) {
 		this.entityManager = entityManager;
 		this.dcemView = dcemView;
 		jpaSelectProducer = new JpaSelectProducer(entityManager, dcemView.getSubject().getKlass());
-
 	}
-
-	// protected Class<T> getEntityClass() {
-	// return entityClass;
-	// }
 
 	@Override
 	public T getRowData(String rowKey) {
@@ -114,76 +108,62 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 	@Override
 	public List<T> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
 		// long start = System.currentTimeMillis();
-		if (dcemView.isDirty() || (first != previousOffset) || (pageSize != previousPageSize) || data == null) {
-			previousOffset = first;
-			previousPageSize = pageSize;
-			dcemView.setDirty(false);
-			// System.out.println("JpaLazyModel.load() Execute " + offset + ", "
-			// + pageSize);
-			if (dcemView.getPredefinedFilterId() > 0) {
+		System.out.println("JpaLazyModel.load()  filterBy " + filterBy);
+		if (dcemView.getPredefinedFilterId() > 0) {
+			try {
+				PredefinedFilter predefinedFilter = dcemView.getPredefinedFilter();
+				int dataSize = predefinedFilter.executeCount(entityManager).intValue();
+				setRowCount(dataSize);
+				data = (List<T>) predefinedFilter.execute(entityManager, first, pageSize);
+			} catch (Exception exp) {
+				JsfUtils.addErrorMessage("Couldn't execute Predefined-Filter. Cause: " + exp.getMessage());
+				data = null;
+			}
+			return data;
+		} else {
+			List<FilterOrder> filterOrders = null;
+			if (filterProperties == null) {
+				filterProperties = getMetaFilterProperties(filterBy, dcemView.getViewVariables());
 				try {
-					PredefinedFilter predefinedFilter = dcemView.getPredefinedFilter();
-					int dataSize = predefinedFilter.executeCount(entityManager).intValue();
-					setRowCount(dataSize);
-					data = (List<T>) predefinedFilter.execute(entityManager, first, pageSize);
-				} catch (Exception exp) {
-					JsfUtils.addErrorMessage("Couldn't execute Predefined-Filter. Cause: " + exp.getMessage());
-					data = null;
-				}
-				return data;
-			} else {
-
-				List<FilterOrder> filterOrders = null;
-				List<FilterProperty> filterProperties;
-
-				try {
-					filterProperties = getFilterProperties(dcemView.getViewVariables());
 					if (preFilterProperties != null) {
 						filterProperties.addAll(preFilterProperties);
 					}
-
 				} catch (Exception exp) {
 					logger.warn("jpaSelectProducer.createCountCriteriaQuery", exp);
 					JsfUtils.addErrorMessage(exp.toString());
 					data = null;
 					return null;
 				}
-				if (filterProperties == null) {
-					return data;
-				}
-
-				try {
-					filterOrders = new ArrayList<FilterOrder>();
-					for (ViewVariable viewVariable : dcemView.getViewVariables()) {
-						if (viewVariable.getFilterItem().sortOrder != SortOrder.UNSORTED) {
-							boolean descending = false;
-							if (viewVariable.getFilterItem().sortOrder == SortOrder.DESCENDING) {
-								descending = true;
-							}
-							filterOrders.add(new FilterOrder(viewVariable.getAttributes(), viewVariable.getId(), descending,
-									viewVariable.getFilterItem().getSortRank()));
-							// break;
-						}
-						if (viewVariable.getDcemGui().sortRank() > 0) {
-							filterOrders
-									.add(new FilterOrder(viewVariable.getAttributes(), viewVariable.getId(), true, viewVariable.getFilterItem().getSortRank()));
-						}
-					}
-					Collections.sort(filterOrders, new FilterOrderCompare());
-					data = jpaSelectProducer.selectCriteriaQuery(filterOrders, filterProperties, first, pageSize);
-				} catch (DcemException exp) {
-					logger.warn("jpaSelectProducer.selectCriteriaQuery", exp);
-					JsfUtils.addErrorMessage(exp.toString());
-					data = null;
-				} catch (Exception e) {
-					logger.warn("jpaSelectProducer.selectCriteriaQuery", e);
-					JsfUtils.addErrorMessage("Opps. Error did occur. Please have a look in the log file. " + e.toString());
-				}
-				// System.out.println("JpaLazyModel.load() RETURN Time: " +
-				// (System.currentTimeMillis() - start));
-				return data;
 			}
-		} else {
+			try {
+				filterOrders = new ArrayList<FilterOrder>();
+				for (SortMeta sortMeta : sortBy.values()) {
+					ViewVariable viewVariable = getViewVariable(sortMeta.getField());
+					boolean descending;
+					switch (sortMeta.getOrder()) {
+					case ASCENDING:
+						descending = false;
+						break;
+					case DESCENDING:
+						descending = true;
+						break;
+					default:
+						continue;
+					}
+					filterOrders
+							.add(new FilterOrder(viewVariable.getAttributes(), viewVariable.getId(), descending, viewVariable.getFilterItem().getSortRank()));
+				}
+				Collections.sort(filterOrders, new FilterOrderCompare());
+				data = jpaSelectProducer.selectCriteriaQuery(filterOrders, filterProperties, first, pageSize);
+			} catch (DcemException exp) {
+				logger.warn("jpaSelectProducer.selectCriteriaQuery", exp);
+				JsfUtils.addErrorMessage(exp.toString());
+				data = null;
+			} catch (Exception e) {
+				logger.warn("jpaSelectProducer.selectCriteriaQuery", e);
+				JsfUtils.addErrorMessage("Opps. Error did occur. Please have a look in the log file. " + e.toString());
+			}
+			filterProperties = null;
 			return data;
 		}
 	}
@@ -193,34 +173,51 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 		return predefinedFilter.executeCount(entityManager).intValue();
 	}
 
+	private ViewVariable getViewVariable(String id) {
+		for (ViewVariable viewVariable : dcemView.getViewVariables()) {
+			if (viewVariable.getId().equals(id)) {
+				return viewVariable;
+			}
+		}
+		return null;
+	}
+
+	private List<FilterProperty> getMetaFilterProperties(Map<String, FilterMeta> filterBy, List<ViewVariable> variables) {
+		List<FilterProperty> properties = new ArrayList<>(filterBy.size());
+		ViewVariable viewVariable;
+		for (FilterMeta filterMeta : filterBy.values()) {
+			viewVariable = null;
+			for (ViewVariable viewVariable2 : variables) {
+				if (viewVariable2.getId().equals(filterMeta.getField())) {
+					viewVariable = viewVariable2;
+					break;
+				}
+			}
+			if (viewVariable == null) {
+				continue;
+			}
+			FilterProperty filterProperty = getFilterProperty(viewVariable, filterMeta.getFilterValue());
+			if (filterProperty != null) {
+				properties.add(filterProperty);
+			}
+		}
+		return properties;
+	}
+
 	public List<T> getPredefinedFilterData(int offset, int pageSize) throws Exception {
 		PredefinedFilter predefinedFilter = dcemView.getPredefinedFilter();
 		return (List<T>) predefinedFilter.execute(entityManager, offset, pageSize);
 	}
 
-	/**
-	 * @return
-	 * @throws DcemException
-	 * @throws Exception
-	 */
-	public static List<FilterProperty> getFilterProperties(List<ViewVariable> variables) throws DcemException {
-
-		List<FilterProperty> filterProperties = new LinkedList<FilterProperty>();
-		Object filterValue = null;
-		for (ViewVariable viewVariable : variables) {
-			if (viewVariable.getFilterItem() == null) {
-				continue;
-			}
-			FilterOperator filterOperator = FilterOperator.NONE;
-			// if (filterOperator == null || filterOperator ==
-			// FilterOperator.NONE) {
-			// continue;
-			// }
-			VariableType variableType = viewVariable.getVariableType();
-			switch (variableType) {
-			case STRING:
+	private static FilterProperty getFilterProperty(ViewVariable viewVariable, Object filterValue) {
+		FilterOperator filterOperator = FilterOperator.NONE;
+		VariableType variableType = viewVariable.getVariableType();
+		Object filterValueTo = viewVariable.getFilterToValue();
+		switch (variableType) {
+		case STRING:
+			if (filterValue == null) {
 				if ((viewVariable.getFilterValue() == null) || ((String) viewVariable.getFilterValue()).isEmpty()) {
-					continue;
+					return null;
 				}
 				if (viewVariable.getFilterOperator() == FilterOperator.NONE) {
 					filterOperator = FilterOperator.LIKE;
@@ -228,10 +225,16 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 					filterOperator = viewVariable.getFilterOperator();
 				}
 				filterValue = viewVariable.getFilterValue();
-				break;
-			case ENUM:
+			} else {
+				if (((String) filterValue).isEmpty() == false) {
+					filterOperator = FilterOperator.LIKE;
+				}
+			}
+			break;
+		case ENUM:
+			filterOperator = FilterOperator.EQUALS;
+			if (filterValue == null) {
 				Class<Enum<?>> klass = viewVariable.getKlass();
-				filterOperator = viewVariable.getFilterItem().getFilterOperator();
 				if (klass.getAnnotation(EnumStringAnnotation.class) != null) {
 					variableType = VariableType.ENUM_STRING;
 					Enum[] enums = klass.getEnumConstants();
@@ -242,78 +245,79 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 				} else {
 					filterValue = viewVariable.getFilterValue();
 				}
-				break;
-			case BOOLEAN:
-				Object object = viewVariable.getFilterValue();
-				if (object != null) {
-					if (object instanceof String) {
-						Boolean value = new Boolean((String) object);
-						viewVariable.setFilterValue(value);
-					}
-					Boolean booleanValue = (Boolean) viewVariable.getFilterValue();
-					if (booleanValue != null) {
-						if (booleanValue == true) {
-							filterOperator = FilterOperator.IS_TRUE;
-							filterValue = true;
-						} else {
-							filterOperator = FilterOperator.IS_FALSE;
-							filterValue = false;
-						}
-					}
-				}
-				break;
-			case NUMBER:
-				if (viewVariable.getFilterValue() != null) {
-					try {
-						Integer value = Integer.parseInt((String) viewVariable.getFilterValue());
-						filterOperator = FilterOperator.EQUALS;
-						filterValue = value;
-					} catch (Exception e) {
-						JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "autoview.invalidNumberFormat", viewVariable.getDisplayName());
-					}
-				}
-				// if (viewVariable.getFilterOperator() != FilterOperator.NONE) {
-				// Integer value;
-				// try {
-				// if (viewVariable.getFilterValue() == null) {
-				// filterOperator = FilterOperator.NONE;
-				// } else {
-				// String strValue = ((String) viewVariable.getFilterValue());
-				// value = Integer.parseInt(strValue);
-				// filterValue = value;
-				// filterOperator = viewVariable.getFilterOperator();
-				// }
-				// } catch (Exception e) {
-				// JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "autoview.invalidNumberFormat", viewVariable.getDisplayName());
-				// }
-				// } else {
-				// filterOperator = viewVariable.getFilterOperator();
-				// }
-				break;
-			case DATE:
-				if (viewVariable.getFilterValue() != null) {
-					filterValue = viewVariable.getFilterValue();
-					filterOperator = FilterOperator.EQUALS;
-				}
-				break;
-			default:
-				if (viewVariable.getFilterValue() == null) {
-					continue;
-				}
-				filterOperator = viewVariable.getFilterOperator();
-				filterValue = viewVariable.getFilterValue();
-
 			}
+			break;
+		case BOOLEAN:
+			if (filterValue == null) {
+				filterValue = viewVariable.getFilterValue();
+			}
+			if (filterValue != null) {
+				if (filterValue instanceof String) {
+					filterValue = new Boolean((String) filterValue);
+				}
+				if (((Boolean) filterValue) == true) {
+					filterOperator = FilterOperator.IS_TRUE;
+				} else {
+					filterOperator = FilterOperator.IS_FALSE;
+				}
+			}
+			break;
+		case NUMBER:
+			if (filterValue == null) {
+				filterValue = viewVariable.getFilterValue();
+			}
+			if (filterValue != null) {
+				try {
+					filterValue = Integer.parseInt((String) filterValue);
+					filterOperator = FilterOperator.EQUALS;
+				} catch (Exception e) {
+					JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "autoview.invalidNumberFormat", viewVariable.getDisplayName());
+				}
+			}
+			break;
+		case DATE:
+			if (filterValue != null) {
+				List<?> list = (List<?>) filterValue;
+				if (list.get(0) instanceof LocalDate) {
+					filterValue = ((LocalDate) list.get(0)).atStartOfDay();
+					filterValueTo = (((LocalDate) list.get(1)).atTime(LocalTime.MAX));
+				} else {
+					filterValue = list.get(0);
+					filterValueTo = (list.get(1));
+				}
+			} else {
+				filterValue = viewVariable.getFilterValue();
+			}
+			filterOperator = FilterOperator.BETWEEN;
+			break;
+		default:
+			if (viewVariable.getFilterValue() == null) {
+				return null;
+			}
+			filterOperator = viewVariable.getFilterOperator();
+			filterValue = viewVariable.getFilterValue();
 
-			// if (viewVariable.getVariableType() == VariableType.STRING && ())
-			// {
-			// JsfUtils.addWarningMessage(Constants.CORE_RESOURCE,
-			// "autoview.missingvalue",
-			// viewVariable.getDisplayName());
-			// return null;
-			// }
+		}
+		return new FilterProperty(viewVariable.getAttributes(), filterValue, filterValueTo, variableType, filterOperator);
 
-			filterProperties.add(new FilterProperty(viewVariable.getAttributes(), filterValue, viewVariable.getFilterToValue(), variableType, filterOperator));
+	}
+
+	/**
+	 * @return
+	 * @throws DcemException
+	 * @throws Exception
+	 */
+	public static List<FilterProperty> getFilterProperties(List<ViewVariable> variables) throws DcemException {
+
+		List<FilterProperty> filterProperties = new LinkedList<FilterProperty>();
+		for (ViewVariable viewVariable : variables) {
+			if (viewVariable.getFilterItem() == null) {
+				continue;
+			}
+			FilterProperty filterProperty = getFilterProperty(viewVariable, null);
+			if (filterProperty != null) {
+				filterProperties.add(filterProperty);
+			}
 		}
 		return filterProperties;
 	}
@@ -328,8 +332,7 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 	@Override
 	public int count(Map<String, FilterMeta> filterBy) {
 		try {
-			List<FilterProperty> filterProperties;
-			filterProperties = getFilterProperties(dcemView.getViewVariables());
+			filterProperties = getMetaFilterProperties(filterBy, dcemView.getViewVariables());
 			if (preFilterProperties != null) {
 				filterProperties.addAll(preFilterProperties);
 			}
@@ -338,7 +341,7 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 			return dataSize;
 		} catch (Exception exp) {
 			logger.warn("jpaSelectProducer.createCountCriteriaQuery", exp);
-			JsfUtils.addErrorMessage(exp.toString() +  "For " + dcemView.getSubject().getKlass());
+			JsfUtils.addErrorMessage(exp.toString() + "For " + dcemView.getSubject().getKlass());
 			return 0;
 		}
 	}

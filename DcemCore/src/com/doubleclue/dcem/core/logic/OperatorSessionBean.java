@@ -83,6 +83,8 @@ public class OperatorSessionBean implements Serializable {
 	String rolesText;
 
 	DcemRole highestRole;
+	
+	List<DcemGroup> userGroups;
 
 	/**
 	 * 
@@ -209,8 +211,8 @@ public class OperatorSessionBean implements Serializable {
 		Set<DcemRole> roles = new HashSet<>();
 		highestRole = user.getDcemRole();
 		roles.add(highestRole);
-		List<DcemGroup> groups = groupLogic.getAllUserGroups(user);
-		for (DcemGroup group : groups) {
+		userGroups = groupLogic.getAllUserGroups(user);
+		for (DcemGroup group : userGroups) {
 			if (group.getDcemRole() != null) {
 				DcemRole groupRole = group.getDcemRole();
 				if (groupRole.getRank() > highestRole.getRank()) {
@@ -361,6 +363,14 @@ public class OperatorSessionBean implements Serializable {
 	
 	public boolean isUserLoggedInAndEnabled() {
 		return isUserLoggedInAndEnabled (null);
+	}
+
+	public List<DcemGroup> getUserGroups() {
+		return userGroups;
+	}
+
+	public void setUserGroups(List<DcemGroup> userGroups) {
+		this.userGroups = userGroups;
 	}
 
 }

@@ -173,7 +173,6 @@ public class UserDialogBean extends DcemDialog {
 			try {
 				userLogic.enableUser(dcemUser, getAutoViewAction().getDcemAction());
 				JsfUtils.addInformationMessage(AdminModule.RESOURCE_NAME, "userIsEnabled");
-				viewNavigator.actionSetDirty();
 				PrimeFaces.current().ajax().update("autoForm:pTable");
 			} catch (Exception e) {
 				JsfUtils.addErrorMessage(e.getMessage());
@@ -200,7 +199,6 @@ public class UserDialogBean extends DcemDialog {
 			try {
 				userLogic.disableUser(dcemUser, getAutoViewAction().getDcemAction());
 				JsfUtils.addInformationMessage(AdminModule.RESOURCE_NAME, "userIsDisabled");
-				viewNavigator.actionSetDirty();
 				PrimeFaces.current().ajax().update("autoForm:pTable");
 			} catch (Exception e) {
 				JsfUtils.addErrorMessage(e.getMessage());

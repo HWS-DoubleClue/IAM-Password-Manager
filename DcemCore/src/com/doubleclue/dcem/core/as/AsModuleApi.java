@@ -51,10 +51,6 @@ public interface AsModuleApi {
 
 	public List<String> getAuthConnectorNames();
 
-	public HashMap<Date, Long> getUserActivityData(Date startDate, SelectedFormat dateFormat, boolean validLogins);
-
-	public HashMap<Integer, Long> getAuthMethodActivityData(Date startDate, SelectedFormat format);
-	
 	public void killUserDevices(DcemUser dcemUser);
 	
 	public long getCloudSafeUsageMb();

@@ -3,6 +3,7 @@ package com.doubleclue.dcem.core.licence;
 import java.security.spec.AlgorithmParameterSpec;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -413,7 +414,7 @@ public class LicenceLogic implements ReloadClassInterface {
 		alertMessage.setSeverity(severity);
 		alertMessage.setInfo(message);
 		alertMessage.setShowOnDashboard(true);
-		alertMessage.setTime(new Date());
+		alertMessage.setLocalDateTime(LocalDateTime.now());
 		alertMessage.setSource("Licence Administration");
 		return alertMessage;
 	}

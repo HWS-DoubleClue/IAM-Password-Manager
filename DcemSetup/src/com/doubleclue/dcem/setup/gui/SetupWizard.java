@@ -154,7 +154,6 @@ public class SetupWizard implements Serializable {
 	public void setActiveView(String viewName) {
 		activeView = CdiUtils.getReference(viewName);
 		activeView.closeDialog();
-		activeView.setDirty(true);
 		activeView.reload();
 		JsfUtils.refreshCurrentPage();
 	}

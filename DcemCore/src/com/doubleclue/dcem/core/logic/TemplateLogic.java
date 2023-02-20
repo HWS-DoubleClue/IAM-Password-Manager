@@ -17,6 +17,7 @@ import javax.persistence.TypedQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.Auditing;
 import com.doubleclue.dcem.core.entities.DcemAction;
@@ -25,6 +26,9 @@ import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
+import com.doubleclue.utils.FileContent;
+import com.doubleclue.utils.ResourceFinder;
+import com.doubleclue.utils.StringUtils;
 
 @ApplicationScoped
 @Named("templateLogic")
@@ -109,6 +113,30 @@ public class TemplateLogic {
 			return null;
 		}
 	}
+	
+	@DcemTransactional
+	public DcemTemplate getUpdateTemplateByName(Class loadingClass,String name, SupportedLanguage language, String scanPackages)  {
+		DcemTemplate dcemTemplate = getTemplateByNameLanguage(name, language);
+		if (dcemTemplate == null) {
+			try {
+				List<FileContent> templateFiles = ResourceFinder.find(loadingClass, scanPackages, name + '_' + language.getLocale().getLanguage() + DcemConstants.TEMPLATE_TYPE);
+				if (templateFiles.isEmpty())  {
+					return null;
+				}
+				
+				dcemTemplate = new  DcemTemplate();
+				dcemTemplate.setName(name);;
+				dcemTemplate.setLanguage(language);
+				dcemTemplate.setContent(StringUtils.getStringFromUtf8(templateFiles.get(0).getContent()));
+				addOrUpdateTemplate(dcemTemplate, new DcemAction(AdminModule.MODULE_ID, null, DcemConstants.ACTION_ADD), false);
+			} catch (Exception e) {
+				logger.warn("Couldn't add Tempalte " + name, e);
+				return null;
+			}
+		} 
+		return dcemTemplate;
+		
+	}
 
 	/**
 	 * @param name
@@ -172,7 +200,6 @@ public class TemplateLogic {
 		int indEnd;
 		while (true) {
 			ind = content.indexOf("{{", ind);
-
 			if (ind == -1) {
 				break;
 			} else {
@@ -185,7 +212,6 @@ public class TemplateLogic {
 				if (keys.contains(token) == false) {
 					keys.add(token);
 				}
-
 			}
 		}
 		return keys;

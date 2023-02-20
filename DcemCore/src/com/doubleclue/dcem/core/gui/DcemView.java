@@ -29,7 +29,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
@@ -103,9 +106,7 @@ public abstract class DcemView implements Serializable {
 
 	protected Object actionObject;
 	protected Object actionSubObject;
-
 	boolean dirty;
-
 	protected int maxExport = 1000;
 
 	public List<AutoViewAction> getViewActions() {
@@ -118,7 +119,6 @@ public abstract class DcemView implements Serializable {
 			activeDialog = null;
 			PrimeFaces.current().dialog().closeDynamic(null);
 		}
-		setDirty(true);
 	}
 
 	public DcemDialog getActiveDialog() {
@@ -198,28 +198,7 @@ public abstract class DcemView implements Serializable {
 		if (actioType == ActionType.CREATE_OBJECT) {
 			selectedObject = viewNavigator.getActiveView().createActionObject();
 		}
-		// if (autoViewAction.getRawAction().getName().equals(DcemConstants.ACTION_COPY)) {
-		// selectedObject = selectedObject.
-		// }
-
-		// Class<?> subClass = autoViewAction.getRawAction().getSubClass();
-		// if (subClass != null) {
-		// try {
-		// PropertyDescriptor pd = new PropertyDescriptor(subClass.getSimpleName(), (Class<?>)
-		// selectedObject.getClass());
-		// Method getterMethod = pd.getReadMethod();
-		// subObject = getterMethod.invoke(selectedObject);
-		// if (subObject == null) {
-		// subObject = subClass.newInstance();
-		// }
-		// } catch (Exception exp) {
-		// logger.warn("Couldn't reetriev sub-Class", exp);
-		// return;
-		// }
-		// } else {
 		subObject = selectedObject;
-		// }
-
 		activeDialog = autoViewAction.getDcemDialog();
 		if (actioType == ActionType.DIALOG || actioType == ActionType.CREATE_OBJECT) {
 			if (autoDialogBean != null) {
@@ -234,7 +213,6 @@ public abstract class DcemView implements Serializable {
 				autoDialogBean.populatePanelGrid();
 			}
 		}
-
 		autoViewAction.getDcemDialog().setAutoViewAction(autoViewAction);
 		try {
 			autoViewAction.getDcemDialog().show(this, autoViewAction);
@@ -329,16 +307,6 @@ public abstract class DcemView implements Serializable {
 	public void setSubject(SubjectAbs subject) {
 		this.subject = subject;
 	}
-
-	// protected DcemAction getDcemActionByName(String name) {
-	// for (DcemAction dcemAction : this.getSubject().getDcemActions()) {
-	// if (dcemAction.getAction().equals(name)) {
-	// return dcemAction;
-	// }
-	// }
-	// return null;
-	//
-	// }
 
 	public void reload() {
 		autoViewBean.reload();
@@ -468,7 +436,6 @@ public abstract class DcemView implements Serializable {
 	}
 
 	public void setPredefinedFilterId(int predefinedFilterId) {
-		setDirty(true);
 		this.predefinedFilterId = predefinedFilterId;
 	}
 
@@ -495,7 +462,6 @@ public abstract class DcemView implements Serializable {
 		options.put("contentWidth", "950");
 		// options.put("contentHeight", "400");
 		options.put("headerElement", "customheader");
-		setDirty(true);
 		PrimeFaces.current().dialog().openDynamic(predefinedFilterAction.getXhtmlPage(), options, null);
 		// RequestContext.getCurrentInstance().openDialog(predefinedFilterAction.getXhtmlPage(), options, null);
 	}
@@ -512,14 +478,6 @@ public abstract class DcemView implements Serializable {
 			return null;
 		}
 		return predefinedFilters.get(predefinedFilterId - 1);
-	}
-
-	public boolean isDirty() {
-		return dirty;
-	}
-
-	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
 	}
 
 	public List<Object> getSelection() {
@@ -562,7 +520,7 @@ public abstract class DcemView implements Serializable {
 		}
 		return displayViewVariables;
 	}
-	
+
 	public ViewVariable getDisplayViewVariable(String id) {
 		List<ViewVariable> list = getDisplayViewVariables();
 		for (ViewVariable variable : list) {
@@ -570,7 +528,7 @@ public abstract class DcemView implements Serializable {
 				return variable;
 			}
 		}
-		return null;	
+		return null;
 	}
 
 	public void setDisplayViewVariables(List<ViewVariable> displayViewVariables) {
@@ -579,16 +537,6 @@ public abstract class DcemView implements Serializable {
 
 	public List<ViewVariable> getVisibleVariables() {
 		return displayViewVariables;
-		// if (visibleVariables != null) {
-		// return visibleVariables;
-		// }
-		// visibleVariables = new ArrayList<ViewVariable>();
-		// for (ViewVariable viewVariable: displayViewVariables) {
-		// if (viewVariable.isVisible()) {
-		// visibleVariables.add(viewVariable);
-		// }
-		// }
-		// return visibleVariables;
 	}
 
 	public void leavingView() {
@@ -672,6 +620,42 @@ public abstract class DcemView implements Serializable {
 			}
 
 		}
+	}
+
+	public List<SortMeta> getSortedBy() {
+		List<SortMeta> list = new LinkedList<SortMeta>();
+		SortMeta sortMeta;
+		for (ViewVariable viewVariable : viewVariables) {
+			switch (viewVariable.getFilterSortOrder()) {
+			case ASCENDING:
+				sortMeta = SortMeta.builder().field(viewVariable.id).order(SortOrder.ASCENDING).build();
+				list.add(sortMeta);
+			case DESCENDING:
+				sortMeta = SortMeta.builder().field(viewVariable.id).order(SortOrder.DESCENDING).build();
+				list.add(sortMeta);
+			default:
+			}
+		}
+		return list;
+	}
+
+	public List<FilterMeta> getFilterBy() {
+		List<FilterMeta> list = new LinkedList<FilterMeta>();
+		FilterMeta filterMeta = null;
+		for (ViewVariable viewVariable : viewVariables) {
+			if (viewVariable.getFilterItem().getFilterOperator() != FilterOperator.NONE &&  viewVariable.getFilterValue() != null) {
+				if (viewVariable.getFilterToValue() != null) {
+					List<Object> listValues = new ArrayList<>();
+					listValues.add(viewVariable.getFilterValue());
+					listValues.add(viewVariable.getFilterToValue());
+					filterMeta = FilterMeta.builder().field(viewVariable.getId()).filterValue(listValues).build();
+				} else {
+					filterMeta = FilterMeta.builder().field(viewVariable.getId()).filterValue(viewVariable.getFilterValue()).build();
+				}
+				list.add(filterMeta);
+			}
+		}
+		return list;
 	}
 
 }

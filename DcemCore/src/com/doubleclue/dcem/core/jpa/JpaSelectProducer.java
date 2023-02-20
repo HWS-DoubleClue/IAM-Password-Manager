@@ -245,10 +245,9 @@ public class JpaSelectProducer<T> implements Serializable {
 			if (filterProperty.filterOperator.valueRequired && ((filterProperty.getValue() == null))) {
 				continue;
 			}
-
 			int length = filterProperty.getAttributes().size();
 			if (filterProperty.getAttributes() == null || filterProperty.getAttributes().size() == 0) {
-				throw new DcemException (DcemErrorCodes.MISSING_META_DATA_ATRIBUTES, filterProperty.toString());
+				throw new DcemException(DcemErrorCodes.MISSING_META_DATA_ATRIBUTES, filterProperty.toString());
 			}
 			SingularAttribute<?, ?> attribute = filterProperty.getAttributes().get(length - 1);
 
@@ -404,20 +403,12 @@ public class JpaSelectProducer<T> implements Serializable {
 				}
 				if (attribute.getJavaType().getSimpleName().equals("LocalDateTime")) {
 					Expression<LocalDateTime> expressionLocalDate = preFrom.<LocalDateTime> get((SingularAttribute<Object, LocalDateTime>) attribute);
-					List<LocalDate> dates = (List<LocalDate>) filterProperty.getValue();
-					if (dates.size() > 1) {
-						LocalDateTime localDateTimeMin = LocalDateTime.of(dates.get(0), LocalTime.MIN);
-						LocalDateTime localDateTimeMax = LocalDateTime.of(dates.get(1), LocalTime.MAX);
-						predicates.add(cb.between(expressionLocalDate, localDateTimeMin, localDateTimeMax));
-					}
+					predicates.add(cb.between(expressionLocalDate, (LocalDateTime) filterProperty.getValue(), (LocalDateTime) filterProperty.getToValue()));
 				} else {
 					Expression<Date> expressionDate = preFrom.<Date> get((SingularAttribute<Object, Date>) attribute);
-					List<LocalDate> dates = (List<LocalDate>) filterProperty.getValue();
-					if (dates.size() > 1) {
-						predicates.add(cb.between(expressionDate, DcemUtils.getDayBegin(dates.get(0)), DcemUtils.getDayEnd(dates.get(1))));
-					}
+					predicates.add(cb.between(expressionDate, DcemUtils.convertToDate((LocalDateTime) filterProperty.getValue()),
+							DcemUtils.convertToDate((LocalDateTime) filterProperty.getToValue())));
 				}
-				filterProperty.setValue(null);
 			}
 				break;
 
@@ -537,59 +528,4 @@ public class JpaSelectProducer<T> implements Serializable {
 		return null;
 	}
 
-	// public List<T> selectCriteriaQueryFilters(List<AsApiFilterItem> filters, int firstResult, int maxResult)
-	// throws DcemException {
-	//
-	// Class<?> metaClass = null;
-	// try {
-	// metaClass = Class.forName(entityClass.getName() + "_");
-	// } catch (Exception e1) {
-	// // logger.debug(e1);
-	// }
-	// List<FilterProperty> filterProperties = new LinkedList<>();
-	// FilterProperty filterProperty;
-	// ArrayList<SingularAttribute<?, ?>> attributes;
-	// if (filters != null) {
-	// for (AsApiFilterItem filter : filters) {
-	// Field field = null;
-	// try {
-	// field = entityClass.getDeclaredField(filter.getName());
-	// } catch (Exception e1) {
-	// throw new DcemException(DcemErrorCodes.INVALID_FILTER_NAME, filter.getName());
-	// }
-	//
-	// attributes = new ArrayList<>();
-	//
-	// try {
-	// attributes.add((SingularAttribute<?, ?>) metaClass.getField(field.getName()).get(metaClass));
-	// } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
-	// | SecurityException e) {
-	// throw new DcemException(DcemErrorCodes.GENERAL, e.getMessage());
-	// }
-	//
-	// VariableType variableType = VariableType.UNKNOWN;
-	// Class<?> cls = field.getType();
-	// if ((cls.equals(Integer.class)) || (cls.equals(int.class))) {
-	// variableType = VariableType.NUMBER;
-	// } else if ((cls.equals(Long.class)) || (cls.equals(long.class))) {
-	// variableType = VariableType.NUMBER;
-	// } else if (cls.equals(String.class)) {
-	// variableType = VariableType.STRING;
-	// } else if ((cls.equals(Boolean.class)) || (cls.equals(boolean.class))) {
-	// variableType = VariableType.BOOLEAN;
-	// } else if ((cls.equals(Date.class)) || (cls.equals(Timestamp.class))
-	// || (cls.equals(java.sql.Date.class))) {
-	// variableType = VariableType.DATE;
-	// } else if (cls.isEnum()) {
-	// variableType = VariableType.ENUM;
-	// } else {
-	//
-	// }
-	// filterProperty = new FilterProperty(attributes, filter.getValue(), null, variableType,
-	// FilterOperator.valueOf(filter.getOperator().name()));
-	// filterProperties.add(filterProperty);
-	// }
-	// }
-	// return selectCriteriaQuery(new LinkedList<FilterOrder>(), filterProperties, firstResult, maxResult);
-	// }
 }

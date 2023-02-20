@@ -75,7 +75,7 @@
 					<p:staticMessage
 						severity="#{alertEntry.value.getWelcomViewAlertSeverity()}"
 						summary="#{alertEntry.value.source != null ? alertEntry.value.source.concat(':') : null}"
-						detail="#{alertEntry.value.time.toString().concat(' - ').concat(alertEntry.value.info == null ? CoreMsg['DcemErrorCodes.'.concat(alertEntry.value.errorCode)] : alertEntry.value.info)}" />
+						detail="#{alertEntry.value.localDateTime.toString().concat(' - ').concat(alertEntry.value.info == null ? CoreMsg['DcemErrorCodes.'.concat(alertEntry.value.errorCode)] : alertEntry.value.info)}" />
 				</p:column>
 				<p:column rendered="#{welcomeView.privilegedForDeletingAlerts}">
 					<p:commandButton
@@ -108,7 +108,7 @@
 				itemLabel="#{CoreMsg['welcomeView.dashboard.'.concat(selectedFormat)]}" />
 		</p:selectOneMenu>
 		<p:commandButton icon="fa fa-angle-right" type="submit"
-			id="changeDateBtn" disabled="#{welcomeView.lastDate}"
+			id="changeDateBtn" 
 			action="#{welcomeView.changeFormatSelection('NEXT')}"
 			update="changeDateBtn barChart pieChart chosenDateLabel"
 			style="height:29px; ">

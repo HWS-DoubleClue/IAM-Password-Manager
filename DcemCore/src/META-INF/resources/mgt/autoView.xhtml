@@ -13,8 +13,8 @@
 				<p:commandLink value="#{autoAction.actionText}" rendered="#{autoAction.link}" ajax="false" action="#{viewNavigator.setActiveDialog(autoAction)}"
 					styleClass="icon_#{viewNavigator.getActionIcon(autoAction)}">
 				</p:commandLink>
-				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link == false}"
-					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false">
+				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link == false}" action="#{viewNavigator.setActiveDialog(autoAction)}"
+					icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false">
 					<p:ajax event="dialogReturn" update="pTable" />
 				</p:commandButton>
 				<p:spacer width="12" />
@@ -55,66 +55,37 @@
 			</p:columnToggler>
 			<p:remoteCommand name="keyAction" update="autoForm:pTable" action="#{viewNavigator.actionSetDirty}" />
 
-			<p:dataTable id="pTable" paginator="true" rowsPerPageTemplate="20,30,50,100,500" rows="20" paginatorPosition="bottom" value="#{autoView.lazyModel}"
-				var="record" rowKey="#{record.id}" update="tableCount" resizableColumns="false"
+			<p:dataTable id="pTable" widgetVar="viewTable" paginator="true" rowsPerPageTemplate="20,30,50,100,500" rows="20" paginatorPosition="bottom"
+				value="#{autoView.lazyModel}" var="record" rowKey="#{record.id}" update="tableCount" resizableColumns="false"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" selectionMode="multiple"
 				selection="#{autoView.selectedItems}" lazy="true" sortMode="single" styleClass="borderless" emptyMessage="#{CoreMsg['emptyTable']}"
-				rowStyleClass="#{record.rowStyle}">
+				rowStyleClass="#{record.rowStyle}" sortBy="#{autoView.sortBy}" filterBy="#{autoView.filterBy}">
 
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
-				<p:ajax event="sort" listener="#{autoView.actionSortSelect}" />
 
 				<p:columns id="columns" value="#{autoView.visibleVariables}" var="item" columnIndexVar="colIndex" filterBy="#{item.id}" width="#{item.columnWidth}"
-					style="text-align: left; word-break: break;  white-space: normal; " visible="#{item.visible}">
+					style="text-align: left; word-break: break;  white-space: normal; " visible="#{item.visible}" field="#{item.id}">
 
 					<f:facet name="header">
-						<h:panelGroup rendered="#{item.variableType ne 'IMAGE'}">
-							<h:commandLink action="#{autoView.sortVariable(item.id)}" value="#{item.displayName}">
-							</h:commandLink>
-							<h:commandLink action="#{autoView.sortVariable(item.id)}">
-								<h:graphicImage id="sorty" url="#{autoView.getSortIcon(item.id)}" style="border: 0; float:right">
-								</h:graphicImage>
-							</h:commandLink>
-						</h:panelGroup>
+						<p:outputLabel value="#{item.displayName}" rendered="#{item.variableType ne 'IMAGE'}" />
+						<p:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
 						<h:panelGroup rendered="#{viewNavigator.predefinedFilterId != 0}">
 							<h:outputText value="#{item.displayName}" />
 						</h:panelGroup>
 					</f:facet>
 
 					<f:facet name="filter">
-
-						<p:inputText value="#{item.filterValue}" size="4" ondblclick="keyAction(); return false;"
-							onkeypress="if (event.keyCode == 13) {keyAction(); return false; }" rendered="#{item.variableType eq 'NUMBER'}" style="vertical-align: middle;"
-							title="#{CoreMsg['filterTooltip']}">
-							<p:ajax event="change" process="@this" update="autoForm:pTable" />
-						</p:inputText>
-
-
-						<p:inputText value="#{item.filterValue}" size="8" rendered="#{item.variableType eq 'STRING'}" ondblclick="keyAction(); return false;"
-							valueChangeListener="#{viewNavigator.actionSetDirty}" onkeypress="if (event.keyCode == 13) { keyAction(); return false; }"
-							style="vertical-align: middle;" title="#{CoreMsg['filterTooltip']}">
-							<p:ajax event="change" process="@this" update="autoForm:pTable" />
-						</p:inputText>
-
-						<p:selectOneMenu style="vertical-align: middle;" value="#{item.filterValue}" rendered="#{item.variableType eq 'BOOLEAN'}">
-							<f:selectItems value="#{dcemApplication.booleanOperators}" />
-							<p:ajax event="change" process="@this" update="autoForm:pTable" listener="#{viewNavigator.actionSetDirty}" />
-						</p:selectOneMenu>
-
-
-						<p:selectOneMenu style="vertical-align: middle;" value="#{item.filterValue}" valueChangeListener="#{viewNavigator.actionSetDirty}"
-							rendered="#{item.variableType eq 'ENUM'}">
+						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'ENUM'}" onchange="PF('viewTable').filter()">
 							<f:selectItems value="#{item.enumItems}" />
-							<p:ajax event="change" process="@form" update="autoForm:pTable" listener="#{item.enumChange}" />
 						</p:selectOneMenu>
-
-
-						<p:datePicker id="datetime" rendered="#{item.variableType eq 'DATE' or item.variableType eq 'EPOCH_DATE'}" value="#{item.filterValue}"
-							showIcon="false"  locale="#{operatorSession.locale}" readonlyInput="true" showTime="false" selectionMode="range" showButtonBar="true" >
-							<p:ajax event="close" process="datetime" update="autoForm:pTable" listener="#{viewNavigator.actionSetDirty}" />
+						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'BOOLEAN'}"
+							onchange="PF('viewTable').filter()">
+							<f:selectItems value="#{dcemApplication.booleanOperators}" />
+						</p:selectOneMenu>
+						<p:datePicker rendered="#{item.variableType eq 'DATE' or item.variableType eq 'EPOCH_DATE'}" showButtonBar="true" locale="#{operatorSession.locale}"
+							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()">
 						</p:datePicker>
-						
-						<h:outputLabel rendered="#{item.variableType eq 'IMAGE'}" />
+						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
 					</f:facet>
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
 						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />

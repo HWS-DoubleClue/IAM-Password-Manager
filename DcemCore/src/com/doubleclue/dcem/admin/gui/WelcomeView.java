@@ -1,8 +1,14 @@
 package com.doubleclue.dcem.admin.gui;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
@@ -11,7 +17,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.primefaces.event.ItemSelectEvent;
-import org.primefaces.model.SortOrder;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.PieChartModel;
 
@@ -29,7 +34,6 @@ import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.ViewNavigator;
 import com.doubleclue.dcem.core.gui.ViewVariable;
-import com.doubleclue.dcem.core.jpa.FilterItem;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.logic.DashboardLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
@@ -68,7 +72,7 @@ public class WelcomeView extends DcemView {
 	private PieChartModel authMethodsPieChart;
 
 	private SelectedFormat selectedDateFormat = SelectedFormat.MONTH;
-	private Date currentDate = new Date();
+	private LocalDate currentDate = LocalDate.now();
 
 	public enum Action {
 		NEXT, PREVIOUS
@@ -78,11 +82,11 @@ public class WelcomeView extends DcemView {
 		DAY, MONTH, YEAR;
 	};
 
-	public Date getCurrentDate() {
+	public LocalDate getCurrentDate() {
 		return currentDate;
 	}
 
-	public void setCurrentDate(Date currentDate) {
+	public void setCurrentDate(LocalDate currentDate) {
 		this.currentDate = currentDate;
 	}
 
@@ -99,62 +103,43 @@ public class WelcomeView extends DcemView {
 	}
 
 	public String getChosenDate() {
+		DateTimeFormatter  dateTimeFormatter;
 		if (selectedDateFormat == SelectedFormat.DAY) {
-			return new SimpleDateFormat("dd MMM", operatorSessionBean.getLocale()).format(currentDate);
+			return currentDate.format(DateTimeFormatter.ofPattern("dd MMM", operatorSessionBean.getLocale()));
 		} else if (selectedDateFormat == SelectedFormat.YEAR) {
-			return new SimpleDateFormat("YYYY", operatorSessionBean.getLocale()).format(currentDate);
+			return currentDate.format(DateTimeFormatter.ofPattern("YYY", operatorSessionBean.getLocale()));
 		} else {
-			return new SimpleDateFormat("MMM YYYY", operatorSessionBean.getLocale()).format(currentDate);
+			return currentDate.format(DateTimeFormatter.ofPattern("MMM YYYY", operatorSessionBean.getLocale()));
 		}
 	}
 
 	public void itemSelect(ItemSelectEvent event) {
-		ViewVariable viewVariable = reportingView.getDisplayViewVariables().get(0);
-		viewVariable.setFilterOperator(FilterOperator.BETWEEN);
-		
-		Calendar calStart = Calendar.getInstance();
-		Calendar calEnd = Calendar.getInstance();
-		
-		calStart.setTime(currentDate);
-		calEnd.setTime(currentDate);
-		
-		calStart.set(Calendar.MINUTE, 0);
-		calStart.set(Calendar.SECOND, 0);
-		
-		calEnd.set(Calendar.MINUTE, 59);
-		calEnd.set(Calendar.SECOND, 59);
-		
+
+		LocalDateTime start;
+		LocalDateTime end;
 		Integer value = event.getItemIndex();
 		switch (selectedDateFormat) {
-		case DAY:
-			calStart.set(Calendar.HOUR_OF_DAY, value);
-			calEnd.set(Calendar.HOUR_OF_DAY, value);
-			break;
 		case MONTH:
-			calStart.set(Calendar.DATE, value + 1);
-			calStart.set(Calendar.HOUR_OF_DAY, 0);
-			calEnd.set(Calendar.DATE, value + 1);	
-			calEnd.set(Calendar.HOUR_OF_DAY, 23);
+			start = currentDate.withDayOfMonth(value).atTime(LocalTime.MIN);
+			end = currentDate.withDayOfMonth(value + 1).atTime(LocalTime.MAX);
 			break;
 		case YEAR:
-			calStart.set(Calendar.MONTH, value);
-			calStart.set(Calendar.DATE, 1);
-			calStart.set(Calendar.HOUR_OF_DAY, 0);
-			calEnd.set(Calendar.DATE, calStart.getActualMaximum(Calendar.DAY_OF_MONTH));
-			calEnd.set(Calendar.MONTH, calStart.get(Calendar.MONTH));
-			calEnd.set(Calendar.HOUR_OF_DAY, 23);
+			start = currentDate.withMonth(value).atTime(LocalTime.MIN);
+			end = currentDate.withMonth(value + 1).atTime(LocalTime.MAX);
 			break;
-		default:
+		default: // DAY
+			start = currentDate.atTime(value, 0);
+			end = currentDate.atTime(value + 1, 0);
 			break;
 		}
-		
-		viewVariable.setFilterValue(calStart.getTime());
-		viewVariable.setFilterToValue(calEnd.getTime());
-		ViewVariable viewVariable2 = reportingView.getDisplayViewVariable(DcemReporting_.action.getName());
-		viewVariable2.setFilterValue(Integer.toString(ReportAction.Authenticate.ordinal()));
-		viewVariable2.setFilterOperator(FilterOperator.EQUALS);
+		ViewVariable viewVariable = reportingView.getDisplayViewVariables().get(0);
+		viewVariable.setFilterOperator(FilterOperator.BETWEEN);
+		List<LocalDateTime> listValues = new ArrayList<>();
+		listValues.add(start);
+		listValues.add(end);
+		viewVariable.setFilterValue(listValues);
 		DcemModule dcemModule = viewNavigator.getActiveModule();
-		viewNavigator.setActiveView(dcemModule.getId()  + DcemConstants.MODULE_VIEW_SPLITTER + "reportingView");
+		viewNavigator.setActiveView(dcemModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER + "reportingView");
 	}
 
 	@PostConstruct
@@ -164,14 +149,9 @@ public class WelcomeView extends DcemView {
 	}
 
 	private void setUpCharts() {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.DAY_OF_MONTH, 1);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
 		selectedDateFormat = SelectedFormat.MONTH;
-		userActivityBarChart = dashboardLogic.getUserActivityBarChart(cal.getTime(), SelectedFormat.MONTH, resourceBundle);
-		authMethodsPieChart = dashboardLogic.getAuthMethodsPieChart(cal.getTime(), SelectedFormat.MONTH, resourceBundle);
+		userActivityBarChart = dashboardLogic.getUserActivityBarChart(currentDate.atStartOfDay(), SelectedFormat.MONTH, resourceBundle);
+		authMethodsPieChart = dashboardLogic.getAuthMethodsPieChart(currentDate.atStartOfDay(), SelectedFormat.MONTH, resourceBundle);
 	}
 
 	@Override
@@ -206,60 +186,42 @@ public class WelcomeView extends DcemView {
 
 	public void changeDateSelection(SelectedFormat format) {
 		selectedDateFormat = format;
-		currentDate = new Date();
-		userActivityBarChart = dashboardLogic.getUserActivityBarChart(currentDate, format, resourceBundle);
-		authMethodsPieChart = dashboardLogic.getAuthMethodsPieChart(currentDate, format, resourceBundle);
+		currentDate = LocalDate.now();
+		userActivityBarChart = dashboardLogic.getUserActivityBarChart(currentDate.atStartOfDay(), format, resourceBundle);
+		authMethodsPieChart = dashboardLogic.getAuthMethodsPieChart(currentDate.atStartOfDay(), format, resourceBundle);
 	}
 
 	public void changeFormatSelection(Action selectedAction) {
 		if (currentDate == null) {
-			currentDate = new Date();
+			currentDate = LocalDate.now();
 		}
-		Date startDate = null;
 		SelectedFormat selectedFormat = getSelectedDateFormat();
-		Calendar cal = null;
-
-		if (selectedFormat == SelectedFormat.DAY) { // per hour
-			cal = Calendar.getInstance();
-			cal.setTime(currentDate);
+		switch (selectedDateFormat) {
+		default:
+		case DAY:
 			if (selectedAction == Action.PREVIOUS)
-				cal.add(Calendar.DAY_OF_YEAR, -1);
+				currentDate = currentDate.minusDays(1);
 			else if (selectedAction == Action.NEXT) {
-				cal.add(Calendar.DAY_OF_YEAR, +1);
+				currentDate = currentDate.plusDays(1);
 			}
-			startDate = cal.getTime();
-		}
-
-		if (selectedFormat == SelectedFormat.MONTH) { // per day
-			cal = Calendar.getInstance();
-			cal.setTime(currentDate);
+			break;
+		case MONTH:
 			if (selectedAction == Action.PREVIOUS)
-				cal.add(Calendar.MONTH, -1);
+				currentDate = currentDate.minusMonths(1);
 			else if (selectedAction == Action.NEXT) {
-				cal.add(Calendar.MONTH, +1);
+				currentDate = currentDate.plusMonths(1);
 			}
-			cal.set(Calendar.DAY_OF_MONTH, 1);
-
-			startDate = cal.getTime();
-		}
-
-		if (selectedFormat == SelectedFormat.YEAR) { // per month
-			cal = Calendar.getInstance();
-			cal.setTime(currentDate);
+			break;
+		case YEAR:
 			if (selectedAction == Action.PREVIOUS)
-				cal.add(Calendar.YEAR, -1);
+				currentDate = currentDate.minusYears(1);
 			else if (selectedAction == Action.NEXT) {
-				cal.add(Calendar.YEAR, +1);
+				currentDate = currentDate.plusYears(1);
 			}
-
-			int year = cal.get(Calendar.YEAR);
-			cal.set(year, 01, 01);
-			startDate = cal.getTime();
+			break;
 		}
-
-		currentDate = startDate;
-		userActivityBarChart = dashboardLogic.getUserActivityBarChart(currentDate, selectedFormat, resourceBundle);
-		authMethodsPieChart = dashboardLogic.getAuthMethodsPieChart(currentDate, selectedFormat, resourceBundle);
+		userActivityBarChart = dashboardLogic.getUserActivityBarChart(currentDate.atStartOfDay(), selectedFormat, resourceBundle);
+		authMethodsPieChart = dashboardLogic.getAuthMethodsPieChart(currentDate.atStartOfDay(), selectedFormat, resourceBundle);
 	}
 
 	public static Date getLastDateOfMonth(Date date) {
@@ -269,25 +231,6 @@ public class WelcomeView extends DcemView {
 		return cal.getTime();
 	}
 
-	public boolean isLastDate() {
-		Calendar today = Calendar.getInstance();
-		Calendar selectedDate = Calendar.getInstance();
-		selectedDate.setTime(currentDate);
-
-		if (selectedDateFormat == SelectedFormat.DAY) {
-			selectedDate.add(Calendar.DATE, 1);
-		} else if (selectedDateFormat == SelectedFormat.MONTH) {
-			selectedDate.add(Calendar.MONTH, 1);
-		} else if (selectedDateFormat == SelectedFormat.YEAR) {
-			selectedDate.add(Calendar.YEAR, 1);
-		}
-
-		if (selectedDate.after(today)) {
-			return true;
-		}
-		return false;
-	}
-	
 	public void leavingView() {
 		userActivityBarChart = null;
 		authMethodsPieChart = null;

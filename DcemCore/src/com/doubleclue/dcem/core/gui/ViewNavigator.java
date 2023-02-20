@@ -184,7 +184,6 @@ public class ViewNavigator implements Serializable {
 		activeView.closeDialog();
 		autoViewBean.switchView();
 		// activeView.setSelection(null);
-		activeView.setDirty(true);
 		activeView.reload();
 		PrimeFaces.current().ajax().update("viewPart");
 		PrimeFaces.current().executeScript("localStorage.setItem('mgtActiveView', '" + moduleId + DcemConstants.MODULE_VIEW_SPLITTER + viewName + "')");
@@ -195,7 +194,6 @@ public class ViewNavigator implements Serializable {
 		if (activeView != null) {
 			activeView.closeDialog();
 		}
-
 	}
 
 	public boolean isEditAction() {
@@ -220,7 +218,6 @@ public class ViewNavigator implements Serializable {
 
 	public void reload() {
 		if (activeView != null) {
-			activeView.setDirty(true);
 			activeView.reload();
 		}
 	}
@@ -239,11 +236,6 @@ public class ViewNavigator implements Serializable {
 		return activeView.getActiveDialog().getConfirmText();
 	}
 
-	public void actionSetDirty() {
-		if (activeView != null) {
-			activeView.setDirty(true);
-		}
-	}
 
 	/**
 	 * @return

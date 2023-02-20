@@ -17,7 +17,9 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
 import com.doubleclue.dcem.core.DcemConstants;
@@ -39,7 +41,8 @@ public class AutoViewBean implements Serializable {
 	OperatorSessionBean sessionBean;
 
 	FacesContext context;
-
+	
+	
 	private static final long serialVersionUID = 3733919546663290317L;
 
 	private static Logger logger = LogManager.getLogger(AutoViewBean.class);
@@ -102,10 +105,6 @@ public class AutoViewBean implements Serializable {
 			Method method = preferences.getClass().getMethod("getManualsLink", (Class[]) null);
 			String methodLink = (String) method.invoke(preferences, (Object[]) null);
 			if (methodLink != null && methodLink.startsWith("http")) {
-				// if (methodLink.endsWith("pdf") && sessionBean.getDcemUser().getLanguage() == SupportedLanguage.German) {
-				// methodLink = methodLink.substring(getCount());
-				// }
-				// Internationalization missing
 				return methodLink;
 			}
 		} catch (Exception e) {
@@ -136,13 +135,6 @@ public class AutoViewBean implements Serializable {
 		}
 		return viewNavigator.getActiveView().getSubject();
 	}
-
-	// public String getIcon24() {
-	// if (viewNavigator.getActiveView() == null) {
-	// return null;
-	// }
-	// return "/pictures/icons/24x24/" + viewNavigator.getActiveView().getSubject().getIconName();
-	// }
 
 	public class FieldType {
 		String subClass;
@@ -181,6 +173,14 @@ public class AutoViewBean implements Serializable {
 	public int getCount() {
 		return viewNavigator.getActiveView().getLazyModel().getRowCount();
 	}
+	
+	public List<SortMeta> getSortBy() {
+		return viewNavigator.getActiveView().getSortedBy();
+	}
+	
+	public List<FilterMeta> getFilterBy() {
+		return viewNavigator.getActiveView().getFilterBy();
+	}
 
 	public List<ViewVariable> getVisibleVariables() {
 		return viewNavigator.getActiveView().getDisplayViewVariables();
@@ -190,62 +190,18 @@ public class AutoViewBean implements Serializable {
 		return autoViewAction.getActionText();
 	}
 
-	// public Collection<Object> getSelection() {
-	// return selection;
-	// }
-
 	public List<Object> getSelectedItems() {
-		// System.out.println("AutoViewBean.getSelectedItems() " + selectedItems);
 		return selectedItems;
 	}
 
 	public void setSelectedItems(List<Object> selectedItems) {
-		// System.out.println("AutoViewBean.setSelectedItems() " + selectedItems);
 		this.selectedItems = selectedItems;
-	}
-
-	public String getSortIcon(String item) {
-		String icon = null;
-		ViewVariable viewVariable = DcemUtils.getViewVariableFromId(getVisibleVariables(), item);
-		switch (viewVariable.getFilterItem().getSortOrder()) {
-		case ASCENDING:
-			icon = "/pictures/icons/16x16/sort_down.png";
-			break;
-		case DESCENDING:
-			icon = "/pictures/icons/16x16/sort_up.png";
-			break;
-		case UNSORTED:
-			icon = "/pictures/icons/16x16/sort_up_down2.png";
-			break;
-		}
-		return icon;
-	}
-
-	public void sortVariable(String item) {
-		List<ViewVariable> viewVariables = getVisibleVariables();
-		for (ViewVariable viewVariable : viewVariables) {
-			if (viewVariable.id.equals(item)) {
-				viewNavigator.getActiveView().setDirty(true);
-				switch (viewVariable.getFilterItem().getSortOrder()) {
-				case ASCENDING:
-					viewVariable.getFilterItem().setSortOrder(SortOrder.DESCENDING);
-					break;
-				case DESCENDING:
-					viewVariable.getFilterItem().setSortOrder(SortOrder.UNSORTED);
-					break;
-				case UNSORTED:
-					viewVariable.getFilterItem().setSortOrder(SortOrder.ASCENDING);
-					break;
-				}
-			} else {
-				viewVariable.getFilterItem().setSortOrder(SortOrder.UNSORTED);
-			}
-		}
-		return;
 	}
 
 	public String preSelectionDialog() {
 		// TODO
 		return null;
 	}
+
+	
 }

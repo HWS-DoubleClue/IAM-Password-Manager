@@ -39,7 +39,7 @@ public class TemplateView extends DcemView {
 
 		subject = templateSubject;
 
-		ResourceBundle resourceBundle = JsfUtils.getBundle(DcemConstants.CORE_RESOURCE);
+		ResourceBundle resourceBundle = JsfUtils.getBundle(DcemConstants.CORE_RESOURCE, operatorSessionBean.getLocale());
 
 		addAutoViewAction(DcemConstants.ACTION_ADD, resourceBundle, templateDialog, DcemConstants.TEMPLATE_DIALOG);
 		addAutoViewAction(DcemConstants.ACTION_COPY, resourceBundle, templateDialog, DcemConstants.TEMPLATE_DIALOG);

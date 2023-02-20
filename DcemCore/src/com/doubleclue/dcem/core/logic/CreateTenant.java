@@ -195,7 +195,7 @@ public class CreateTenant {
 		logger.debug("Adding Actions");
 		actionLogic.createDbActions(tenantEntity);
 		logger.debug("Adding Templates");
-		createDefaultTemplates();
+		updateTemplates(DcemConstants.TEMPLATE_RESOURCES);
 		try {
 			logger.debug("Adding TextResources");
 			textResourceLogic.createDefaultTextResources(true);
@@ -302,14 +302,14 @@ public class CreateTenant {
 		return;
 	}
 
-	private void createDefaultTemplates() throws DcemException {
+	public void updateTemplates(String scannedPackages) throws DcemException {
 		/**
 		 * adding default Templates
 		 * 
 		 */
 		List<FileContent> templates;
 		try {
-			templates = ResourceFinder.find(CreateTenant.class, DcemConstants.TEMPLATE_RESOURCES, DcemConstants.TEMPLATE_TYPE);
+			templates = ResourceFinder.find(CreateTenant.class, scannedPackages, DcemConstants.TEMPLATE_TYPE);
 		} catch (Exception exp) {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Couldn't find templates", exp);
 		}
@@ -324,10 +324,17 @@ public class CreateTenant {
 			}
 			fileName = fileName.substring(0, fileName.length() - 3);
 			supportedLanguage = DcemUtils.getSuppotedLanguage(locale); // default is always english
-			DcemTemplate dcemTemplate = new DcemTemplate();
-			dcemTemplate.setName(fileName);
-			if (supportedLanguage == SupportedLanguage.English) {
-				dcemTemplate.setDefaultTemplate(true);
+			List<DcemTemplate> dcemTemplateList = templateLogic.getTemplatesByName(fileName, supportedLanguage);
+			DcemTemplate dcemTemplate = null;
+			if (dcemTemplateList.isEmpty() == false) {
+				dcemTemplate = dcemTemplateList.get(0);
+			}
+			if (dcemTemplate == null) {
+				dcemTemplate = new DcemTemplate();
+				dcemTemplate.setName(fileName);
+				if (supportedLanguage == SupportedLanguage.English) {
+					dcemTemplate.setDefaultTemplate(true);
+				}
 			}
 			dcemTemplate.setLanguage(supportedLanguage);
 			dcemTemplate.setContent(StringUtils.getStringFromUtf8(template.getContent()));

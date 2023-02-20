@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -291,6 +292,9 @@ public class ViewVariable implements Serializable {
 	}
 
 	public Object getFilterValue() {
+		// if (filterItem.getFilterValue() != null) {
+		// System.out.println("ViewVariable.getFilterValue() " + this.getDisplayName() + "/" + filterItem.getFilterValue());
+		// }
 		return filterItem.getFilterValue();
 	}
 
@@ -317,11 +321,11 @@ public class ViewVariable implements Serializable {
 		return filterItem.getFilterToValue();
 	}
 
-	public Date getFilterToValueAsDate() {
-		return (Date) filterItem.getFilterToValue();
+	public LocalDateTime getFilterToValueAsLocalDateTime() {
+		return (LocalDateTime) filterItem.getFilterToValue();
 	}
 
-	public void setFilterToValueAsDate(Date date) {
+	public void setFilterToValueAsLocalDateTime(LocalDateTime date) {
 		filterItem.setFilterToValue(date);
 	}
 

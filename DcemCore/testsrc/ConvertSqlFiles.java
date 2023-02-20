@@ -111,9 +111,9 @@ public class ConvertSqlFiles {
 			boolean copyLines = false;
 			boolean createTableFound = false;
 
-			if (inputFile.getPath().indexOf("POSTGRE") > 0) {
-				System.out.println("ConvertSqlFiles.convertFile() as");
-			}
+//			if (inputFile.getPath().indexOf("POSTGRE") > 0) {
+//				System.out.println("ConvertSqlFiles.convertFile() as");
+//			}
 
 			while (true) {
 				zeile = bufferedReader.readLine();
@@ -128,9 +128,9 @@ public class ConvertSqlFiles {
 					trimZeile = trimZeile.replaceAll("clob\\(255\\)", "clob(10M)");
 				}
 				
-				if (trimZeile.contains("ts core_")) {
-					System.out.println("ConvertSqlFiles.convertFile()");
-				}
+//				if (trimZeile.contains("ts core_")) {
+//					System.out.println("ConvertSqlFiles.convertFile()");
+//				}
 					
 					
 				if (trimZeile.startsWith("create table ") || trimZeile.startsWith("alter table ") || trimZeile.startsWith("insert into ")) { // Search for first

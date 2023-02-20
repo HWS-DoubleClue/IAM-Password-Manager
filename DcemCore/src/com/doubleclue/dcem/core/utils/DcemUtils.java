@@ -1029,96 +1029,6 @@ public class DcemUtils {
 	}
 
 	/**
-	 * @return
-	 * @throws DcemException
-	 * @throws Exception
-	 */
-	public static List<FilterProperty> getFilterProperties(List<ViewVariable> viewVariables) throws DcemException {
-
-		List<FilterProperty> filterProperties = new LinkedList<FilterProperty>();
-		Object filterValue = null;
-		for (ViewVariable viewVariable : viewVariables) {
-			if (viewVariable.getFilterItem() == null) {
-				continue;
-			}
-			FilterOperator filterOperator = FilterOperator.NONE;
-			// if (filterOperator == null || filterOperator ==
-			// FilterOperator.NONE) {
-			// continue;
-			// }
-
-			switch (viewVariable.getVariableType()) {
-			case STRING:
-				if ((viewVariable.getFilterValue() == null) || ((String) viewVariable.getFilterValue()).isEmpty()) {
-					continue;
-				}
-				filterOperator = FilterOperator.LIKE;
-				filterValue = viewVariable.getFilterValue();
-				break;
-			case ENUM:
-			case BOOLEAN:
-				filterOperator = viewVariable.getFilterItem().getFilterOperator();
-				break;
-			case NUMBER:
-				if ((viewVariable.getFilterValue() == null)) {
-					continue;
-				}
-				if (viewVariable.getFilterValue().getClass().equals(Integer.class)) {
-					filterValue = viewVariable.getFilterValue();
-					filterOperator = FilterOperator.EQUALS;
-					break;
-				}
-				if (((String) viewVariable.getFilterValue()).isEmpty()) {
-					continue;
-				}
-				int ind = 1;
-				switch (((String) viewVariable.getFilterValue()).charAt(0)) {
-				case '>':
-					filterOperator = FilterOperator.GREATER;
-					break;
-				case '<':
-					filterOperator = FilterOperator.LESSER;
-					break;
-				case '!':
-					filterOperator = FilterOperator.NOT_EQUALS;
-					break;
-				default:
-					ind = 0;
-					filterOperator = FilterOperator.EQUALS;
-				}
-				Integer value;
-				try {
-					String strValue = ((String) viewVariable.getFilterValue()).substring(ind);
-					value = Integer.parseInt(strValue);
-					filterValue = value;
-				} catch (Exception e) {
-					JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "autoview.invalidNumberFormat", viewVariable.getDisplayName());
-				}
-				break;
-			default:
-				if (viewVariable.getFilterValue() == null) {
-					continue;
-				}
-				filterOperator = viewVariable.getFilterOperator();
-				filterValue = viewVariable.getFilterValue();
-
-			}
-
-			// if (viewVariable.getVariableType() == VariableType.STRING && ())
-			// {
-			// JsfUtils.addWarningMessage(Constants.CORE_RESOURCE,
-			// "autoview.missingvalue",
-			// viewVariable.getDisplayName());
-			// return null;
-			// }
-
-			filterProperties.add(new FilterProperty(viewVariable.getAttributes(), filterValue, viewVariable.getFilterToValue(), viewVariable.getVariableType(),
-					filterOperator));
-		}
-		return filterProperties;
-	}
-
-	/**
 	 * @param clazz
 	 * @param resourceBundle
 	 * @param viewName
@@ -1533,9 +1443,8 @@ public class DcemUtils {
 		return Date.from(instant);
 	}
 
-	public static Date getDayBegin(LocalDate localDate) {
-		Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		return Date.from(instant);
+	public static Date convertToDate(LocalDateTime localDateTime) {
+		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}
 
 	public static boolean isWindows() {
