@@ -9,5 +9,6 @@ public interface SmsApi {
 	
 	void initSms(SystemPreferences preferences) throws DcemException;
 	void sendSmsMessage (List<String> telephoneNumbers, String body) throws DcemException;
+	void sendSmsMessage (List<String> telephoneNumbers, String body, String originator) throws DcemException;
 
 }

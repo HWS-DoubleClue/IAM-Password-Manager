@@ -42,7 +42,6 @@ public class TemplateLogic {
 	@Inject
 	EntityManager em;
 
-
 	@DcemTransactional
 	public void addOrUpdateTemplate(DcemTemplate template, DcemAction dcemAction, boolean withAudit) throws DcemException {
 		Auditing auditing = null;
@@ -74,7 +73,7 @@ public class TemplateLogic {
 				newTemplate.setActive(true);
 				newTemplate.setInUse(false);
 				newTemplate.setTokens(getTokens(newTemplate.getContent()));
-				template = getTemplate(template.getId());  // reload original from DB
+				template = getTemplate(template.getId()); // reload original from DB
 				template.setActive(false);
 				if (template.getName().equals(newTemplate.getName()) == false) {
 					throw new DcemException(DcemErrorCodes.CANNOT_CHANGE_TEMPLATE_IN_USE, "Can't change tempalte name");
@@ -103,7 +102,7 @@ public class TemplateLogic {
 		return query.getResultList();
 	}
 
-	public DcemTemplate getDefaultTemplate(String name)  {
+	public DcemTemplate getDefaultTemplate(String name) {
 		TypedQuery<DcemTemplate> query = em.createNamedQuery(DcemTemplate.GET_DEFAULT_TEMPLATE, DcemTemplate.class);
 		query.setParameter(1, name);
 		query.setMaxResults(1);
@@ -113,19 +112,23 @@ public class TemplateLogic {
 			return null;
 		}
 	}
-	
+
 	@DcemTransactional
-	public DcemTemplate getUpdateTemplateByName(Class loadingClass,String name, SupportedLanguage language, String scanPackages)  {
+	public DcemTemplate getUpdateTemplateByName(Class loadingClass, String name, SupportedLanguage language, String scanPackages) {
 		DcemTemplate dcemTemplate = getTemplateByNameLanguage(name, language);
 		if (dcemTemplate == null) {
 			try {
-				List<FileContent> templateFiles = ResourceFinder.find(loadingClass, scanPackages, name + '_' + language.getLocale().getLanguage() + DcemConstants.TEMPLATE_TYPE);
-				if (templateFiles.isEmpty())  {
+				List<FileContent> templateFiles = ResourceFinder.find(loadingClass, scanPackages,
+						name + '_' + language.getLocale().getLanguage() + DcemConstants.TEMPLATE_TYPE);
+				if (templateFiles.isEmpty()) {
 					return null;
 				}
-				
-				dcemTemplate = new  DcemTemplate();
-				dcemTemplate.setName(name);;
+
+				dcemTemplate = new DcemTemplate();
+				dcemTemplate.setName(name);
+				if (language == SupportedLanguage.English) {
+					dcemTemplate.setDefaultTemplate(true);
+				}
 				dcemTemplate.setLanguage(language);
 				dcemTemplate.setContent(StringUtils.getStringFromUtf8(templateFiles.get(0).getContent()));
 				addOrUpdateTemplate(dcemTemplate, new DcemAction(AdminModule.MODULE_ID, null, DcemConstants.ACTION_ADD), false);
@@ -133,9 +136,9 @@ public class TemplateLogic {
 				logger.warn("Couldn't add Tempalte " + name, e);
 				return null;
 			}
-		} 
+		}
 		return dcemTemplate;
-		
+
 	}
 
 	/**
@@ -144,14 +147,14 @@ public class TemplateLogic {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<DcemTemplate> getTemplatesByName(String name, SupportedLanguage language)  {
+	public List<DcemTemplate> getTemplatesByName(String name, SupportedLanguage language) {
 		TypedQuery<DcemTemplate> query = em.createNamedQuery(DcemTemplate.GET_TEMPLATES_BY_NAME_LOCALE, DcemTemplate.class);
 		query.setParameter(1, name);
 		query.setParameter(2, language);
 		return query.getResultList();
 	}
 
-	public DcemTemplate getTemplateByNameLanguage(String name, SupportedLanguage language)  {
+	public DcemTemplate getTemplateByNameLanguage(String name, SupportedLanguage language) {
 		if (language == null) {
 			return getDefaultTemplate(name);
 		}
@@ -161,7 +164,6 @@ public class TemplateLogic {
 		}
 		return list.get(0);
 	}
-	
 
 	public List<SelectItem> getActiveTemplateSelection() throws Exception {
 		List<DcemTemplate> templates = getActiveTemplates();

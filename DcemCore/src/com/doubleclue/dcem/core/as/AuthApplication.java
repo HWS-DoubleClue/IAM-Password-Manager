@@ -17,7 +17,8 @@ public enum AuthApplication {
 	OTP("OTP", false, false),
 	SECURE_APP("SecureApp", false, false), 
 	USER_PORTAL ("User-Portal", true, true),
-	PERFORMANCE_DECK ("Performance-Deck", false, false);
+	PERFORMANCE_DECK ("Performance-Deck", false, false),
+	BOOKINGS ("Bookings", false, false);
 
 	String name;
 	boolean withPolicies;

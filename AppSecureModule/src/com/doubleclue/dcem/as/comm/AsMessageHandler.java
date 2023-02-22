@@ -157,7 +157,8 @@ public class AsMessageHandler {
 		}
 		PolicyAppEntity policyAppEntity = policyLogic.getDetachedPolicyApp(authApplication, subId);
 		if (policyAppEntity == null) {
-			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Couldn't find PolicyApp: " + authApplication + "/" + subId);
+			policyAppEntity = new PolicyAppEntity(authApplication, subId, null);
+//			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Couldn't find PolicyApp: " + authApplication + "/" + subId);
 		}
 		// TODO check the other input fields
 		AppSession appSession = null;

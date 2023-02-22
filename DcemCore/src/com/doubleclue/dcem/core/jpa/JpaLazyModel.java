@@ -108,7 +108,7 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 	@Override
 	public List<T> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
 		// long start = System.currentTimeMillis();
-		System.out.println("JpaLazyModel.load()  filterBy " + filterBy);
+	//	System.out.println("JpaLazyModel.load()  filterBy " + filterBy);
 		if (dcemView.getPredefinedFilterId() > 0) {
 			try {
 				PredefinedFilter predefinedFilter = dcemView.getPredefinedFilter();

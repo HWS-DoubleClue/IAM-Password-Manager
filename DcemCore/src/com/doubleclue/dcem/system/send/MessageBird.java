@@ -59,12 +59,16 @@ public class MessageBird implements SmsApi {
 		messageBirdClient = new MessageBirdClient(messageBirdService);
 		originatorName = preferences.getSmsOriginatorName();
 	}
+	
+	public void sendSmsMessage(List<String> telephoneNumbers, String messageBody) throws DcemException {
+		sendSmsMessage(telephoneNumbers, messageBody, originatorName);
+	}
 
 	/*
 	 * (non-Javadoc)
 	 *
 	 */
-	public void sendSmsMessage(List<String> telephoneNumbers, String messageBody) throws DcemException {
+	public void sendSmsMessage(List<String> telephoneNumbers, String messageBody, String originator) throws DcemException {
 
 		if (messageBirdClient == null) {
 			initSms(systemModule.getPreferences());
@@ -80,7 +84,7 @@ public class MessageBird implements SmsApi {
 			phones.add(new BigInteger(prepareTelephoneNumbers(phoneNumber, defaultCountryCode)));
 		}
 		try {
-			messageResponse = messageBirdClient.sendMessage(originatorName, messageBody, phones);
+			messageResponse = messageBirdClient.sendMessage(originator, messageBody, phones);
 			if (logger.isDebugEnabled()) {
 				logger.debug("SMS message Response: " + messageResponse.toString());
 			}
