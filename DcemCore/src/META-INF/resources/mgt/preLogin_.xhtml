@@ -24,6 +24,7 @@
 		<h:form id="preLoginForm">
 			<h:inputHidden id="serializedAccounts" value="#{mfaLoginView.serializedAccounts}" />
 		 	<h:inputHidden id="mgtActiveView" value="#{mfaLoginView.mgtActiveView}" />
+		 	<h:inputHidden id="mgtUserSettings" value="#{mfaLoginView.userSettings}" />
 			<p:commandButton id="ok" ajax="false" action="#{mfaLoginView.actionPreLoginOk}" style="display: none" />
 		</h:form>
 	</h:body>

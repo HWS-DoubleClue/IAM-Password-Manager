@@ -16,7 +16,7 @@ public class DcemJarScanFilter implements JarScanFilter {
 		// return false;
 		// }
 		if (Pattern.matches(pattern, jarName)) {
-			System.out.println("JAR Match: " + jarName + " Type: " + jarScanType);
+	//		System.out.println("JAR Match: " + jarName + " Type: " + jarScanType);
 			return true;
 		}
 //		System.out.println("JAR Do NOT Match: " + jarName);

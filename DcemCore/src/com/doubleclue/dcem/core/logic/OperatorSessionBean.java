@@ -5,9 +5,11 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -46,6 +48,10 @@ import com.doubleclue.dcem.core.gui.ViewNavigator;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.utils.StringUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Named("operatorSession")
 @SessionScoped
@@ -83,8 +89,10 @@ public class OperatorSessionBean implements Serializable {
 	String rolesText;
 
 	DcemRole highestRole;
-	
+
 	List<DcemGroup> userGroups;
+
+	Map<String, String> userSettings;
 
 	/**
 	 * 
@@ -96,9 +104,9 @@ public class OperatorSessionBean implements Serializable {
 
 	boolean masterAdminGuest;
 
-
 	@PostConstruct
 	public void init() {
+		userSettings = new HashMap<String, String>();
 		asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
 	}
 
@@ -360,9 +368,8 @@ public class OperatorSessionBean implements Serializable {
 		this.masterAdminGuest = masterAdminGuest;
 	}
 
-	
 	public boolean isUserLoggedInAndEnabled() {
-		return isUserLoggedInAndEnabled (null);
+		return isUserLoggedInAndEnabled(null);
 	}
 
 	public List<DcemGroup> getUserGroups() {
@@ -371,6 +378,35 @@ public class OperatorSessionBean implements Serializable {
 
 	public void setUserGroups(List<DcemGroup> userGroups) {
 		this.userGroups = userGroups;
+	}
+
+	public void setUserSettingsFromString(String value) {
+		if (value != null && value.isEmpty() == false) {
+			ObjectMapper mapper = new ObjectMapper();
+			TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
+			};
+			try {
+				userSettings = mapper.readValue(value, typeRef);
+			} catch (Exception e) {
+				logger.info(e);
+				userSettings = new HashMap<String, String>();
+			}
+		} else {
+			userSettings = new HashMap<String, String>();
+		}
+	}
+	
+	public String getUserSettingsToString() throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.writeValueAsString(userSettings);
+	}
+
+	public Map<String, String> getUserSettings() {
+		return userSettings;
+	}
+
+	public void setUserSettings(Map<String, String> userSettings) {
+		this.userSettings = userSettings;
 	}
 
 }

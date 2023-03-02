@@ -82,6 +82,14 @@ public class MfaLoginView extends LoginViewAbstract {
 			JsfUtils.addErrorMessage(e.getMessage());
 		}
 	}
+	
+	public void setUserSettings (String value) {
+		operatorSessionBean.setUserSettingsFromString(value);
+	}
+	
+	public String getUserSettings () {
+		return "";
+	}
 
 	@Override
 	public void showChangePassword() {

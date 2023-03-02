@@ -47,6 +47,7 @@
 			<h:form id="loginForm">
 				<p:remoteCommand name="qrCodeExpired" actionListener="#{mfaLoginView.actionQrExpired}" update="qrcodePanel basic" />
 				<h:inputHidden id="mgtActiveView" value="#{mfaLoginView.mgtActiveView}" />
+				<h:inputHidden id="mgtUserSettings" value="#{mfaLoginView.userSettings}" />
 
 				<p />
 				<f:metadata>

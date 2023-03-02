@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	$('#loginForm\\:rpId').val(window.location.hostname);
 	$('#loginForm\\:mgtActiveView').val(localStorage.getItem('mgtActiveView'));
+	$('#loginForm\\:mgtUserSettings').val(localStorage.getItem('userSettings'));
 	bdcLoc();
 });
 
