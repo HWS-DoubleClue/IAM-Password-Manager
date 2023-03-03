@@ -40,7 +40,7 @@
 
 						<p:outputLabel for="url" value="JDBC-URL " />
 						<h:panelGroup>
-							<p:inputText id="url" value="#{dbView.dbConfig.jdbcUrl}" size="70" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
+							<p:inputText id="url" value="#{dbView.dbConfig.jdbcUrl}" size="100" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
 							<p:commandButton id="urlBtn" value="Configure URL" style="width: 10em; color: white;" icon="fa fa-cog" immediate="true" onclick="PF('urlConfig').show();"
 								disabled="#{dbView.embedded}" />
 						</h:panelGroup>

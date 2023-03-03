@@ -106,6 +106,11 @@ public class LocalPaths {
 	public static File getDcemLogDir() {
 		return new File(dcemHomeDir, LOGS);
 	}
+	
+	public static File getDcemNativeLibDir() throws DcemException {
+		File file = getDcemInstallDir();
+		return new File (file, "lib/native");
+	}
 
 	/**
 	 * @return
@@ -128,8 +133,12 @@ public class LocalPaths {
 				} else {
 					throw new DcemException(DcemErrorCodes.CONFIGURE_INSTALL_DIRECTORY, "Couldn't get the install path");
 				}
+				
+			} else {
+				dcemInstallDir = new File (filePath, "../../DcemDistribution/artifacts/yajsw");
+				dcemInstallDir = new File(dcemInstallDir.getCanonicalPath());
 			}
-			dcemInstallDir = filePath;
+			
 		} catch (Exception e) {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Could get Installation path", e);
 		}

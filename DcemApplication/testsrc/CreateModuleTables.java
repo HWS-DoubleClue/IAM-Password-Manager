@@ -191,7 +191,10 @@ public class CreateModuleTables {
 		}
 		System.out.println("Tables created, now improving the sql scripts");
 		File inputDirectory = new File(outputDir);
-		File outputDirectory = new File(modulePath + File.separator + outputResources + File.separator + "DB-Tables");
+		File outputDirectory = new File(modulePath + File.separator + outputResources + File.separator + "com/doubleclue/dcem/db");
+		if (outputDirectory.exists() == false) {
+			outputDirectory.mkdirs();
+		}
 		try {
 			System.out.println("						Input directory:		" + inputDirectory.getPath());
 			System.out.println("						Output directory:		" + outputDirectory.getPath());

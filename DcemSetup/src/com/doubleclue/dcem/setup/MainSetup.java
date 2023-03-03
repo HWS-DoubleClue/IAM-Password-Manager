@@ -32,7 +32,6 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import com.doubleclue.dcem.core.DcemJarScanFilter;
-import com.doubleclue.dcem.core.config.DatabaseConfig;
 import com.doubleclue.dcem.core.config.LocalConfig;
 import com.doubleclue.dcem.core.config.LocalConfigProvider;
 import com.doubleclue.dcem.core.config.LocalPaths;
@@ -71,7 +70,6 @@ public class MainSetup {
 		if (javaVersion.startsWith("1")) {
 			KaraUtils.removeCryptographyRestrictions();
 		}
-
 		
 		Locale.setDefault(Locale.ENGLISH);
 		Locale.setDefault(Locale.Category.DISPLAY, Locale.ENGLISH);
@@ -93,9 +91,13 @@ public class MainSetup {
 		LogUtils.initLog4j(null, null, dcemLogLevel, fromEclipse);
 		logger = LogManager.getLogger(MainSetup.class);
 		logger.info("DCEM_HOME: " + LocalPaths.getDcemHomeDir());
-		if (javaVersion.startsWith("9")) {
-			logger.fatal("!!!  Sorry JAVA Version 9.x.x is not supported yet. !!! Please use version 1.8.xx");
-			System.exit(-2);
+		if (javaVersion.startsWith("1.8") == false) {
+			System.err.println("!!!  Sorry INVALID JAVA Version. !!! Please use version 1.8.xx");
+			System.exit(-1);
+		}
+		System.out.println("Install Directory: " + LocalPaths.getDcemInstallDir());
+		if (SystemUtils.IS_OS_WINDOWS) {
+			System.setProperty("javax.net.ssl.trustStoreType", "Windows-ROOT");
 		}
 
 		LocalConfig config;

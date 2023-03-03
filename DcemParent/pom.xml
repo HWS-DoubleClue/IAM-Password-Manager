@@ -914,7 +914,12 @@
 			<dependency>
 				<groupId>com.microsoft.sqlserver</groupId>
 				<artifactId>mssql-jdbc</artifactId>
-				<version>7.2.0.jre8</version>
+				<version>12.2.0.jre8</version>
+			</dependency>
+			<dependency>
+				<groupId>com.microsoft.sqlserver</groupId>
+				<artifactId>mssql-jdbc_auth</artifactId>
+				<version>12.2.0.x64</version>
 			</dependency>
 			<dependency>
 				<groupId>com.madgag.spongycastle</groupId>
