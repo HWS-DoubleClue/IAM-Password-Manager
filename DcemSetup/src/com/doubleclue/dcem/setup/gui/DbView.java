@@ -109,9 +109,6 @@ public class DbView extends DcemView {
 				JsfUtils.addWarnMessage(stringBuffer.toString());
 				JsfUtils.addInfoMessage("Click on 'Execute Migration Scripts' for migration.");
 			}
-			
-			
-			
 		} catch (Exception exp) {
 			logger.warn(exp.getMessage(), exp);
 			JsfUtils.addErrorMessage("Database migration scripts FAILED: " + exp.toString());

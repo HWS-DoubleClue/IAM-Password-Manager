@@ -24,6 +24,7 @@ import org.hibernate.AnnotationException;
 import org.hibernate.boot.MappingException;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Environment;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.hibernate.tool.schema.TargetType;
 import org.w3c.dom.Document;
@@ -38,13 +39,13 @@ import com.doubleclue.dcem.core.jpa.DatabaseTypes;
 
 @ApplicationScoped
 public class CreateDbUpdateScripts {
-	
+
 	final Logger logger = LogManager.getLogger(CreateDbUpdateScripts.class);
 
 	public File createMigrationScripts(DatabaseConfig databaseConfig, TargetType targetType) throws Exception {
 
 		String outputDir = LocalPaths.getDcemHomeDir() + File.separator + "DatabaseMigrationScripts";
-		logger.info ("Output Directory = " + outputDir);
+		logger.info("Output Directory = " + outputDir);
 
 		Enumeration<URL> persistenceRes = null;
 		persistenceRes = Thread.currentThread().getContextClassLoader().getResources("META-INF/persistence.xml");
@@ -75,9 +76,18 @@ public class CreateDbUpdateScripts {
 			}
 			// settings.put("connection.driver_class", "com.mysql.jdbc.Driver");
 			settings.put("hibernate.dialect", dbType.getHibernateDialect());
-			settings.put("hibernate.connection.url", databaseConfig.getJdbcUrl() + "/" + databaseConfig.getDatabaseName());
-			settings.put("hibernate.connection.username", databaseConfig.getAdminName());
-			settings.put("hibernate.connection.password", databaseConfig.getAdminPassword());
+			settings.put("hibernate.connection.url", databaseConfig.getJdbcUrl());
+			String schemaName = databaseConfig.getSchemaName().trim();
+			if (dbType == DatabaseTypes.MSSQL && schemaName.length() > 0) {
+				settings.put(Environment.DEFAULT_SCHEMA, databaseConfig.getDatabaseName() + "." + schemaName);
+			} else {
+				settings.put(Environment.DEFAULT_SCHEMA, databaseConfig.getDatabaseName());
+			}
+			if (dbType != DatabaseTypes.DERBY) {
+				settings.put("hibernate.connection.username", databaseConfig.getAdminName());
+				settings.put("hibernate.connection.password", databaseConfig.getAdminPassword());
+			}
+			// settings.put
 			MetadataSources metadata = new MetadataSources(new StandardServiceRegistryBuilder().applySettings(settings).build());
 			Document persistenceDocument = null;
 			try {
@@ -102,7 +112,7 @@ public class CreateDbUpdateScripts {
 			}
 			Node node = module.item(0);
 			if (node == null) {
-				logger.debug ("ERROR:  No Module Defined in " + path);
+				logger.debug("ERROR:  No Module Defined in " + path);
 				continue;
 			}
 			String moduleName = module.item(0).getNodeValue();
@@ -117,14 +127,14 @@ public class CreateDbUpdateScripts {
 				try {
 					metadata.addAnnotatedClass(Class.forName(className));
 				} catch (ClassNotFoundException e) {
-					logger.debug (e);
+					logger.debug(e);
 					continue;
 				}
 			}
 
 			SchemaUpdate schemaUpdate = new SchemaUpdate();
 			schemaUpdate.setDelimiter(";");
-			
+
 			try {
 				String outputSqlFile = outputFile.getPath() + File.separatorChar + moduleName + "Tables.sql";
 				File outfile = new File(outputSqlFile);
