@@ -508,7 +508,7 @@ public class DomainLdap implements DomainApi {
 		} catch (PartialResultException exp) {
 			// throw new DcemException(DcemErrorCodes.LDAP_CONNECTION_FAILED,
 			// "LDAP Connection failed due to PartialResultException. Try to make the 'Base DN' more specific or user port 3269");
-			logger.info("PartialResultException got ignored");
+			// logger.info("PartialResultException got ignored");
 		} catch (Throwable exp) {
 			if (exp.getClass() == javax.naming.CommunicationException.class) {
 				throw new DcemException(DcemErrorCodes.LDAP_CONNECTION_FAILED, "LDAP Connection failed.", exp);

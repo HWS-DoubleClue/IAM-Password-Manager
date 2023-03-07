@@ -134,7 +134,7 @@ public class ClientRestApi {
 		// adding our own TrustManager
 		DcemTrustManager trustManager = new DcemTrustManager(unsecure, true);
 		trustManager.addDefaultTrustManager();
-		SSLContext context = SSLContext.getInstance("TLS");
+		SSLContext context = SSLContext.getInstance("TLSv1.2");
 		context.init(null, new TrustManager[] { trustManager }, null);
 
 		HostnameVerifier hostnameVerifier = null;
