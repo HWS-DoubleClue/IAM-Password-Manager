@@ -5,7 +5,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2020-10-19T11:08:08.984+0200")
+@Generated(value="Dali", date="2023-03-03T12:09:53.671+0100")
 @StaticMetamodel(DomainEntity.class)
 public class DomainEntity_ {
 	public static volatile SingularAttribute<DomainEntity, Integer> id;
@@ -23,7 +23,6 @@ public class DomainEntity_ {
 	public static volatile SingularAttribute<DomainEntity, String> mailAttribute;
 	public static volatile SingularAttribute<DomainEntity, String> telephoneAttribute;
 	public static volatile SingularAttribute<DomainEntity, String> mobileAttribute;
-	public static volatile SingularAttribute<DomainEntity, String> groupAttribute;
 	public static volatile SingularAttribute<DomainEntity, String> mapEmailDomains;
 	public static volatile SingularAttribute<DomainEntity, String> configJson;
 	public static volatile SingularAttribute<DomainEntity, Boolean> enable;

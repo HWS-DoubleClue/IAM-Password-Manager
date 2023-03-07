@@ -7,7 +7,10 @@ import java.util.TimeZone;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -16,6 +19,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.primefaces.model.SortOrder;
 
 import com.doubleclue.dcem.core.gui.DcemGui;
 
@@ -48,6 +52,11 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 	@DcemGui(name = "Photo")
 	@Column(length = 8096, nullable = true)
 	private byte[] photo;
+	
+	@DcemGui (name = "Department")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_DEPARTMENT_USEREXT_ID"), name = "dc_id", nullable = true, insertable = true, updatable = true)
+	private DepartmentEntity department;
 
 //	@OneToOne(mappedBy = "dcemUserExt", fetch = FetchType.LAZY)
 //	private DcemUser dcemUser;
@@ -88,6 +97,14 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 
 	public void setTimezone(String timezone) {
 		this.timezone = timezone;
+	}
+
+	public DepartmentEntity getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(DepartmentEntity department) {
+		this.department = department;
 	}
 
 //	public DcemUser getDcemUser() {

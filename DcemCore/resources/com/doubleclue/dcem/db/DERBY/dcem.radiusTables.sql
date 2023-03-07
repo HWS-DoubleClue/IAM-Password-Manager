@@ -1,3 +1,4 @@
+
 create table radius_client (
 dc_id integer not null,
 ignoreUsersPassword boolean not null,

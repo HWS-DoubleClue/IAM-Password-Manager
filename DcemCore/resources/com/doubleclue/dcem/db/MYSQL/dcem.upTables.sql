@@ -1,3 +1,4 @@
+
 create table up_apphubseq (
 next_val bigint
 ) engine=InnoDB;

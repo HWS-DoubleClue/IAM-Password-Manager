@@ -18,11 +18,13 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
+import com.doubleclue.dcem.admin.logic.DepartmentLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemRole;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.DcemUserExtension;
+import com.doubleclue.dcem.core.entities.DepartmentEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.AutoViewAction;
@@ -76,6 +78,9 @@ public class UserDialogBean extends DcemDialog {
 
 	@Inject
 	DcemApplicationBean applicationBean;
+	
+	@Inject
+	DepartmentLogic departmentLogic;
 
 	boolean leaving;
 
@@ -86,6 +91,7 @@ public class UserDialogBean extends DcemDialog {
 	private String userType = DcemConstants.TYPE_LOCAL;
 	private LinkedList<SelectItem> availableRoles;
 	String country;
+	String department;
 
 	public boolean actionOk() throws Exception {
 		DcemUser user = (DcemUser) getActionObject();
@@ -110,10 +116,19 @@ public class UserDialogBean extends DcemDialog {
 				user.setLoginId(loginId);
 				user.setUserDn(null);
 			}
+			DepartmentEntity departmentEntity = null;
+			if (department != null && department.isEmpty() == false) {
+				departmentEntity = departmentLogic.getDepartmentByName (department);
+				if (departmentEntity == null) {
+					JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "departmentDialog.invalidDepartment");
+					return false;
+				}
+			}
 			userLogic.addOrUpdateUser(user, getAutoViewAction().getDcemAction(), true, adminModule.getPreferences().isNumericPassword(),
 					adminModule.getPreferences().getUserPasswordLength(), false);
 			DcemUserExtension dcemUserExtension = new DcemUserExtension();
 			dcemUserExtension.setCountry(country);
+			dcemUserExtension.setDepartment(departmentEntity);
 			userLogic.updateDcemUserExtension(user, dcemUserExtension);
 			StringUtils.wipeString(user.getInitialPassword());
 			return true;
@@ -256,6 +271,10 @@ public class UserDialogBean extends DcemDialog {
 			JsfUtils.addErrorMessage(e.toString());
 			return null;
 		}
+	}
+	
+	public List<String> completeDepartment(String name) {
+		return departmentLogic.getCompleteDepartmentList(name, 50);
 	}
 
 	public void setLoginId(String loginId) {
@@ -406,5 +425,13 @@ public class UserDialogBean extends DcemDialog {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
 	}
 }

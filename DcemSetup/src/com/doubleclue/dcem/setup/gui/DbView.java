@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.hibernate.tool.schema.TargetType;
 import org.primefaces.PrimeFaces;
 
 import com.doubleclue.dcem.core.config.DatabaseConfig;
@@ -23,6 +24,7 @@ import com.doubleclue.dcem.core.jpa.DatabaseTypes;
 import com.doubleclue.dcem.core.jpa.DatabaseUtils;
 import com.doubleclue.dcem.core.jpa.JdbcUtils;
 import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.doubleclue.dcem.setup.logic.CreateDbUpdateScripts;
 import com.doubleclue.dcem.setup.logic.DbLogic;
 import com.doubleclue.dcem.setup.logic.DbState;
 
@@ -36,10 +38,13 @@ public class DbView extends DcemView {
 	@Inject
 	DbLogic dbLogic;
 
+	@Inject
+	CreateDbUpdateScripts createDbUpdateScripts;
+
 	DbState dbState = DbState.Init;
 
 	DatabaseConfig dbConfig;
-	
+
 	String nodeName;
 
 	@PostConstruct
@@ -84,6 +89,43 @@ public class DbView extends DcemView {
 			JsfUtils.addErrorMessage(exp.getMessage());
 		}
 		return;
+	}
+	
+	public void actionSynchroniuzeDb () {
+		try {
+			File outputFolder = createDbUpdateScripts.createMigrationScripts(dbConfig, TargetType.SCRIPT);
+			StringBuffer stringBuffer = new StringBuffer();
+			for (File file : outputFolder.listFiles()) {
+				if (file.length() > 0) {
+					stringBuffer.append(file.getName());
+					stringBuffer.append(", ");
+				}
+			}
+			if (stringBuffer.length() == 0) {
+				JsfUtils.addInfoMessage("There is no need for migration");
+			} else {
+				JsfUtils.addWarnMessage("The database-schema is not UpToDate!!!");
+				JsfUtils.addWarnMessage("See SQL Update Scripts at: "  + outputFolder.getAbsolutePath() );
+				JsfUtils.addWarnMessage(stringBuffer.toString());
+				JsfUtils.addInfoMessage("Click on 'Execute Migration Scripts' for migration.");
+			}
+			
+			
+			
+		} catch (Exception exp) {
+			logger.warn(exp.getMessage(), exp);
+			JsfUtils.addErrorMessage("Database migration scripts FAILED: " + exp.toString());
+		}
+	}
+	
+	public void actionAutoMigrateeDb () {
+		try {
+			createDbUpdateScripts.createMigrationScripts(dbConfig, TargetType.DATABASE);
+			JsfUtils.addInfoMessage("The database migrated succesfully: ");
+		} catch (Exception exp) {
+			JsfUtils.addErrorMessage("Database migration FAILED: " + exp.toString());
+			logger.warn(exp.getMessage(), exp);
+		}
 	}
 
 	public void actionCreateUrl() {
@@ -162,7 +204,7 @@ public class DbView extends DcemView {
 	/**
 	 * 
 	 */
-	private void testDbConnection(String currentNodeName, String newNodeName ) {
+	private void testDbConnection(String currentNodeName, String newNodeName) {
 
 		try {
 			if (withSchema() == false) {
@@ -188,7 +230,7 @@ public class DbView extends DcemView {
 
 				break;
 			case Create_Tables_Required:
-				
+
 				break;
 			case No_Connection:
 				JsfUtils.addErrorMessage("Couldn't connect to Database");

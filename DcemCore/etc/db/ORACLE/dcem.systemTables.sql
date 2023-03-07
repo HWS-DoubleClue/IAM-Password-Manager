@@ -25,6 +25,17 @@
         primary key (dc_id)
     );
 
+    create table core_department (
+       dc_id number(19,0) generated as identity,
+        abbriviation varchar2(255 char),
+        dc_desc varchar2(255 char),
+        dc_name varchar2(255 char) not null,
+        deputy_dc_id number(10,0),
+        headOf_dc_id number(10,0),
+        dc_parent_id number(19,0),
+        primary key (dc_id)
+    );
+
     create table core_group (
        dc_id number(10,0) not null,
         jpaVersion number(10,0) not null,
@@ -69,11 +80,11 @@
         action number(10,0),
         errorCode varchar2(255 char),
         info varchar2(255 char),
+        dc_time timestamp not null,
         dc_loc varchar2(255 char),
         severity number(10,0) not null,
         show_on_dashboard number(1,0) not null,
         dc_source varchar2(255 char),
-        dc_time timestamp not null,
         user_dc_id number(10,0),
         primary key (dc_id)
     );
@@ -272,6 +283,9 @@
     alter table core_config 
        add constraint UK_CONFIG_NAME unique (moduleId, dc_key);
 
+    alter table core_department 
+       add constraint UK_DEPARTMENT_NAME unique (dc_name);
+
     alter table core_group 
        add constraint UK_APP_GROUP unique (dc_name);
 
@@ -315,6 +329,21 @@ create index statisticTimestamp on core_statistic (dc_timestamp);
        add constraint FK_AUDITING_USER 
        foreign key (audituserId) 
        references core_user;
+
+    alter table core_department 
+       add constraint FK_APP_DEPARTMENT_USER_DEPUTY 
+       foreign key (deputy_dc_id) 
+       references core_user;
+
+    alter table core_department 
+       add constraint FK_APP_DEPARTMENT_USER 
+       foreign key (headOf_dc_id) 
+       references core_user;
+
+    alter table core_department 
+       add constraint FK_DEPARTMENT_PARENT_ID 
+       foreign key (dc_parent_id) 
+       references core_department;
 
     alter table core_group 
        add constraint FK_GROUP_ROLE 
