@@ -31,7 +31,7 @@ abbriviation varchar(255),
 dc_desc varchar(255),
 dc_name varchar(255) not null,
 deputy_dc_id int,
-headOf_dc_id int,
+headOf_dc_id int not null,
 dc_parent_id bigint,
 primary key (dc_id)
 );
@@ -235,6 +235,7 @@ dc_userext_id int not null,
 dc_country varchar(255),
 photo varbinary(MAX),
 dc_timezone varchar(255),
+departmentid bigint,
 primary key (dc_userext_id)
 );
 
@@ -297,6 +298,7 @@ add constraint UK_ROLE_NAME unique (dc_name);
 
 alter table core_rolerestriction
 add constraint UK_ROLE_RESTRICTION unique (dc_role, moduleId, viewName, variableName);
+
 create index statisticTimestamp on core_statistic (dc_timestamp);
 
 alter table core_template
@@ -409,6 +411,11 @@ alter table core_user
 add constraint FK_USER_LDAP
 foreign key (dc_ldap)
 references core_ldap;
+
+alter table core_userext
+add constraint FK_DEPARTMENT_USEREXT_ID
+foreign key (departmentid)
+references core_department;
 
 alter table sys_keystore
 add constraint FK_KEYSTORE_NODE

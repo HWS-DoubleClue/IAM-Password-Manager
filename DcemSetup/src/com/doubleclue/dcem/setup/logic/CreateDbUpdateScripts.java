@@ -36,6 +36,7 @@ import com.doubleclue.dcem.core.config.LocalPaths;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
+import com.doubleclue.dcem.core.utils.ConvertSqlFiles;
 
 @ApplicationScoped
 public class CreateDbUpdateScripts {
@@ -44,15 +45,17 @@ public class CreateDbUpdateScripts {
 
 	public File createMigrationScripts(DatabaseConfig databaseConfig, TargetType targetType) throws Exception {
 
-		String outputDir = LocalPaths.getDcemHomeDir() + File.separator + "DatabaseMigrationScripts";
-		logger.info("Output Directory = " + outputDir);
+		String outputDirPath = LocalPaths.getDcemHomeDir() + File.separator + "DatabaseMigrationScripts";
+		File outputDir = new File(outputDirPath);
+		String outputDirPathTemp = LocalPaths.getDcemHomeDir() + File.separator + "dbTemp";
+		logger.info("Output Directory = " + outputDirPath);
 
 		Enumeration<URL> persistenceRes = null;
 		persistenceRes = Thread.currentThread().getContextClassLoader().getResources("META-INF/persistence.xml");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		File outputFile = new File(outputDir + File.separatorChar + databaseConfig.getDatabaseType());
-		if (outputFile.exists() == false) {
-			outputFile.mkdirs();
+		File outputDirTemp = new File(outputDirPathTemp, databaseConfig.getDatabaseType());
+		if (outputDirTemp.exists() == false) {
+			outputDirTemp.mkdirs();
 		}
 		while (persistenceRes.hasMoreElements()) {
 			URL persistenceFileUrl = persistenceRes.nextElement();
@@ -78,10 +81,20 @@ public class CreateDbUpdateScripts {
 			settings.put("hibernate.dialect", dbType.getHibernateDialect());
 			settings.put("hibernate.connection.url", databaseConfig.getJdbcUrl());
 			String schemaName = databaseConfig.getSchemaName().trim();
-			if (dbType == DatabaseTypes.MSSQL && schemaName.length() > 0) {
-				settings.put(Environment.DEFAULT_SCHEMA, databaseConfig.getDatabaseName() + "." + schemaName);
-			} else {
+			switch (dbType) {
+			case MARIADB:
+			case MYSQL:
+				settings.put(Environment.DEFAULT_CATALOG, databaseConfig.getDatabaseName());
+				break;
+			case MSSQL:
+				settings.put(Environment.DEFAULT_SCHEMA, schemaName);
+				settings.put(Environment.DEFAULT_CATALOG, databaseConfig.getDatabaseName());
+				break;
+			case POSTGRE:
 				settings.put(Environment.DEFAULT_SCHEMA, databaseConfig.getDatabaseName());
+				break;
+			default:
+				break;			
 			}
 			if (dbType != DatabaseTypes.DERBY) {
 				settings.put("hibernate.connection.username", databaseConfig.getAdminName());
@@ -136,7 +149,7 @@ public class CreateDbUpdateScripts {
 			schemaUpdate.setDelimiter(";");
 
 			try {
-				String outputSqlFile = outputFile.getPath() + File.separatorChar + moduleName + "Tables.sql";
+				String outputSqlFile = outputDirTemp.getPath() + File.separatorChar + moduleName + "Tables.sql";
 				File outfile = new File(outputSqlFile);
 				if (outfile.exists()) {
 					outfile.delete();
@@ -146,6 +159,7 @@ public class CreateDbUpdateScripts {
 				schemaUpdate.setHaltOnError(true);
 				EnumSet<TargetType> targetTypes = EnumSet.of(targetType);
 				schemaUpdate.execute(targetTypes, metadata.buildMetadata());
+				metadata.getServiceRegistry().close();
 			} catch (AnnotationException exp) {
 				logger.error("ERROR: Somthing is wrong with your annotation for Module: " + moduleName, exp);
 				throw exp;
@@ -156,7 +170,20 @@ public class CreateDbUpdateScripts {
 				throw e;
 			}
 		}
-		return outputFile;
+		if (targetType == TargetType.SCRIPT) {
+			System.out.println("Tables created, now improving the sql scripts");
+			File inputDirectory = new File(outputDirPathTemp);
+			File outputDirectory = new File(outputDirPath);
+			try {
+				System.out.println("Input directory:		" + inputDirectory.getPath());
+				System.out.println("Output directory:		" + outputDirectory.getPath());
+				ConvertSqlFiles.convertSqlDirectories(inputDirectory, outputDirectory);
+			} catch (Exception exp) {
+				logger.error("Couldn't convert files ", exp);
+				throw exp;
+			}
+		}
+		return new File(outputDir, databaseConfig.getDatabaseType());
 	}
 
 }

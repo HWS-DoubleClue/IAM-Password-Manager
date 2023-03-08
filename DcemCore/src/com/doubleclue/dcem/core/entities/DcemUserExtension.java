@@ -55,7 +55,7 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 	
 	@DcemGui (name = "Department")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_DEPARTMENT_USEREXT_ID"), name = "dc_id", nullable = true, insertable = true, updatable = true)
+	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_DEPARTMENT_USEREXT_ID"), name = "departmentid", nullable = true, insertable = true, updatable = true)
 	private DepartmentEntity department;
 
 //	@OneToOne(mappedBy = "dcemUserExt", fetch = FetchType.LAZY)

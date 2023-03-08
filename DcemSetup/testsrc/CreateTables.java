@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,21 +30,31 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
+import com.doubleclue.dcem.core.logic.module.DcemModule;
+import com.doubleclue.dcem.core.utils.ConvertSqlFiles;
 
 public class CreateTables {
-
+	
+	
 	public static void main(String[] args) {
 
-		// PersistenceXmlParser parser = new PersistenceXmlParser(new ClassLoaderServiceImpl(),
-		// PersistenceUnitTransactionType.RESOURCE_LOCAL);
-		// List<ParsedPersistenceXmlDescriptor> allDescriptors = parser.doResolve(new HashMap<>());
+		HashSet<String> defaulModules = new HashSet<>();
+		defaulModules.add("dcem.system");
+		defaulModules.add("dcem.as");
+		defaulModules.add("dcem.radius");
+		defaulModules.add("dcem.up");
+		defaulModules.add("dcem.oauth");
+		defaulModules.add("dcem.otp");
+		defaulModules.add("dcem.saml");
+		defaulModules.add("dcem.saml");	
+			
 
 		if (args.length < 1) {
 			System.err.println("Need Workspace Location as first parameter");
 			System.exit(-1);
 		}
 
-		String outputDir = args[0] + File.separator + "DcemCore" + File.separator + "etc" + File.separator + "db";
+		String outputDir = args[0] + File.separator + "DcemCore" + File.separator + "target" + File.separator + "db";
 		System.out.println("Output Directory = " + outputDir);
 
 		for (DatabaseTypes databaseType : DatabaseTypes.values()) {
@@ -61,9 +74,7 @@ public class CreateTables {
 				// if (path.contains("/bin/")) {
 				// continue;
 				// }
-
 				System.out.println("CreateTables.main() Path=" + path);
-
 				// int ind = path.indexOf("Module/");
 				// if (ind == -1) {
 				// continue;
@@ -131,7 +142,10 @@ public class CreateTables {
 					continue;
 				}
 				String moduleName = module.item(0).getNodeValue();
-
+				if (defaulModules.contains(moduleName) == false) {
+					continue;
+				}
+				System.out.println("CreateTables.main() moduelName: " + moduleName);
 				for (int i = 0; i < result.getLength(); i++) {
 					String className = result.item(i).getNodeValue();
 					classesMap.add(className);

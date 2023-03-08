@@ -32,6 +32,7 @@ import com.doubleclue.dcem.app.DcemMain;
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
 import com.doubleclue.dcem.core.logging.DcemLogLevel;
 import com.doubleclue.dcem.core.logging.LogUtils;
+import com.doubleclue.dcem.core.utils.ConvertSqlFiles;
 
 public class CreateModuleTables {
 

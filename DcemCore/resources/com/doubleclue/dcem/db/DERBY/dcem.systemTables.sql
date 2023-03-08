@@ -31,7 +31,7 @@ abbriviation varchar(255),
 dc_desc varchar(255),
 dc_name varchar(255) not null,
 deputy_dc_id integer,
-headOf_dc_id integer,
+headOf_dc_id integer not null,
 dc_parent_id bigint,
 primary key (dc_id)
 );
@@ -235,6 +235,7 @@ dc_userext_id integer not null,
 dc_country varchar(255),
 photo varchar(8096) for bit data,
 dc_timezone varchar(255),
+departmentid bigint,
 primary key (dc_userext_id)
 );
 
@@ -276,20 +277,35 @@ dc_name varchar(32) not null,
 dc_schema varchar(32),
 primary key (dc_id)
 );
+
 create unique index UK_SEM_ACTION on core_action (moduleId, subject, action);
+
 create unique index UK_CONFIG_NAME on core_config (moduleId, dc_key);
+
 create unique index UK_DEPARTMENT_NAME on core_department (dc_name);
+
 create unique index UK_APP_GROUP on core_group (dc_name);
+
 create unique index UK_LDAP_NAME on core_ldap (name);
+
 create unique index UK_ROLE_NAME on core_role (dc_name);
+
 create unique index UK_ROLE_RESTRICTION on core_rolerestriction (dc_role, moduleId, viewName, variableName);
+
 create index statisticTimestamp on core_statistic (dc_timestamp);
+
 create unique index UK_APP_TEMPLATE on core_template (dc_name, language, dc_version);
+
 create unique index UK_RESOURCE_MESSAGE_KEY on core_textMessage (dc_key, textResourceBundle);
+
 create unique index UK_RESOURCE_LOCALE_BASENAME on core_textResourceBundle (locale, basename);
+
 create unique index UK_APP_USER on core_user (loginId);
+
 create unique index UK_NODE_NAME on sys_node (dc_name);
+
 create unique index UK_TENANT_NAME on sys_tenant (dc_name);
+
 create unique index UK_TENANT_SCHEMA on sys_tenant (dc_schema);
 
 alter table core_auditing
@@ -381,6 +397,11 @@ alter table core_user
 add constraint FK_USER_LDAP
 foreign key (dc_ldap)
 references core_ldap;
+
+alter table core_userext
+add constraint FK_DEPARTMENT_USEREXT_ID
+foreign key (departmentid)
+references core_department;
 
 alter table sys_keystore
 add constraint FK_KEYSTORE_NODE

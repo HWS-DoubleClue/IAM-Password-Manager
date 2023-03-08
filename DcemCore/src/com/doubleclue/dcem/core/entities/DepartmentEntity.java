@@ -14,6 +14,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.primefaces.model.SortOrder;
 
 import com.doubleclue.dcem.core.gui.DcemGui;
@@ -24,6 +26,7 @@ import com.doubleclue.dcem.core.gui.DcemGui;
  */
 @Entity
 @Table(name = "core_department", uniqueConstraints = { @UniqueConstraint(name = "UK_DEPARTMENT_NAME", columnNames = { "dc_name" }) } )
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NamedQueries({
 @NamedQuery(name = DepartmentEntity.GET_FILTER_LIST, 
 query = "SELECT dt.name FROM DepartmentEntity dt WHERE LOWER(dt.name) LIKE LOWER(?1) ORDER BY dt.name"

@@ -31,7 +31,7 @@ abbriviation varchar(255),
 dc_desc varchar(255),
 dc_name varchar(255) not null,
 deputy_dc_id integer,
-headOf_dc_id integer,
+headOf_dc_id integer not null,
 dc_parent_id bigint,
 primary key (dc_id)
 ) engine=InnoDB;
@@ -235,6 +235,7 @@ dc_userext_id integer not null,
 dc_country varchar(255),
 photo blob,
 dc_timezone varchar(255),
+departmentid bigint,
 primary key (dc_userext_id)
 ) engine=InnoDB;
 
@@ -297,6 +298,7 @@ add constraint UK_ROLE_NAME unique (dc_name);
 
 alter table core_rolerestriction
 add constraint UK_ROLE_RESTRICTION unique (dc_role, moduleId, viewName, variableName);
+
 create index statisticTimestamp on core_statistic (dc_timestamp);
 
 alter table core_template
@@ -409,6 +411,11 @@ alter table core_user
 add constraint FK_USER_LDAP
 foreign key (dc_ldap)
 references core_ldap (dc_id);
+
+alter table core_userext
+add constraint FK_DEPARTMENT_USEREXT_ID
+foreign key (departmentid)
+references core_department (dc_id);
 
 alter table sys_keystore
 add constraint FK_KEYSTORE_NODE
