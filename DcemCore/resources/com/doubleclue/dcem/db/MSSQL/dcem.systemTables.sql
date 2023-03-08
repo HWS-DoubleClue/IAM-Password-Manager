@@ -1,3 +1,4 @@
+
 create table core_action (
 dc_id int not null,
 action varchar(128) not null,
@@ -21,6 +22,17 @@ dc_key varchar(128) not null,
 moduleId varchar(64),
 nodeId varchar(64),
 dc_value varbinary(MAX) not null,
+primary key (dc_id)
+);
+
+create table core_department (
+dc_id bigint identity not null,
+abbriviation varchar(255),
+dc_desc varchar(255),
+dc_name varchar(255) not null,
+deputy_dc_id int,
+headOf_dc_id int not null,
+dc_parent_id bigint,
 primary key (dc_id)
 );
 
@@ -68,11 +80,11 @@ dc_id bigint not null,
 action int,
 errorCode varchar(255),
 info varchar(255),
+dc_time datetime2 not null,
 dc_loc varchar(255),
 severity int not null,
 show_on_dashboard bit not null,
 dc_source varchar(255),
-dc_time datetime2 not null,
 user_dc_id int,
 primary key (dc_id)
 );
@@ -223,6 +235,7 @@ dc_userext_id int not null,
 dc_country varchar(255),
 photo varbinary(MAX),
 dc_timezone varchar(255),
+departmentid bigint,
 primary key (dc_userext_id)
 );
 
@@ -271,6 +284,9 @@ add constraint UK_SEM_ACTION unique (moduleId, subject, action);
 alter table core_config
 add constraint UK_CONFIG_NAME unique (moduleId, dc_key);
 
+alter table core_department
+add constraint UK_DEPARTMENT_NAME unique (dc_name);
+
 alter table core_group
 add constraint UK_APP_GROUP unique (dc_name);
 
@@ -282,6 +298,7 @@ add constraint UK_ROLE_NAME unique (dc_name);
 
 alter table core_rolerestriction
 add constraint UK_ROLE_RESTRICTION unique (dc_role, moduleId, viewName, variableName);
+
 create index statisticTimestamp on core_statistic (dc_timestamp);
 
 alter table core_template
@@ -314,6 +331,21 @@ alter table core_auditing
 add constraint FK_AUDITING_USER
 foreign key (audituserId)
 references core_user;
+
+alter table core_department
+add constraint FK_APP_DEPARTMENT_USER_DEPUTY
+foreign key (deputy_dc_id)
+references core_user;
+
+alter table core_department
+add constraint FK_APP_DEPARTMENT_USER
+foreign key (headOf_dc_id)
+references core_user;
+
+alter table core_department
+add constraint FK_DEPARTMENT_PARENT_ID
+foreign key (dc_parent_id)
+references core_department;
 
 alter table core_group
 add constraint FK_GROUP_ROLE
@@ -379,6 +411,11 @@ alter table core_user
 add constraint FK_USER_LDAP
 foreign key (dc_ldap)
 references core_ldap;
+
+alter table core_userext
+add constraint FK_DEPARTMENT_USEREXT_ID
+foreign key (departmentid)
+references core_department;
 
 alter table sys_keystore
 add constraint FK_KEYSTORE_NODE

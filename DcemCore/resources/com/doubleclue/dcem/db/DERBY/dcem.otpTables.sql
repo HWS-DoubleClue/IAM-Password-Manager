@@ -1,3 +1,4 @@
+
 create table otp_token (
 dc_id integer not null,
 counter integer not null,
@@ -9,6 +10,7 @@ serialNumber varchar(255) not null,
 userId integer,
 primary key (dc_id)
 );
+
 create unique index UK_OTP_SERIAL on otp_token (serialNumber);
 
 alter table otp_token

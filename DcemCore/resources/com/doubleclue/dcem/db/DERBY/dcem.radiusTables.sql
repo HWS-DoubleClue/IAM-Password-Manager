@@ -1,3 +1,4 @@
+
 create table radius_client (
 dc_id integer not null,
 ignoreUsersPassword boolean not null,
@@ -18,4 +19,5 @@ nasClientName varchar(128),
 dc_time timestamp not null,
 primary key (dc_id)
 );
+
 create unique index UK_RADIUS_IPNUMBER on radius_client (ipNumber);

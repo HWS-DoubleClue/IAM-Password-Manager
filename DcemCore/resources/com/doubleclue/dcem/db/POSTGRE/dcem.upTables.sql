@@ -1,3 +1,4 @@
+
 create sequence up_apphubseq start 1 increment 1;
 
 create table up_applicationhub (

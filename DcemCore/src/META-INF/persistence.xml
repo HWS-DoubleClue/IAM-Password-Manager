@@ -31,6 +31,7 @@
 		<class>com.doubleclue.dcem.core.entities.DcemStatistic</class>
 		
 		<class>com.doubleclue.dcem.core.entities.DcemReporting</class>
+		<class>com.doubleclue.dcem.core.entities.DepartmentEntity</class>
 		
 		<properties> 
 		 	

@@ -99,6 +99,10 @@
 					<f:selectItems value="#{userDialog.availableRoles}" />
 				</p:selectOneMenu>
 				
+				<p:outputLabel for="@next" value="#{AdminMsg['userDialog.department']} "  />
+				<p:autoComplete id="dept" minQueryLength="1" value="#{userDialog.department}" completeMethod="#{userDialog.completeDepartment}" effect="fade"
+						size="40" />
+								
 				<p:outputLabel for="country" value="#{AdminMsg['userDialog.country']} "  />
 				<p:selectOneMenu id="country" value="#{userDialog.country}"  >
 					<f:selectItems value="#{userDialog.availableCountries}" />

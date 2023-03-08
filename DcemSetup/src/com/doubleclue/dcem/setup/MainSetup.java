@@ -7,9 +7,12 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.X509Certificate;
@@ -115,80 +118,48 @@ public class MainSetup {
 			logger.info("New local configuration file created");
 		}
 		System.setProperty("org.jboss.weld.xml.disableValidating", "true");
+		
+		/**
+		 * 
+		 * Loading the Module Plugins
+		 */
+		Method method = null;
+		try {
+			URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+			method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+			method.setAccessible(true);
+			File pluginsDirectory = LocalPaths.getPluginsDirectory();
+			logger.info("Plugins directory: " + pluginsDirectory.getAbsolutePath());
+			File filesList[] = pluginsDirectory.listFiles();
+			if (filesList.length == 0) {
+				logger.info("No Plugins found.");
+			} else {
+				for (File pluginFile : filesList) {
+					if (pluginFile.getName().endsWith(".jar")) {
+						URL url = pluginFile.toURI().toURL();
+						method.invoke(classLoader, url);
+						logger.info("DCEM Plugin added: " + pluginFile.getName());
+					}
+				}
+			}
+		} catch (Exception e1) {
+			logger.error("Couldn't load Plugins ", e1);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 		localConfig = config;
-	//	DatabaseConfig databaseConfig = localConfig.getDatabase();
-		// if (databaseConfig.getDatabaseEncryptionKey() != null) {
-		// try {
-		// DbEncryption.createDbCiphers(databaseConfig);
-		// } catch (DcemException e1) {
-		// fatalExit(null, -4, "Error at creating DB Ciphers", e1);
-		// }
-		// Connection conn = null;
-		// try {
-		// conn = JdbcUtils.getJdbcConnectionWithSchema(databaseConfig, null, null);
-		// } catch (SQLException exp) {
-		// fatalExit(conn, -5, "Couldn't establish Database connection", exp);
-		// }
-		// try {
-		// JdbcUtils.verifyDbKey(conn, localConfig.getDatabase());
-		// } catch (Exception exp) {
-		// fatalExit(conn, -6, "Invalid database Encryption key!", exp);
-		// }
-		//
-		// /**
-		// * Get the node Name
-		// */
-		// String nodeName = localConfig.getNodeName();
-		// if (nodeName == null) {
-		// nodeName = DcemUtils.getComputerName();
-		// if (nodeName == null) {
-		// fatalExit(conn, -7, "No NodeName found! You must set the Node-Name in configuration.xml or enviroment as either COMPUTERNAME or HOSTNAME",
-		// null);
-		// }
-		// }
-		//
-		// ClusterConfig clusterConfig = null;
-		// Integer nodeType = null;
-		// try {
-		// byte[] data = JdbcUtils.getConfigData(conn, SystemModule.MODULE_ID, DcemConstants.CONFIG_KEY_CLUSTER_CONFIG);
-		// clusterConfig = new ObjectMapper().readValue(data, ClusterConfig.class);
-		// System.out.println("Cluster Name: " + clusterConfig.getGivenName());
-		//
-		// nodeType = JdbcUtils.getNodeType(conn, nodeName);
-		// if (nodeType == null) {
-		// fatalExit(conn, -8, "No DB-Node configuration found for Node: " + nodeName, null);
-		// }
-		// // nodeTypeEnum = NodeTypeEnum.values()[nodeType];
-		//
-		// } catch (Exception exp) {
-		// fatalExit(conn, -9, "Failed to retrieve Cluster and Node configuration from database", exp);
-		// }
-		// DbVersion dbVersion = null;
-		// try {
-		// dbVersion = JdbcUtils.getDbVersion(conn, DcemConstants.DCEM_MODULE_ID);
-		// if (dbVersion == null) {
-		// throw new Exception("ProductDbVerion DCEM not found");
-		// }
-		// } catch (Exception exp) {
-		// fatalExit(conn, -10, "Failed to retrieve DCEM Version from database", exp);
-		// }
-		// ProductVersion productVersion = null;
-		// try {
-		// productVersion = KaraUtils.getProductVersion(MainSetup.class);
-		// } catch (Exception exp) {
-		// fatalExit(conn, -11, "Could read Product-Version", exp);
-		// }
-		//
-		// if (productVersion.getVersionInt() < dbVersion.getVersion()) {
-		// logger.error("This Product-Version: " + productVersion.getVersionStr() + " (" + productVersion.getVersionInt() + "), Current DB-Version: "
-		// + dbVersion.getVersionStr() + "(" + dbVersion.getVersion() + ")");
-		// fatalExit(conn, -12, "This Version cannot run with a newer database version!", null);
-		// }
-		// if (productVersion.getVersionInt() == dbVersion.getVersion()) {
-		// fatalExit(conn, 0, "The database is up to date, there is no need to do anything. Setup is ready.", null);
-		// }
-		// }
 		Tomcat tomcat = new Tomcat();
 		tomcat.setBaseDir(LocalPaths.getDcemHomeFile().getAbsolutePath());
 		String webappDirLocation = "SetupContent";

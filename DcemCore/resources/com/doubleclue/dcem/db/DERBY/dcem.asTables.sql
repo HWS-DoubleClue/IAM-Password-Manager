@@ -1,3 +1,4 @@
+
 create table as_activationcode (
 dc_id integer not null,
 activationCode long varchar for bit data not null,
@@ -167,15 +168,25 @@ primary key (dc_id)
 );
 
 create unique index UK_AUTHAPP_NAME on as_authApp (dc_name);
+
 create unique index UK_AS_CLOUDDATA on as_cloudsafe (dc_name, owner, user_dc_id, device_dc_id, dc_parent_id, group_dc_id);
+
 create index IDX_DEVICE_LAST_LOGIN on as_device (lastLogin, dc_state);
+
 create index IDX_DEVICE_USER on as_device (userId);
+
 create unique index UK_DEVICE_USER on as_device (userId, name);
+
 create index FIDO_AUTH_CREDENTIAL_ID_INDEX on as_fido_authenticator (credentialId);
+
 create unique index UK_USER_CREDENTIAL_ID on as_fido_authenticator (userId, credentialId);
+
 create unique index UK_POLICY_NAME on as_policy (dc_name);
+
 create unique index UK_POLICY_APP on as_policy_app (authapp, subId);
+
 create unique index UK_VERSION_NAME_TYPE on as_version (dc_name, versionStr, clientType);
+
 alter table as_activationcode
 add constraint FK_APP_AC_USER
 foreign key (userId)
@@ -286,4 +297,3 @@ alter table as_version
 add constraint FK_APP_VERSION_USER
 foreign key (user_dc_id)
 references core_user;
-
