@@ -7,6 +7,17 @@
         primary key (dc_id)
     );
 
+    create table core_department (
+       dc_id  bigserial not null,
+        abbriviation varchar(255),
+        dc_desc varchar(255),
+        dc_name varchar(255) not null,
+        deputy_dc_id int4,
+        headOf_dc_id int4 not null,
+        dc_parent_id int8,
+        primary key (dc_id)
+    );
+
     create table core_ldap (
        dc_id int4 not null,
         baseDN varchar(255) not null,
@@ -96,6 +107,7 @@
         dc_country varchar(255),
         photo bytea,
         dc_timezone varchar(255),
+        dc_id int8,
         primary key (dc_userext_id)
     );
 
@@ -114,6 +126,9 @@
     alter table if exists core_action 
        add constraint UK_SEM_ACTION unique (moduleId, subject, action);
 
+    alter table if exists core_department 
+       add constraint UK_DEPARTMENT_NAME unique (dc_name);
+
     alter table if exists core_ldap 
        add constraint UK_LDAP_NAME unique (name);
 
@@ -125,6 +140,21 @@
 
     alter table if exists otp_token 
        add constraint UK_OTP_SERIAL unique (serialNumber);
+
+    alter table if exists core_department 
+       add constraint FK_APP_DEPARTMENT_USER_DEPUTY 
+       foreign key (deputy_dc_id) 
+       references core_user;
+
+    alter table if exists core_department 
+       add constraint FK_APP_DEPARTMENT_USER 
+       foreign key (headOf_dc_id) 
+       references core_user;
+
+    alter table if exists core_department 
+       add constraint FK_DEPARTMENT_PARENT_ID 
+       foreign key (dc_parent_id) 
+       references core_department;
 
     alter table if exists core_role_core_action 
        add constraint FK_ROLE_ACTION 
@@ -150,6 +180,11 @@
        add constraint FK_USER_LDAP 
        foreign key (dc_ldap) 
        references core_ldap;
+
+    alter table if exists core_userext 
+       add constraint FK_DEPARTMENT_USEREXT_ID 
+       foreign key (dc_id) 
+       references core_department;
 
     alter table if exists otp_token 
        add constraint FK_OTP_TOKEN_USER 

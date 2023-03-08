@@ -133,7 +133,7 @@ public class ConvertSqlFiles {
 //				}
 					
 					
-				if (trimZeile.startsWith("create table ") || trimZeile.startsWith("alter table ") || trimZeile.startsWith("insert into ")) { // Search for first
+				if (trimZeile.startsWith("create table ") || trimZeile.startsWith("alter table ") || trimZeile.startsWith("insert into ") || trimZeile.startsWith("create sequence ")) { // Search for first
 					if ((systemFile == false) && (trimZeile.contains(" on sys_") || trimZeile.contains(" on core_") || trimZeile.contains(" table core_")
 							|| trimZeile.contains(" table sys_") || trimZeile.startsWith("insert into core_") 
 							|| trimZeile.startsWith(" insert into sys_")

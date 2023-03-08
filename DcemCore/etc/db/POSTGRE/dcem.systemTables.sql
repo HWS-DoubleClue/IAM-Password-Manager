@@ -31,7 +31,7 @@
         dc_desc varchar(255),
         dc_name varchar(255) not null,
         deputy_dc_id int4,
-        headOf_dc_id int4,
+        headOf_dc_id int4 not null,
         dc_parent_id int8,
         primary key (dc_id)
     );
@@ -235,6 +235,7 @@
         dc_country varchar(255),
         photo bytea,
         dc_timezone varchar(255),
+        dc_id int8,
         primary key (dc_userext_id)
     );
 
@@ -409,6 +410,11 @@ create index statisticTimestamp on core_statistic (dc_timestamp);
        add constraint FK_USER_LDAP 
        foreign key (dc_ldap) 
        references core_ldap;
+
+    alter table if exists core_userext 
+       add constraint FK_DEPARTMENT_USEREXT_ID 
+       foreign key (dc_id) 
+       references core_department;
 
     alter table if exists sys_keystore 
        add constraint FK_KEYSTORE_NODE 

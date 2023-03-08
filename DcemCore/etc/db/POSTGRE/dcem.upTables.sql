@@ -8,6 +8,17 @@ create sequence up_apphubseq start 1 increment 1;
         primary key (dc_id)
     );
 
+    create table core_department (
+       dc_id  bigserial not null,
+        abbriviation varchar(255),
+        dc_desc varchar(255),
+        dc_name varchar(255) not null,
+        deputy_dc_id int4,
+        headOf_dc_id int4 not null,
+        dc_parent_id int8,
+        primary key (dc_id)
+    );
+
     create table core_group (
        dc_id int4 not null,
         jpaVersion int4 not null,
@@ -113,6 +124,7 @@ create sequence up_apphubseq start 1 increment 1;
         dc_country varchar(255),
         photo bytea,
         dc_timezone varchar(255),
+        dc_id int8,
         primary key (dc_userext_id)
     );
 
@@ -135,6 +147,9 @@ create sequence up_apphubseq start 1 increment 1;
     alter table if exists core_action 
        add constraint UK_SEM_ACTION unique (moduleId, subject, action);
 
+    alter table if exists core_department 
+       add constraint UK_DEPARTMENT_NAME unique (dc_name);
+
     alter table if exists core_group 
        add constraint UK_APP_GROUP unique (dc_name);
 
@@ -149,6 +164,21 @@ create sequence up_apphubseq start 1 increment 1;
 
     alter table if exists up_applicationhub 
        add constraint UK_APPHUB_NAME unique (up_name);
+
+    alter table if exists core_department 
+       add constraint FK_APP_DEPARTMENT_USER_DEPUTY 
+       foreign key (deputy_dc_id) 
+       references core_user;
+
+    alter table if exists core_department 
+       add constraint FK_APP_DEPARTMENT_USER 
+       foreign key (headOf_dc_id) 
+       references core_user;
+
+    alter table if exists core_department 
+       add constraint FK_DEPARTMENT_PARENT_ID 
+       foreign key (dc_parent_id) 
+       references core_department;
 
     alter table if exists core_group 
        add constraint FK_GROUP_ROLE 
@@ -194,6 +224,11 @@ create sequence up_apphubseq start 1 increment 1;
        add constraint FK_USER_LDAP 
        foreign key (dc_ldap) 
        references core_ldap;
+
+    alter table if exists core_userext 
+       add constraint FK_DEPARTMENT_USEREXT_ID 
+       foreign key (dc_id) 
+       references core_department;
 
     alter table if exists up_keepassentry 
        add constraint FK_KEEPASS_APP 
