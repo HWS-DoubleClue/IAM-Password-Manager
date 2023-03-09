@@ -20,7 +20,6 @@ public class UserPortalPreferences extends ModulePreferences {
 	private boolean enableCaptcha = false;
 	private boolean enableAutoComplete = true;
 	private boolean enableLocalUserRegistration = false;
-	private boolean enableSwitchToUserportal = true;
 
 	private int urlTokenTimeout = 120; // minutes
 
@@ -177,13 +176,5 @@ public class UserPortalPreferences extends ModulePreferences {
 
 	public void setTutorialUrl(String tutorialUrl) {
 		this.tutorialUrl = tutorialUrl;
-	}
-
-	public boolean isEnableSwitchToUserportal() {
-		return enableSwitchToUserportal;
-	}
-
-	public void setEnableSwitchToUserportal(boolean enableSwitchToUserportal) {
-		this.enableSwitchToUserportal = enableSwitchToUserportal;
 	}
 }

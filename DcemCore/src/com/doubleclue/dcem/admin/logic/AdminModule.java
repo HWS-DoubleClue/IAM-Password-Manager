@@ -136,10 +136,13 @@ public class AdminModule extends DcemModule {
 		return (AdminTenantData) getModuleTenantData();
 	}
 
+	public boolean isUserPortalDisabled() {
+		return getPreferences().isDisableUserPortal();
+	}
+
 	public String getTitle() {
 		String name = "";
-		String bannerTextEnterpriseManagment = getTenantData().getTenantBrandingEntity()
-				.getBannerTextEnterpriseManagment();
+		String bannerTextEnterpriseManagment = getTenantData().getTenantBrandingEntity().getBannerTextEnterpriseManagment();
 		if (bannerTextEnterpriseManagment != null && bannerTextEnterpriseManagment.isEmpty() == false) {
 			return bannerTextEnterpriseManagment;
 		} else {
@@ -189,8 +192,7 @@ public class AdminModule extends DcemModule {
 
 	public String getTitleEnterpriseManagment() {
 		String name = "";
-		String bannerTextEnterpriseManagment = getTenantData().getTenantBrandingEntity()
-				.getBannerTextEnterpriseManagment();
+		String bannerTextEnterpriseManagment = getTenantData().getTenantBrandingEntity().getBannerTextEnterpriseManagment();
 		if (bannerTextEnterpriseManagment != null && bannerTextEnterpriseManagment.isEmpty() == false) {
 			return bannerTextEnterpriseManagment;
 		} else {
@@ -226,8 +228,7 @@ public class AdminModule extends DcemModule {
 		if (companyLogo == null) {
 			return JsfUtils.getEmptyImage();
 		}
-		return DefaultStreamedContent.builder().contentType("image/png")
-				.stream(() -> new ByteArrayInputStream(companyLogo)).build();
+		return DefaultStreamedContent.builder().contentType("image/png").stream(() -> new ByteArrayInputStream(companyLogo)).build();
 	}
 
 	public boolean isDefaultBackgroundImg() {
@@ -243,8 +244,7 @@ public class AdminModule extends DcemModule {
 		if (backgroundimg == null) {
 			return null;
 		}
-		return DefaultStreamedContent.builder().contentType("image/png")
-				.stream(() -> new ByteArrayInputStream(backgroundimg)).build();
+		return DefaultStreamedContent.builder().contentType("image/png").stream(() -> new ByteArrayInputStream(backgroundimg)).build();
 	}
 
 	public String getTitleStyle() {
@@ -313,13 +313,11 @@ public class AdminModule extends DcemModule {
 		cal.setTime(new Date());
 
 		// Archive Reports
-		if (cal.get(Calendar.DAY_OF_MONTH) == 1
-				|| systemModule.getSpecialPropery(DcemConstants.SPECIAL_PROPERTY_RUN_NIGHTLY_TASK) != null) {
+		if (cal.get(Calendar.DAY_OF_MONTH) == 1 || systemModule.getSpecialPropery(DcemConstants.SPECIAL_PROPERTY_RUN_NIGHTLY_TASK) != null) {
 			int days = getPreferences().getDurationForHistoryArchive();
 			if (days > 0) {
 				try {
-					String[] result = exportRecords.archive(days, Auditing.class, Auditing.GET_AFTER,
-							Auditing.DELETE_AFTER);
+					String[] result = exportRecords.archive(days, Auditing.class, Auditing.GET_AFTER, Auditing.DELETE_AFTER);
 					if (result != null) {
 						logger.info("Admin History-Archived: File=" + result[0] + " Records=" + result[1]);
 					}
@@ -331,8 +329,7 @@ public class AdminModule extends DcemModule {
 			days = getPreferences().getDurationForReportArchive();
 			if (days > 0) {
 				try {
-					String[] result = exportRecords.archive(days, DcemReporting.class, DcemReporting.GET_AFTER,
-							DcemReporting.DELETE_AFTER);
+					String[] result = exportRecords.archive(days, DcemReporting.class, DcemReporting.GET_AFTER, DcemReporting.DELETE_AFTER);
 					if (result != null) {
 						logger.info("AsReporting-Archived: File=" + result[0] + " Records=" + result[1]);
 					}
@@ -405,23 +402,20 @@ public class AdminModule extends DcemModule {
 	public boolean isWindowsSso() {
 		return DcemUtils.isWindows() == true && getPreferences().isUseWindowsSSO() == true;
 	}
-	
-	
+
 	@Override
 	public void preferencesValidation(ModulePreferences modulePreferences) throws DcemException {
 		AdminPreferences preferences = (AdminPreferences) modulePreferences;
 		if (preferences.getAlertsNotificationGroup() != null) {
 			if (groupLogic.getGroup(preferences.getAlertsNotificationGroup()) == null) {
-				throw new DcemException(DcemErrorCodes.ALERT_NOTIFICATION_GROUP_NOT_FOUND,
-						"Please enter a valid alert recipient group name");
+				throw new DcemException(DcemErrorCodes.ALERT_NOTIFICATION_GROUP_NOT_FOUND, "Please enter a valid alert recipient group name");
 			}
 		}
 	}
 
 	public void actionRedirectionToUserPortal() {
 		try {
-			FacesContext.getCurrentInstance().getExternalContext()
-					.redirect(DcemConstants.USER_PORTAL_WELCOME + DcemConstants.FACES_REDIRECT);
+			FacesContext.getCurrentInstance().getExternalContext().redirect(DcemConstants.USER_PORTAL_WELCOME + DcemConstants.FACES_REDIRECT);
 		} catch (IOException e) {
 			logger.error("Could not redirect to Userportal", e);
 		}

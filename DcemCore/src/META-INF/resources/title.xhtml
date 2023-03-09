@@ -33,7 +33,7 @@
 						<h:panelGroup>
 							<div style="display: inline-block; vertical-align: middle;">
 								<p:commandLink action="#{adminModule.actionRedirectionToUserPortal}" title="#{DcupMsg['title.switchToUserportal']}"
-									rendered="#{userPortalModule.enableSwitchToUserportal}">
+									rendered="#{!adminModule.userPortalDisabled}">
 									<i class="fa fa-exchange" style="color: white; font-size: 1.2em" />
 								</p:commandLink>
 							</div>

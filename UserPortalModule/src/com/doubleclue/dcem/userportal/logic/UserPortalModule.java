@@ -150,10 +150,6 @@ public class UserPortalModule extends DcemModule {
 		return dcemApplicationBean.isCaptchaOn() && getModulePreferences().isEnableCaptcha();
 	}
 
-	public boolean isEnableSwitchToUserportal() {
-		return getModulePreferences().isEnableSwitchToUserportal();
-	}
-
 	public SupportedLanguage[] getSupportedLanguages() {
 		return SupportedLanguage.values();
 	}

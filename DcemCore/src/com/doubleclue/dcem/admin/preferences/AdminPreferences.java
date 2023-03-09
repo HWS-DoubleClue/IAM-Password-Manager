@@ -63,24 +63,25 @@ public class AdminPreferences extends ModulePreferences {
 
 	@DcemGui()
 	String alertsNotificationGroup = null;
-	
+
+	@DcemGui()
+	boolean disableUserPortal = false;
+
 	@DcemGui(separator = "Login With")
 	boolean enableAzureDirectLogin;
-	
+
 	@DcemGui()
 	boolean useOnlyAzureDirectLogin;
-
-	
 
 	@DcemGui()
 	boolean useWindowsSSO;
 
 	@DcemGui(separator = "Location", choose = { "None", "IP", "City" })
 	String locationInformation = "None";
-	
+
 	@DcemGui(style = "width: 18em", password = true)
 	String locationApiKey;
-	
+
 	@DcemGui(separator = "Reporting")
 	boolean reportErrorsOnly = false;
 
@@ -91,8 +92,7 @@ public class AdminPreferences extends ModulePreferences {
 
 	@DcemGui()
 	int durationForReportArchive = 0;
-	
-	
+
 	public String getLocationInformation() {
 		return locationInformation;
 	}
@@ -225,10 +225,10 @@ public class AdminPreferences extends ModulePreferences {
 		this.enableAzureDirectLogin = enableAzureDirectLogin;
 	}
 
-	public void setMaxExport(int maxExport) {	
-		this.maxExport = maxExport;	
+	public void setMaxExport(int maxExport) {
+		this.maxExport = maxExport;
 	}
-	
+
 	public boolean isUseWindowsSSO() {
 		return useWindowsSSO;
 	}
@@ -245,5 +245,12 @@ public class AdminPreferences extends ModulePreferences {
 		this.useOnlyAzureDirectLogin = useOnlyAzureDirectLogin;
 	}
 
+	public boolean isDisableUserPortal() {
+		return disableUserPortal;
+	}
+
+	public void setDisableUserPortal(boolean disableUserPortal) {
+		this.disableUserPortal = disableUserPortal;
+	}
 
 }
