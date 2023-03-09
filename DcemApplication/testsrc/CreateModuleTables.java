@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.AnnotationException;
@@ -73,6 +74,15 @@ public class CreateModuleTables {
 		
         String outputResources = "resources";
 		String outputDir = modulePath + File.separator + "target" + File.separator + "tables";
+		File outputDirFile = new File(outputDir);
+		try {
+			FileUtils.deleteDirectory(new File(outputDir));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		outputDirFile.delete();
+		
 		System.out.println("Output Directory = " + outputDir);
 		String persistencePath = modulePath + File.separator + "src" + File.separator + "META-INF" + File.separator + "persistence.xml";
 		File persistenceFile = new File(persistencePath);
@@ -139,7 +149,7 @@ public class CreateModuleTables {
 				continue;
 			}
 			String moduleName = module.item(0).getNodeValue();
-
+			System.out.println("Module Name " + moduleName);
 			for (int i = 0; i < result.getLength(); i++) {
 				String className = result.item(i).getNodeValue();
 				classesMap.add(className);

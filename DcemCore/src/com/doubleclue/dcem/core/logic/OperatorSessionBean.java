@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.LazyInitializationException;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -93,6 +94,11 @@ public class OperatorSessionBean implements Serializable {
 	List<DcemGroup> userGroups;
 
 	Map<String, String> userSettings;
+	
+	
+	byte[] image = null;
+	
+	
 
 	/**
 	 * 
@@ -238,7 +244,7 @@ public class OperatorSessionBean implements Serializable {
 				FacesContext.getCurrentInstance().getViewRoot().setLocale(supportedLocale.getLocale());
 			}
 		}
-		this.dcemUser = user;
+		setDcemUser(user);
 		haveAction = new HashSet<>();
 		StringBuffer sb = new StringBuffer();
 		for (DcemRole role : roles) {
@@ -321,6 +327,7 @@ public class OperatorSessionBean implements Serializable {
 
 	public void setDcemUser(DcemUser dcemUser) {
 		this.dcemUser = dcemUser;
+		loadPhotoImage();
 	}
 
 	public String getDateTimeShortPattern() {
@@ -350,13 +357,28 @@ public class OperatorSessionBean implements Serializable {
 	}
 
 	public StreamedContent getFotoProfileUser() {
-		DcemUserExtension dcemUserExtension = dcemUser.getDcemUserExt();
-		if (dcemUserExtension != null && dcemUserExtension.getPhoto() != null) {
-			byte[] image = dcemUserExtension.getPhoto();
+		if (image == null) {
+			return JsfUtils.getDefaultUserImage();
+		} else {
 			InputStream in = new ByteArrayInputStream(image);
 			return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
-		} else {
-			return JsfUtils.getDefaultUserImage();
+		}
+	}
+		
+	private void loadPhotoImage () {
+		DcemUserExtension dcemUserExtension = dcemUser.getDcemUserExt();
+		if (dcemUserExtension != null) {
+			try {
+				image = dcemUserExtension.getPhoto();
+			} catch (LazyInitializationException e) {
+				dcemUser = em.merge(dcemUser);
+				dcemUserExtension = dcemUser.getDcemUserExt();
+				if (dcemUserExtension != null) {
+					image = dcemUserExtension.getPhoto();
+				}
+			} catch (Exception e) {
+				logger.error(e);
+			}
 		}
 	}
 
@@ -395,7 +417,7 @@ public class OperatorSessionBean implements Serializable {
 			userSettings = new HashMap<String, String>();
 		}
 	}
-	
+
 	public String getUserSettingsToString() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(userSettings);

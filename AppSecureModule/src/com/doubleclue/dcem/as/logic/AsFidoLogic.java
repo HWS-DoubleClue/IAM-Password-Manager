@@ -66,7 +66,7 @@ public class AsFidoLogic {
 	@Inject
 	AppServices appServices;
 
-	private static Logger logger = LogManager.getLogger(AsModule.class);
+	private static Logger logger = LogManager.getLogger(AsFidoLogic.class);
 
 	public String startRegistration(String username, String rpId) throws DcemException {
 		try {

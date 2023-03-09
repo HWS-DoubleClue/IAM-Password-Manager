@@ -564,11 +564,15 @@
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi-ooxml</artifactId>
-				<version>5.0.0</version>
+				<version>5.2.3</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.fasterxml.woodstox</groupId>
 						<artifactId>woodstox-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.logging.log4j</groupId>
+						<artifactId>log4j-core</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -631,6 +635,18 @@
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>RadiusModule</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.doubleclue.dcem.module</groupId>
+				<artifactId>SkillsModule</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.doubleclue.dcem.module</groupId>
+				<artifactId>VacancyModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -749,7 +765,7 @@
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
-				<version>2.17.2</version>
+				<version>2.20.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

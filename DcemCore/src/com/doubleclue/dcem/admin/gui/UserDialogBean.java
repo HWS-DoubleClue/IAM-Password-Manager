@@ -120,7 +120,7 @@ public class UserDialogBean extends DcemDialog {
 			if (department != null && department.isEmpty() == false) {
 				departmentEntity = departmentLogic.getDepartmentByName (department);
 				if (departmentEntity == null) {
-					JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "departmentDialog.invalidDepartment");
+					JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "userDialog.error.invalidDepartment");
 					return false;
 				}
 			}
@@ -304,10 +304,14 @@ public class UserDialogBean extends DcemDialog {
 			loginId = null;
 			domainName = null;
 		}
+		department = null;
 		if (user.getDcemUserExt() == null) {
 			country = null;
 		} else {
 			country = user.getDcemUserExt().getCountry();
+			if (user.getDcemUserExt().getDepartment() != null) {
+				department = user.getDcemUserExt().getDepartment().getName();
+			}
 		}
 		if (country == null) {
 			if (adminModule.getPreferences().getUserDefaultLanguage() == SupportedLanguage.German) {

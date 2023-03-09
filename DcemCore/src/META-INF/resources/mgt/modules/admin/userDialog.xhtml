@@ -85,7 +85,6 @@
 				<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} " rendered="#{viewNavigator.editAction}" />
 				<p:outputLabel value="#{userDialog.actionObject.partMobileNumber}" rendered="#{viewNavigator.editAction}" />
 
-
 				<p:outputLabel value="#{AdminMsg['userDialog.disable']} " />
 				<p:selectBooleanCheckbox value="#{userDialog.actionObject.disabled}" disabled="#{userDialog.userOutranksOperator()}" />
 
@@ -108,13 +107,6 @@
 					<f:selectItems value="#{userDialog.availableCountries}" />
 				</p:selectOneMenu>
 
-				<p:outputLabel value="#{AdminMsg['userDialog.passCounter']} " rendered="#{viewNavigator.editAction }" />
-				<p:inputText id="passcounter" value="#{userDialog.actionObject.passCounter}" rendered="#{viewNavigator.editAction}"
-					disabled="#{userDialog.userOutranksOperator()}" />
-					
-				
-					
-					
 					
 			</h:panelGrid>
 			<p />

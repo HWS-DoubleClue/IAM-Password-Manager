@@ -30,6 +30,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/BookingsModule"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/VacanciesModule"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
