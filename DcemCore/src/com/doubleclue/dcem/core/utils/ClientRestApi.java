@@ -17,6 +17,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -37,43 +38,55 @@ public class ClientRestApi {
 	boolean traceRestApi; 
 	
 	enum HttpVerb {
-		HTTP_GET, HTTP_PUT, HTTP_DELETE, HTTP_POST;
+		HTTP_GET, HTTP_PUT, HTTP_PATCH, HTTP_DELETE, HTTP_POST;
 	}
 
 	private Logger logger = LogManager.getLogger(ClientRestApi.class);
 
 	CloseableHttpClient httpClient;
-	
-	public CloseableHttpResponse postRequest(String url, UsernamePasswordCredentials credentials, String body,
-			String contentType, boolean unseruce, int timeoutSeconds) throws Exception {
+
+	public CloseableHttpResponse postRequest(String url, UsernamePasswordCredentials credentials, String body, String contentType, boolean unseruce,
+			int timeoutSeconds) throws Exception {
 		return getResponse(url, false, HttpVerb.HTTP_POST, credentials, body, contentType, unseruce, timeoutSeconds);
 	}
-	
-	public CloseableHttpResponse postRequest(String url, String authHeader, String body,
-			String contentType, String accept, boolean unseruce, int timeoutSeconds) throws Exception {
-		return getResponse(url, false, HttpVerb.HTTP_POST, authHeader, body, contentType, accept, unseruce, timeoutSeconds);
+
+	public CloseableHttpResponse postRequest(String url, String authHeader, String body, String contentType, String accept, boolean unseruce,
+			int timeoutSeconds) throws Exception {
+		return getResponse(url, false, HttpVerb.HTTP_POST, authHeader, true, body, contentType, accept, unseruce, timeoutSeconds);
 	}
 
-	public CloseableHttpResponse deleteRequest(String url, UsernamePasswordCredentials credentials, boolean unsecure,
+	public CloseableHttpResponse patchRequest(String url, String authHeader, boolean userAgentHeader, String body, String contentType, String accept,
+			boolean unseruce, int timeoutSeconds) throws Exception {
+		return getResponse(url, false, HttpVerb.HTTP_PATCH, authHeader, userAgentHeader, body, contentType, accept, unseruce, timeoutSeconds);
+	}
+
+	public CloseableHttpResponse patchRequest(String url, String authHeader, String body, String contentType, String accept, boolean unseruce,
 			int timeoutSeconds) throws Exception {
+		return getResponse(url, false, HttpVerb.HTTP_PATCH, authHeader, true, body, contentType, accept, unseruce, timeoutSeconds);
+	}
+
+	public CloseableHttpResponse deleteRequest(String url, UsernamePasswordCredentials credentials, boolean unsecure, int timeoutSeconds) throws Exception {
 		return getResponse(url, false, HttpVerb.HTTP_DELETE, credentials, null, null, unsecure, timeoutSeconds);
 	}
 
-	public CloseableHttpResponse putRequest(String url, UsernamePasswordCredentials credentials, String body,
-			String contentType, boolean unsecure, int timeoutSeconds) throws Exception {
+	public CloseableHttpResponse putRequest(String url, UsernamePasswordCredentials credentials, String body, String contentType, boolean unsecure,
+			int timeoutSeconds) throws Exception {
 		return getResponse(url, false, HttpVerb.HTTP_PUT, credentials, body, contentType, unsecure, timeoutSeconds);
 	}
 
-	private CloseableHttpResponse getResponse(String url, boolean closeConnection, HttpVerb httpVerb,
-			UsernamePasswordCredentials credentials, String body, String contentType, boolean unsecure,
-			int timeoutSeconds) throws Exception {
+	private CloseableHttpResponse getResponse(String url, boolean closeConnection, HttpVerb httpVerb, UsernamePasswordCredentials credentials, String body,
+			String contentType, boolean unsecure, int timeoutSeconds) throws Exception {
 
 		String encodedAuth = Base64.getEncoder().encodeToString((credentials.getUserName() + ":" + credentials.getPassword()).getBytes());
 		String authHeader = "Basic " + new String(encodedAuth);
-		return getResponse(url, closeConnection, httpVerb, authHeader, body, contentType, null, unsecure, timeoutSeconds);
+		return getResponse(url, closeConnection, httpVerb, authHeader, true, body, contentType, null, unsecure, timeoutSeconds);
 	}
 
-	private CloseableHttpResponse getResponse(String url, boolean closeConnection, HttpVerb httpVerb, String authHeader, String body,
+	public CloseableHttpResponse simplePostRequest(String url, String body, String contentType, boolean unsecure, int timeoutSeconds) throws Exception {
+		return getResponse(url, false, HttpVerb.HTTP_POST, "", false, body, contentType, null, unsecure, timeoutSeconds);
+	}
+
+	private CloseableHttpResponse getResponse(String url, boolean closeConnection, HttpVerb httpVerb, String authHeader, boolean userAgentHeader, String body,
 			String contentType, String accept, boolean unsecure, int timeoutSeconds) throws Exception {
 		long start = System.currentTimeMillis();
 		CloseableHttpResponse response = null;
@@ -89,7 +102,7 @@ public class ClientRestApi {
 			break;
 		case HTTP_POST:
 			request = new HttpPost(url);
-			entity = new StringEntity(body);			
+			entity = new StringEntity(body);
 			((HttpPost) request).setEntity(entity);
 			break;
 		case HTTP_PUT:
@@ -97,26 +110,31 @@ public class ClientRestApi {
 			entity = new StringEntity(body);
 			((HttpPut) request).setEntity(entity);
 			break;
+		case HTTP_PATCH:
+			request = new HttpPatch(url);
+			entity = new StringEntity(body, "UTF-8");
+			((HttpPatch) request).setEntity(entity);
 		default:
 			break;
 		}
-		
-		if(authHeader != "") {
+
+		if (authHeader != "") {
 			request.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
 		}
-		request.addHeader(DcemConstants.USER_AGENT, DcemConstants.CHROME_AGENT);
+		if (userAgentHeader) {
+			request.addHeader(DcemConstants.USER_AGENT, DcemConstants.CHROME_AGENT);
+		}
 		if (contentType != null) {
 			request.addHeader(HttpHeaders.CONTENT_TYPE, contentType);
 		}
-		if(accept != null) {
+		if (accept != null) {
 			request.addHeader(HttpHeaders.ACCEPT, accept);
 		}
-	
-		
+
 		// adding our own TrustManager
 		DcemTrustManager trustManager = new DcemTrustManager(unsecure, true);
 		trustManager.addDefaultTrustManager();
-		SSLContext context = SSLContext.getInstance("TLS");
+		SSLContext context = SSLContext.getInstance("TLSv1.2");
 		context.init(null, new TrustManager[] { trustManager }, null);
 
 		HostnameVerifier hostnameVerifier = null;
@@ -181,15 +199,13 @@ public class ClientRestApi {
 		return response;
 	}
 
-	public String getResponseHeader(String url, String headerName, UsernamePasswordCredentials credentials,
-			int timeoutSeconds) throws Exception {
+	public String getResponseHeader(String url, String headerName, UsernamePasswordCredentials credentials, int timeoutSeconds) throws Exception {
 		return getResponseHeader(url, headerName, credentials, false, timeoutSeconds);
 	}
 
-	public String getResponseHeader(String url, String headerName, UsernamePasswordCredentials credentials,
-			boolean unsecure, int timeoutSeconds) throws Exception {
-		CloseableHttpResponse response = getResponse(url, true, HttpVerb.HTTP_GET, credentials, null, null, unsecure,
-				timeoutSeconds);
+	public String getResponseHeader(String url, String headerName, UsernamePasswordCredentials credentials, boolean unsecure, int timeoutSeconds)
+			throws Exception {
+		CloseableHttpResponse response = getResponse(url, true, HttpVerb.HTTP_GET, credentials, null, null, unsecure, timeoutSeconds);
 		if (response != null) {
 			Header header = response.getFirstHeader(headerName);
 			return (header != null) ? header.getValue() : null;
@@ -197,33 +213,13 @@ public class ClientRestApi {
 		return null;
 	}
 
-	public String getResponseBody(String url, UsernamePasswordCredentials credentials, int timeoutSeconds)
-			throws Exception {
+	public String getResponseBody(String url, UsernamePasswordCredentials credentials, int timeoutSeconds) throws Exception {
 		return getResponseBody(url, credentials, false, timeoutSeconds);
 	}
 
 	public String getResponseBody(String url, String authHeader, boolean unsecure, int timeoutSeconds) throws Exception {
-		
-		CloseableHttpResponse response = getResponse(url, false, HttpVerb.HTTP_GET, authHeader, null, null, "*/*", unsecure, timeoutSeconds);
-		if (response != null) {
-			try {
-				return EntityUtils.toString(response.getEntity());
-			} catch (Exception exp) {
-				throw exp;
-			} finally {
-				try {
-					response.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-		return null;
-	}
-	
-	public String getResponseBody(String url, UsernamePasswordCredentials credentials, boolean unsecure,
-			int timeoutSeconds) throws Exception {
-		CloseableHttpResponse response = getResponse(url, false, HttpVerb.HTTP_GET, credentials, null, null, unsecure,
-				timeoutSeconds);
+
+		CloseableHttpResponse response = getResponse(url, false, HttpVerb.HTTP_GET, authHeader, true, null, null, "*/*", unsecure, timeoutSeconds);
 		if (response != null) {
 			try {
 				return EntityUtils.toString(response.getEntity());
@@ -239,32 +235,21 @@ public class ClientRestApi {
 		return null;
 	}
 
-	public CloseableHttpResponse simplePost(String url, String body) throws Exception{
-
-		HttpPost request = new HttpPost(url);
-		StringEntity entity = new StringEntity(body);
-		request.setEntity(entity);
-		request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-		
-		DcemTrustManager trustManager = new DcemTrustManager(true, true);
-		trustManager.addDefaultTrustManager();
-		SSLContext context = SSLContext.getInstance("TLS");
-		context.init(null, new TrustManager[] { trustManager }, null);
-		HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-			@Override
-			public boolean verify(String arg0, SSLSession arg1) {
-				return true;
+	public String getResponseBody(String url, UsernamePasswordCredentials credentials, boolean unsecure, int timeoutSeconds) throws Exception {
+		CloseableHttpResponse response = getResponse(url, false, HttpVerb.HTTP_GET, credentials, null, null, unsecure, timeoutSeconds);
+		if (response != null) {
+			try {
+				return EntityUtils.toString(response.getEntity());
+			} catch (Exception exp) {
+				throw exp;
+			} finally {
+				try {
+					response.close();
+				} catch (IOException e) {
+				}
 			}
-		};
-		
-		CloseableHttpClient client = HttpClientBuilder.create().setSSLContext(context).setSSLHostnameVerifier(hostnameVerifier).build();
-		try {
-			return client.execute(request);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	public boolean isTraceRestApi() {
