@@ -85,14 +85,7 @@
 						onclick="PF('cloudSafeStorageDialog').show();" rendered="#{dbView.stateOk}" />
 					<p></p>
 					<br />
-					<p:fieldset legend="Database Auto-Migration Experimental" rendered="#{dbView.stateOk || dbView.migration}" >
-						<p:commandButton style="width: 16em; " value="Create Auto Migration Scripts" immediate="true" action="#{dbView.actionSynchroniuzeDb}"
-							 />
-						<p:commandButton style="width: 16em; margin-left: 20px" value="Execute Migration Scripts" immediate="true" action="#{dbView.actionAutoMigrateeDb}"
-							 />
-					</p:fieldset>
-					<p />
-
+					
 					<p:outputLabel style="font-size: small" value="Local configuration file stored at: #{dbView.localConfigurationFile}" />
 				</p:tab>
 				<p:tab id="createSchema" title="Create Database">

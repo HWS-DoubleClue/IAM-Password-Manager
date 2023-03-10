@@ -201,7 +201,7 @@ public class CreateTables {
 		try {
 			System.out.println("						Input directory:		" + inputDirectory.getPath());
 			System.out.println("						Output directory:		" + outputDirectory.getPath());
-			ConvertSqlFiles.convertSqlDirectories(inputDirectory, outputDirectory);
+			ConvertSqlFiles.convertSqlDirectories(inputDirectory, outputDirectory, null);
 		} catch (Exception e) {
 			System.out.println("Couldn't convert tables");
 			e.printStackTrace();

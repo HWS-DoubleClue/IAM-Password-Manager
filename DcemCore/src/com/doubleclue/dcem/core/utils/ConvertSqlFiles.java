@@ -5,9 +5,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.HashSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.microsoft.graph.models.OnlineMeeting;
 
 public class ConvertSqlFiles {
 
@@ -34,13 +37,13 @@ public class ConvertSqlFiles {
 			System.exit(-1);
 		}
 		try {
-			convertSqlDirectories(inputDirectory, outputDirectory);
+			convertSqlDirectories(inputDirectory, outputDirectory, null);
 		} catch (Exception e) {
 			System.exit(-1);
 		}
 	}
 
-	public static void convertSqlDirectories(File inputdir, File outputdir) throws Exception {
+	public static void convertSqlDirectories(File inputdir, File outputdir, String onlyFormoduleName) throws Exception {
 		for (String dbDirectory : inputdir.list()) {
 			File sqlInputDirectory = new File(inputdir, dbDirectory);
 			File sqlOutputDirectory = new File(outputdir, dbDirectory);
@@ -55,7 +58,7 @@ public class ConvertSqlFiles {
 				File sqlFileOutput = new File(sqlOutputDirectory, sqlFileStr);
 				try {
 					// Call the convertFile method
-					convertFile(sqlFileInput, sqlFileOutput);
+					convertFile(sqlFileInput, sqlFileOutput, onlyFormoduleName);
 					countFiles++;
 				} catch (Exception e) {
 					System.err.println("Please check your input file! File: " + sqlFileInput.getAbsolutePath());
@@ -78,7 +81,7 @@ public class ConvertSqlFiles {
 	 * @throws Exception
 	 *             converts your File
 	 */
-	private static void convertFile(File inputFile, File outputFile) throws Exception {
+	private static void convertFile(File inputFile, File outputFile, String onlyForModuleName) throws Exception {
 
 		BufferedReader bufferedReader = null;
 		FileReader fileReader = null;
@@ -99,7 +102,7 @@ public class ConvertSqlFiles {
 		String lineSeparator = System.getProperty("line.separator");
 		FileWriter filewriter = new FileWriter(outputFile, false);
 		BufferedWriter bufferedwriter = new BufferedWriter(filewriter);
-		
+
 		String zeile = "";
 		String trimZeile;
 		boolean copyLines = false;
@@ -127,19 +130,30 @@ public class ConvertSqlFiles {
 
 			if (trimZeile.startsWith("create table ") || trimZeile.startsWith("alter table ") || trimZeile.startsWith("insert into ")
 					|| trimZeile.startsWith("create sequence ") || trimZeile.startsWith("create unique ") || trimZeile.startsWith("create index ")) { // Search
-																																						// for
-																																						// first
-				if ((systemFile == false) && (trimZeile.contains(" on sys_") || trimZeile.contains(" on core_") || trimZeile.contains(" table core_")
-						|| trimZeile.contains(" table sys_") || trimZeile.startsWith("insert into core_") || trimZeile.startsWith(" insert into sys_")
-						|| trimZeile.contains("if exists core_") || trimZeile.contains("if exists sys_") || trimZeile.contains(".core_")
-						|| trimZeile.contains(".sys_"))) {
-					copyLines = false;
+				/*
+				 * Start of new command																												// first
+				 */
+				if (onlyForModuleName != null) {
+					if (trimZeile.contains(" " + onlyForModuleName + "_")) {
+						filewriter.write(lineSeparator);
+						copyLines = true;
+					} else {
+						copyLines = false;
+					}
 				} else {
-					filewriter.write(lineSeparator);
-					copyLines = true;
-				}
-				if (trimZeile.startsWith("alter table if exists")) { // most probably Postgre
-					trimZeile = trimZeile.replace("alter table if exists", "alter table");
+					// For Create All Default Modules
+					if ((systemFile == false) && (trimZeile.contains(" on sys_") || trimZeile.contains(" on core_") || trimZeile.contains(" table core_")
+							|| trimZeile.contains(" table sys_") || trimZeile.startsWith("insert into core_") || trimZeile.startsWith(" insert into sys_")
+							|| trimZeile.contains("if exists core_") || trimZeile.contains("if exists sys_") || trimZeile.contains(".core_")
+							|| trimZeile.contains(".sys_"))) {
+						copyLines = false;
+					} else {
+						filewriter.write(lineSeparator);
+						copyLines = true;
+					}
+					if (trimZeile.startsWith("alter table if exists")) { // most probably Postgre
+						trimZeile = trimZeile.replace("alter table if exists", "alter table");
+					}
 				}
 			}
 			if (copyLines == true) { // Transfer lines

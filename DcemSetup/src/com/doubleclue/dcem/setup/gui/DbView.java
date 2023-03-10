@@ -1,6 +1,7 @@
 package com.doubleclue.dcem.setup.gui;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.FileUtils;
 import org.hibernate.tool.schema.TargetType;
 import org.primefaces.PrimeFaces;
 
@@ -22,7 +24,6 @@ import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
 import com.doubleclue.dcem.core.jpa.DatabaseUtils;
-import com.doubleclue.dcem.core.jpa.JdbcUtils;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.setup.logic.CreateDbUpdateScripts;
 import com.doubleclue.dcem.setup.logic.DbLogic;
@@ -37,10 +38,11 @@ public class DbView extends DcemView {
 
 	@Inject
 	DbLogic dbLogic;
-
+	
 	@Inject
-	CreateDbUpdateScripts createDbUpdateScripts;
+	MigrationView migrationView;
 
+	
 	DbState dbState = DbState.Init;
 
 	DatabaseConfig dbConfig;
@@ -91,39 +93,17 @@ public class DbView extends DcemView {
 		return;
 	}
 	
-	public void actionSynchroniuzeDb () {
-		try {
-			File outputFolder = createDbUpdateScripts.createMigrationScripts(dbConfig, TargetType.SCRIPT);
-			StringBuffer stringBuffer = new StringBuffer();
-			for (File file : outputFolder.listFiles()) {
-				if (file.length() > 0) {
-					stringBuffer.append(file.getName());
-					stringBuffer.append(", ");
-				}
-			}
-			if (stringBuffer.length() == 0) {
-				JsfUtils.addInfoMessage("There is no need for migration");
-			} else {
-				JsfUtils.addWarnMessage("The database-schema is not UpToDate!!!");
-				JsfUtils.addWarnMessage("See SQL Update Scripts at: "  + outputFolder.getAbsolutePath() );
-				JsfUtils.addWarnMessage(stringBuffer.toString());
-				JsfUtils.addInfoMessage("Click on 'Execute Migration Scripts' for migration.");
-			}
-		} catch (Exception exp) {
-			logger.warn(exp.getMessage(), exp);
-			JsfUtils.addErrorMessage("Database migration scripts FAILED: " + exp.toString());
-		}
-	}
 	
-	public void actionAutoMigrateeDb () {
-		try {
-			createDbUpdateScripts.createMigrationScripts(dbConfig, TargetType.DATABASE);
-			JsfUtils.addInfoMessage("The database migrated succesfully: ");
-		} catch (Exception exp) {
-			JsfUtils.addErrorMessage("Database migration FAILED: " + exp.toString());
-			logger.warn(exp.getMessage(), exp);
-		}
-	}
+	
+//	public void actionAutoMigrateeDb () {
+//		try {
+//			CreateDbUpdateScripts.createMigrationScripts(dbConfig, TargetType.SCRIPT, null);
+//			JsfUtils.addInfoMessage("The database migrated succesfully: ");
+//		} catch (Exception exp) {
+//			JsfUtils.addErrorMessage("Database migration FAILED: " + exp.toString());
+//			logger.warn(exp.getMessage(), exp);
+//		}
+//	}
 
 	public void actionCreateUrl() {
 		try {
@@ -236,6 +216,10 @@ public class DbView extends DcemView {
 				JsfUtils.addErrorMessage("Migration required");
 				break;
 			case OK:
+				if (checkAutoMigrationDb() == true) {
+					migrationView.setMigrationDone(false);
+					dbState = DbState.Migration_Required;
+				}
 				break;
 			default:
 				break;
@@ -246,6 +230,38 @@ public class DbView extends DcemView {
 			logger.warn(e.getMessage(), e);
 			JsfUtils.addErrorMessage(e.getMessage());
 			return;
+		}
+
+	}
+	
+	private boolean checkAutoMigrationDb () throws Exception {
+		try {
+			File outputFolder = CreateDbUpdateScripts.createMigrationScripts(dbConfig, TargetType.SCRIPT, null);
+			StringBuffer stringBuffer = new StringBuffer();
+			for (File file : outputFolder.listFiles()) {
+				if (file.length() > 0) {
+					stringBuffer.append(file.getName());
+					stringBuffer.append(", ");
+				}
+			}
+			if (stringBuffer.length() == 0) {
+				try {
+					FileUtils.deleteDirectory(outputFolder);
+				} catch (IOException exp) {
+					logger.debug(exp.getMessage(), exp);
+				}
+				return false;
+			} else {
+				JsfUtils.addWarnMessage("The database-schema is not UpToDate!!!");
+				JsfUtils.addWarnMessage("See SQL Update Scripts at: "  + outputFolder.getAbsolutePath() );
+				JsfUtils.addWarnMessage(stringBuffer.toString());
+				JsfUtils.addInfoMessage("Click on 'Next' for migration.");
+				return true;
+			}
+		} catch (Exception exp) {
+			logger.warn(exp.getMessage(), exp);
+			JsfUtils.addErrorMessage("Database Migration Check FAILED: " + exp.toString());
+			throw exp;
 		}
 
 	}
