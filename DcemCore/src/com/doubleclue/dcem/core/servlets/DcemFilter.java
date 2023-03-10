@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import org.spongycastle.crypto.io.InvalidCipherTextIOException;
 
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemUser;
@@ -45,9 +46,12 @@ public abstract class DcemFilter implements Filter {
 
 	@Inject
 	UserLogic userLogic;
-	
+
 	@Inject
 	SystemModule systemModule;
+
+	@Inject
+	AdminModule adminModule;
 
 	private static final Logger logger = LogManager.getLogger(DcemFilter.class);
 
@@ -117,18 +121,20 @@ public abstract class DcemFilter implements Filter {
 		xssProtectionEnabled = preferences.isXssProtectionEnabled();
 		blockContentTypeSniffingEnabled = preferences.isBlockContentTypeSniffingEnabled();
 		antiClickJackingEnabled = preferences.isAntiClickJackingEnabled();
-		
+
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		path = httpServletRequest.getServletPath();
-		// System.out.println("DcemFilter.doFilter() Path: " + path + " WebName: " +
-		// webName);
+		if (path.startsWith("/userportal") && adminModule.isUserPortalDisabled()) {
+			String redirectUrl = httpServletRequest.getContextPath() + DcemConstants.WEB_MGT_CONTEXT;
+			httpServletResponse.sendRedirect(redirectUrl);
+			return;
+		}
 		if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 			if (isSessionInvalid(httpServletRequest)) {
 				String redirectUrl = httpServletRequest.getContextPath() + webName + "/" + DcemConstants.EXPIRED_PAGE;
@@ -160,8 +166,7 @@ public abstract class DcemFilter implements Filter {
 			return;
 		}
 		if (remotePort != webPort) {
-			logger.warn("Wrong Port. WebPort=" + webPort + " RemotePort=" + remotePort + ", remoteAddress="
-					+ request.getRemoteAddr());
+			logger.warn("Wrong Port. WebPort=" + webPort + " RemotePort=" + remotePort + ", remoteAddress=" + request.getRemoteAddr());
 			httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
@@ -181,20 +186,18 @@ public abstract class DcemFilter implements Filter {
 					return;
 				}
 				ThreadContext.put(DcemConstants.MDC_USER_ID, getUserId());
-				secureHeaderREsponse (httpServletResponse);
+				secureHeaderREsponse(httpServletResponse);
 				chain.doFilter(request, response);
-				
+
 				return;
 			}
-			secureHeaderREsponse (httpServletResponse);
+			secureHeaderREsponse(httpServletResponse);
 			ThreadContext.put(DcemConstants.MDC_USER_ID, "");
-			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession()
-					.getAttribute(DcemConstants.URL_TENANT_PARAMETER);
+			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession().getAttribute(DcemConstants.URL_TENANT_PARAMETER);
 			if (tenantEntity == null) {
 				tenantEntity = applicationBean.getTenantFromRequest(httpServletRequest);
 				if (tenantEntity == null) {
-					logger.error(
-							"!!! NO TENANT FOUND, we take now the master tenant. Please check the Cluster-Configuration 'Host Domain Name'");
+					logger.error("!!! NO TENANT FOUND, we take now the master tenant. Please check the Cluster-Configuration 'Host Domain Name'");
 					tenantEntity = TenantIdResolver.getMasterTenant();
 				}
 				httpServletRequest.getSession().setAttribute(DcemConstants.URL_TENANT_PARAMETER, tenantEntity);
@@ -213,8 +216,7 @@ public abstract class DcemFilter implements Filter {
 				String fullUrl = currentUri + (queryStr != null ? "?" + queryStr : "");
 				DomainAzure domainAzure = domainLogic.getDomainAzure();
 				try {
-					DcemUser dcemUserAzure = domainAzure.processAuthenticationCodeRedirect(httpServletRequest,
-							currentUri, fullUrl);
+					DcemUser dcemUserAzure = domainAzure.processAuthenticationCodeRedirect(httpServletRequest, currentUri, fullUrl);
 					DcemUser dcemUser = userLogic.getDistinctUser(dcemUserAzure.getLoginId());
 					if (dcemUser == null) {
 						userLogic.addOrUpdateUserWoAuditing(dcemUserAzure);
@@ -246,7 +248,7 @@ public abstract class DcemFilter implements Filter {
 		redirect(httpServletRequest, response, redirectionPage, false);
 	}
 
-	private void secureHeaderREsponse (HttpServletResponse httpResponse) {
+	private void secureHeaderREsponse(HttpServletResponse httpResponse) {
 		if (strictTransportSecurityEnabled) {
 			httpResponse.setHeader(HSTS_HEADER_NAME, hstsHeaderValue);
 		}
@@ -263,8 +265,7 @@ public abstract class DcemFilter implements Filter {
 		}
 	}
 
-	private void redirect(HttpServletRequest httpServletRequest, ServletResponse response, String redirectPage,
-			boolean encrpytionError) throws IOException {
+	private void redirect(HttpServletRequest httpServletRequest, ServletResponse response, String redirectPage, boolean encrpytionError) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(httpServletRequest.getContextPath());
 		sb.append(redirectPage);
@@ -311,8 +312,7 @@ public abstract class DcemFilter implements Filter {
 		if (requestPath == null)
 			return false;
 		String sessionControlStr = (String) httpServletRequest.getAttribute("isSessionControlRequired");
-		boolean isSessionControlRequired = (sessionControlStr == null || "true".equals(sessionControlStr)) ? true
-				: false;
+		boolean isSessionControlRequired = (sessionControlStr == null || "true".equals(sessionControlStr)) ? true : false;
 
 		return (requestPath.contains("expired") == false && isSessionControlRequired);
 

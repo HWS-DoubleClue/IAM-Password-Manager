@@ -52,6 +52,9 @@ public class ViewNavigator implements Serializable {
 
 	DcemView activeView = null;
 
+	@Inject
+	AdminModule adminModule;
+
 	// private UIToolbar menuBar;
 
 	private MenuModel menuModel = null;
@@ -236,7 +239,6 @@ public class ViewNavigator implements Serializable {
 		return activeView.getActiveDialog().getConfirmText();
 	}
 
-
 	/**
 	 * @return
 	 */
@@ -247,7 +249,11 @@ public class ViewNavigator implements Serializable {
 		menuModel = new DefaultMenuModel();
 		DefaultMenuItem menuItem;
 		for (DcemModule dcemModule : applicationBean.getSortedEnabledModules()) {
-		
+
+			if (adminModule.isUserPortalDisabled() && dcemModule.getName().equals("UserPortal")) {
+				continue;
+			}
+
 			if (operatorSessionBean.isPermission(dcemModule.getDcemActions()) == false) {
 				continue; // ignore if role has no module View or Manage Action.
 			}
@@ -376,7 +382,7 @@ public class ViewNavigator implements Serializable {
 	}
 
 	public boolean isGroupViewActive() {
-		if(getActiveView().getSubject().getName().equals(DcemConstants.GROUP_VIEW)) {
+		if (getActiveView().getSubject().getName().equals(DcemConstants.GROUP_VIEW)) {
 			return true;
 		}
 		return false;
