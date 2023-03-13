@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.doubleclue.comm.thrift.CloudSafeOptions;
 import com.doubleclue.dcem.admin.logic.AdminModule;
+import com.doubleclue.dcem.admin.logic.DepartmentLogic;
 import com.doubleclue.dcem.admin.subjects.UserSubject;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AsModuleApi;
@@ -35,6 +36,7 @@ import com.doubleclue.dcem.core.entities.DcemRole;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.entities.DcemUser_;
+import com.doubleclue.dcem.core.entities.DepartmentEntity;
 import com.doubleclue.dcem.core.entities.DomainEntity;
 import com.doubleclue.dcem.core.entities.UrlTokenEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -88,6 +90,9 @@ public class UserLogic {
 
 	@Inject
 	LicenceLogic licenceLogic;
+	
+	@Inject 
+	DepartmentLogic departmentLogic;
 
 	AsModuleApi asModuleApi;
 
@@ -359,7 +364,7 @@ public class UserLogic {
 	}
 
 	@DcemTransactional
-	public void updateExtention(DcemUser dcemUser, byte[] photo) throws DcemException {
+	public void updateExtention(DcemUser dcemUser, byte[] photo, DcemLdapAttributes dcemLdapAttributes) throws DcemException {
 
 		DcemUserExtension dcemUserExtension = em.find(DcemUserExtension.class, dcemUser.getId());
 		if (dcemUserExtension == null) {
@@ -367,11 +372,48 @@ public class UserLogic {
 			dcemUserExtension.setId(dcemUser.getId());
 			dcemUserExtension.setPhoto(photo);
 			em.persist(dcemUserExtension);
-			dcemUser.setDcemUserExt(dcemUserExtension);
-			return;
 		} else {
 			dcemUserExtension.setPhoto(photo);
-			dcemUser.setDcemUserExt(dcemUserExtension);
+		}
+		updateUserExtensionAttributes(dcemUserExtension, dcemLdapAttributes);
+//		System.out.println("UserLogic.updateExtention( ) " + dcemUserExtension.toString());
+//		em.flush();
+		dcemUser.setDcemUserExt(dcemUserExtension);
+		return;
+	}
+	
+	private void updateUserExtensionAttributes (DcemUserExtension dcemUserExtension, DcemLdapAttributes dcemLdapAttributes ) throws DcemException {
+		if (dcemLdapAttributes.country != null) {
+			dcemUserExtension.setCountry(dcemLdapAttributes.country);
+		}
+		if (dcemLdapAttributes.jobTitle != null) {
+			dcemUserExtension.setJobTitle(dcemLdapAttributes.jobTitle);
+		}
+		dcemUserExtension.getCountry();
+		if (dcemLdapAttributes.department != null) {
+			DepartmentEntity departmentEntity = departmentLogic.getDepartmentByName(dcemLdapAttributes.department);
+			DcemUser manager = dcemLdapAttributes.getManager();
+			DcemUser headOf = getDistinctUser (manager.getLoginId());
+			if (headOf == null) {
+				addOrUpdateUserWoAuditing(manager);
+				headOf = manager;
+			}
+			if (departmentEntity == null) {
+				departmentEntity = new DepartmentEntity();
+				departmentEntity.setName(dcemLdapAttributes.department);
+				if (headOf != null) {
+					departmentEntity.setHeadOf(headOf);
+				}
+				em.persist(departmentEntity);
+				dcemUserExtension.setDepartment(departmentEntity);
+			} else {
+				dcemUserExtension.setDepartment(departmentEntity);
+				if (headOf != null) {
+					departmentEntity.setHeadOf(headOf);
+				}
+			}
+			
+			
 		}
 	}
 

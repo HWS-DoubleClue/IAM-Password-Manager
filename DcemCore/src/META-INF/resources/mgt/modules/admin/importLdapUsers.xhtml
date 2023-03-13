@@ -75,10 +75,10 @@
 						<p:commandButton id="import" value="#{CoreMsg['importDomain.importselectedusers']}" ajax="true" update="grid"
 							actionListener="#{importLdapUsersView.actionImportUsers}" icon="fa fa-upload" style="color: white !important;" />
 						<p />
-						<p:commandButton id="selectAll" value="#{CoreMsg['importDomain.selectall']}" rendered="#{importLdapUsersView.userSearchMap.isEmpty() == false}"
+						<p:commandButton id="selectAll" value="#{CoreMsg['importDomain.selectall']}" rendered="#{importLdapUsersView.domainUsers.isEmpty() == false}"
 							ajax="true" update="grid" actionListener="#{importLdapUsersView.selectAll}" icon="fa fa-plus" style="color: white !important;" />
 						<p:commandButton id="deselectAll" value="#{CoreMsg['importDomain.deselectall']}" ajax="true" update="grid"
-							rendered="#{importLdapUsersView.userSearchMap.isEmpty() == false}" actionListener="#{importLdapUsersView.deselectAll}" icon="fa fa-minus"
+							rendered="#{importLdapUsersView.domainUsers.isEmpty() == false}" actionListener="#{importLdapUsersView.deselectAll}" icon="fa fa-minus"
 							style="color: white !important;" />
 						<p:selectManyCheckbox id="grid" value="#{importLdapUsersView.selectedUsers}" layout="grid" style="padding: 5px" columns="2">
 							<f:selectItems value="#{importLdapUsersView.users}" var="user" itemLabel="#{user}" itemValue="#{user}" />

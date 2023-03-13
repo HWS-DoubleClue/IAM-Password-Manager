@@ -44,6 +44,10 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 	@DcemGui(name = "Country")
 	@Column(length = 255, name = "dc_country", nullable = true, updatable = true, insertable = true)
 	String country;
+	
+	@DcemGui(name = "Job Title")
+	@Column(length = 128, name = "jobTitle", nullable = true, updatable = true, insertable = true)
+	String jobTitle;
 
 	// @DcemGui(name = "Country")
 	@Column(length = 255, name = "dc_timezone", nullable = true, updatable = true, insertable = true)
@@ -58,8 +62,6 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_DEPARTMENT_USEREXT_ID"), name = "departmentid", nullable = true, insertable = true, updatable = true)
 	private DepartmentEntity department;
 
-//	@OneToOne(mappedBy = "dcemUserExt", fetch = FetchType.LAZY)
-//	private DcemUser dcemUser;
 
 	// @DcemGui(name = "Country")
 	@Transient
@@ -105,6 +107,19 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 
 	public void setDepartment(DepartmentEntity department) {
 		this.department = department;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", country=" + country + ", timezone=" + timezone + ", department=" + department + "]";
+	}
+
+	public String getJobTitle() {
+		return jobTitle;
+	}
+
+	public void setJobTitle(String jobTitle) {
+		this.jobTitle = jobTitle;
 	}
 
 //	public DcemUser getDcemUser() {

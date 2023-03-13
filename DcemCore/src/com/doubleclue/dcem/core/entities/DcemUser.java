@@ -368,7 +368,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 		return true;
 	}
 
-	public void sync(DcemLdapAttributes dcemLdapAttributes) {
+	public void updateDomainAttributes (DcemLdapAttributes dcemLdapAttributes) {
 		email = dcemLdapAttributes.getEmail();
 		displayName = dcemLdapAttributes.getDisplayName();
 		userDn = dcemLdapAttributes.getDn();

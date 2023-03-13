@@ -221,7 +221,7 @@ public abstract class DcemFilter implements Filter {
 					if (dcemUser == null) {
 						userLogic.addOrUpdateUserWoAuditing(dcemUserAzure);
 					} else {
-						dcemUser.sync(dcemUserAzure.getDcemLdapAttributes());
+						dcemUser.updateDomainAttributes(dcemUserAzure.getDcemLdapAttributes());
 					}
 					logUserIn(dcemUser, httpServletRequest);
 					redirect(httpServletRequest, response, webName + "/" + welcomePage, false);

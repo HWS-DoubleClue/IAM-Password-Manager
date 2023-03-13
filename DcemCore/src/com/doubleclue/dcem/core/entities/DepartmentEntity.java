@@ -63,10 +63,9 @@ public class DepartmentEntity extends EntityInterface  {
 	@DcemGui
 	private String abbriviation;
 
-		
 	@DcemGui(name = "HeadOf", subClass = "displayName")
 	@ManyToOne
-	@JoinColumn(nullable = false, foreignKey = @ForeignKey(name = "FK_APP_DEPARTMENT_USER"), insertable = true, updatable = true)
+	@JoinColumn(nullable = true, foreignKey = @ForeignKey(name = "FK_APP_DEPARTMENT_USER"), insertable = true, updatable = true)
 	private DcemUser headOf;
 	
 	@DcemGui (name = "Deputy", subClass = "displayName")

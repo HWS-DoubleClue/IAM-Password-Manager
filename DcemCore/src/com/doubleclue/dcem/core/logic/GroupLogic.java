@@ -116,8 +116,7 @@ public class GroupLogic {
 	public long getMemberCount(DcemGroup dcemGroup) {
 		if (dcemGroup.isDomainGroup()) {
 			try {
-				List<DcemUser> members = domainLogic.getMembers(dcemGroup);
-				return members.size();
+				return domainLogic.getMembers(dcemGroup).getUsers().size();
 			} catch (DcemException e) {
 				return -1;
 			}

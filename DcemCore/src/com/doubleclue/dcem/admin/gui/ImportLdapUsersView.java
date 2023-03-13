@@ -33,6 +33,7 @@ import com.doubleclue.dcem.core.logic.DomainApi;
 import com.doubleclue.dcem.core.logic.DomainAzure;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.DomainType;
+import com.doubleclue.dcem.core.logic.DomainUsers;
 import com.doubleclue.dcem.core.logic.GroupLogic;
 import com.doubleclue.dcem.core.logic.RoleLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
@@ -77,7 +78,7 @@ public class ImportLdapUsersView extends DcemView {
 	List<String> selectedUsers = new LinkedList<>();
 	List<String> selectedGroups = new LinkedList<>();
 	// List<String> users;
-	List<DcemUser> userSearchMap;
+	DomainUsers domainUsers;
 
 	List<DcemGroup> groupSearchMap;
 
@@ -151,7 +152,11 @@ public class ImportLdapUsersView extends DcemView {
 				}
 			}
 			if (userAccount != null && userAccount.isEmpty() == false) {
-				userSearchMap = domainLogic.getUsers(domainName, ldapTree, dcemGroup, userAccount, DomainLogic.PAGE_SIZE);
+				domainUsers = domainLogic.getUsers(domainName, ldapTree, dcemGroup, userAccount, DomainLogic.PAGE_SIZE);
+				if (domainUsers.isNextPageAvaliable() == true) {
+					JsfUtils.addWarnMessage("Your search exided the maximum limit of " + domainUsers.getPageSize());
+					JsfUtils.addInfoMessage("Please restrict your search." );
+				}
 			}
 		} catch (DcemException e) {
 			logger.warn(e);
@@ -214,7 +219,7 @@ public class ImportLdapUsersView extends DcemView {
 
 			if (withUsers) {
 				try {
-					userSearchMap = domainLogic.getUsers(domainName, null, dcemGroup, (String) null, DomainLogic.PAGE_SIZE);
+					domainUsers = domainLogic.getUsers(domainName, null, dcemGroup, (String) null, DomainLogic.PAGE_SIZE);
 					selectAll();
 					importUsers(domainName);
 					countNewUsers += countUsers;
@@ -347,7 +352,7 @@ public class ImportLdapUsersView extends DcemView {
 			selectedUser = null;
 			DcemUser dcemUser;
 			try {
-				for (DcemUser user : userSearchMap) {
+				for (DcemUser user : domainUsers.getUsers()) {
 					if (user.getShortLoginId().equals(userName)) {
 						selectedUser = user;
 						break;
@@ -362,7 +367,7 @@ public class ImportLdapUsersView extends DcemView {
 				} else {
 					existingUser = true;
 				}
-				dcemUser.sync(selectedUser.getDcemLdapAttributes());
+				dcemUser.updateDomainAttributes(selectedUser.getDcemLdapAttributes());
 				userLogic.addOrUpdateUserWoAuditing(dcemUser);
 				byte[] photo = domainApi.getUserPhoto(dcemUser);
 				if (photo == null && domainApi.getDomainEntity().getDomainType() == DomainType.Active_Directory) {
@@ -374,9 +379,7 @@ public class ImportLdapUsersView extends DcemView {
 						}
 					}
 				}
-				if (photo != null) {
-					userLogic.updateExtention(dcemUser, photo);
-				}
+				userLogic.updateExtention(dcemUser, photo, selectedUser.getDcemLdapAttributes());
 			} catch (Exception e) {
 				logger.info("Importing users", e);
 				JsfUtils.addWarningMessage(DcemConstants.CORE_RESOURCE, "importDomain.user.error", userName, e.toString());
@@ -423,10 +426,10 @@ public class ImportLdapUsersView extends DcemView {
 		if (domainName == null || domainName.isEmpty()) {
 			return userList;
 		}
-		if (userSearchMap == null) {
+		if (domainUsers == null) {
 			return userList;
 		}
-		for (DcemUser user : userSearchMap) {
+		for (DcemUser user : domainUsers.getUsers()) {
 			userList.add(user.getShortLoginId());
 		}
 		userList.sort(new SortIgnoreCase());
@@ -525,7 +528,7 @@ public class ImportLdapUsersView extends DcemView {
 	@Override
 	public void leavingView() {
 		selectedUsers = new LinkedList<>();
-		userSearchMap = null;
+		domainUsers = null;
 		selectedGroups = new LinkedList<>();
 		groupSearchMap = null;
 		ldapTree = null;
@@ -574,7 +577,7 @@ public class ImportLdapUsersView extends DcemView {
 	public void onChangeDomainName() {
 		selectedGroups.clear();
 		selectedUsers.clear();
-		userSearchMap = null;
+		domainUsers = null;
 		groupSearchMap = null;
 		ldapTree = null;
 	}
@@ -592,8 +595,8 @@ public class ImportLdapUsersView extends DcemView {
 		return domainType != DomainType.Azure_AD;
 	}
 
-	public List<DcemUser> getUserSearchMap() {
-		return userSearchMap;
+	public DomainUsers getDomainUsers() {
+		return domainUsers;
 	}
 
 }

@@ -132,7 +132,20 @@ public class DcemUtils {
 				return nodeName;
 			}
 		}
-
+	}
+	
+	public static String getCountryCode (String country) {
+		if (country == null) {
+			return null;
+		}
+		String[] countries = Locale.getISOCountries();
+		for (String countryCode : countries) {
+			Locale locale = new Locale("", countryCode);
+			if (country.equals(locale.getDisplayCountry())) {
+				return countryCode;
+			}
+		}
+		return null;
 	}
 
 	/**

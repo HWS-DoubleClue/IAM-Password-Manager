@@ -2,11 +2,8 @@ package com.doubleclue.dcem.admin.gui;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.ConnectException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
@@ -41,7 +38,6 @@ import com.doubleclue.dcem.core.logic.JpaLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.RoleLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
-import com.doubleclue.dcem.core.utils.QrCodeUtils;
 import com.doubleclue.utils.StringUtils;
 
 @SuppressWarnings("serial")
@@ -92,6 +88,7 @@ public class UserDialogBean extends DcemDialog {
 	private LinkedList<SelectItem> availableRoles;
 	String country;
 	String department;
+	String jobTitle;
 
 	public boolean actionOk() throws Exception {
 		DcemUser user = (DcemUser) getActionObject();
@@ -128,6 +125,7 @@ public class UserDialogBean extends DcemDialog {
 					adminModule.getPreferences().getUserPasswordLength(), false);
 			DcemUserExtension dcemUserExtension = new DcemUserExtension();
 			dcemUserExtension.setCountry(country);
+			dcemUserExtension.setJobTitle(jobTitle);
 			dcemUserExtension.setDepartment(departmentEntity);
 			userLogic.updateDcemUserExtension(user, dcemUserExtension);
 			StringUtils.wipeString(user.getInitialPassword());
@@ -307,8 +305,10 @@ public class UserDialogBean extends DcemDialog {
 		department = null;
 		if (user.getDcemUserExt() == null) {
 			country = null;
+			jobTitle = null;
 		} else {
 			country = user.getDcemUserExt().getCountry();
+			jobTitle = user.getDcemUserExt().getJobTitle();
 			if (user.getDcemUserExt().getDepartment() != null) {
 				department = user.getDcemUserExt().getDepartment().getName();
 			}
@@ -404,7 +404,15 @@ public class UserDialogBean extends DcemDialog {
 		} else {
 			return JsfUtils.getDefaultUserImage();
 		}
-
+	}
+	
+	public String getReportsTo () {
+		DcemUser user = (DcemUser) this.getActionObject();
+		DcemUserExtension dcemUserExtension = user.getDcemUserExt();
+		if (dcemUserExtension != null && dcemUserExtension.getDepartment() != null && dcemUserExtension.getDepartment().getHeadOf() != null) {
+			return dcemUserExtension.getDepartment().getHeadOf().getDisplayName();
+		}
+		return null;
 	}
 
 	public String getNewPassword() {
@@ -437,5 +445,13 @@ public class UserDialogBean extends DcemDialog {
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public String getJobTitle() {
+		return jobTitle;
+	}
+
+	public void setJobTitle(String jobTitle) {
+		this.jobTitle = jobTitle;
 	}
 }

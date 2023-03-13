@@ -389,7 +389,7 @@ public class DomainLdap implements DomainApi {
 
 	}
 
-	public List<DcemUser> getUsers(String tree, DcemGroup dcemGroup, String user, int pageSize) throws DcemException {
+	public DomainUsers getUsers(String tree, DcemGroup dcemGroup, String user, int pageSize) throws DcemException {
 
 		StringBuffer sb = new StringBuffer();
 		if (hasUserAccountControl) {
@@ -405,9 +405,7 @@ public class DomainLdap implements DomainApi {
 			sb.append("(memberOf=" + dcemGroup.getGroupDn() + ")");
 		}
 		sb.append(")");
-
 		Map<String, Attributes> map;
-
 		try {
 			map = getSearchTry(tree, sb.toString(), null, defaultUserReturnedAtts, pageSize);
 			List<DcemUser> users = new ArrayList<>(map.size());
@@ -426,7 +424,7 @@ public class DomainLdap implements DomainApi {
 					}
 				}
 			}
-			return users;
+			return new DomainUsers(pageSize, false , users);
 		} catch (DcemException exp) {
 			if (exp.getErrorCode() == DcemErrorCodes.LDAP_CONNECTION_FAILED) {
 				logger.info("LDAP-Connection failed, trying again");
@@ -451,11 +449,12 @@ public class DomainLdap implements DomainApi {
 						}
 					}
 				}
-				return users;
+				new DomainUsers(pageSize, false, users);
 			} else {
 				throw exp;
 			}
 		}
+		return null;
 
 	}
 
@@ -603,7 +602,7 @@ public class DomainLdap implements DomainApi {
 	 * @return
 	 */
 	@Override
-	public List<DcemUser> getGroupMembers(DcemGroup dcemGroup, String filter) throws DcemException {
+	public DomainUsers getGroupMembers(DcemGroup dcemGroup, String filter) throws DcemException {
 
 		Map<String, Attributes> map = getUsersAttributeMap(null, dcemGroup.getGroupDn(), null, null, defaultUserReturnedAtts, DomainLogic.PAGE_SIZE);
 		List<DcemUser> userList = new ArrayList<>(map.size());
@@ -623,7 +622,7 @@ public class DomainLdap implements DomainApi {
 			dcemUser2.setDomainEntity(domainEntity);
 			userList.add(dcemUser2);
 		}
-		return userList;
+		return new DomainUsers(DomainLogic.PAGE_SIZE, false , userList);
 	}
 
 	@Override
