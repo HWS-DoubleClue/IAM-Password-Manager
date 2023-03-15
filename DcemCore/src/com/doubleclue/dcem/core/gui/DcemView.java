@@ -200,6 +200,7 @@ public abstract class DcemView implements Serializable {
 		}
 		subObject = selectedObject;
 		activeDialog = autoViewAction.getDcemDialog();
+		
 		if (actioType == ActionType.DIALOG || actioType == ActionType.CREATE_OBJECT) {
 			if (autoDialogBean != null) {
 				setActionObject(selectedObject);
@@ -209,7 +210,7 @@ public abstract class DcemView implements Serializable {
 				autoViewAction.getDcemDialog().setActionObject(selectedObject);
 				autoViewAction.getDcemDialog().setSubActionObject(subObject);
 			}
-			if (selectedObject != null) {
+			if (selectedObject != null && autoViewAction.xhtmlPage.endsWith(DcemConstants.AUTO_DIALOG_PATH)) {
 				autoDialogBean.populatePanelGrid();
 			}
 		}
