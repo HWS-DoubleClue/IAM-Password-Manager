@@ -235,9 +235,6 @@ public class OperatorSessionBean implements Serializable {
 				roles.add(group.getDcemRole());
 			}
 		}
-		if (highestRole.getRank() == 0) {
-			throw new DcemException(DcemErrorCodes.NO_MANAGEMENT_RIGHTS, user.getLoginId());
-		}
 		SupportedLanguage supportedLocale = user.getLanguage();
 		if (supportedLocale != null && FacesContext.getCurrentInstance() != null) {
 			if (FacesContext.getCurrentInstance().getViewRoot() != null) {
@@ -253,6 +250,9 @@ public class OperatorSessionBean implements Serializable {
 			}
 			sb.append(role.getName());
 			haveAction.addAll(role.getActions());
+		}
+		if (haveAction.isEmpty() == true) {
+			throw new DcemException(DcemErrorCodes.NO_MANAGEMENT_RIGHTS, user.getLoginId());
 		}
 		rolesText = sb.toString();
 		loggedIn = true;

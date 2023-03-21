@@ -243,11 +243,11 @@ public class ConfigLogic {
 
 		try {
 			if (dcemConfiguration.getId() != null) {
-				logger.info("updating DcemConfiguration " + dcemConfiguration.toString());
+				logger.debug("updating DcemConfiguration " + dcemConfiguration.toString());
 				dcemConfiguration = entityManager.merge(dcemConfiguration);
 			} else {
 				entityManager.persist(dcemConfiguration);
-				logger.info("persist DcemConfiguration " + dcemConfiguration.toString());
+				logger.debug("persist DcemConfiguration " + dcemConfiguration.toString());
 			}
 			return;
 		} catch (Exception e) {
