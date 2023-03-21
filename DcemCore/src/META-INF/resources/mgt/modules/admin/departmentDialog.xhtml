@@ -38,7 +38,7 @@
 						
 					<p:outputLabel for="@next" value="#{AdminMsg['departmentDialog.headOf']} " />
 					<p:autoComplete id="user" minQueryLength="1" value="#{departmentDialog.loginId}" completeMethod="#{departmentDialog.completeUser}" effect="fade"
-						size="40" />
+						size="40" required="true" />
 						
 					<p:outputLabel for="@next" value="#{AdminMsg['departmentDialog.deputy']} " />
 					<p:autoComplete id="deputy" minQueryLength="1" value="#{departmentDialog.deputyLoginId}" completeMethod="#{departmentDialog.completeUser}" effect="fade"

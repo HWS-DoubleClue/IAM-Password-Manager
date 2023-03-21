@@ -44,9 +44,8 @@ public class DepartmentDialog extends DcemDialog {
 
 	@Override
 	public boolean actionOk() throws Exception {
-		// AsActivationCode activationCode = (AsActivationCode) this.getActionObject();
+		
 		DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
-
 		DcemUser headOf = userLogic.getDistinctUser(loginId);
 		if (headOf == null) {
 				JsfUtils.addErrorMessage(departmentView.getResourceBundle(), "departmentDialog.invalidHeadOf");
