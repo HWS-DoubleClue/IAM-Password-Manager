@@ -399,6 +399,7 @@ public class DcemApplicationBean implements Serializable {
 
 	public List<DcemModule> getSortedEnabledModules() {
 		String[] disabledModules = adminModule.getAdminTenantData().getDisabledModules();
+		String[] pluginModules = adminModule.getAdminTenantData().getEnabledPluginModules();
 		if (disabledModules == null || disabledModules.length == 0) {
 			return sortedModules;
 		}
@@ -407,13 +408,26 @@ public class DcemApplicationBean implements Serializable {
 		for (DcemModule dcemModule : sortedModules) {
 			disabled = false;
 			for (String id : disabledModules) {
-				if (dcemModule.getId().equals(id)) {
+				if (dcemModule.getId().compareToIgnoreCase(id) == 0) {
 					disabled = true;
 					break;
 				}
 			}
 			if (disabled == false) {
-				list.add(dcemModule);
+				if (dcemModule.isPluginModule() == true) {
+					if (pluginModules.length > 0 && pluginModules[0].compareToIgnoreCase("all") == 0) {
+						list.add(dcemModule);
+					} else {
+						for (String id : pluginModules) {
+							if (dcemModule.getId().compareToIgnoreCase(id) == 0) {
+								list.add(dcemModule);
+								break;
+							}
+						}
+					}
+				} else {
+					list.add(dcemModule);
+				}
 			}
 		}
 		return list;
@@ -486,7 +500,6 @@ public class DcemApplicationBean implements Serializable {
 				tenantMap.remove(tenantEntity.getName().toUpperCase());
 			}
 		}
-
 
 		for (TenantEntity tenantEntity : dbTenants) {
 			if (tenantMap.get(tenantEntity.getName().toUpperCase()) == null) {

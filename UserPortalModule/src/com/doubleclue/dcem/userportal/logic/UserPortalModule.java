@@ -91,6 +91,11 @@ public class UserPortalModule extends DcemModule {
 	public int getDbVersion() {
 		return 0;
 	}
+	
+	@Override
+	public boolean isPluginModule() {
+		return false;
+	}
 
 	public int getRank() {
 		return 80;

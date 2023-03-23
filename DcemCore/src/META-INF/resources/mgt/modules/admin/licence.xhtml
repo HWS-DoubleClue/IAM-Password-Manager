@@ -51,25 +51,28 @@
 				<p:outputLabel id="clusterSelect" value="#{adminLicenceView.licenceKeyContent.clusterId}" />
 
 
-				<p:outputLabel for="tenantId" value="Tenant ID " />
+				<p:outputLabel for="tenantId" value="Tenant ID:  " />
 				<p:outputLabel id="tenantId" value="#{adminLicenceView.licenceKeyContent.tenantId}" />
 
-				<p:outputLabel for="expireDate" value="Expires on" />
+				<p:outputLabel for="expireDate" value="Expires on: " />
 				<p:outputLabel id="expireDate" value="#{adminLicenceView.licenceKeyContent.expiresOn}" locale="#{operatorSession.locale}" />
 
-				<p:outputLabel for="maxUsers" value="Maximum Users" />
+				<p:outputLabel for="maxUsers" value="Maximum Users: " />
 				<p:outputLabel id="maxUsers" value="#{adminLicenceView.licenceKeyContent.maxUsers} / Consumed #{adminLicenceView.licenceKeyContentUsage.maxUsers}"  />
 				
-				<p:outputLabel for="trial" value="Trial Version" />
+				<p:outputLabel for="trial" value="Trial Version: " />
 				<p:outputLabel id="trial" value="#{adminLicenceView.licenceKeyContent.trialVersion}"  />
 
-				<p:outputLabel for="maxCloudStorage" value="Maximum CloudStorage MBytes" />
+				<p:outputLabel for="maxCloudStorage" value="Maximum CloudStorage MBytes: " />
 				<p:outputLabel id="maxCloudStorage" value="#{adminLicenceView.licenceKeyContent.cloudSafeStoageMb} / Consumed: #{adminLicenceView.licenceKeyContentUsage.cloudSafeStoageMb}" />
 
-				<p:outputLabel for="disabledModules" value="Disabled Modules" />
+				<p:outputLabel for="disabledModules" value="Disabled Modules: " />
 				<p:outputLabel id="disabledModules" value="#{adminLicenceView.licenceKeyContent.disabledModules}" />
+				
+				<p:outputLabel for="@next" value="PlugIn Modules: " />
+				<p:outputLabel id="pluginModules" value="#{adminLicenceView.licenceKeyContent.pluginModules}" />
 
-				<p:outputLabel for="passwordSafe" value="PasswordSafe" />
+				<p:outputLabel for="passwordSafe" value="PasswordSafe: " />
 				<p:outputLabel id="passwordSafe" value="#{adminLicenceView.licenceKeyContent.passwordSafe}" />
 
 			</h:panelGrid>

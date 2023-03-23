@@ -21,6 +21,7 @@ public class AdminTenantData extends ModuleTenantData {
 	private FlakeIdGenerator reportIdGenerator;
 	private DcemGroup rootGroup = null;
 	private String [] disabledModules;
+	private String [] enabledPluginModules;
 	private LicenceKeyContent licenceKeyContent;
 	private DcemUser superAdmin;
 	
@@ -87,6 +88,14 @@ public class AdminTenantData extends ModuleTenantData {
 
 	public void setSuperAdmin(DcemUser superAdmin) {
 		this.superAdmin = superAdmin;
+	}
+
+	public String[] getEnabledPluginModules() {
+		return enabledPluginModules;
+	}
+
+	public void setEnabledPluginModules(String[] enabledPluginModules) {
+		this.enabledPluginModules = enabledPluginModules;
 	}
 
 	

@@ -135,6 +135,11 @@ public class RadiusModule extends DcemModule implements ReloadClassInterface {
 	public int getRank() {
 		return 50;
 	}
+	
+	@Override
+	public boolean isPluginModule() {
+		return false;
+	}
 
 	@Override
 	public DcemView getDefaultView() {

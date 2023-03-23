@@ -112,8 +112,13 @@ public abstract class DcemModule implements Serializable {
 
 	public void init() throws DcemException {
 	}
+	
+	public boolean isPluginModule() {
+		return true;
+	}
 
 	abstract public String getResourceName();
+	
 
 	abstract public ModulePreferences getDefaultPreferences();
 

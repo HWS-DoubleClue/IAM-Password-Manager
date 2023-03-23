@@ -89,6 +89,7 @@ public class DcemMain {
 
 	public static void main(String[] args) {
 		javaVersion = System.getProperty("java.version");
+		
 
 		System.out.println("Java Version: " + javaVersion);
 		System.out.println("Java Installation: " + System.getProperty("java.home"));

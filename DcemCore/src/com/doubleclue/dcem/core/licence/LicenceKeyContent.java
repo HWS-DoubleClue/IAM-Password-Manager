@@ -3,6 +3,7 @@ package com.doubleclue.dcem.core.licence;
 import java.util.Date;
 
 import com.doubleclue.dcem.core.DcemConstants;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LicenceKeyContent {
 
@@ -17,6 +18,9 @@ public class LicenceKeyContent {
 	String disabledModules;
 	boolean passwordSafe = true;
 	long cloudSafeStoageMb = 50;
+	
+	@JsonProperty ("pm")
+	String pluginModules;
 	
 
 	public LicenceKeyContent() {
@@ -81,12 +85,7 @@ public class LicenceKeyContent {
 	}
 
 	
-
-	@Override
-	public String toString() {
-		return "LicenceKeyContent [trialVersion=" + trialVersion + ", expiresOn=" + expiresOn + ", maxUsers=" + maxUsers + ", disabledModules=" + disabledModules +
-				", passwordSafe=" + passwordSafe + ", cloudSafeStoageMb=" + cloudSafeStoageMb + "]";
-	}
+	
 
 	
 
@@ -128,6 +127,21 @@ public class LicenceKeyContent {
 
 	public void setVersion(int version) {
 		this.version = version;
+	}
+
+	public String getPluginModules() {
+		return pluginModules;
+	}
+
+	public void setPluginModules(String pluginModules) {
+		this.pluginModules = pluginModules;
+	}
+
+	@Override
+	public String toString() {
+		return "LicenceKeyContent [version=" + version + ", clusterId=" + clusterId + ", customerName=" + customerName + ", trialVersion=" + trialVersion
+				+ ", createdOn=" + createdOn + ", expiresOn=" + expiresOn + ", tenantId=" + tenantId + ", maxUsers=" + maxUsers + ", disabledModules="
+				+ disabledModules + ", passwordSafe=" + passwordSafe + ", cloudSafeStoageMb=" + cloudSafeStoageMb + ", pluginModules=" + pluginModules + "]";
 	}
 	
 	

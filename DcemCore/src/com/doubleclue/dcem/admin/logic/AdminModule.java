@@ -137,7 +137,16 @@ public class AdminModule extends DcemModule {
 	}
 
 	public boolean isUserPortalDisabled() {
-		return getPreferences().isDisableUserPortal();
+		if (getPreferences().isDisableUserPortal()) {
+			return true;
+		}
+		AdminTenantData adminTenantData = getTenantData();
+		for (String moduleId : adminTenantData.getDisabledModules()) {
+			if (moduleId.equals("up")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String getTitle() {
@@ -419,5 +428,10 @@ public class AdminModule extends DcemModule {
 		} catch (IOException e) {
 			logger.error("Could not redirect to Userportal", e);
 		}
+	}
+
+	@Override
+	public boolean isPluginModule() {
+		return false;
 	}
 }

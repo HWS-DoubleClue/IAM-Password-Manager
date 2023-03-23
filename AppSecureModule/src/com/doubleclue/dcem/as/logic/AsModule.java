@@ -709,4 +709,9 @@ public class AsModule extends DcemModule {
 		super.setModuleAction(moduleAction);
 	}
 
+	@Override
+	public boolean isPluginModule() {
+		return false;
+	}
+
 }
