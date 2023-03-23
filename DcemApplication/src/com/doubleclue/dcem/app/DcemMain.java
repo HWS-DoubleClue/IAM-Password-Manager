@@ -606,6 +606,7 @@ public class DcemMain {
 				Integer.toString(TuningMaxValues.getMaxValueOf(TuningMaxValues.MGT_CONN_MIN_THREAD, clusterConfig.getScaleFactor())));
 		connector.setProperty("compression", "off");
 		connector.setProperty("compressableMimeType", "application/json");
+		connector.setProperty("maxHttpHeaderSize", "32768");
 		if (connectorService.isSecure()) {
 			sslConfiguration(connector, KeyStorePurpose.getKeyStorePurpose(connectorService.getConnectionServicesType()), entityManager, dcemNode);
 		}
