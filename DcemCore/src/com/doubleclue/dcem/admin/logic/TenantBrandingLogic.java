@@ -62,7 +62,7 @@ public class TenantBrandingLogic implements ReloadClassInterface {
 		configLogic.setDcemConfiguration(dcemConfiguration);
 	}
 	@Override
-	public void reload() throws DcemException {
+	public void reload(String info) throws DcemException {
 		TenantBrandingEntity tenantBrandingEntity = getTenantBrandingEntity();
 		adminModule.getAdminTenantData().setTenantBrandingEntity(tenantBrandingEntity);		
 	}

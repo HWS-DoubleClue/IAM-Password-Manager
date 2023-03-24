@@ -204,7 +204,7 @@ public class RadiusModule extends DcemModule implements ReloadClassInterface {
 	}
 
 	@Override
-	public void reload() throws DcemException {
+	public void reload(String info) throws DcemException {
 		Set<String> keys = ipNumberTenantMap.keySet();
 		TenantEntity tenantEntity = TenantIdResolver.getCurrentTenant();
 		// first remove all ipnumbers of tenenat

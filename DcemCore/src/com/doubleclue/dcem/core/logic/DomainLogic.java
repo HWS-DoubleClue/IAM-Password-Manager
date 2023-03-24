@@ -80,8 +80,8 @@ public class DomainLogic implements ReloadClassInterface {
 	}
 
 	// getDomianFromAddress
-
-	public void reload() throws DcemException {
+	@Override
+	public void reload(String info) throws DcemException {
 		// System.setProperty("com.sun.jndi.ldap.connect.pool.debug", "fine");
 		// System.setProperty("com.sun.jndi.ldap.connect.pool.maxsize", "1");
 		// -Dcom.sun.jndi.ldap.connect.pool.debug=fine

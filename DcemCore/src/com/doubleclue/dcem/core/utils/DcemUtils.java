@@ -86,6 +86,7 @@ import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.RoleRestriction;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.DcemGui;
 import com.doubleclue.dcem.core.gui.JsfUtils;
@@ -1288,19 +1289,23 @@ public class DcemUtils {
 	}
 
 	public static Exception reloadTaskNodes(Class<?> klass) {
-		return reloadTaskNodes(klass, TenantIdResolver.getCurrentTenantName());
+		return reloadTaskNodes(klass, TenantIdResolver.getCurrentTenantName(), null);
 	}
 
+	public static Exception reloadTaskNodes(Class<?> klass, String tenantName, String info) {
+		return reloadTaskNodes(klass.getAnnotation(Named.class).value(), tenantName, info);
+	}
+	
 	public static Exception reloadTaskNodes(Class<?> klass, String tenantName) {
-		return reloadTaskNodes(klass.getAnnotation(Named.class).value(), tenantName);
+		return reloadTaskNodes(klass.getAnnotation(Named.class).value(), tenantName, null);
 	}
 
-	public static Exception reloadTaskNodes(String className, String tenantName) {
+	public static Exception reloadTaskNodes(String className, String tenantName, String info) {
 		IExecutorService executorService = DcemCluster.getDcemCluster().getExecutorService();
 		Set<Member> members = DcemCluster.getDcemCluster().getMembers();
 		Exception exception = null;
 		for (Member member : members) {
-			Future<Exception> future = executorService.submitToMember(new ReloadTask(className, tenantName), member);
+			Future<Exception> future = executorService.submitToMember(new ReloadTask(className, tenantName, info), member);
 			try {
 				exception = future.get();
 			} catch (Exception e) {
@@ -1464,4 +1469,5 @@ public class DcemUtils {
 		String os = System.getProperty("os.name").toLowerCase();
 		return os.contains("win");
 	}
+
 }

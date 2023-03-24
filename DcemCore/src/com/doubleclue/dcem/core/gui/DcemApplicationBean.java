@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.core.gui;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -60,6 +61,7 @@ import com.doubleclue.dcem.core.logic.TenantLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.tasks.CallInittializeTenant;
+import com.doubleclue.dcem.core.tasks.ReloadClassInterface;
 import com.doubleclue.dcem.core.tasks.TaskExecutor;
 import com.doubleclue.dcem.core.utils.SecureUtilsImpl;
 import com.doubleclue.dcem.system.logic.NodeLogic;
@@ -780,17 +782,18 @@ public class DcemApplicationBean implements Serializable {
 		return freeMarkerConfiguration;
 	}
 	
-	public Template getTemplateFromConfig(DcemTemplate dcemTemplate, Configuration fmConfig) throws Exception {
+	public Template getTemplateFromConfig(DcemTemplate dcemTemplate) throws Exception {
+		getFreeMarkerConfiguration();
 		Template template = null;
 		try {
-			template = fmConfig.getTemplate(dcemTemplate.getName());
+			template = freeMarkerConfiguration.getTemplate(dcemTemplate.getName());
 		} catch (TemplateNotFoundException e) {
-			StringTemplateLoader stringLoader = (StringTemplateLoader) fmConfig.getTemplateLoader();
+			StringTemplateLoader stringLoader = (StringTemplateLoader) freeMarkerConfiguration.getTemplateLoader();
 			stringLoader.putTemplate(dcemTemplate.getName(), dcemTemplate.getContent());
 			// Wait until the template is loaded in the configuration
 			for (int sleepCounter = 0; sleepCounter < 20; sleepCounter++) {
 				try {
-					template = fmConfig.getTemplate(dcemTemplate.getName());
+					template = freeMarkerConfiguration.getTemplate(dcemTemplate.getName());
 					break;
 				} catch (TemplateNotFoundException exp) {
 					Thread.sleep(500);
@@ -803,6 +806,15 @@ public class DcemApplicationBean implements Serializable {
 			throw e;
 		}
 		return template;
+	}
+
+	
+	public void removeFreeMarkerTemplate(String templateName) throws DcemException {
+		if (freeMarkerConfiguration != null) {
+			((StringTemplateLoader)freeMarkerConfiguration.getTemplateLoader()).removeTemplate(templateName);
+//		freeMarkerConfiguration.removeTemplateFromCache(templateName);
+//		freeMarkerConfiguration.clearTemplateCache();
+		}
 	}
 
 }

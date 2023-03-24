@@ -51,7 +51,7 @@ import de.slackspace.openkeepass.domain.MetaBuilder;
 
 @ApplicationScoped
 @Named("upAppHubLogic")
-public class UpAppHubLogic implements ReloadClassInterface {
+public class UpAppHubLogic  {
 
 	@Inject
 	EntityManager em;
@@ -67,11 +67,7 @@ public class UpAppHubLogic implements ReloadClassInterface {
 
 	private Logger logger = LogManager.getLogger(UpAppHubLogic.class);
 
-	@Override
-	public void reload() throws DcemException {
-		// TODO Auto-generated method stub
-	}
-
+	
 	public List<ApplicationHubEntity> getAllApplicationsByName(String name) {
 		TypedQuery<ApplicationHubEntity> query = em.createNamedQuery(ApplicationHubEntity.GET_APPLICATIONS_WITH_NAME,
 				ApplicationHubEntity.class);

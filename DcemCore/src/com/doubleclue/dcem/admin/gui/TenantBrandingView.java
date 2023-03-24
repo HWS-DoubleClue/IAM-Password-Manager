@@ -162,7 +162,7 @@ public class TenantBrandingView extends DcemView {
 		try {
 			branding.setTimezone(countryTimezone);
 			tenantBrandingLogic.setTenantBrandingEntity(branding);
-			DcemUtils.reloadTaskNodes(TenantBrandingLogic.class);
+			DcemUtils.reloadTaskNodes(TenantBrandingLogic.class, null);
 			JsfUtils.addInformationMessage(AdminModule.RESOURCE_NAME, "tenantBranding.save.ok");
 			
 			TimeZone timeZone = adminModule.getTimezone();

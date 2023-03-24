@@ -92,7 +92,7 @@ public class FcmLogic implements ReloadClassInterface {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Couldn't save PN Config", e);
 		}
 		configLogic.setDcemConfiguration(dcemConfiguration);
-		DcemUtils.reloadTaskNodes(FcmLogic.class); // inform all Nodes
+		DcemUtils.reloadTaskNodes(FcmLogic.class, null); // inform all Nodes
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class FcmLogic implements ReloadClassInterface {
 	}
 
 	@Override
-	public void reload() throws DcemException {
+	public void reload(String info) throws DcemException {
 		PushNotificationConfig pushNotificationConfig = loadConfiguration();
 		initialise(pushNotificationConfig);
 		if (asModule.getTenantData() != null) {

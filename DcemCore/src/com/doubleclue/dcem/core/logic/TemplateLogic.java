@@ -19,20 +19,23 @@ import org.apache.logging.log4j.Logger;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
-import com.doubleclue.dcem.core.entities.Auditing;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
+import com.doubleclue.dcem.core.tasks.ReloadClassInterface;
+import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.utils.FileContent;
 import com.doubleclue.utils.ResourceFinder;
 import com.doubleclue.utils.StringUtils;
 
 @ApplicationScoped
 @Named("templateLogic")
-public class TemplateLogic {
+public class TemplateLogic implements ReloadClassInterface {
 
 	private static Logger logger = LogManager.getLogger(TemplateLogic.class);
 
@@ -40,12 +43,13 @@ public class TemplateLogic {
 	AuditingLogic auditingLogic;
 
 	@Inject
+	DcemApplicationBean applicationBean;
+
+	@Inject
 	EntityManager em;
 
 	@DcemTransactional
 	public void addOrUpdateTemplate(DcemTemplate template, DcemAction dcemAction, boolean withAudit) throws DcemException {
-		Auditing auditing = null;
-
 		if (dcemAction.getAction().equals(DcemConstants.ACTION_ADD) || dcemAction.getAction().equals(DcemConstants.ACTION_COPY)) {
 			template.setId(null);
 			template.setVersion(1);
@@ -84,6 +88,10 @@ public class TemplateLogic {
 				template = em.merge(template);
 				template.setLastModified(new Date());
 				template.setTokens(getTokens(template.getContent()));
+				Exception exception = DcemUtils.reloadTaskNodes(TemplateLogic.class, TenantIdResolver.getCurrentTenantName(), template.getName());
+				if (exception != null) {
+					throw new DcemException(DcemErrorCodes.NODE_FAILED, "Can't uüdate all nodes");
+				}
 			}
 		}
 		if (withAudit) {
@@ -114,13 +122,14 @@ public class TemplateLogic {
 	}
 
 	@DcemTransactional
-	public DcemTemplate getUpdateTemplateByName(Class loadingClass, String name, SupportedLanguage language, String scanPackages) {
+	public DcemTemplate getUpdateTemplateByName(Class<?> loadingClass, String name, SupportedLanguage language, String scanPackages) {
 		DcemTemplate dcemTemplate = getTemplateByNameLanguage(name, language);
 		if (dcemTemplate == null) {
 			try {
-				List<FileContent> templateFiles = ResourceFinder.find(loadingClass, scanPackages,
-						name + '_' + language.getLocale().getLanguage() + DcemConstants.TEMPLATE_TYPE);
+				String templateName = name + '_' + language.getLocale().getLanguage() + DcemConstants.TEMPLATE_TYPE;
+				List<FileContent> templateFiles = ResourceFinder.find(loadingClass, scanPackages, templateName);
 				if (templateFiles.isEmpty()) {
+					logger.info("Couldn't add Tempalte " + scanPackages + "/" + templateName);
 					return null;
 				}
 
@@ -226,6 +235,11 @@ public class TemplateLogic {
 	@DcemTransactional
 	public void setTemplateInUse(DcemTemplate template) {
 		template.setInUse(true);
+	}
+
+	@Override
+	public void reload(String templateName) throws DcemException {
+		applicationBean.removeFreeMarkerTemplate(templateName);
 	}
 
 }

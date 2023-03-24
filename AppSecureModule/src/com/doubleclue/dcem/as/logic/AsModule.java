@@ -656,7 +656,7 @@ public class AsModule extends DcemModule {
 		}
 
 		try {
-			domainLogic.reload();
+			domainLogic.reload(null);
 		} catch (Exception e) {
 			logger.warn("Could initialize LDAP", e);
 		}

@@ -174,7 +174,7 @@ public class TenantLogic implements ReloadClassInterface {
 	}
 
 	@Override
-	public void reload() throws DcemException {
+	public void reload(String info) throws DcemException {
 		applicationBean.updateInitializeTenantMap();
 	}
 }
