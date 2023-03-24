@@ -25,7 +25,6 @@ public class AdminTenantData extends ModuleTenantData {
 	private LicenceKeyContent licenceKeyContent;
 	private DcemUser superAdmin;
 	
-
 	public Map<String, DbResourceBundle> getBundleCache() {
 		return bundleCache;
 	}

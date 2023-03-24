@@ -8,9 +8,7 @@
 	</parent>
 	<groupId>com.doubleclue.dcem.module</groupId>
 	<artifactId>DcemCore</artifactId>
-
 	<dependencies>
-
 		<dependency>
 			<groupId>com.messagebird</groupId>
 			<artifactId>messagebird-api</artifactId>
@@ -21,25 +19,21 @@
 			<artifactId>mail</artifactId>
 			<version>1.4.7</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 		</dependency>
-
 		<!-- <dependency> <groupId>javax.el</groupId> <artifactId>el-api</artifactId> 
 			</dependency> -->
 		<dependency>
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>el-impl</artifactId>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jboss.weld.servlet</groupId>
 			<artifactId>weld-servlet</artifactId>
@@ -48,7 +42,6 @@
 			<groupId>org.jboss</groupId>
 			<artifactId>jandex</artifactId>
 		</dependency>
-
 		<!-- <dependency> <groupId>com.sun.faces</groupId> <artifactId>jsf-api</artifactId> 
 			</dependency> <dependency> <groupId>com.sun.faces</groupId> <artifactId>jsf-impl</artifactId> 
 			</dependency> -->
@@ -56,7 +49,6 @@
 			<groupId>org.glassfish</groupId>
 			<artifactId>javax.faces</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.microsoft.graph</groupId>
 			<artifactId>microsoft-graph</artifactId>
@@ -71,7 +63,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
@@ -81,12 +72,10 @@
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet.jsp.jstl</groupId>
 			<artifactId>jstl-api</artifactId>
@@ -105,16 +94,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>com.sun.xml.ws</groupId>
 			<artifactId>jaxws-rt</artifactId>
 		</dependency>
-
-
 		<!-- <dependency> <groupId>javax.servlet.jsp</groupId> <artifactId>jsp-api</artifactId> 
 			</dependency> -->
-
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
@@ -125,7 +110,6 @@
 		</dependency>
 		<!-- <dependency> <groupId>org.primefaces.extensions</groupId> <artifactId>primefaces-extensions</artifactId> 
 			</dependency> -->
-
 		<!-- https://mvnrepository.com/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer -->
 		<dependency>
 			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
@@ -138,12 +122,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		<dependency>
-				<groupId>com.microsoft.azure</groupId>
-				<artifactId>msal4j</artifactId>
+			<groupId>com.microsoft.azure</groupId>
+			<artifactId>msal4j</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.madgag.spongycastle</groupId>
 			<artifactId>core</artifactId>
@@ -152,17 +134,14 @@
 			<groupId>com.madgag.spongycastle</groupId>
 			<artifactId>pkix</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.doubleclue.lib</groupId>
 			<artifactId>LibKaraUtils</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.doubleclue.lib</groupId>
 			<artifactId>LibOAuth</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.1-api</artifactId>
@@ -177,7 +156,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>
@@ -186,11 +164,8 @@
 					<groupId>org.jboss.logging</groupId>
 					<artifactId>jboss-logging</artifactId>
 				</exclusion>
-
 			</exclusions>
 		</dependency>
-
-
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
@@ -222,12 +197,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-websocket</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
@@ -239,7 +212,6 @@
 		</dependency>
 		<!-- <dependency> <groupId>io.swagger.core.v3</groupId> <artifactId>swagger-jaxrs2</artifactId> 
 			<scope>compile</scope> </dependency> -->
-
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-jersey2-jaxrs</artifactId>
@@ -253,12 +225,10 @@
 		</dependency>
 		<!-- <dependency> <groupId>org.glassfish.jersey.media</groupId> <artifactId>jersey-media-multipart</artifactId> 
 			</dependency> -->
-
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
@@ -273,40 +243,32 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-multipart</artifactId>
 		</dependency>
-
 		<!-- <dependency> <groupId>com.doubleclue.lib</groupId> <artifactId>LibAsThrift</artifactId> 
 			</dependency> -->
-
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.google.zxing</groupId>
 			<artifactId>core</artifactId>
@@ -322,15 +284,12 @@
 			<version>1.6.4</version>
 		</dependency>
 		-->
-
 		<!-- <dependency> <groupId>com.microsoft.azure</groupId> <artifactId>msal4j</artifactId> 
 			<version>1.1.0</version> </dependency> -->
-
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -343,28 +302,31 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.twelvemonkeys.imageio</groupId>
 			<artifactId>imageio-bmp</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.github.waffle</groupId>
 			<artifactId>waffle-jna</artifactId>
 			<version>3.1.1</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
 		<dependency>
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
 			<version>2.9.0</version>
 		</dependency>
-
-
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-pdfbox -->
+		<dependency>
+			<groupId>com.openhtmltopdf</groupId>
+			<artifactId>openhtmltopdf-pdfbox</artifactId>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins></plugins>

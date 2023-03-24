@@ -45,6 +45,7 @@ import com.doubleclue.dcem.core.config.ConnectionService;
 import com.doubleclue.dcem.core.config.ConnectionServicesType;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemNode;
+import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -67,6 +68,11 @@ import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ProductVersion;
 import com.doubleclue.utils.SecureUtils;
 
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateNotFoundException;
 import jersey.repackaged.com.google.common.collect.Lists;
 import jersey.repackaged.com.google.common.net.InetAddresses;
 
@@ -136,6 +142,8 @@ public class DcemApplicationBean implements Serializable {
 	private HashMap<String, String> fileIconsMap = new HashMap<String, String>();
 
 	private boolean captchaOn;
+	
+	Configuration freeMarkerConfiguration;
 
 	@Inject
 	@Any
@@ -758,9 +766,47 @@ public class DcemApplicationBean implements Serializable {
 		Collections.sort(selectItems, new SelectItemComparator());
 		return selectItems;
 	}
+	
+	public Configuration getFreeMarkerConfiguration() {
+		if (freeMarkerConfiguration == null) {
+			freeMarkerConfiguration = new Configuration(Configuration.VERSION_2_3_29);
+			freeMarkerConfiguration.setDefaultEncoding("UTF-8");
+			freeMarkerConfiguration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+			freeMarkerConfiguration.setLogTemplateExceptions(false);
+			freeMarkerConfiguration.setWrapUncheckedExceptions(true);
+			freeMarkerConfiguration.setFallbackOnNullLoopVariable(false);
+			freeMarkerConfiguration.setTemplateLoader(new StringTemplateLoader());
+		}
+		return freeMarkerConfiguration;
+	}
+	
+	public Template getTemplateFromConfig(DcemTemplate dcemTemplate, Configuration fmConfig) throws Exception {
+		Template template = null;
+		try {
+			template = fmConfig.getTemplate(dcemTemplate.getName());
+		} catch (TemplateNotFoundException e) {
+			StringTemplateLoader stringLoader = (StringTemplateLoader) fmConfig.getTemplateLoader();
+			stringLoader.putTemplate(dcemTemplate.getName(), dcemTemplate.getContent());
+			// Wait until the template is loaded in the configuration
+			for (int sleepCounter = 0; sleepCounter < 20; sleepCounter++) {
+				try {
+					template = fmConfig.getTemplate(dcemTemplate.getName());
+					break;
+				} catch (TemplateNotFoundException exp) {
+					Thread.sleep(500);
+				}
+			}
+			if (template == null) {
+				throw new TemplateNotFoundException(dcemTemplate.getName(), null, "The template could not be loaded after 10 seconds");
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+		return template;
+	}
 
 }
-
+/////////////////////////////////////////////////////////////////////////////////////////////
 class ViewComparator implements Comparator<SubjectAbs> {
 
 	@Override

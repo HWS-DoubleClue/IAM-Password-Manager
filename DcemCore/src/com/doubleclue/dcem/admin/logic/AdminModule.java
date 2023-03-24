@@ -88,7 +88,6 @@ public class AdminModule extends DcemModule {
 	public void start() throws DcemException {
 		super.start();
 		// policyLogic.reloadApplicationIdentifier();
-
 	}
 
 	// HashMap<String, SubjectAbs> subjects = new HashMap<String, SubjectAbs>();
@@ -141,9 +140,11 @@ public class AdminModule extends DcemModule {
 			return true;
 		}
 		AdminTenantData adminTenantData = getTenantData();
-		for (String moduleId : adminTenantData.getDisabledModules()) {
-			if (moduleId.equals("up")) {
-				return true;
+		if (adminTenantData.getDisabledModules() != null) {
+			for (String moduleId : adminTenantData.getDisabledModules()) {
+				if (moduleId.equals("up")) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -434,4 +435,5 @@ public class AdminModule extends DcemModule {
 	public boolean isPluginModule() {
 		return false;
 	}
+
 }
