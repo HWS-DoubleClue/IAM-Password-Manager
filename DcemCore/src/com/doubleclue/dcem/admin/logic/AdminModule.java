@@ -170,7 +170,6 @@ public class AdminModule extends DcemModule {
 				}
 				name = name + " - " + tenantEntity.getName();
 			}
-
 			return DcemConstants.APP_TITLE + name;
 		}
 	}
@@ -348,6 +347,7 @@ public class AdminModule extends DcemModule {
 				}
 			}
 		}
+		applicationBean.updateFreeMarkerCache();
 		// Check for any alerts regarding licence limits
 		// licenceLogic.checkLicenceAlerts();
 	}

@@ -88,7 +88,7 @@ public class TemplateLogic implements ReloadClassInterface {
 				template = em.merge(template);
 				template.setLastModified(new Date());
 				template.setTokens(getTokens(template.getContent()));
-				Exception exception = DcemUtils.reloadTaskNodes(TemplateLogic.class, TenantIdResolver.getCurrentTenantName(), template.getName());
+				Exception exception = DcemUtils.reloadTaskNodes(TemplateLogic.class, TenantIdResolver.getCurrentTenantName(), template.getFullName());
 				if (exception != null) {
 					throw new DcemException(DcemErrorCodes.NODE_FAILED, "Can't uüdate all nodes");
 				}

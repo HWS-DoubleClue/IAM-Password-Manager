@@ -1,9 +1,10 @@
 package com.doubleclue.dcem.core.gui;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,12 +57,12 @@ import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.ActionLogic;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
+import com.doubleclue.dcem.core.logic.DcFreeMarkerStringLoader;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.TenantLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.tasks.CallInittializeTenant;
-import com.doubleclue.dcem.core.tasks.ReloadClassInterface;
 import com.doubleclue.dcem.core.tasks.TaskExecutor;
 import com.doubleclue.dcem.core.utils.SecureUtilsImpl;
 import com.doubleclue.dcem.system.logic.NodeLogic;
@@ -777,7 +778,8 @@ public class DcemApplicationBean implements Serializable {
 			freeMarkerConfiguration.setLogTemplateExceptions(false);
 			freeMarkerConfiguration.setWrapUncheckedExceptions(true);
 			freeMarkerConfiguration.setFallbackOnNullLoopVariable(false);
-			freeMarkerConfiguration.setTemplateLoader(new StringTemplateLoader());
+			DcFreeMarkerStringLoader templateLoader = new DcFreeMarkerStringLoader();
+			freeMarkerConfiguration.setTemplateLoader(templateLoader);
 		}
 		return freeMarkerConfiguration;
 	}
@@ -786,7 +788,8 @@ public class DcemApplicationBean implements Serializable {
 		getFreeMarkerConfiguration();
 		Template template = null;
 		try {
-			template = freeMarkerConfiguration.getTemplate(dcemTemplate.getName());
+			String name = dcemTemplate.getFullName() + "-" + TenantIdResolver.getCurrentTenantName();
+			template = freeMarkerConfiguration.getTemplate(name);
 		} catch (TemplateNotFoundException e) {
 			StringTemplateLoader stringLoader = (StringTemplateLoader) freeMarkerConfiguration.getTemplateLoader();
 			stringLoader.putTemplate(dcemTemplate.getName(), dcemTemplate.getContent());
@@ -809,11 +812,18 @@ public class DcemApplicationBean implements Serializable {
 	}
 
 	
-	public void removeFreeMarkerTemplate(String templateName) throws DcemException {
+	public void removeFreeMarkerTemplate(String templateFullName) {
 		if (freeMarkerConfiguration != null) {
-			((StringTemplateLoader)freeMarkerConfiguration.getTemplateLoader()).removeTemplate(templateName);
-//		freeMarkerConfiguration.removeTemplateFromCache(templateName);
-//		freeMarkerConfiguration.clearTemplateCache();
+			((DcFreeMarkerStringLoader)freeMarkerConfiguration.getTemplateLoader()).removeTemplate(templateFullName  + "-" + TenantIdResolver.getCurrentTenantName());
+		}
+	}
+	
+	public void updateFreeMarkerCache() {
+		LocalDateTime localDateTime = LocalDateTime.now();
+		localDateTime.minusDays(5);
+		if (freeMarkerConfiguration != null) {
+			long epoch = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+			((DcFreeMarkerStringLoader)freeMarkerConfiguration.getTemplateLoader()).updataTemplateCache(epoch);
 		}
 	}
 
