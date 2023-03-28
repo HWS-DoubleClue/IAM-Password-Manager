@@ -654,6 +654,8 @@ public class UserLogic {
 	// query.setParameter(1, ldap);
 	// return query.getResultList();
 	// }
+	
+	
 
 	@DcemTransactional
 	public void deleteUsers(List<Object> list, DcemAction dcemAction) throws DcemException {
@@ -864,6 +866,8 @@ public class UserLogic {
 			}
 			dcemUserExtensionDb.setCountry(dcemUserExtension.getCountry());
 			dcemUserExtensionDb.setTimezone(dcemUserExtension.getTimezone());
+			dcemUserExtensionDb.setDepartment(dcemUserExtension.getDepartment());
+			dcemUserExtensionDb.setJobTitle(dcemUserExtension.getJobTitle());
 			dcemUser.setDcemUserExt(dcemUserExtension);
 		}
 	}

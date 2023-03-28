@@ -201,6 +201,10 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	@DcemGui (name= "Department", subClass = "department", dbMetaAttributeName = "dcemUserExt")
 	@Transient
 	private DcemUserExtension dcemUserExtDepartment;
+	
+	@DcemGui (name= "JobTitle", subClass = "jobTitle", dbMetaAttributeName = "dcemUserExt")
+	@Transient
+	private DcemUserExtension dcemUserExtJobtitle;
 
 	@Version
 	private int jpaVersion;
@@ -769,11 +773,19 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	}
 
 	public DcemUserExtension getDcemUserExtDepartment() {
-		return dcemUserExtDepartment;
+		return dcemUserExt;
 	}
 
 	public void setDcemUserExtDepartment(DcemUserExtension dcemUserExtDepartment) {
 		this.dcemUserExtDepartment = dcemUserExtDepartment;
+	}
+
+	public DcemUserExtension getDcemUserExtJobtitle() {
+		return dcemUserExt;
+	}
+
+	public void setDcemUserExtJobtitle(DcemUserExtension dcemUserExtJobtitle) {
+		this.dcemUserExtJobtitle = dcemUserExtJobtitle;
 	}
 
 }

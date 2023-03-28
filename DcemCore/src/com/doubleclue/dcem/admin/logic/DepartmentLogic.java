@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.DepartmentEntity;
 
 @ApplicationScoped
@@ -42,4 +43,12 @@ public class DepartmentLogic {
 			return null;
 		}
 	}
+	
+	public List<DepartmentEntity> getDepartmentsByHeadOf(DcemUser dcemUser) {
+		TypedQuery<DepartmentEntity> query = em.createNamedQuery(DepartmentEntity.GET_BY_HEAD_OF, DepartmentEntity.class);
+		query.setParameter(1, dcemUser);
+		return query.getResultList();
+
+	}
+	
 }

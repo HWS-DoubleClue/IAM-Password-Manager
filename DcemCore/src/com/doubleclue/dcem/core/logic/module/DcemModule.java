@@ -19,12 +19,14 @@ import org.apache.logging.log4j.Logger;
 
 import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
+import com.doubleclue.dcem.admin.logic.DepartmentLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemNode;
 import com.doubleclue.dcem.core.entities.DcemReporting;
 import com.doubleclue.dcem.core.entities.DcemUser;
+import com.doubleclue.dcem.core.entities.DepartmentEntity;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -58,6 +60,9 @@ public abstract class DcemModule implements Serializable {
 
 	@Inject
 	LicenceLogic licenceLogic;
+	
+	@Inject
+	DepartmentLogic departmentLogic;
 
 	@Inject
 	DcemReportingLogic dcemReportingLogic;
@@ -263,10 +268,7 @@ public abstract class DcemModule implements Serializable {
 		return null;
 	}
 
-	@DcemTransactional
-	public void deleteUserFromDb(DcemUser dcemUser) throws DcemException {
-		return;
-	}
+	
 	
 	@DcemTransactional
 	public void deleteGroupFromDb(DcemGroup dcemGroup) throws DcemException {
@@ -335,5 +337,10 @@ public abstract class DcemModule implements Serializable {
 
 	public int getModuleVersion() {
 		return moduleVersion;
+	}
+
+	public void deleteUserFromDb(DcemUser dcemUser) throws DcemException {
+		return;
+		
 	}
 }

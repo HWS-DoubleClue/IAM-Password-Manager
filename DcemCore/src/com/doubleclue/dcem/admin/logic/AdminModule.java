@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -23,6 +24,7 @@ import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.Auditing;
 import com.doubleclue.dcem.core.entities.DcemReporting;
 import com.doubleclue.dcem.core.entities.DcemUser;
+import com.doubleclue.dcem.core.entities.DepartmentEntity;
 import com.doubleclue.dcem.core.entities.TenantBrandingEntity;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -30,6 +32,7 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
+import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.ExportRecords;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.licence.LicenceLogic;
@@ -83,6 +86,9 @@ public class AdminModule extends DcemModule {
 
 	@Inject
 	UserLogic userLogic;
+	
+	@Inject
+	DepartmentLogic departmentLogic;
 
 	@Override
 	public void start() throws DcemException {
@@ -436,4 +442,17 @@ public class AdminModule extends DcemModule {
 		return false;
 	}
 
+	@DcemTransactional
+	public void deleteUserFromDb(DcemUser dcemUser) throws DcemException {
+		List<DepartmentEntity> list = departmentLogic.getDepartmentsByHeadOf(dcemUser);
+		for (DepartmentEntity departmentEntity : list) {
+			if (departmentEntity.getHeadOf().getId() == dcemUser.getId()) {
+				departmentEntity.setHeadOf(null);
+			}
+			if (departmentEntity.getDeputy().getId() == dcemUser.getId()) {
+				departmentEntity.setDeputy(null);
+			}
+		}
+		return;
+	}
 }
