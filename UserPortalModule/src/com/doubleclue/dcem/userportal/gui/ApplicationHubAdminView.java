@@ -745,6 +745,7 @@ public class ApplicationHubAdminView extends DcemView {
 		applications = null;
 	}
 
+	@Deprecated
 	public String getApplicationPath() throws DcemException {
 		String decodedURL = null;
 		try {

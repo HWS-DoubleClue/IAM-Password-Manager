@@ -105,7 +105,7 @@ public class AsCreateChangeTenantCall implements Callable<AsCreateChangeTenantCa
 				break;
 			case RECOVER_SUPERADMIN_ACCESS:
 				policyLogic.setBackdoorToManagementPolicy();
-				policyLogic.reload();
+				policyLogic.reload(null);
 				break;
 			}
 		} catch (Exception e) {

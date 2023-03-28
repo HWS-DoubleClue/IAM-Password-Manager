@@ -95,6 +95,11 @@ public class SamlModule extends DcemModule {
 	public DcemView getDefaultView() {
 		return null;
 	}
+	
+	@Override
+	public boolean isPluginModule() {
+		return false;
+	}
 
 	@Override
 	public ModulePreferences getDefaultPreferences() {

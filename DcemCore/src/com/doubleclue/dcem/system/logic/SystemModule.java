@@ -515,6 +515,11 @@ public class SystemModule extends DcemModule {
 		}
 	}
 	
+	@Override
+	public boolean isPluginModule() {
+		return false;
+	}
+	
 
 
 	class DcemProxySelector extends ProxySelector {

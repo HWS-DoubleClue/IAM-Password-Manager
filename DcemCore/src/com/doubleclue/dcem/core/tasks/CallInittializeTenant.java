@@ -52,7 +52,7 @@ public class CallInittializeTenant implements Callable<Exception> {
 			}
 	 		LicenceLogic licenceLogic = CdiUtils.getReference(LicenceLogic.class);
 			try {
-				licenceLogic.reload();
+				licenceLogic.reload(null);
 			} catch (DcemException exp) {
 				logger.warn("Loading licence failed during tenant initialisation: " + exp.getMessage());
 				return exp;

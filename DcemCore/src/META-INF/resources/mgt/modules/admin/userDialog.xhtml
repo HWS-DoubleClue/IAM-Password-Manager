@@ -85,7 +85,6 @@
 				<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} " rendered="#{viewNavigator.editAction}" />
 				<p:outputLabel value="#{userDialog.actionObject.partMobileNumber}" rendered="#{viewNavigator.editAction}" />
 
-
 				<p:outputLabel value="#{AdminMsg['userDialog.disable']} " />
 				<p:selectBooleanCheckbox value="#{userDialog.actionObject.disabled}" disabled="#{userDialog.userOutranksOperator()}" />
 
@@ -99,19 +98,23 @@
 					<f:selectItems value="#{userDialog.availableRoles}" />
 				</p:selectOneMenu>
 				
+				<p:outputLabel for="@next" value="#{AdminMsg['userDialog.jobTitle']} " />
+				<p:inputText id="jobtitle" value="#{userDialog.jobTitle}" />
+				
+				
 				<p:outputLabel for="country" value="#{AdminMsg['userDialog.country']} "  />
 				<p:selectOneMenu id="country" value="#{userDialog.country}"  >
 					<f:selectItems value="#{userDialog.availableCountries}" />
 				</p:selectOneMenu>
-
-				<p:outputLabel value="#{AdminMsg['userDialog.passCounter']} " rendered="#{viewNavigator.editAction }" />
-				<p:inputText id="passcounter" value="#{userDialog.actionObject.passCounter}" rendered="#{viewNavigator.editAction}"
-					disabled="#{userDialog.userOutranksOperator()}" />
-					
 				
-					
-					
-					
+				<p:outputLabel for="@next" value="#{AdminMsg['userDialog.department']} "  />
+				<p:autoComplete id="dept" minQueryLength="1" value="#{userDialog.department}" completeMethod="#{userDialog.completeDepartment}" effect="fade"
+						size="40" />
+						
+				<p:outputLabel for="@next" value="#{AdminMsg['userDialog.reportsTo']} "  />
+				<p:outputLabel id="reportsTo" value="#{userDialog.reportsTo}" />
+								
+									
 			</h:panelGrid>
 			<p />
 			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}" update="@form"

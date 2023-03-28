@@ -208,6 +208,11 @@ public class JdbcUtils {
 	}
 
 	public static void updateVersion(Connection conn, DbVersion dbVersion) throws SQLException {
+		DbVersion dbVersion2 = getDbVersion(conn, dbVersion.getModuleId());
+		if (dbVersion2 == null) {
+			insertVersion (conn, dbVersion);
+			return;
+		}
 		PreparedStatement statement = conn.prepareStatement("UPDATE sys_dbversion SET dbversion = ?, versionStr=? where moduleId=?");
 		statement.setInt(1, dbVersion.getVersion());
 		statement.setString(2, dbVersion.getVersionStr());

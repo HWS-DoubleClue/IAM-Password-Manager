@@ -193,6 +193,9 @@ public class ViewVariable implements Serializable {
 				return "???";
 			}
 		}
+		if (lastMethodProperty == null) {
+			return "???";
+		}
 		if (lastMethodProperty.getConverter() != null) {
 			try {
 				return lastMethodProperty.getConverter().getAsString(FacesContext.getCurrentInstance(), null, klassObject);

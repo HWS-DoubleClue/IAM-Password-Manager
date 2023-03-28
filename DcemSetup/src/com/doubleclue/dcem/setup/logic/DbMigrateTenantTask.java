@@ -51,7 +51,6 @@ public class DbMigrateTenantTask implements Callable<Exception> {
 					}
 				}
 			}
-
 			return null;
 		} catch (Exception e) {
 			logger.error("Error while setting up Default Text Resources during migration: " + e.getMessage());

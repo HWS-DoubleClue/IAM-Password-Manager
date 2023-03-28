@@ -18,11 +18,13 @@ public class ReloadTask implements Callable<Exception>, Serializable {
 
 	String reloadClassInterface;
 	String tenantName;
+	String information;
 
-	public ReloadTask(String class1, String tenantName) {
+	public ReloadTask(String class1, String tenantName, String information) {
 		super();
 		this.reloadClassInterface = class1;
 		this.tenantName = tenantName;
+		this.information = information;
 	}
 
 	private static final Logger logger = LogManager.getLogger(ReloadTask.class);
@@ -42,7 +44,7 @@ public class ReloadTask implements Callable<Exception>, Serializable {
 			TenantEntity tenantEntity = applicationBean.getTenant(tenantName);
 			TenantIdResolver.setCurrentTenant(tenantEntity);
 			ReloadClassInterface reloadClass = CdiUtils.getReference(reloadClassInterface);
-			reloadClass.reload();
+			reloadClass.reload(information);
 			
 		} catch (Exception e) {
 			return e;

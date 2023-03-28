@@ -80,8 +80,8 @@ public class DomainLogic implements ReloadClassInterface {
 	}
 
 	// getDomianFromAddress
-
-	public void reload() throws DcemException {
+	@Override
+	public void reload(String info) throws DcemException {
 		// System.setProperty("com.sun.jndi.ldap.connect.pool.debug", "fine");
 		// System.setProperty("com.sun.jndi.ldap.connect.pool.maxsize", "1");
 		// -Dcom.sun.jndi.ldap.connect.pool.debug=fine
@@ -289,7 +289,7 @@ public class DomainLogic implements ReloadClassInterface {
 		return domainApi.getUserNames(userFilter);
 	}
 
-	public List<DcemUser> getUsers(String domainName, String tree, DcemGroup dcemGroup, String userFilter, int pageSize) throws DcemException {
+	public DomainUsers getUsers(String domainName, String tree, DcemGroup dcemGroup, String userFilter, int pageSize) throws DcemException {
 		if (domainName == null) {
 			throw new DcemException(DcemErrorCodes.INVALID_DOMAIN_NAME, null);
 		}
@@ -347,9 +347,9 @@ public class DomainLogic implements ReloadClassInterface {
 		if (domainApi == null) {
 			throw new DcemException(DcemErrorCodes.DOMAIN_DISABLED, dcemGroup.getDomainEntity().getName());
 		}
-		List<DcemUser> members = domainApi.getGroupMembers(dcemGroup, null);
-		List<DcemUser> userList = new ArrayList<>(members.size());
-		for (DcemUser member : members) {
+		DomainUsers members = domainApi.getGroupMembers(dcemGroup, null);
+		List<DcemUser> userList = new ArrayList<>(members.getUsers().size());
+		for (DcemUser member : members.getUsers()) {
 			DcemUser user = userLogic.getUser(member.getLoginId());
 			if (user != null) {
 				userList.add(user);
@@ -362,7 +362,7 @@ public class DomainLogic implements ReloadClassInterface {
 		return userList;
 	}
 
-	public List<DcemUser> getMembers(DcemGroup dcemGroup) throws DcemException {
+	public DomainUsers getMembers(DcemGroup dcemGroup) throws DcemException {
 		DomainApi domainApi = getDomainApi(dcemGroup.getDomainEntity().getName());
 		if (domainApi == null) {
 			throw new DcemException(DcemErrorCodes.DOMAIN_DISABLED, dcemGroup.getDomainEntity().getName());

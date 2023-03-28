@@ -15,6 +15,7 @@
 		<class>com.doubleclue.dcem.core.entities.DcemAction</class>
 		<class>com.doubleclue.dcem.core.entities.DomainEntity</class>
 		<class>com.doubleclue.dcem.core.entities.DcemUserExtension</class>
+		<class>com.doubleclue.dcem.core.entities.DepartmentEntity</class>
 		
 		<properties> 
 			<property name="hibernate.show_sql" value="false" />

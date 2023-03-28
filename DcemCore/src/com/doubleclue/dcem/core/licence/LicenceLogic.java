@@ -211,6 +211,13 @@ public class LicenceLogic implements ReloadClassInterface {
 				}
 				adminTenantData.setDisabledModules(disabledModules);
 			}
+			if (licenceKeyContent.getPluginModules() != null) {
+				String[] pluginModulesModules = licenceKeyContent.getPluginModules().split(",");
+				for (int i = 0; i < pluginModulesModules.length; i++) {
+					pluginModulesModules[i] = pluginModulesModules[i].trim();
+				}
+				adminTenantData.setEnabledPluginModules(pluginModulesModules);
+			}
 			return licenceKeyContent;
 		} catch (Exception e) {
 			throw new DcemException(DcemErrorCodes.INVALID_LICENCE_CONTENT, "Could not read LicenceContent");
@@ -451,7 +458,7 @@ public class LicenceLogic implements ReloadClassInterface {
 	}
 
 	@Override
-	public void reload() throws DcemException {
+	public void reload(String info) throws DcemException {
 		loadLicenceKeyContent();
 	}
 

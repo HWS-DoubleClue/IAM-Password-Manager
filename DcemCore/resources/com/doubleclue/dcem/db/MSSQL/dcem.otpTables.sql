@@ -1,3 +1,4 @@
+
 create table otp_token (
 dc_id int not null,
 counter int not null,

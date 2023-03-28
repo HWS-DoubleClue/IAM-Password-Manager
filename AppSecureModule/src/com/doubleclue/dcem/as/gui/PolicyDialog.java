@@ -134,7 +134,7 @@ public class PolicyDialog extends DcemDialog {
 		}
 
 		viewNavigator.getActiveView().closeDialog();
-		Exception exception = DcemUtils.reloadTaskNodes(PolicyLogic.class);
+		Exception exception = DcemUtils.reloadTaskNodes(PolicyLogic.class, null);
 		if (exception != null) {
 			JsfUtils.addErrorMessage(exception.toString());
 			return;
@@ -167,7 +167,7 @@ public class PolicyDialog extends DcemDialog {
 			return false;
 		}
 		policyLogic.addOrUpdatePolicy(policyEntity, this.getAutoViewAction().getDcemAction(), true);
-		Exception exception = DcemUtils.reloadTaskNodes(PolicyLogic.class);
+		Exception exception = DcemUtils.reloadTaskNodes(PolicyLogic.class, null);
 		if (exception != null) {
 			throw exception;
 		}

@@ -169,6 +169,9 @@ public class DbLogic {
 		} catch (Exception e) {
 			dbState = DbState.No_Connection;
 			list.add("Connection failed. Reason: " + e.getMessage());
+			if (e.getCause() != null) {
+				list.add("Other Cause: " + e.getCause().getMessage());
+			}
 			if (databaseType == DatabaseTypes.POSTGRE && e.getMessage().startsWith("No suitable driver found")) {
 				list.add("Please check! Most probably the URL have to end with a forward slash. '/'");
 			}

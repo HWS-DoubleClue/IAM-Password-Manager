@@ -17,6 +17,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.tool.schema.TargetType;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
@@ -105,6 +106,11 @@ public class DbMigrate {
 			migrationModuleMap.put(tenantEntity.getSchema(), migrationModules);
 			migrateScriptTenant(conn, localConfig, tenantEntity, migrationModules);
 			logger.info("Migration Scripts succesful for: " + tenantEntity.getName());
+			/*
+			 *  Auto Update
+			 */
+			CreateDbUpdateScripts.createMigrationScripts(databaseConfig, TargetType.DATABASE, tenantEntity.getSchema());
+			
 		}
 
 		EntityManagerProducer emp = null;
@@ -189,7 +195,9 @@ public class DbMigrate {
 						throw new DcemException(DcemErrorCodes.CANNOT_MIGRATE_MODULE, "for Module " + moduleMigration.getId());
 					}
 					if (url == null) {
-						throw new DcemException(DcemErrorCodes.CANNOT_MIGRATE_MODULE, "for Module " + moduleMigration.getId() + " Invalid File: " + fileName);
+						logger.info("No Migration Script found for " + fileName);
+						continue;
+				//		throw new DcemException(DcemErrorCodes.CANNOT_MIGRATE_MODULE, "for Module " + moduleMigration.getId() + " Invalid File: " + fileName);
 					}
 					logger.info("Executing SQL Script : " + url);
 					StringReader stringReader;

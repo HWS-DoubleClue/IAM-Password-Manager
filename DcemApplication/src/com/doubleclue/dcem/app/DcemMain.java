@@ -31,6 +31,7 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -88,6 +89,7 @@ public class DcemMain {
 
 	public static void main(String[] args) {
 		javaVersion = System.getProperty("java.version");
+		
 
 		System.out.println("Java Version: " + javaVersion);
 		System.out.println("Java Installation: " + System.getProperty("java.home"));
@@ -104,10 +106,9 @@ public class DcemMain {
 			System.err.println("ERROR: Couldn't set the Application Home Directory, Please set 'DCEM_HOME' in enviorment or as System-Parameter");
 			System.exit(-1);
 		}
-		if (System.getProperty("os.name").startsWith("Windows")) {
+		if (SystemUtils.IS_OS_WINDOWS) {
 			System.setProperty("javax.net.ssl.trustStoreType", "Windows-ROOT");
 		}
-
 		Locale.setDefault(Locale.ENGLISH);
 		Locale.setDefault(Locale.Category.DISPLAY, Locale.ENGLISH);
 
@@ -136,8 +137,8 @@ public class DcemMain {
 			System.exit(-1);
 		}
 
-		if (javaVersion.startsWith("9")) {
-			fatalExit(null, "!!!  Sorry JAVA Version 9 is not supported yet. !!! Please use version 1.8.xx", null);
+		if (javaVersion.startsWith("1.8") == false) {
+			fatalExit(null, "!!!  Sorry INVALID JAVA Version. !!! Please use version 1.8.xx", null);
 		}
 		// logger.info("Java User Home directory: " +
 		// System.getProperty("user.home"));
@@ -493,7 +494,7 @@ public class DcemMain {
 						addServlet(context, DcemConstants.TEST_SP_SERVLET_NAME, DcemConstants.TEST_SP_SERVLET_CLASS, DcemConstants.TEST_SP_SERVLET_PATH);
 						addServlet(context, DcemConstants.LICENCE_SERVLET_NAME, DcemConstants.LICENCE_SERVLET_CLASS, DcemConstants.LICENCE_SERVLET_PATH);
 						break;
-					
+
 					default:
 						break;
 					}

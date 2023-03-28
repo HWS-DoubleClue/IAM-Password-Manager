@@ -656,7 +656,7 @@ public class AsModule extends DcemModule {
 		}
 
 		try {
-			domainLogic.reload();
+			domainLogic.reload(null);
 		} catch (Exception e) {
 			logger.warn("Could initialize LDAP", e);
 		}
@@ -707,6 +707,11 @@ public class AsModule extends DcemModule {
 	public void setModuleAction(DcemAction moduleAction) {
 		// TODO Auto-generated method stub
 		super.setModuleAction(moduleAction);
+	}
+
+	@Override
+	public boolean isPluginModule() {
+		return false;
 	}
 
 }

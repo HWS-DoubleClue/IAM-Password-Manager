@@ -3,6 +3,8 @@ package com.doubleclue.dcem.core.gui;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,6 +47,7 @@ import com.doubleclue.dcem.core.config.ConnectionService;
 import com.doubleclue.dcem.core.config.ConnectionServicesType;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemNode;
+import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -54,6 +57,7 @@ import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.ActionLogic;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
+import com.doubleclue.dcem.core.logic.DcFreeMarkerStringLoader;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.TenantLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
@@ -67,6 +71,11 @@ import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ProductVersion;
 import com.doubleclue.utils.SecureUtils;
 
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateNotFoundException;
 import jersey.repackaged.com.google.common.collect.Lists;
 import jersey.repackaged.com.google.common.net.InetAddresses;
 
@@ -136,6 +145,8 @@ public class DcemApplicationBean implements Serializable {
 	private HashMap<String, String> fileIconsMap = new HashMap<String, String>();
 
 	private boolean captchaOn;
+	
+	Configuration freeMarkerConfiguration;
 
 	@Inject
 	@Any
@@ -399,6 +410,7 @@ public class DcemApplicationBean implements Serializable {
 
 	public List<DcemModule> getSortedEnabledModules() {
 		String[] disabledModules = adminModule.getAdminTenantData().getDisabledModules();
+		String[] pluginModules = adminModule.getAdminTenantData().getEnabledPluginModules();
 		if (disabledModules == null || disabledModules.length == 0) {
 			return sortedModules;
 		}
@@ -407,13 +419,26 @@ public class DcemApplicationBean implements Serializable {
 		for (DcemModule dcemModule : sortedModules) {
 			disabled = false;
 			for (String id : disabledModules) {
-				if (dcemModule.getId().equals(id)) {
+				if (dcemModule.getId().compareToIgnoreCase(id) == 0) {
 					disabled = true;
 					break;
 				}
 			}
 			if (disabled == false) {
-				list.add(dcemModule);
+				if (dcemModule.isPluginModule() == true) {
+					if (pluginModules.length > 0 && pluginModules[0].compareToIgnoreCase("all") == 0) {
+						list.add(dcemModule);
+					} else {
+						for (String id : pluginModules) {
+							if (dcemModule.getId().compareToIgnoreCase(id) == 0) {
+								list.add(dcemModule);
+								break;
+							}
+						}
+					}
+				} else {
+					list.add(dcemModule);
+				}
 			}
 		}
 		return list;
@@ -486,7 +511,6 @@ public class DcemApplicationBean implements Serializable {
 				tenantMap.remove(tenantEntity.getName().toUpperCase());
 			}
 		}
-
 
 		for (TenantEntity tenantEntity : dbTenants) {
 			if (tenantMap.get(tenantEntity.getName().toUpperCase()) == null) {
@@ -745,9 +769,66 @@ public class DcemApplicationBean implements Serializable {
 		Collections.sort(selectItems, new SelectItemComparator());
 		return selectItems;
 	}
+	
+	public Configuration getFreeMarkerConfiguration() {
+		if (freeMarkerConfiguration == null) {
+			freeMarkerConfiguration = new Configuration(Configuration.VERSION_2_3_29);
+			freeMarkerConfiguration.setDefaultEncoding("UTF-8");
+			freeMarkerConfiguration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+			freeMarkerConfiguration.setLogTemplateExceptions(false);
+			freeMarkerConfiguration.setWrapUncheckedExceptions(true);
+			freeMarkerConfiguration.setFallbackOnNullLoopVariable(false);
+			DcFreeMarkerStringLoader templateLoader = new DcFreeMarkerStringLoader();
+			freeMarkerConfiguration.setTemplateLoader(templateLoader);
+		}
+		return freeMarkerConfiguration;
+	}
+	
+	public Template getTemplateFromConfig(DcemTemplate dcemTemplate) throws Exception {
+		getFreeMarkerConfiguration();
+		Template template = null;
+		try {
+			String name = dcemTemplate.getFullName() + "-" + TenantIdResolver.getCurrentTenantName();
+			template = freeMarkerConfiguration.getTemplate(name);
+		} catch (TemplateNotFoundException e) {
+			StringTemplateLoader stringLoader = (StringTemplateLoader) freeMarkerConfiguration.getTemplateLoader();
+			stringLoader.putTemplate(dcemTemplate.getName(), dcemTemplate.getContent());
+			// Wait until the template is loaded in the configuration
+			for (int sleepCounter = 0; sleepCounter < 20; sleepCounter++) {
+				try {
+					template = freeMarkerConfiguration.getTemplate(dcemTemplate.getName());
+					break;
+				} catch (TemplateNotFoundException exp) {
+					Thread.sleep(500);
+				}
+			}
+			if (template == null) {
+				throw new TemplateNotFoundException(dcemTemplate.getName(), null, "The template could not be loaded after 10 seconds");
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+		return template;
+	}
+
+	
+	public void removeFreeMarkerTemplate(String templateFullName) {
+		if (freeMarkerConfiguration != null) {
+			((DcFreeMarkerStringLoader)freeMarkerConfiguration.getTemplateLoader()).removeTemplate(templateFullName  + "-" + TenantIdResolver.getCurrentTenantName());
+		}
+	}
+	
+	public void updateFreeMarkerCache() {
+		LocalDateTime localDateTime = LocalDateTime.now();
+		localDateTime.minusDays(5);
+		if (freeMarkerConfiguration != null) {
+			long epoch = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+			((DcFreeMarkerStringLoader)freeMarkerConfiguration.getTemplateLoader()).updataTemplateCache(epoch);
+		}
+	}
 
 }
-
+/////////////////////////////////////////////////////////////////////////////////////////////
 class ViewComparator implements Comparator<SubjectAbs> {
 
 	@Override

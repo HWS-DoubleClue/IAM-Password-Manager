@@ -16,6 +16,13 @@
 	background-color: #ffffff;
 }
 
+.ui-messages-warn {
+	background: #e0800e !important;
+	color: white !important;
+	font-weight: normal !important;
+	border-radius: 5px !important;
+}
+
 .ui-dialog-titlebar {
 	background-color: #ffffff !important;
 	margin: 15px 0px 0px 10px !important;
@@ -1256,7 +1263,7 @@ body .ui-toggleswitch.ui-toggleswitch-focus .ui-toggleswitch-slider {
 }
 
 body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
-	background: #005078; 
+	background: #005078;
 }
 
 body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
@@ -1508,4 +1515,144 @@ body .ui-password-panel {
 .ui-password.ui-password-masked .ui-password-icon, .ui-password.ui-password-unmasked .ui-password-icon:before
 	{
 	margin-left: 0.2em;
+}
+
+.ui-texteditor .ui-editor-toolbar {
+	background: #f4f4f4;
+	border-top-right-radius: 3px;
+	border-top-left-radius: 3px
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow {
+	border: 1px solid #c8c8c8
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-stroke {
+	stroke: #848484
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-fill {
+	fill: #848484
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker .ql-picker-label {
+	border: 0 none;
+	color: #848484
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker .ql-picker-label:hover
+	{
+	color: #333
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker .ql-picker-label:hover .ql-stroke
+	{
+	stroke: #333
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker .ql-picker-label:hover .ql-fill
+	{
+	fill: #333
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label
+	{
+	color: #333
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-stroke
+	{
+	stroke: #333
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label .ql-fill
+	{
+	fill: #333
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options
+	{
+	background: #fff;
+	border: 1px solid #c8c8c8;
+	box-shadow: 0 3px 6px 0 rgba(0, 0, 0, .16);
+	border-radius: 3px;
+	padding: 0
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options .ql-picker-item
+	{
+	color: #333
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options .ql-picker-item:hover
+	{
+	color: #333;
+	background: #eaeaea
+}
+
+.ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker.ql-expanded:not(.ql-icon-picker) .ql-picker-item
+	{
+	padding: .429rem .857rem
+}
+
+.ui-texteditor .ql-container {
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px
+}
+
+.ui-texteditor .ql-container.ql-snow {
+	border: 1px solid #c8c8c8
+}
+
+.ui-texteditor .ql-container .ql-editor {
+	background: #fff;
+	color: #333;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px
+}
+
+.ui-texteditor .ql-snow.ql-toolbar button:hover, .ui-texteditor .ql-snow.ql-toolbar button:focus
+	{
+	color: #333
+}
+
+.ui-texteditor .ql-snow.ql-toolbar button:hover .ql-stroke,
+	.ui-texteditor .ql-snow.ql-toolbar button:focus .ql-stroke {
+	stroke: #333
+}
+
+.ui-texteditor .ql-snow.ql-toolbar button:hover .ql-fill, .ui-texteditor .ql-snow.ql-toolbar button:focus .ql-fill
+	{
+	fill: #333
+}
+
+.ui-texteditor .ql-snow.ql-toolbar button.ql-active, .ui-texteditor .ql-snow.ql-toolbar .ql-picker-label.ql-active,
+	.ui-texteditor .ql-snow.ql-toolbar .ql-picker-item.ql-selected {
+	color: #007ad9
+}
+
+.ui-texteditor .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+	.ui-texteditor .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-stroke,
+	.ui-texteditor .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-stroke
+	{
+	stroke: #007ad9
+}
+
+.ui-texteditor .ql-snow.ql-toolbar button.ql-active .ql-fill,
+	.ui-texteditor .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-fill,
+	.ui-texteditor .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-fill
+	{
+	fill: #007ad9
+}
+
+.ui-texteditor .ql-snow.ql-toolbar button.ql-active .ql-picker-label,
+	.ui-texteditor .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-picker-label,
+	.ui-texteditor .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-picker-label
+	{
+	color: #007ad9
+}
+
+.ui-texteditor.ui-state-error .ui-editor-toolbar.ql-snow, .ui-texteditor.ui-state-error .ql-container.ql-snow
+	{
+	border-color: #a80000
 }

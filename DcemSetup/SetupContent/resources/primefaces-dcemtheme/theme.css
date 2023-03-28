@@ -10,6 +10,13 @@
 	border: 0;
 }
 
+.ui-messages-warn {
+	background: #e0800e !important;
+	color: white !important;
+	font-weight: normal !important;
+	border-radius: 5px !important;
+}
+
 .ui-dialog-titlebar {
 	background-color: #ffffff !important;
 	margin: 15px 0px 0px 10px !important;

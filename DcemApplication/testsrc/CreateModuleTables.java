@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.AnnotationException;
@@ -32,6 +33,7 @@ import com.doubleclue.dcem.app.DcemMain;
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
 import com.doubleclue.dcem.core.logging.DcemLogLevel;
 import com.doubleclue.dcem.core.logging.LogUtils;
+import com.doubleclue.dcem.core.utils.ConvertSqlFiles;
 
 public class CreateModuleTables {
 
@@ -72,6 +74,15 @@ public class CreateModuleTables {
 		
         String outputResources = "resources";
 		String outputDir = modulePath + File.separator + "target" + File.separator + "tables";
+		File outputDirFile = new File(outputDir);
+		try {
+			FileUtils.deleteDirectory(new File(outputDir));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		outputDirFile.delete();
+		
 		System.out.println("Output Directory = " + outputDir);
 		String persistencePath = modulePath + File.separator + "src" + File.separator + "META-INF" + File.separator + "persistence.xml";
 		File persistenceFile = new File(persistencePath);
@@ -90,6 +101,7 @@ public class CreateModuleTables {
 			}
 		}
 		System.out.println("CreateTables.main() Path=" + persistencePath);
+		String moduleName = null;
 		for (DatabaseTypes databaseType : DatabaseTypes.values()) {
 			System.out.println("CreateTables.main() Database Type: " + databaseType);
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -120,8 +132,9 @@ public class CreateModuleTables {
 			NodeList result = null;
 			NodeList module = null;
 			try {
-				result = (NodeList) xPath.evaluate("/persistence/persistence-unit/class/text()", persistenceDocument, XPathConstants.NODESET);
 				module = (NodeList) xPath.evaluate("/persistence/persistence-unit/@name", persistenceDocument, XPathConstants.NODESET);
+				result = (NodeList) xPath.evaluate("/persistence/persistence-unit/class/text()", persistenceDocument, XPathConstants.NODESET);
+				
 			} catch (XPathExpressionException e) {
 				System.err.println("ERROR: Parsing 'persistence.xml' " + persistencePath);
 				System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
@@ -137,8 +150,8 @@ public class CreateModuleTables {
 				System.out.println("ERROR:  No Module Defined in " + persistencePath);
 				continue;
 			}
-			String moduleName = module.item(0).getNodeValue();
-
+			moduleName = module.item(0).getNodeValue();
+			System.out.println("Module Name " + moduleName);
 			for (int i = 0; i < result.getLength(); i++) {
 				String className = result.item(i).getNodeValue();
 				classesMap.add(className);
@@ -149,6 +162,7 @@ public class CreateModuleTables {
 				String className = iterator.next();
 				try {
 					metadata.addAnnotatedClass(Class.forName(className));
+			//		System.out.println("className " + className);
 				} catch (ClassNotFoundException e) {
 					System.out.println();
 					System.err.println("FATAL ERROR: Class not found: " + className);
@@ -157,8 +171,9 @@ public class CreateModuleTables {
 					System.exit(1);
 				}
 			}
-			SchemaExport export = new SchemaExport();
-			export.setDelimiter(";");
+			
+			SchemaExport schemaExport = new SchemaExport();
+			schemaExport.setDelimiter(";");
 			File file = new File(outputDir + File.separatorChar + databaseType);
 			if (file.exists() == false) {
 				file.mkdirs();
@@ -169,11 +184,12 @@ public class CreateModuleTables {
 				if (outfile.exists()) {
 					outfile.delete();
 				}
-				export.setOutputFile(outputFile);
-				export.setFormat(true);
-				export.setHaltOnError(true);
+				schemaExport.setOutputFile(outputFile);
+				schemaExport.setFormat(true);
+				schemaExport.setHaltOnError(true);
+				schemaExport.setManageNamespaces(true);
 				EnumSet<TargetType> targetTypes = EnumSet.of(TargetType.SCRIPT);
-				export.execute(targetTypes, SchemaExport.Action.CREATE, metadata.buildMetadata());
+				schemaExport.execute(targetTypes, SchemaExport.Action.CREATE, metadata.buildMetadata());
 				System.out.println("CreateTables.main() exported");
 			} catch (AnnotationException e) {
 				System.out.println();
@@ -185,17 +201,24 @@ public class CreateModuleTables {
 				System.out.println();
 				System.err.println("FATAL ERROR: UNKNOWN EXCEPTION: " + e.toString());
 				e.printStackTrace();
-				System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
+				System.err.println("\n!!!!!!!!!!!!    CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
 				System.exit(1);
 			}
 		}
 		System.out.println("Tables created, now improving the sql scripts");
 		File inputDirectory = new File(outputDir);
-		File outputDirectory = new File(modulePath + File.separator + outputResources + File.separator + "DB-Tables");
+		File outputDirectory = new File(modulePath + File.separator + outputResources + File.separator + "com/doubleclue/dcem/db");
+		if (outputDirectory.exists() == false) {
+			outputDirectory.mkdirs();
+		}
 		try {
 			System.out.println("						Input directory:		" + inputDirectory.getPath());
 			System.out.println("						Output directory:		" + outputDirectory.getPath());
-			ConvertSqlFiles.convertSqlDirectories(inputDirectory, outputDirectory);
+			int ind2 = moduleName.indexOf('.');
+			if (ind2 != -1) {
+				moduleName = moduleName.substring(ind2+1);
+			}
+			ConvertSqlFiles.convertSqlDirectories(inputDirectory, outputDirectory, moduleName);
 		} catch (Exception e) {
 			System.out.println("Couldn't convert tables");
 			e.printStackTrace();

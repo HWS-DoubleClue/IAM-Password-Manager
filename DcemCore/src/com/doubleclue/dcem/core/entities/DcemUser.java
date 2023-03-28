@@ -197,6 +197,10 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	@DcemGui (name= "Country", subClass = "country", dbMetaAttributeName = "dcemUserExt")
 	@Transient
 	private DcemUserExtension dcemUserExtCountry;
+	
+	@DcemGui (name= "Department", subClass = "department", dbMetaAttributeName = "dcemUserExt")
+	@Transient
+	private DcemUserExtension dcemUserExtDepartment;
 
 	@Version
 	private int jpaVersion;
@@ -364,7 +368,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 		return true;
 	}
 
-	public void sync(DcemLdapAttributes dcemLdapAttributes) {
+	public void updateDomainAttributes (DcemLdapAttributes dcemLdapAttributes) {
 		email = dcemLdapAttributes.getEmail();
 		displayName = dcemLdapAttributes.getDisplayName();
 		userDn = dcemLdapAttributes.getDn();
@@ -762,6 +766,14 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 
 	public void setDcemUserExtCountry(DcemUserExtension dcemUserExtCountry) {
 		this.dcemUserExt = dcemUserExtCountry;
+	}
+
+	public DcemUserExtension getDcemUserExtDepartment() {
+		return dcemUserExtDepartment;
+	}
+
+	public void setDcemUserExtDepartment(DcemUserExtension dcemUserExtDepartment) {
+		this.dcemUserExtDepartment = dcemUserExtDepartment;
 	}
 
 }

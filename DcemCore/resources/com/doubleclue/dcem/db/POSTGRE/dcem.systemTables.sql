@@ -1,3 +1,4 @@
+
 create table core_action (
 dc_id int4 not null,
 action varchar(128) not null,
@@ -21,6 +22,17 @@ dc_key varchar(128) not null,
 moduleId varchar(64),
 nodeId varchar(64),
 dc_value bytea not null,
+primary key (dc_id)
+);
+
+create table core_department (
+dc_id  bigserial not null,
+abbriviation varchar(255),
+dc_desc varchar(255),
+dc_name varchar(255) not null,
+deputy_dc_id int4,
+headOf_dc_id int4 not null,
+dc_parent_id int8,
 primary key (dc_id)
 );
 
@@ -68,11 +80,11 @@ dc_id int8 not null,
 action int4,
 errorCode varchar(255),
 info varchar(255),
+dc_time timestamp not null,
 dc_loc varchar(255),
 severity int4 not null,
 show_on_dashboard boolean not null,
 dc_source varchar(255),
-dc_time timestamp not null,
 user_dc_id int4,
 primary key (dc_id)
 );
@@ -223,6 +235,7 @@ dc_userext_id int4 not null,
 dc_country varchar(255),
 photo bytea,
 dc_timezone varchar(255),
+departmentid int8,
 primary key (dc_userext_id)
 );
 
@@ -265,122 +278,146 @@ dc_schema varchar(32),
 primary key (dc_id)
 );
 
-alter table if exists core_action
+alter table core_action
 add constraint UK_SEM_ACTION unique (moduleId, subject, action);
 
-alter table if exists core_config
+alter table core_config
 add constraint UK_CONFIG_NAME unique (moduleId, dc_key);
 
-alter table if exists core_group
+alter table core_department
+add constraint UK_DEPARTMENT_NAME unique (dc_name);
+
+alter table core_group
 add constraint UK_APP_GROUP unique (dc_name);
 
-alter table if exists core_ldap
+alter table core_ldap
 add constraint UK_LDAP_NAME unique (name);
 
-alter table if exists core_role
+alter table core_role
 add constraint UK_ROLE_NAME unique (dc_name);
 
-alter table if exists core_rolerestriction
+alter table core_rolerestriction
 add constraint UK_ROLE_RESTRICTION unique (dc_role, moduleId, viewName, variableName);
+
 create index statisticTimestamp on core_statistic (dc_timestamp);
 
-alter table if exists core_template
+alter table core_template
 add constraint UK_APP_TEMPLATE unique (dc_name, language, dc_version);
 
-alter table if exists core_textMessage
+alter table core_textMessage
 add constraint UK_RESOURCE_MESSAGE_KEY unique (dc_key, textResourceBundle);
 
-alter table if exists core_textResourceBundle
+alter table core_textResourceBundle
 add constraint UK_RESOURCE_LOCALE_BASENAME unique (locale, basename);
 
-alter table if exists core_user
+alter table core_user
 add constraint UK_APP_USER unique (loginId);
 
-alter table if exists sys_node
+alter table sys_node
 add constraint UK_NODE_NAME unique (dc_name);
 
-alter table if exists sys_tenant
+alter table sys_tenant
 add constraint UK_TENANT_NAME unique (dc_name);
 
-alter table if exists sys_tenant
+alter table sys_tenant
 add constraint UK_TENANT_SCHEMA unique (dc_schema);
 
-alter table if exists core_auditing
+alter table core_auditing
 add constraint FK_AUDITING_ACTION
 foreign key (actionId)
 references core_action;
 
-alter table if exists core_auditing
+alter table core_auditing
 add constraint FK_AUDITING_USER
 foreign key (audituserId)
 references core_user;
 
-alter table if exists core_group
+alter table core_department
+add constraint FK_APP_DEPARTMENT_USER_DEPUTY
+foreign key (deputy_dc_id)
+references core_user;
+
+alter table core_department
+add constraint FK_APP_DEPARTMENT_USER
+foreign key (headOf_dc_id)
+references core_user;
+
+alter table core_department
+add constraint FK_DEPARTMENT_PARENT_ID
+foreign key (dc_parent_id)
+references core_department;
+
+alter table core_group
 add constraint FK_GROUP_ROLE
 foreign key (dc_role)
 references core_role;
 
-alter table if exists core_group
+alter table core_group
 add constraint FK_GROUP_LDAP
 foreign key (dc_ldap)
 references core_ldap;
 
-alter table if exists core_ref_user_group
+alter table core_ref_user_group
 add constraint FK_GROUP_USER
 foreign key (user_id)
 references core_user;
 
-alter table if exists core_ref_user_group
+alter table core_ref_user_group
 add constraint FK_USER_GROUP
 foreign key (group_id)
 references core_group;
 
-alter table if exists core_reporting
+alter table core_reporting
 add constraint FK_APP_REPORT_USER
 foreign key (user_dc_id)
 references core_user;
 
-alter table if exists core_role_core_action
+alter table core_role_core_action
 add constraint FK_ROLE_ACTION
 foreign key (actions_dc_id)
 references core_action;
 
-alter table if exists core_role_core_action
+alter table core_role_core_action
 add constraint FKm8fcladhxpesfv9gs7r0leqqg
 foreign key (core_role_dc_id)
 references core_role;
 
-alter table if exists core_rolerestriction
+alter table core_rolerestriction
 add constraint FK_RESTRICTION_ROLE
 foreign key (dc_role)
 references core_role;
 
-alter table if exists core_statistic
+alter table core_statistic
 add constraint FK_APP_STATISTIC_NODE
 foreign key (nodeId)
 references sys_node;
 
-alter table if exists core_textMessage
+alter table core_textMessage
 add constraint FK_RESOURCE_MESSAGE_BUNDLE
 foreign key (textResourceBundle)
 references core_textResourceBundle;
 
-alter table if exists core_user
+alter table core_user
 add constraint FK_USER_ROLE
 foreign key (dc_role)
 references core_role;
 
-alter table if exists core_user
+alter table core_user
 add constraint FK_USER_EXTENSION
 foreign key (userext)
 references core_userext;
 
-alter table if exists core_user
+alter table core_user
 add constraint FK_USER_LDAP
 foreign key (dc_ldap)
 references core_ldap;
 
-alter table if exists sys_keystore
+alter table core_userext
+add constraint FK_DEPARTMENT_USEREXT_ID
+foreign key (departmentid)
+references core_department;
+
+alter table sys_keystore
 add constraint FK_KEYSTORE_NODE
 foreign key (dc_node)
 references sys_node;

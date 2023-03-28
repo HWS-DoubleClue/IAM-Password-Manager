@@ -449,7 +449,7 @@ public class PolicyLogic implements ReloadClassInterface {
 			}
 			if (appEntity == null) {
 				try {
-					reload();
+					reload(null);
 					// search again
 					policyAppEntities = tenantData.getPolicyAppEntities();
 					for (PolicyAppEntity entity : policyAppEntities) {
@@ -595,7 +595,7 @@ public class PolicyLogic implements ReloadClassInterface {
 
 	@Override
 	@DcemTransactional
-	public void reload() throws DcemException {
+	public void reload(String info) throws DcemException {
 		try {
 			syncPolicyAppEntity();
 		} catch (Exception e) {

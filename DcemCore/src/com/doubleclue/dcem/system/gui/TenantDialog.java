@@ -137,7 +137,7 @@ public class TenantDialog extends DcemDialog {
 			if (this.getAutoViewAction().getDcemAction().getAction().equals(DcemConstants.ACTION_ADD)) {
 				asModuleApi.onCreateTenant(tenantEntity);
 			}
-			Exception exception = DcemUtils.reloadTaskNodes(TenantLogic.class);
+			Exception exception = DcemUtils.reloadTaskNodes(TenantLogic.class, null);
 			if (exception != null) {
 				logger.warn("Couldn't reloadRaskNodes", exception);
 				JsfUtils.addErrorMessage(exception.toString());

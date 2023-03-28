@@ -240,11 +240,6 @@ public class CreateTenant {
 	 */
 	public void createTables(DatabaseTypes dbType, String schemaName, String createTablesAdmin, String createTablesPassword, boolean masterTenant)
 			throws Exception {
-		// UrlDriverName urlDriverName =
-		// DatabaseUtils.getUrlAndDriverName(LocalConfigProvider.getLocalConfig().getDatabase());
-
-		// Connection conn = DriverManager.getConnection(urlDriverName.url, createTablesAdmin, createTablesPassword);
-
 		Connection conn = JdbcUtils.getJdbcConnection(LocalConfigProvider.getLocalConfig().getDatabase(), createTablesAdmin, createTablesPassword);
 
 		Statement stmt = null;

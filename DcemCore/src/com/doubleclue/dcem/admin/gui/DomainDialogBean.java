@@ -112,7 +112,7 @@ public class DomainDialogBean extends DcemDialog {
 			domainEntity.setBaseDN("");
 		}
 		domainLogic.addOrUpdateDcemLdap(domainEntity, this.getAutoViewAction().getDcemAction());
-		Exception exception = DcemUtils.reloadTaskNodes(DomainLogic.class);
+		Exception exception = DcemUtils.reloadTaskNodes(DomainLogic.class, null);
 		if (exception != null) {
 			throw exception;
 		}

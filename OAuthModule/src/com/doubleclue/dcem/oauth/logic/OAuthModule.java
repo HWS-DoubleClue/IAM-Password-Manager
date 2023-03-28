@@ -63,6 +63,11 @@ public class OAuthModule extends DcemModule {
 	public void init() throws DcemException {
 		setDbVersion(1); // DCEM 2.3.1
 	}
+	
+	@Override
+	public boolean isPluginModule() {
+		return false;
+	}
 
 	@Override
 	public String getResourceName() {

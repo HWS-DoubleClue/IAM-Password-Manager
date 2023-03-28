@@ -35,6 +35,11 @@ public class OtpModule extends DcemModule {
 	public String getResourceName() {
 		return RESOURCE_NAME;
 	}
+	
+	@Override
+	public boolean isPluginModule() {
+		return false;
+	}
 
 	public String getName() {
 		return "OTP Tokens";

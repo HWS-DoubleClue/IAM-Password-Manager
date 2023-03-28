@@ -2,7 +2,6 @@ package com.doubleclue.dcem.core.logic;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
@@ -10,17 +9,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.ResourceBundle.Control;
 
 import javax.faces.context.FacesContext;
-
-import org.glassfish.hk2.api.Self;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.tasks.ReloadClassInterface;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.utils.ResourceBundleUtf8Control;
-import com.messagebird.objects.Language;
 
 public class DbResourceBundle extends ResourceBundle implements ReloadClassInterface {
 
@@ -46,14 +41,14 @@ public class DbResourceBundle extends ResourceBundle implements ReloadClassInter
 		} else {
 			locale = new Locale("en");
 		}
-		reload();
+		reload(null);
 		AdminModule adminModule = CdiUtils.getReference(AdminModule.class);
 		adminModule.getAdminTenantData().getBundleCache().put(locale.getDisplayLanguage(), this);
 	}
 
 	public DbResourceBundle(Locale locale) {
 		this.locale = locale;
-		reload();
+		reload(null);
 		AdminModule adminModule = CdiUtils.getReference(AdminModule.class);
 		adminModule.getAdminTenantData().getBundleCache().put(locale.getDisplayLanguage(), this);
 	}
@@ -71,7 +66,7 @@ public class DbResourceBundle extends ResourceBundle implements ReloadClassInter
 	
 
 	@Override
-	public void reload() {
+	public void reload(String info) {
 		TextResourceLogic textResourceLogic = CdiUtils.getReference(TextResourceLogic.class);
 		properties = textResourceLogic.loadResourceFromDB(locale);
 	}
@@ -103,7 +98,7 @@ public class DbResourceBundle extends ResourceBundle implements ReloadClassInter
 		AdminModule adminModule = CdiUtils.getReference(AdminModule.class);
 		Map<String, DbResourceBundle> bundleCache = adminModule.getAdminTenantData().getBundleCache();
 		for (DbResourceBundle bundle : bundleCache.values()) {
-			bundle.reload();
+			bundle.reload(null);
 		}
 	}
 

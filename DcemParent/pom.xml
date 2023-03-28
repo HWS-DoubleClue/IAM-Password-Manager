@@ -4,8 +4,6 @@
 	<artifactId>DcemParent</artifactId>
 	<version>2.9.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
-
 	<repositories>
 		<repository>
 			<id>snapshots</id>
@@ -18,7 +16,6 @@
 			<url>http://hws001S0201.dom1.ad.tld:8081/repository/maven-releases</url>
 		</repository>
 	</repositories>
-
 	<distributionManagement>
 		<snapshotRepository>
 			<id>snapshots</id>
@@ -31,13 +28,10 @@
 			<url>http://hws001S0201.dom1.ad.tld:8081/repository/maven-releases</url>
 		</repository>
 	</distributionManagement>
-
-
 	<ciManagement>
 		<system>jenkins</system>
 		<url>http://hws001s0210</url>
 	</ciManagement>
-
 	<scm>
 		<url>https://gitlab.hws-gruppe.de/DoubleClue/dcem</url>
 		<connection>scm:git:git://gitlab.hws-gruppe.de/DoubleClue/dcem.git</connection>
@@ -62,22 +56,18 @@
 		<jaxwstools.version>2.2.6</jaxwstools.version>
 		<jspapi.version>2.2.1-b03</jspapi.version>
 		<mssql-driver.version>4.0</mssql-driver.version>
-
 		<thrift.version>0.13.0</thrift.version>
 		<jersey.version>2.25</jersey.version>
 		<tomcat.version>9.0.44</tomcat.version>
 		<jackson.version>2.14.0-rc1</jackson.version>
 		<swagger-core-version>1.5.18</swagger-core-version>
-
 	</properties>
-
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>testsrc</testSourceDirectory>
 		<outputDirectory>bin</outputDirectory>
 		<testOutputDirectory>testbin</testOutputDirectory>
 		<defaultGoal>deploy</defaultGoal>
-
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
@@ -108,13 +98,11 @@
 		</testResources>
 		<plugins>
 			<!-- PLUGIN for this pom -->
-
 			<!-- <plugin> <groupId>org.sonatype.plugins</groupId> <artifactId>nexus-staging-maven-plugin</artifactId> 
 				<version>1.5.1</version> <executions> <execution> <id>default-deploy</id> 
 				<phase>deploy</phase> <goals> <goal>deploy</goal> </goals> </execution> </executions> 
 				<configuration> <serverId>nexus</serverId> <nexusUrl>http://172.16.200.201:8081/nexus/</nexusUrl> 
 				<skipStaging>true</skipStaging> </configuration> </plugin> -->
-
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<inherited>false</inherited>
@@ -155,7 +143,6 @@
 					</includes>
 				</configuration>
 			</plugin>
-
 			<!-- SUREFIRE: UNIT TESTS -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -193,7 +180,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<!-- COBERTURA -->
 			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>cobertura-maven-plugin</artifactId> 
 				<version>2.6</version> <configuration> <formats> <format>xml</format> <format>html</format> 
@@ -258,7 +244,6 @@
 						<artifactId>maven-scm-api</artifactId>
 						<version>1.11.2</version>
 					</dependency>
-
 				</dependencies>
 			</plugin>
 			<!-- Buildnumber -->
@@ -309,7 +294,6 @@
 					</execution>
 				</executions>
 				<configuration>
-
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
 						<manifest>
@@ -346,8 +330,6 @@
 				</configuration>
 			</plugin>
 			<!-- build source release -->
-
-
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -438,8 +420,8 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-    									<execute />
-  									</action>
+										<execute />
+									</action>
 								</pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
@@ -451,10 +433,9 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-    									<execute />
-  									</action>
+										<execute />
+									</action>
 								</pluginExecution>
-								
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -475,7 +456,6 @@
 			</extension>
 		</extensions>
 	</build>
-
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
 		<dependency>
@@ -510,15 +490,11 @@
 		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-simple</artifactId> 
 			<version>1.7.10</version> </dependency> <dependency> <groupId>org.slf4j</groupId> 
 			<artifactId>slf4j-log4j12</artifactId> <version>1.7.10</version> </dependency> -->
-
 		<!-- <dependency> <groupId>org.apache.pdfbox</groupId> <artifactId>pdfbox</artifactId> 
 			<version>2.0.0</version> </dependency> -->
-
 		<!-- <dependency> <groupId>com.messagebird</groupId> <artifactId>messagebird-api</artifactId> 
 			<version>1.3.0</version> </dependency> -->
-
 	</dependencies>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -533,7 +509,6 @@
 				<artifactId>tomcat-embed-jasper</artifactId>
 				<version>${tomcat.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-jasper-el</artifactId>
@@ -564,11 +539,15 @@
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi-ooxml</artifactId>
-				<version>5.0.0</version>
+				<version>5.2.3</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.fasterxml.woodstox</groupId>
 						<artifactId>woodstox-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.logging.log4j</groupId>
+						<artifactId>log4j-core</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -595,26 +574,21 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
 			<dependency>
 				<groupId>com.microsoft.azure</groupId>
 				<artifactId>msal4j</artifactId>
 				<version>1.13.0</version>
 			</dependency>
-
-
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>PetshopModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>PerformanceDeckModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>DcemCore</artifactId>
@@ -627,19 +601,26 @@
 				<artifactId>AppSecureModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>RadiusModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>com.doubleclue.dcem.module</groupId>
+				<artifactId>SkillsModule</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.doubleclue.dcem.module</groupId>
+				<artifactId>VacancyModule</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<artifactId>UserPortalModule</artifactId>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.apache.derby</groupId>
 				<artifactId>derby</artifactId>
@@ -660,47 +641,38 @@
 				<artifactId>OtpModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<artifactId>ShiftsModule</artifactId>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>OAuthModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>LicenseModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>DispatcherModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>RedHatSatelliteModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
-
 			<!-- <dependency> <groupId>com.doubleclue.dcem.module</groupId> <artifactId>CrmModule</artifactId> 
 				<version>${project.version}</version> </dependency> -->
-
 			<dependency>
 				<groupId>com.doubleclue.lib</groupId>
 				<artifactId>LibKaraUtils</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.lib</groupId>
 				<artifactId>DcemCore</artifactId>
@@ -716,13 +688,11 @@
 				<artifactId>LibRestDcClient</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.lib</groupId>
 				<artifactId>LibWebSocketOkHttp</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.doubleclue.userportal</groupId>
 				<artifactId>LibUserPortal</artifactId>
@@ -745,11 +715,10 @@
 				<artifactId>LibOAuth</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
-				<version>2.17.2</version>
+				<version>2.20.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -765,8 +734,6 @@
 				<artifactId>javax.faces</artifactId>
 				<version>2.3.9</version>
 			</dependency>
-
-
 			<!-- <dependency> <groupId>org.richfaces</groupId> <artifactId>richfaces</artifactId> 
 				<version>4.5.14.Final</version> </dependency> -->
 			<dependency>
@@ -793,19 +760,16 @@
 				<artifactId>el-impl</artifactId>
 				<version>2.2</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.mariadb.jdbc</groupId>
 				<artifactId>mariadb-java-client</artifactId>
 				<version>2.6.0</version>
 			</dependency>
-
 			<dependency>
 				<groupId>javax.servlet.jsp</groupId>
 				<artifactId>jsp-api</artifactId>
 				<version>${jspapi.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>javax.servlet.jsp.jstl</groupId>
 				<artifactId>jstl-api</artifactId>
@@ -855,14 +819,12 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
 			<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager -->
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-entitymanager</artifactId>
 				<version>5.6.9.Final</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-c3p0</artifactId>
@@ -880,7 +842,6 @@
 			</dependency>
 			<!-- <dependency> <groupId>commons-io</groupId> <artifactId>commons-io</artifactId> 
 				<version>${commons-io.version}</version> </dependency> -->
-
 			<dependency>
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-rt</artifactId>
@@ -896,8 +857,6 @@
 				<artifactId>jandex</artifactId>
 				<version>2.0.3.Final</version>
 			</dependency>
-
-
 			<dependency>
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
@@ -910,11 +869,15 @@
 			</dependency>
 			<!-- <dependency> <groupId>com.oracle</groupId> <artifactId>ojdbc6</artifactId> 
 				<version>11.2.0.4.0</version> </dependency> -->
-
 			<dependency>
 				<groupId>com.microsoft.sqlserver</groupId>
 				<artifactId>mssql-jdbc</artifactId>
-				<version>7.2.0.jre8</version>
+				<version>12.2.0.jre8</version>
+			</dependency>
+			<dependency>
+				<groupId>com.microsoft.sqlserver</groupId>
+				<artifactId>mssql-jdbc_auth</artifactId>
+				<version>12.2.0.x64</version>
 			</dependency>
 			<dependency>
 				<groupId>com.madgag.spongycastle</groupId>
@@ -926,7 +889,6 @@
 				<artifactId>pkix</artifactId>
 				<version>1.54.0.0</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.jboss.shrinkwrap.resolver</groupId>
 				<artifactId>shrinkwrap-resolver-bom</artifactId>
@@ -975,13 +937,11 @@
 				<artifactId>jersey-media-multipart</artifactId>
 				<version>${jersey.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
@@ -997,12 +957,9 @@
 				<artifactId>jackson-datatype-jsr310</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-
-
 			<!-- <dependency> <groupId>com.fasterxml.jackson.jaxrs</groupId> <artifactId>jackson-jaxrs-json-provider</artifactId> 
 				<version>2.8.8</version> </dependency> <dependency> <groupId>com.fasterxml.jackson.core</groupId> 
 				<artifactId>jackson-databind</artifactId> <version>2.8.8</version> </dependency> -->
-
 			<dependency>
 				<groupId>io.swagger</groupId>
 				<artifactId>swagger-jersey2-jaxrs</artifactId>
@@ -1015,7 +972,6 @@
 				<scope>compile</scope>
 				<version>${swagger-core-version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.primefaces</groupId>
 				<artifactId>primefaces</artifactId>
@@ -1038,7 +994,6 @@
 				<artifactId>hazelcast</artifactId>
 				<version>3.12.1</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
@@ -1054,13 +1009,11 @@
 				<artifactId>javase</artifactId>
 				<version>2.2</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.microsoft.graph</groupId>
 				<artifactId>microsoft-graph</artifactId>
 				<version>5.34.0</version>
 			</dependency>
-
 			<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 			<dependency>
 				<groupId>com.google.guava</groupId>
@@ -1092,7 +1045,18 @@
 				<artifactId>imageio-bmp</artifactId>
 				<version>3.6.4</version>
 			</dependency>
-
+			<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>2.3.32</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-pdfbox -->
+			<dependency>
+				<groupId>com.openhtmltopdf</groupId>
+				<artifactId>openhtmltopdf-pdfbox</artifactId>
+				<version>1.0.10</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<modules>
@@ -1110,11 +1074,9 @@
 		<module>../DcemSetup</module>
 		<module>../DcemDistribution</module>
 	</modules>
-
 	<!-- plugins -->
 	<reporting>
 		<!-- <plugins> <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>cobertura-maven-plugin</artifactId> 
 			<version>2.5</version> </plugin> </plugins> -->
 	</reporting>
-
 </project>

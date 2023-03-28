@@ -3,6 +3,7 @@ package com.doubleclue.dcem.core.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,11 +12,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.logic.module.UserPortalModuleApi;
 
 // WebServlet("/DcemExceptionHandler")
 @SuppressWarnings("serial")
 public class DcemExceptionHandler extends HttpServlet {
+
+	@Inject
+	UserPortalModuleApi userPortalModuleApi;
+
+	@Inject
+	AdminModule module;
 
 	private final static Logger logger = LogManager.getLogger(DcemExceptionHandler.class);
 
@@ -47,7 +57,7 @@ public class DcemExceptionHandler extends HttpServlet {
 		if (requestUri == null) {
 			requestUri = "Unknown";
 		}
-		logger.warn("DcemExceptionHandler: Status=" + statusCode + " URI: " + uri + ", Servlet=" + servletName + ", Msg=" + msg , throwable);
+		logger.warn("DcemExceptionHandler: Status=" + statusCode + " URI: " + uri + ", Servlet=" + servletName + ", Msg=" + msg, throwable);
 		String error = "Unexpected ERROR";
 		switch (statusCode) {
 		case 500:
@@ -56,16 +66,28 @@ public class DcemExceptionHandler extends HttpServlet {
 			break;
 		case 404:
 			if (uri.startsWith(DcemConstants.DEFAULT_WEB_NAME)) {
-				response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + DcemConstants.USER_PORTAL_WELCOME);
+				try {
+					userPortalModuleApi.getUserPortalConfig();
+				} catch (DcemException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (module.isUserPortalDisabled()) {
+					response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + DcemConstants.DEFAULT_WEB_NAME
+							+ DcemConstants.WEB_MGT_CONTEXT);
+					return;
+				}
+				response.sendRedirect(
+						request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + DcemConstants.USER_PORTAL_WELCOME);
 				return;
 			}
 			error = "Page Not Found";
 			break;
 		case 401:
-//			request.getSession().invalidate();
+			// request.getSession().invalidate();
 			error = "Unauthorized";
 			return;
-		//	break;
+		// break;
 		case HttpServletResponse.SC_SERVICE_UNAVAILABLE:
 			request.getSession().invalidate();
 			error = "Service is unavailable";
@@ -82,9 +104,9 @@ public class DcemExceptionHandler extends HttpServlet {
 		out.write("<p /><br /><h2>DoubleClue Enterprise Management - Error Page</h2><p></p>");
 
 		out.write("<p /><br /><h3>Oops.. Something went wrong. Please contact your administrator</h3><p></p>");
-		
-		out.write ("<p />Request: " + uri +  "<p />") ;
-		out.write (error);
+
+		out.write("<p />Request: " + uri + "<p />");
+		out.write(error);
 
 		// out.write("<ul><li>Servlet Name: " + servletName + "</li>");
 		// out.write("<li>Status Code: " + statusCode + "</li>");

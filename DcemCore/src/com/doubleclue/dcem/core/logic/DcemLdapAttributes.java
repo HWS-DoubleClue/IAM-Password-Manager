@@ -1,5 +1,7 @@
 package com.doubleclue.dcem.core.logic;
 
+import com.doubleclue.dcem.core.entities.DcemUser;
+
 public class DcemLdapAttributes {
 
 	String firstName;
@@ -11,6 +13,10 @@ public class DcemLdapAttributes {
 	String displayName;
 	String userPrincipalName;
 	String preferredLanguage;
+	String country;
+	String department;
+	String jobTitle;
+	DcemUser manager;
 	byte [] objectGuid;
 	byte [] photo;
 	
@@ -18,22 +24,6 @@ public class DcemLdapAttributes {
 	public DcemLdapAttributes() {
 
 	}
-
-//	public DcemLdapAttributes(String firstName, String lastGivenName, String dn, String email, String telephone, String mobile,
-//			String displayName, String userPrincipalName, byte [] objectGuid, String preferredAttributes) {
-//		super();
-//		this.firstName = firstName;
-//		this.lastGivenName = lastGivenName;
-//		this.email = email;
-//		this.dn = dn;
-//		this.telephone = telephone;
-//		this.mobile = mobile;
-//		this.displayName = displayName;
-//		this.userPrincipalName = userPrincipalName;
-//		this.objectGuid = objectGuid;
-//		this.preferredLangauge = preferredAttributes;
-//		this.photo = photo;
-//	}
 
 	public String getDisplayName() {
 		if (displayName == null) {
@@ -137,4 +127,45 @@ public class DcemLdapAttributes {
 	public void setPreferredLanguage(String preferredLanguage) {
 		this.preferredLanguage = preferredLanguage;
 	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	@Override
+	public String toString() {
+		return "DcemLdapAttributes [firstName=" + firstName + ", dn=" + dn + ", lastGivenName=" + lastGivenName + ", email=" + email + ", telephone="
+				+ telephone + ", mobile=" + mobile + ", displayName=" + displayName + ", userPrincipalName=" + userPrincipalName + ", preferredLanguage="
+				+ preferredLanguage + ", country=" + country + ", department=" + department + "]";
+	}
+
+	public DcemUser getManager() {
+		return manager;
+	}
+
+	public void setManager(DcemUser manager) {
+		this.manager = manager;
+	}
+
+	public String getJobTitle() {
+		return jobTitle;
+	}
+
+	public void setJobTitle(String jobTitle) {
+		this.jobTitle = jobTitle;
+	}
+
+	
 }

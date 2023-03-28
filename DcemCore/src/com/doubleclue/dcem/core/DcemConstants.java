@@ -37,6 +37,8 @@ public final class DcemConstants {
 	public static final String DOMAIN_DIALOG_PATH = "/modules/admin/domainDialog.xhtml";
 	public static final String SHOW_MEMBEROF_DIALOG = "/modules/admin/userMemberOfDialog.xhtml";
 	public static final String GROUP_MEMBERS_DIALOG_PATH = "/modules/admin/groupMembersDialog.xhtml";
+	public static final String DEPARTMENT_ORGAMIGRAM_DIALOG = "/modules/admin/departmentOrganigramDialog.xhtml";
+	public static final String DEPARTMENT_DIALOG = "/modules/admin/departmentDialog.xhtml";;
 
 	// public static final String SHOW_INITIAL_PASSWORD_DIALOG = "/modules/admin/showInitialPassword.xhtml";
 
@@ -489,6 +491,11 @@ public final class DcemConstants {
 	public static final String COUNTRY_CODE_GERMAN = "DE";
 	public static final String COUNTRY_CODE_MALTA = "MT";
 	public static final String COUNTRY_CODE_INDIA = "IN";
+
+	public static final String ACTION_ORGANIGRAM = "organigram";
+
+
+
 
 
 	

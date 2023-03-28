@@ -229,7 +229,9 @@ public class DcemTemplate extends EntityInterface {
 		this.lastModified = lastModified;
 	}
 	
-	
+	public String getFullName() {
+		return name + '_' + language.name();
+	}
 		
 	
 }

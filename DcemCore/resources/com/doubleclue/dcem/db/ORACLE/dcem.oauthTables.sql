@@ -1,3 +1,4 @@
+
 create table oauth_client (
 dc_id number(10,0) not null,
 client_id varchar2(255 char) not null,

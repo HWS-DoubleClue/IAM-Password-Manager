@@ -91,6 +91,11 @@ public class UserPortalModule extends DcemModule {
 	public int getDbVersion() {
 		return 0;
 	}
+	
+	@Override
+	public boolean isPluginModule() {
+		return false;
+	}
 
 	public int getRank() {
 		return 80;
@@ -148,10 +153,6 @@ public class UserPortalModule extends DcemModule {
 
 	public boolean isEnableCaptcha() {
 		return dcemApplicationBean.isCaptchaOn() && getModulePreferences().isEnableCaptcha();
-	}
-
-	public boolean isEnableSwitchToUserportal() {
-		return getModulePreferences().isEnableSwitchToUserportal();
 	}
 
 	public SupportedLanguage[] getSupportedLanguages() {

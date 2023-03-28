@@ -1,3 +1,4 @@
+
 create table saml_sp_metadata (
 dc_id integer not null,
 acs_location varchar(255) not null,
@@ -13,5 +14,7 @@ name_id_format integer not null,
 requests_signed boolean not null,
 primary key (dc_id)
 );
+
 create unique index UK_SP_METADATA_ENTITYID on saml_sp_metadata (entityId);
+
 create unique index UK_SP_METADATA_DISPLAY_NAME on saml_sp_metadata (display_name);

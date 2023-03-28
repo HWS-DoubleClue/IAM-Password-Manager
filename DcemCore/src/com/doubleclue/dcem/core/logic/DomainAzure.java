@@ -80,10 +80,12 @@ public class DomainAzure implements DomainApi {
 	private static final String AZURE_STATE = "state";
 	// private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails,
 	// onPremisesImmutableId";
-	private static final String SELECT_USER_ATTRIBUTES_EXT = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId, profilePhoto";
+	private static final String SELECT_USER_ATTRIBUTES_EXT = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId, profilePhoto, department, country, jobTitle";
 	private static final String SCOPE = "https://graph.microsoft.com/.default";
 	private final DomainEntity domainEntity;
 	private final static Set<String> SCOPE_USER_PASSWORD = Collections.singleton("");
+
+	private static final int AZURE_PAGE_SIZE_999 = 999; // AZURE have a mximum of 999
 
 	private GraphServiceClient<Request> graphServiceClient = null;
 	private ConfidentialClientApplication confidentialClientApplication;
@@ -162,9 +164,9 @@ public class DomainAzure implements DomainApi {
 
 	@Override
 	public List<String> getUserNames(String userFilter) throws DcemException {
-		List<DcemUser> users = getUsers(null, null, userFilter, 20);
-		List<String> names = new ArrayList<>(users.size());
-		for (DcemUser dcemUser : users) {
+		DomainUsers users = getUsers(null, null, userFilter, 20);
+		List<String> names = new ArrayList<>(users.getUsers().size());
+		for (DcemUser dcemUser : users.getUsers()) {
 			names.add(dcemUser.getShortLoginId());
 		}
 		return names;
@@ -206,6 +208,7 @@ public class DomainAzure implements DomainApi {
 
 	@Override
 	public List<DcemGroup> getUserGroups(DcemUser dcemUser, int pagesize) throws DcemException {
+		pagesize = AZURE_PAGE_SIZE_999;
 		DirectoryObjectCollectionWithReferencesPage collection = null;
 		List<DcemGroup> groupList = new LinkedList<>();
 		String userId = dcemUser.getUserDn();
@@ -264,14 +267,14 @@ public class DomainAzure implements DomainApi {
 	}
 
 	@Override
-	public List<DcemUser> getGroupMembers(DcemGroup dcemGroup, String filter) throws DcemException {
+	public DomainUsers getGroupMembers(DcemGroup dcemGroup, String filter) throws DcemException {
 		UserCollectionPage userCollectionPage;
 		try {
-			userCollectionPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).membersAsUser().buildRequest().get();
+			userCollectionPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).membersAsUser().buildRequest().top(AZURE_PAGE_SIZE_999).get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
 				graphServiceClient = null;
-				userCollectionPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).membersAsUser().buildRequest().get();
+				userCollectionPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).membersAsUser().buildRequest().top(AZURE_PAGE_SIZE_999).get();
 			} else {
 				throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString(), e);
 			}
@@ -293,7 +296,7 @@ public class DomainAzure implements DomainApi {
 			}
 			userList.add(createDcemUser(user));
 		}
-		return userList;
+		return new DomainUsers(AZURE_PAGE_SIZE_999, userCollectionPage.getNextPage() == null ? false : true, userList);
 	}
 
 	@Override
@@ -315,7 +318,10 @@ public class DomainAzure implements DomainApi {
 	}
 
 	@Override
-	public List<DcemUser> getUsers(String tree, DcemGroup dcemGroup, String userName, int pageSize) throws DcemException {
+	public DomainUsers getUsers(String tree, DcemGroup dcemGroup, String userName, int pageSize) throws DcemException {
+		if (pageSize > AZURE_PAGE_SIZE_999) {
+			pageSize = AZURE_PAGE_SIZE_999;
+		}
 		if (dcemGroup != null) {
 			return getGroupMembers(dcemGroup, userName);
 		}
@@ -331,28 +337,29 @@ public class DomainAzure implements DomainApi {
 		// }
 		UserCollectionPage userCollectionPage = null;
 		try {
-			userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).select(SELECT_USER_ATTRIBUTES_EXT).get();
+			userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).expand("manager").select(SELECT_USER_ATTRIBUTES_EXT).get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
 				graphServiceClient = null;
-				userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).select(SELECT_USER_ATTRIBUTES_EXT).get();
+				userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).expand("manager").select(SELECT_USER_ATTRIBUTES_EXT).get();
 			} else {
 				throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString());
 			}
 		}
+	//	System.out.println("DomainAzure.getUsers() NextPage: " + userCollectionPage.getNextPage());
+	//	System.out.println("DomainAzure.getUsers() " + userCollectionPage.additionalDataManager());
 		Iterator<User> iterator = userCollectionPage.getCurrentPage().iterator();
 		List<DcemUser> userList = new LinkedList<>();
 
 		while (iterator.hasNext()) {
 			User user = iterator.next();
-
 			// AuthenticationMethodCollectionPage authenticationMethodCollectionPage =
 			// getSearchGraphClient().users(user.id).authentication().methods().buildRequest().get();
-
 			DcemUser dcemUser = createDcemUser(user);
 			userList.add(dcemUser);
 		}
-		return userList;
+		
+		return new DomainUsers(AZURE_PAGE_SIZE_999, userCollectionPage.getNextPage() == null ? false : true, userList);
 	}
 
 	@Override
@@ -391,7 +398,7 @@ public class DomainAzure implements DomainApi {
 	// return dcemUser;
 	// }
 
-	private DcemUser createDcemUser(User user) {
+	private DcemUser createDcemUser(User user) throws DcemException {
 		DcemUser dcemUser = new DcemUser(domainEntity, user.id, user.userPrincipalName);
 		DcemLdapAttributes dcemLdapAttributes = new DcemLdapAttributes();
 		dcemUser.setUserPrincipalName(user.userPrincipalName);
@@ -417,6 +424,16 @@ public class DomainAzure implements DomainApi {
 			Locale locale = Locale.forLanguageTag(user.preferredLanguage);
 			dcemUser.setLanguage(SupportedLanguage.fromLocale(locale));
 		}
+		String countryCode = DcemUtils.getCountryCode(user.country);
+		dcemLdapAttributes.setCountry(countryCode);
+		dcemLdapAttributes.setJobTitle(user.jobTitle);
+		dcemLdapAttributes.setDepartment(user.department);
+		DirectoryObject manager = user.manager;
+		if (manager != null) {
+			DcemUser dcemManager = getUser(manager.id);
+			dcemLdapAttributes.setManager(dcemManager);
+		}
+//		System.out.println("DomainAzure.createDcemUser() " + dcemLdapAttributes.toString() + " Manager " + manager);
 		dcemUser.setDcemLdapAttributes(dcemLdapAttributes);
 		return dcemUser;
 	}
@@ -444,8 +461,8 @@ public class DomainAzure implements DomainApi {
 
 		String userAccessToken = null;
 		try {
-			UserNamePasswordParameters userNamePasswordParameters = UserNamePasswordParameters.builder(SCOPE_USER_PASSWORD, dcemUser.getAccountName(), password.toCharArray())
-					.build();
+			UserNamePasswordParameters userNamePasswordParameters = UserNamePasswordParameters
+					.builder(SCOPE_USER_PASSWORD, dcemUser.getAccountName(), password.toCharArray()).build();
 			CompletableFuture<IAuthenticationResult> acquireToken = publicClientApplication.acquireToken(userNamePasswordParameters);
 			IAuthenticationResult authenticationResult = acquireToken.join();
 			userAccessToken = authenticationResult.accessToken();
@@ -531,7 +548,6 @@ public class DomainAzure implements DomainApi {
 		IAuthenticationResult authenticationResult = future.get();
 		return authenticationResult;
 	}
-
 
 	public void sendAuthRedirect(ConnectionServicesType connectionServicesType) throws Exception {
 		// state parameter to validate response from Authorization server and nonce parameter to validate idToken

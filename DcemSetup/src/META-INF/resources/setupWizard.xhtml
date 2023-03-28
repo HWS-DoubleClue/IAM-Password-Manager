@@ -11,7 +11,7 @@
 	</f:facet>
 	<h:outputStylesheet library="webjars" name="font-awesome/6.2.0/css/all-jsf.css" />
 	<title>DCEM-Setup</title>
-	
+
 </h:head>
 
 <h:body>
@@ -40,7 +40,7 @@
 
 						<p:outputLabel for="url" value="JDBC-URL " />
 						<h:panelGroup>
-							<p:inputText id="url" value="#{dbView.dbConfig.jdbcUrl}" size="70" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
+							<p:inputText id="url" value="#{dbView.dbConfig.jdbcUrl}" size="100" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
 							<p:commandButton id="urlBtn" value="Configure URL" style="width: 10em; color: white;" icon="fa fa-cog" immediate="true" onclick="PF('urlConfig').show();"
 								disabled="#{dbView.embedded}" />
 						</h:panelGroup>
@@ -61,8 +61,9 @@
 						</h:panelGroup>
 						<p:outputLabel for="password" value="Administrator Password " />
 						<p:password id="password" title="Password will be encrypted and saved in configuration.xml file." disabled="#{dbView.embedded}"
-								value="#{dbView.dbConfig.adminPassword}" redisplay="true" toggleMask="true" autocomplete="false" validatorMessage="Please enter a strong password with at least 4 digits.">
-								<f:validateLength minimum="4"></f:validateLength>
+							value="#{dbView.dbConfig.adminPassword}" redisplay="true" toggleMask="true" autocomplete="false"
+							validatorMessage="Please enter a strong password with at least 4 digits.">
+							<f:validateLength minimum="4"></f:validateLength>
 						</p:password>
 
 						<p:outputLabel for="nodeName" value="DoubleClue Node-Name " />
@@ -78,14 +79,13 @@
 					<p />
 					<p:commandButton id="closeApp1" value="Close DoubleClue Setup" action="#{createTablesView.closeApplication}" ajax="false" update="@form"
 						style="width: 16em;" rendered="#{dbView.closeApplication}" icon="fa fa-sign-out" />
-					<p:spacer width="20" />
-					<p:commandButton style="width: 16em; color: white;" icon="fa fa-rotate-left" value="Recover SuperAdmin Access" immediate="true"
+					<p:commandButton style="width: 16em; color: white; margin-left: 20px" icon="fa fa-rotate-left" value="Recover SuperAdmin Access" immediate="true"
 						onclick="PF('resetPassword').show();" rendered="#{dbView.stateOk}" />
-					<p:spacer width="20" />
-					<p:commandButton style="width: 16em;" styleClass="cloudSafe-icon" value="Change CloudSafe Storage" immediate="true"
+					<p:commandButton style="width: 16em; margin-left: 20px" styleClass="cloudSafe-icon; " value="Change CloudSafe Storage" immediate="true"
 						onclick="PF('cloudSafeStorageDialog').show();" rendered="#{dbView.stateOk}" />
-					<p />
-
+					<p></p>
+					<br />
+					
 					<p:outputLabel style="font-size: small" value="Local configuration file stored at: #{dbView.localConfigurationFile}" />
 				</p:tab>
 				<p:tab id="createSchema" title="Create Database">
@@ -104,8 +104,8 @@
 
 						<p:outputLabel for="schemaPassword" value="Database-Administrator Password: " />
 						<p:password id="schemaPassword" value="#{createSchemaView.adminPassword}" redisplay="true" toggleMask="true"
-								validatorMessage="Please enter a strong password with at least 4 digits.">
-								<f:validateLength minimum="4"></f:validateLength>
+							validatorMessage="Please enter a strong password with at least 4 digits.">
+							<f:validateLength minimum="4"></f:validateLength>
 						</p:password>
 
 					</h:panelGrid>
@@ -128,15 +128,15 @@
 						</h:panelGroup>
 						<p:outputLabel for="tablePassword" value="Create-Tables Administrator Password: " />
 						<p:password id="tablePassword" value="#{createTablesView.adminPassword}" required="false" redisplay="true" disabled="#{dbView.embedded}"
-								validatorMessage="Please enter a strong password with at least 4 digits." toggleMask="true">
-								<f:validateLength minimum="4"></f:validateLength>
+							validatorMessage="Please enter a strong password with at least 4 digits." toggleMask="true">
+							<f:validateLength minimum="4"></f:validateLength>
 						</p:password>
 
 						<p:outputLabel for="superPassword" value="SuperAdmin Password: " />
-							<p:password id="superPassword" title="Password to log into DCEM as SuperAdmin" value="#{createTablesView.superAdminPassword}" match="confirmPassword"
-								required="true" validatorMessage="Please enter a strong password with at least 4 digits. Please ensure the passwords match." toggleMask="true">
-								<f:validateLength minimum="4"></f:validateLength>
-							</p:password>
+						<p:password id="superPassword" title="Password to log into DCEM as SuperAdmin" value="#{createTablesView.superAdminPassword}" match="confirmPassword"
+							required="true" validatorMessage="Please enter a strong password with at least 4 digits. Please ensure the passwords match." toggleMask="true">
+							<f:validateLength minimum="4"></f:validateLength>
+						</p:password>
 
 						<p:outputLabel for="confirmPassword" value="Confirm SuperAdmin Password: " />
 						<p:password id="confirmPassword" value="#{createTablesView.superAdminPassword}" required="true" toggleMask="true" />
@@ -218,13 +218,13 @@
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 					<p:outputLabel for="superPassword2" value="New Password: " />
 					<p:password id="superPassword2" title="Password to log into DCEM as SuperAdmin" value="#{createTablesView.resetSuperAdminPassword}"
-							match="confirmPassword2" required="false" validatorMessage="Please enter a strong password with at least 4 digits."  toggleMask="true">
-							<f:validateLength minimum="4"></f:validateLength>
+						match="confirmPassword2" required="false" validatorMessage="Please enter a strong password with at least 4 digits." toggleMask="true">
+						<f:validateLength minimum="4"></f:validateLength>
 					</p:password>
-						
+
 					<p:outputLabel for="confirmPassword2" value="Confirm Password: " />
 					<p:password id="confirmPassword2" value="#{createTablesView.resetSuperAdminPassword}" required="false" toggleMask="true" />
-						
+
 				</h:panelGrid>
 				<p:commandButton id="resetAdminPass" value="OK" style="width: 8em; color: white;" icon="fa fa-check" action="#{createTablesView.actionResetAdminPassword()}"
 					oncomplete="PF('resetPassword').hide();" />
@@ -232,9 +232,6 @@
 				<p:commandButton id="cancel2" value="Cancel" style="width: 8em; color: white;" icon="fa fa-close" onclick="PF('resetPassword').hide();" />
 				<p />
 			</p:dialog>
-
-
-
 
 			<p:dialog id="urlConfig" header="Database URL Configuration" widgetVar="urlConfig" modal="true" width="50%">
 				<p />
