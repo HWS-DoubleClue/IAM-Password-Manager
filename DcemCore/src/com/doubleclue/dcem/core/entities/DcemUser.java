@@ -212,6 +212,10 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	@Column(length = 128, nullable = true)
 	@Convert(converter = DbEncryptConverterBinary.class)
 	private byte[] hashPassword;
+	
+	@Column(name = "bcrypt_hash", length = 128, nullable = true)
+	@Convert(converter = DbEncryptConverter.class)
+	private String bcryptHash;
 
 	@Column(length = 128, nullable = true)
 	@Convert(converter = DbEncryptConverter.class)
@@ -478,6 +482,14 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 
 	public void setHashPassword(byte[] hashPassword) {
 		this.hashPassword = hashPassword;
+	}
+
+	public String getBcryptHash() {
+		return bcryptHash;
+	}
+
+	public void setBcryptHash(String bcryptHash) {
+		this.bcryptHash = bcryptHash;
 	}
 
 	public String getMobileNumber() {
