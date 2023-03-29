@@ -113,7 +113,7 @@ public class ScriptRunner {
 			checkForMissingLineTerminator(command);
 		} catch (Exception e) {
 			String message = "Error executing: " + command + ".  Cause: " + e;
-			logger.error(message);
+			logger.error(message, e);
 			throw new RuntimeSqlException(message, e);
 		}
 	}
@@ -149,6 +149,9 @@ public class ScriptRunner {
 		} else if (commandReadyToExecute(trimmedLine)) {
 			command.append(line.substring(0, line.lastIndexOf(delimiter)));
 			command.append(LINE_SEPARATOR);
+			if (command.toString().contains("Upstrea")) {
+				logger.error("ERROR");
+			}
 			logger.info(command);
 			executeStatement(command.toString());
 			command.setLength(0);
