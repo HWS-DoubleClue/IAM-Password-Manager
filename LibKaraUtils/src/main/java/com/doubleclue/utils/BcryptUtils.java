@@ -7,8 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public final class BcryptUtils {
 	
-	private static final int DEFAULT_STRENGTH = 8;
-	public static final int OPTIMAL_STRENGTH = calculateOptimalStrength();
+	public static final int OPTIMAL_STRENGTH = calculateOptimalStrength(8);
 	
 	private BcryptUtils() {
 	}
@@ -28,16 +27,25 @@ public final class BcryptUtils {
 		return new BCryptPasswordEncoder(OPTIMAL_STRENGTH).upgradeEncoding(oldHash);
 	}
 	
-	private static int calculateOptimalStrength() {
-		int strength = DEFAULT_STRENGTH;
+	private static long measureHashingDuration(int strength) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(strength);
 		Instant start = Instant.now();
 		encoder.encode("durance-check");
 		Instant finish = Instant.now();
-		long durance = Duration.between(start, finish).toMillis();
-		while (durance < 500) {
-			strength++;
-			durance *= 2;
+		return Duration.between(start, finish).toMillis();
+	}
+	
+	private static int calculateOptimalStrength(int strength) {
+		// target duration is between 512 and 1024 milliseconds
+		// increasing strength by one doubles the duration
+		int[] threasholds = {8, 16, 32, 64, 128, 256, 512};
+		long durance = measureHashingDuration(strength);
+		int increment = 7;
+		for (int threashold : threasholds) {
+			if (durance < threashold) {
+				return calculateOptimalStrength(strength + increment);
+			}
+			increment--;
 		}
 		return strength;
 	}
