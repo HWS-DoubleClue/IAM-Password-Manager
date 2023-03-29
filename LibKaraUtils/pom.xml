@@ -18,17 +18,17 @@
             <artifactId>LibDcThrift</artifactId>
         </dependency>
         
-        <!-- for bcrypt hashes -->
-        <dependency>
-	        <groupId>commons-logging</groupId>
-	        <artifactId>commons-logging</artifactId>
-	        <version>1.1.1</version>
+		<!-- for bcrypt hashes -->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
 		</dependency>
-        <dependency>
-		    <groupId>org.springframework.security</groupId>
-		    <artifactId>spring-security-crypto</artifactId>
-		    <!-- newest possible version due to java 8 compatibility -->
-		    <version>5.8.2</version>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<!-- newest possible version due to java 8 compatibility -->
+			<version>5.8.2</version>
 		</dependency>
 
         <dependency>

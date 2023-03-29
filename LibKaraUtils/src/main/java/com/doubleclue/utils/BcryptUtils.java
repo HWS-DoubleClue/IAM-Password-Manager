@@ -36,7 +36,6 @@ public final class BcryptUtils {
 		Instant finish = Instant.now();
 		long durance = Duration.between(start, finish).toMillis();
 		while (durance < 500) {
-			System.out.println("running...");
 			strength++;
 			durance *= 2;
 		}
