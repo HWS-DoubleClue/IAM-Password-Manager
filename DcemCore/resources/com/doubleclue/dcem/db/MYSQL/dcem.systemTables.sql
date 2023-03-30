@@ -31,7 +31,7 @@ abbriviation varchar(255),
 dc_desc varchar(255),
 dc_name varchar(255) not null,
 deputy_dc_id integer,
-headOf_dc_id integer not null,
+headOf_dc_id integer,
 dc_parent_id bigint,
 primary key (dc_id)
 ) engine=InnoDB;
@@ -233,6 +233,7 @@ primary key (dc_id)
 create table core_userext (
 dc_userext_id integer not null,
 dc_country varchar(255),
+jobTitle varchar(128),
 photo blob,
 dc_timezone varchar(255),
 departmentid bigint,

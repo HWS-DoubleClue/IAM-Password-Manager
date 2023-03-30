@@ -30,7 +30,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/VacanciesModule"/>
 	<classpathentry kind="src" path="target/generated-sources/annotations">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -42,6 +41,7 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/RecruitingModule"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SkillsModule"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

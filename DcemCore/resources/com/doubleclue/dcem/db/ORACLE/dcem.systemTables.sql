@@ -31,7 +31,7 @@ abbriviation varchar2(255 char),
 dc_desc varchar2(255 char),
 dc_name varchar2(255 char) not null,
 deputy_dc_id number(10,0),
-headOf_dc_id number(10,0) not null,
+headOf_dc_id number(10,0),
 dc_parent_id number(19,0),
 primary key (dc_id)
 );
@@ -233,6 +233,7 @@ primary key (dc_id)
 create table core_userext (
 dc_userext_id number(10,0) not null,
 dc_country varchar2(255 char),
+jobTitle varchar2(128 char),
 photo blob,
 dc_timezone varchar2(255 char),
 departmentid number(19,0),
