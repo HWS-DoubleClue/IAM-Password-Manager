@@ -791,7 +791,7 @@ public class DcemApplicationBean implements Serializable {
 			String name = dcemTemplate.getFullName() + "-" + TenantIdResolver.getCurrentTenantName();
 			template = freeMarkerConfiguration.getTemplate(name);
 		} catch (TemplateNotFoundException e) {
-			StringTemplateLoader stringLoader = (StringTemplateLoader) freeMarkerConfiguration.getTemplateLoader();
+			DcFreeMarkerStringLoader stringLoader = (DcFreeMarkerStringLoader) freeMarkerConfiguration.getTemplateLoader();
 			stringLoader.putTemplate(dcemTemplate.getName(), dcemTemplate.getContent());
 			// Wait until the template is loaded in the configuration
 			for (int sleepCounter = 0; sleepCounter < 20; sleepCounter++) {
