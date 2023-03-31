@@ -119,6 +119,7 @@ import com.doubleclue.dcem.core.logic.module.OtpModuleApi;
 import com.doubleclue.dcem.core.tasks.TaskExecutor;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
+import com.doubleclue.utils.BcryptUtils;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ProductVersion;
 import com.doubleclue.utils.RandomUtils;
@@ -888,13 +889,14 @@ public class AppServices {
 	 * @throws ExceptionReportingflogin
 	 * 
 	 */
-	public SdkCloudSafe getCloudSafe(SdkCloudSafeKey uniqueKey, DeviceEntity detachedDevice, int userId, int libVersion) throws DcemException, ExceptionReporting {
+	public SdkCloudSafe getCloudSafe(SdkCloudSafeKey uniqueKey, DeviceEntity detachedDevice, int userId, int libVersion)
+			throws DcemException, ExceptionReporting {
 		CloudSafeEntity cloudSafeEntity = getCloudSafeEntityFromKey(uniqueKey, userId);
 		uniqueKey.setName(cloudSafeEntity.getName());
 		uniqueKey.setDbId(cloudSafeEntity.getId());
-		if (libVersion < AsConstants.LIB_VERION_2) {     // For backward compatible with old appVersion 2.5
-			uniqueKey.setOwner(CloudSafeOwner.USER);  // For backward compatible with old appVersion 2.5
-		} 
+		if (libVersion < AsConstants.LIB_VERION_2) { // For backward compatible with old appVersion 2.5
+			uniqueKey.setOwner(CloudSafeOwner.USER); // For backward compatible with old appVersion 2.5
+		}
 		if (cloudSafeEntity.getOwner() == CloudSafeOwner.GROUP) {
 			uniqueKey.setGroupName(cloudSafeEntity.getGroup().getName());
 		}
@@ -984,7 +986,8 @@ public class AppServices {
 		cloudSafeEntity.setLastModified(lastModified);
 		try {
 			// String x = new String(sdkCloudSafe.getContent(), StandardCharsets.UTF_8);
-			CloudSafeEntity newEntity = cloudSafeLogic.setCloudSafeByteArray(cloudSafeEntity, null, sdkCloudSafe.getContent(), userLogic.getUser(userId), cloudSafeFromDb);
+			CloudSafeEntity newEntity = cloudSafeLogic.setCloudSafeByteArray(cloudSafeEntity, null, sdkCloudSafe.getContent(), userLogic.getUser(userId),
+					cloudSafeFromDb);
 			return newEntity.getLastModified();
 		} catch (DcemException exp) {
 			AppErrorCodes appErrorCode = null;
@@ -1291,6 +1294,27 @@ public class AppServices {
 
 		} else {
 			byte[] passwordHash;
+			String bcryptHash = dcemUser.getBcryptHash();
+
+			if (bcryptHash != null && !bcryptHash.isEmpty()) {
+				if (!BcryptUtils.isValid(new String(password), bcryptHash)) {
+					if (appSession.device != null) {
+						deviceLogic.updateDeviceRc(appSession.device, null);
+						throw new ExceptionReporting(
+								new DcemReporting(reportAction, appSession.device.getUser(), AppErrorCodes.INVALID_PASSWORD, location,
+										"device: " + appSession.device.getName() + ", RetryCount=" + Integer.toString(appSession.device.getRetryCounter())),
+								null);
+					} else {
+						throw new ExceptionReporting(new DcemReporting(reportAction, dcemUser, AppErrorCodes.INVALID_PASSWORD, location, null), null, null);
+					}
+				}
+				if (BcryptUtils.needsNewHash(bcryptHash)) {
+					dcemUser.setBcryptHash(BcryptUtils.hash(new String(password)));
+					em.merge(dcemUser);
+				}
+				return;
+			}
+
 			try {
 				passwordHash = KaraUtils.getSha1WithSalt(dcemUser.getSalt(), password);
 			} catch (Exception e) {
@@ -1310,12 +1334,18 @@ public class AppServices {
 					throw new ExceptionReporting(new DcemReporting(reportAction, dcemUser, AppErrorCodes.INVALID_PASSWORD, location, null), null, null);
 				}
 			}
+			
+			dcemUser.setBcryptHash(BcryptUtils.hash(new String(password)));
+			dcemUser.setHashPassword(null);
+			dcemUser.setSalt(null);
+			em.merge(dcemUser);
 		}
 		// if no exception was fired, the password has been validated
 	}
 
-	public List<SdkCloudSafe> getCloudSafeList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, int libVersion) throws DcemException {
-		return cloudSafeLogic.getCloudSafeFileList(userId, nameFilter, modifiedFromEpoch, owner, true, libVersion );
+	public List<SdkCloudSafe> getCloudSafeList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, int libVersion)
+			throws DcemException {
+		return cloudSafeLogic.getCloudSafeFileList(userId, nameFilter, modifiedFromEpoch, owner, true, libVersion);
 	}
 
 	public void renameCloudSafe(SdkCloudSafeKey uniqueKey, String newName, int userId) throws DcemException {
@@ -1351,26 +1381,26 @@ public class AppServices {
 		if (cloudSafeEntity == null) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, uniqueKey.getName());
 		}
-//		switch (cloudSafeEntity.getOwner()) {
-//		case GROUP:
-//			HashSet<String> groupSet = userLogic.getUserGroupNames(dcemUser, null);
-//			if (groupSet.contains(cloudSafeEntity.getGroup().getName()) == false) {
-//				throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "User is not member of group." + cloudSafeEntity.getGroup().getName());
-//			}
-//			break;
-//		case USER:
-//			if (cloudSafeEntity.getUser().getId() != userId) {
-//				List<CloudSafeShareEntity> sharedCloudSafeFiles = cloudSafeLogic.getCloudSafeShareEntities(dcemUser, cloudSafeEntity);
-//				if (sharedCloudSafeFiles.size() == 0) {
-//					throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "User is not valid.");
-//				}
-//				cloudSafeEntity.setWriteAccess(sharedCloudSafeFiles.get(0).isWriteAccess());
-//				cloudSafeEntity.setRestrictDownload(sharedCloudSafeFiles.get(0).isRestrictDownload());
-//			}
-//			break;
-//		default:
-//			throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "Wrong Owner.");
-//		}
+		// switch (cloudSafeEntity.getOwner()) {
+		// case GROUP:
+		// HashSet<String> groupSet = userLogic.getUserGroupNames(dcemUser, null);
+		// if (groupSet.contains(cloudSafeEntity.getGroup().getName()) == false) {
+		// throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "User is not member of group." + cloudSafeEntity.getGroup().getName());
+		// }
+		// break;
+		// case USER:
+		// if (cloudSafeEntity.getUser().getId() != userId) {
+		// List<CloudSafeShareEntity> sharedCloudSafeFiles = cloudSafeLogic.getCloudSafeShareEntities(dcemUser, cloudSafeEntity);
+		// if (sharedCloudSafeFiles.size() == 0) {
+		// throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "User is not valid.");
+		// }
+		// cloudSafeEntity.setWriteAccess(sharedCloudSafeFiles.get(0).isWriteAccess());
+		// cloudSafeEntity.setRestrictDownload(sharedCloudSafeFiles.get(0).isRestrictDownload());
+		// }
+		// break;
+		// default:
+		// throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "Wrong Owner.");
+		// }
 		return cloudSafeEntity;
 	}
 
