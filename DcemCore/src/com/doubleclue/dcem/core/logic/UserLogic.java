@@ -49,6 +49,7 @@ import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
+import com.doubleclue.utils.BcryptUtils;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.RandomUtils;
 import com.doubleclue.utils.StringUtils;
@@ -141,12 +142,9 @@ public class UserLogic {
 			} else {
 				user.setSaveit(null);
 			}
-			try {
-				user.setSalt(RandomUtils.getRandom(8));
-				user.setHashPassword(KaraUtils.getSha1WithSalt(user.getSalt(), user.getInitialPassword().getBytes(DcemConstants.CHARSET_UTF8)));
-			} catch (Exception e) {
-				throw new DcemException(DcemErrorCodes.EXCEPTION, "sha1 failed", e);
-			}
+			user.setBcryptHash(BcryptUtils.hash(initialPassword));
+			user.setHashPassword(null);
+			user.setSalt(null);
 			if (user.getEmail() == null) {
 				user.setEmail("dummy@dummy.de");
 			}
@@ -166,12 +164,9 @@ public class UserLogic {
 			}
 			String initialPin = user.getInitialPassword();
 			if (initialPin != null && initialPin.isEmpty() == false) {
-				try {
-					user.setSalt(RandomUtils.getRandom(8));
-					user.setHashPassword(KaraUtils.getSha1WithSalt(user.getSalt(), user.getInitialPassword().getBytes(DcemConstants.CHARSET_UTF8)));
-				} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-					throw new DcemException(DcemErrorCodes.EXCEPTION, "sha1 failed", e);
-				}
+				user.setBcryptHash(BcryptUtils.hash(user.getInitialPassword()));
+				user.setHashPassword(null);
+				user.setSalt(null);
 
 				if (adminModule.getPreferences().isSaveUserPasswords() == true || user.getSaveit() != null) {
 					user.setSaveit(initialPin);
@@ -328,19 +323,8 @@ public class UserLogic {
 	@DcemTransactional
 	public void addOrUpdateUserWoAuditing(DcemUser user) throws DcemException {
 		String initialPassword = user.getInitialPassword();
-		byte[] salt = null;
-		byte[] hashPassword = null;
 		if (user.getLanguage() == null) {
 			user.setLanguage(adminModule.getPreferences().getUserDefaultLanguage());
-		}
-
-		if (initialPassword != null && !initialPassword.isEmpty()) {
-			try {
-				salt = RandomUtils.getRandom(8);
-				hashPassword = (KaraUtils.getSha1WithSalt(salt, user.getInitialPassword().getBytes(DcemConstants.CHARSET_UTF8)));
-			} catch (Exception e) {
-				throw new DcemException(DcemErrorCodes.EXCEPTION, "sha1 failed", e);
-			}
 		}
 		if (user.getDcemRole() == null) {
 			DcemRole dcemRole = roleLogic.getDcemRole(DcemConstants.SYSTEM_ROLE_USER);
@@ -348,17 +332,20 @@ public class UserLogic {
 		}
 		if (user.getId() == null) {
 			licenceLogic.checkForLicence(null, true);
-			if (salt != null && user.isDomainUser() == false) {
-				user.setSalt(salt);
-				user.setHashPassword(hashPassword);
+			if (user.isDomainUser() == false && initialPassword != null && !initialPassword.isEmpty()) {
+				user.setBcryptHash(BcryptUtils.hash(user.getInitialPassword()));
+				user.setHashPassword(null);
+				user.setSalt(null);
 			}
 			em.persist(user);
 			logger.info("User added: " + user.getLoginId());
 		} else {
 			user = em.merge(user);
-			if (user.isDomainUser() == false && salt != null) {
-				user.setSalt(salt);
-				user.setHashPassword(hashPassword);
+			if (user.isDomainUser() == false && initialPassword != null && !initialPassword.isEmpty()) {
+				user.setBcryptHash(BcryptUtils.hash(user.getInitialPassword()));
+				user.setHashPassword(null);
+				user.setSalt(null);
+				em.merge(user);
 			}
 		}
 	}
@@ -570,6 +557,7 @@ public class UserLogic {
 				}
 			} else {
 				byte[] passwordHash;
+				String bcryptHash = dcemUser.getBcryptHash();
 				int rc = dcemUser.getPassCounter();
 				if (rc >= adminModule.getPreferences().getPasswordMaxRetryCounter()) {
 					if (dcemUser.getAcSuspendedTill() == null) {
@@ -577,6 +565,18 @@ public class UserLogic {
 					}
 					throw new DcemException(DcemErrorCodes.USER_PASSWORD_MAX_RETRIES, dcemUser.getLoginId());
 				}
+				
+				if (bcryptHash != null && !bcryptHash.isEmpty()) {
+					if (!BcryptUtils.isValid(new String(password), bcryptHash)) {
+						throw new DcemException(DcemErrorCodes.INVALID_PASSWORD, dcemUser.getLoginId());
+					}
+					if (BcryptUtils.needsNewHash(bcryptHash)) {
+						dcemUser.setBcryptHash(BcryptUtils.hash(new String(password)));
+						em.merge(dcemUser);
+					}
+					return;
+				}
+				
 				try {
 					passwordHash = KaraUtils.getSha1WithSalt(dcemUser.getSalt(), password);
 				} catch (Exception e) {
@@ -585,6 +585,11 @@ public class UserLogic {
 				if (Arrays.equals(passwordHash, dcemUser.getHashPassword()) == false) {
 					throw new DcemException(DcemErrorCodes.INVALID_PASSWORD, dcemUser.getLoginId());
 				}
+				
+				dcemUser.setBcryptHash(BcryptUtils.hash(new String(password)));
+				dcemUser.setHashPassword(null);
+				dcemUser.setSalt(null);
+				em.merge(dcemUser);
 			}
 			// if no exception was fired, the password has been validated
 		}
@@ -733,15 +738,13 @@ public class UserLogic {
 			}
 		}
 
-		try {
-			if (dcemUser.isDomainUser()) {
-				domainLogic.resetUserPassword(dcemUser, newPassword);// still TODO
-			} else {
-				dcemUser.setSalt(RandomUtils.getRandom(8));
-				dcemUser.setHashPassword(KaraUtils.getSha1WithSalt(dcemUser.getSalt(), newPassword.getBytes(DcemConstants.CHARSET_UTF8)));
-			}
-		} catch (Exception e) {
-			throw new DcemException(DcemErrorCodes.EXCEPTION, "sha1 failed", e);
+		if (dcemUser.isDomainUser()) {
+			domainLogic.resetUserPassword(dcemUser, newPassword);// still TODO
+		} else {
+			dcemUser.setBcryptHash(BcryptUtils.hash(newPassword));
+			dcemUser.setHashPassword(null);
+			dcemUser.setSalt(null);
+			em.merge(dcemUser);
 		}
 	}
 

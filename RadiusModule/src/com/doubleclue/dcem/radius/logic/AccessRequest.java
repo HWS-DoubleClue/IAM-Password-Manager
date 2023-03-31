@@ -21,7 +21,7 @@ public class AccessRequest extends RadiusPacket {
 	
 	private static final Logger logger = LogManager.getLogger(AccessRequest.class);
 
-
+	/*TODO: check: is password hash improvement via bcrypt needed here? */
 
 	/**
 	 * Passphrase Authentication Protocol

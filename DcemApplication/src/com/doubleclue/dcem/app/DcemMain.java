@@ -41,6 +41,7 @@ import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.hibernate.exception.GenericJDBCException;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.doubleclue.dcem.admin.servlet.LoginWebFilter;
 import com.doubleclue.dcem.core.DcemConstants;
@@ -74,6 +75,7 @@ import com.doubleclue.dcem.core.utils.SecureServerUtils;
 import com.doubleclue.dcem.system.logic.KeyStoreLogic;
 import com.doubleclue.dcem.system.logic.NodeLogic;
 import com.doubleclue.dcem.system.logic.SystemModule;
+import com.doubleclue.utils.BcryptUtils;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ProductVersion;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -514,6 +516,11 @@ public class DcemMain {
 		}
 
 		dbFactoryProducer.disposeUnmanagedEntityManager(entityManager);
+		
+		int optimalBcryptStrength = BcryptUtils.OPTIMAL_STRENGTH;
+		String optimalBcryptStrengthMsg = "Using Bcrypt strength: " + optimalBcryptStrength;
+		System.out.println(optimalBcryptStrengthMsg);
+		logger.info(optimalBcryptStrengthMsg);
 
 		try {
 			tomcat.getEngine().setJvmRoute(dcemNode.getName());
