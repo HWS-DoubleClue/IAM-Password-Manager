@@ -63,8 +63,8 @@
  
 
 		<dependency>
-			<artifactId>AppSecureModule</artifactId>
 			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>AppSecureModule</artifactId>
 		</dependency>
 
 		<!-- <dependency> <groupId>com.doubleclue.dcem.TestModule</groupId> <artifactId>TestModule</artifactId> 

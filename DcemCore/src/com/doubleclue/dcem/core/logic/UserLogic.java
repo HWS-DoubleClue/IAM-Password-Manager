@@ -7,11 +7,15 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -42,6 +46,7 @@ import com.doubleclue.dcem.core.entities.UrlTokenEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
+import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.jpa.DbFactoryProducer;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
@@ -871,4 +876,5 @@ public class UserLogic {
 			dcemUser.setDcemUserExt(dcemUserExtension);
 		}
 	}
+		
 }
