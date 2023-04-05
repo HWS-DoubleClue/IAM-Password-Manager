@@ -134,6 +134,11 @@
 			<groupId>com.madgag.spongycastle</groupId>
 			<artifactId>pkix</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk15on</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.doubleclue.lib</groupId>
 			<artifactId>LibKaraUtils</artifactId>

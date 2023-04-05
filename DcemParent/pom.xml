@@ -889,6 +889,18 @@
 				<artifactId>pkix</artifactId>
 				<version>1.54.0.0</version>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk15on</artifactId>
+				<version>1.68</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on -->
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcpkix-jdk15on</artifactId>
+				<version>1.70</version>
+			</dependency>
 			<dependency>
 				<groupId>org.jboss.shrinkwrap.resolver</groupId>
 				<artifactId>shrinkwrap-resolver-bom</artifactId>
