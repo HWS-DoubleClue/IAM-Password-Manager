@@ -129,7 +129,7 @@ public class LocalPaths {
 				int ind = path.lastIndexOf(File.separator + "bin");
 				if (ind != -1) {
 					path = path.substring(0, ind);
-					filePath = new File(path);
+					dcemInstallDir = new File(path);
 				} else {
 					throw new DcemException(DcemErrorCodes.CONFIGURE_INSTALL_DIRECTORY, "Couldn't get the install path");
 				}
