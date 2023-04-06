@@ -145,7 +145,7 @@ public class DcemApplicationBean implements Serializable {
 	private HashMap<String, String> fileIconsMap = new HashMap<String, String>();
 
 	private boolean captchaOn;
-	
+
 	Configuration freeMarkerConfiguration;
 
 	@Inject
@@ -426,13 +426,15 @@ public class DcemApplicationBean implements Serializable {
 			}
 			if (disabled == false) {
 				if (dcemModule.isPluginModule() == true) {
-					if (pluginModules.length > 0 && pluginModules[0].compareToIgnoreCase("all") == 0) {
-						list.add(dcemModule);
-					} else {
-						for (String id : pluginModules) {
-							if (dcemModule.getId().compareToIgnoreCase(id) == 0) {
-								list.add(dcemModule);
-								break;
+					if (pluginModules != null) {
+						if (pluginModules.length > 0 && pluginModules[0].compareToIgnoreCase("all") == 0) {
+							list.add(dcemModule);
+						} else {
+							for (String id : pluginModules) {
+								if (dcemModule.getId().compareToIgnoreCase(id) == 0) {
+									list.add(dcemModule);
+									break;
+								}
 							}
 						}
 					}
@@ -769,7 +771,7 @@ public class DcemApplicationBean implements Serializable {
 		Collections.sort(selectItems, new SelectItemComparator());
 		return selectItems;
 	}
-	
+
 	public Configuration getFreeMarkerConfiguration() {
 		if (freeMarkerConfiguration == null) {
 			freeMarkerConfiguration = new Configuration(Configuration.VERSION_2_3_29);
@@ -783,7 +785,7 @@ public class DcemApplicationBean implements Serializable {
 		}
 		return freeMarkerConfiguration;
 	}
-	
+
 	public Template getTemplateFromConfig(DcemTemplate dcemTemplate) throws Exception {
 		getFreeMarkerConfiguration();
 		Template template = null;
@@ -811,23 +813,24 @@ public class DcemApplicationBean implements Serializable {
 		return template;
 	}
 
-	
 	public void removeFreeMarkerTemplate(String templateFullName) {
 		if (freeMarkerConfiguration != null) {
-			((DcFreeMarkerStringLoader)freeMarkerConfiguration.getTemplateLoader()).removeTemplate(templateFullName  + "-" + TenantIdResolver.getCurrentTenantName());
+			((DcFreeMarkerStringLoader) freeMarkerConfiguration.getTemplateLoader())
+					.removeTemplate(templateFullName + "-" + TenantIdResolver.getCurrentTenantName());
 		}
 	}
-	
+
 	public void updateFreeMarkerCache() {
 		LocalDateTime localDateTime = LocalDateTime.now();
 		localDateTime.minusDays(5);
 		if (freeMarkerConfiguration != null) {
 			long epoch = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-			((DcFreeMarkerStringLoader)freeMarkerConfiguration.getTemplateLoader()).updataTemplateCache(epoch);
+			((DcFreeMarkerStringLoader) freeMarkerConfiguration.getTemplateLoader()).updataTemplateCache(epoch);
 		}
 	}
 
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 class ViewComparator implements Comparator<SubjectAbs> {
 

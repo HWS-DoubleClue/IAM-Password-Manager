@@ -210,6 +210,8 @@ public class LicenceLogic implements ReloadClassInterface {
 					disabledModules[i] = disabledModules[i].trim();
 				}
 				adminTenantData.setDisabledModules(disabledModules);
+			} else {
+				adminTenantData.setDisabledModules(null);
 			}
 			if (licenceKeyContent.getPluginModules() != null) {
 				String[] pluginModulesModules = licenceKeyContent.getPluginModules().split(",");
@@ -217,6 +219,8 @@ public class LicenceLogic implements ReloadClassInterface {
 					pluginModulesModules[i] = pluginModulesModules[i].trim();
 				}
 				adminTenantData.setEnabledPluginModules(pluginModulesModules);
+			} else {
+				adminTenantData.setEnabledPluginModules(null);
 			}
 			return licenceKeyContent;
 		} catch (Exception e) {
