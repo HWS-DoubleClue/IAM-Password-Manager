@@ -41,7 +41,6 @@ import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.hibernate.exception.GenericJDBCException;
-//import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import com.doubleclue.dcem.admin.servlet.LoginWebFilter;
 import com.doubleclue.dcem.core.DcemConstants;

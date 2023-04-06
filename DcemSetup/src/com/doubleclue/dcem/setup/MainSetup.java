@@ -32,7 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.scan.StandardJarScanner;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.doubleclue.dcem.core.DcemJarScanFilter;
 import com.doubleclue.dcem.core.config.LocalConfig;

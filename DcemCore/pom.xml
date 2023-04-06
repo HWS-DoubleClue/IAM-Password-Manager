@@ -126,7 +126,7 @@
 			<groupId>com.microsoft.azure</groupId>
 			<artifactId>msal4j</artifactId>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>com.madgag.spongycastle</groupId>
 			<artifactId>core</artifactId>
 		</dependency>
@@ -134,6 +134,7 @@
 			<groupId>com.madgag.spongycastle</groupId>
 			<artifactId>pkix</artifactId>
 		</dependency>
+		-->
 		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on -->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>

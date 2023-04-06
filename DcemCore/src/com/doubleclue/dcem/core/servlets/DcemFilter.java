@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
-import org.spongycastle.crypto.io.InvalidCipherTextIOException;
+import org.bouncycastle.crypto.io.InvalidCipherTextIOException;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;

@@ -4,7 +4,7 @@ import java.security.Security;
 
 import javax.net.ssl.SSLSocketFactory;
 
-import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class ListChipers {
 

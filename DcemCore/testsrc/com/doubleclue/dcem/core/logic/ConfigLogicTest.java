@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -17,7 +18,6 @@ import org.hibernate.internal.SessionImpl;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.spongycastle.util.Arrays;
 
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -69,12 +69,12 @@ public class ConfigLogicTest extends AbstractArquillianTest {
 				fail();
 			}
 			byte[] value = rs.getBytes(1);
-			if (Arrays.areEqual(ConfigLogic.DB_VERIFICATION, value) == true) {
+			if (Arrays.equals(ConfigLogic.DB_VERIFICATION, value) == true) {
 				logger.error("DB Verification Key is not encrypted at all");
 				fail();
 			}
 			
-			if (Arrays.areEqual(ConfigLogic.DB_VERIFICATION, DbEncryption.decryptSeed(value)) == false) {
+			if (Arrays.equals(ConfigLogic.DB_VERIFICATION, DbEncryption.decryptSeed(value)) == false) {
 				logger.error("DB Verification Key is dencrypted failed.");
 				fail();
 			}

@@ -3,6 +3,7 @@ package com.doubleclue.dcem.core.logic;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,7 +19,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.spongycastle.util.Arrays;
 
 import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
@@ -87,7 +87,7 @@ public class ConfigLogic {
 		if (semConfiguration == null) {
 			return false;
 		}
-		if (Arrays.areEqual(DB_VERIFICATION, semConfiguration.getValue())) {
+		if (Arrays.equals(DB_VERIFICATION, semConfiguration.getValue())) {
 			return true;
 		}
 		return false;
