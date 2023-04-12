@@ -124,12 +124,12 @@ public class TemplateLogic implements ReloadClassInterface {
 	@DcemTransactional
 	public DcemTemplate getUpdateTemplateByName(Class<?> loadingClass, String name, SupportedLanguage language, String scanPackages) {
 		DcemTemplate dcemTemplate = getTemplateByNameLanguage(name, language);
-		if (dcemTemplate == null) {
+		if (dcemTemplate == null || dcemTemplate.getLanguage() != language) {
 			try {
 				String templateName = name + '_' + language.getLocale().getLanguage() + DcemConstants.TEMPLATE_TYPE;
 				List<FileContent> templateFiles = ResourceFinder.find(loadingClass, scanPackages, templateName);
 				if (templateFiles.isEmpty()) {
-					logger.info("Couldn't add Tempalte " + scanPackages + "/" + templateName);
+					logger.info("Couldn't add Tempalte: " + scanPackages + "/" + templateName);
 					return null;
 				}
 
