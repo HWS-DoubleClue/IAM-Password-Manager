@@ -1108,6 +1108,20 @@ public class JsfUtils {
 								// since it's already
 								// written with a file and closed.
 	}
+	
+	public static void downloadFile(String contentType, String fileName, File file) throws IOException {
+		FacesContext fc = FacesContext.getCurrentInstance();
+		OutputStream output = getDownloadFileOutputStream(contentType, fileName);
+		FileInputStream fileInputStream = new FileInputStream(file);
+		KaraUtils.copyStream(fileInputStream, output, 1024*8);
+		output.flush();
+		output.close();
+		fileInputStream.close();
+		fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail
+								// since it's already
+								// written with a file and closed.
+		
+	}
 
 	public static OutputStream getDownloadFileOutputStream(String contentType, String fileName) throws IOException {
 		FacesContext fc = FacesContext.getCurrentInstance();
