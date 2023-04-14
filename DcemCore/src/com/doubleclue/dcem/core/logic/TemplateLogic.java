@@ -122,32 +122,38 @@ public class TemplateLogic implements ReloadClassInterface {
 	}
 
 	@DcemTransactional
-	public DcemTemplate getUpdateTemplateByName(Class<?> loadingClass, String name, SupportedLanguage language, String scanPackages) {
-		DcemTemplate dcemTemplate = getTemplateByNameLanguage(name, language);
-		if (dcemTemplate == null || dcemTemplate.getLanguage() != language) {
-			try {
-				String templateName = name + '_' + language.getLocale().getLanguage() + DcemConstants.TEMPLATE_TYPE;
-				List<FileContent> templateFiles = ResourceFinder.find(loadingClass, scanPackages, templateName);
-				if (templateFiles.isEmpty()) {
-					logger.info("Couldn't add Tempalte: " + scanPackages + "/" + templateName);
-					return null;
-				}
+	public String getUpdateTemplateByName(Class<?> loadingClass, String [] names, SupportedLanguage [] languages, String scanPackages) {
+		StringBuffer sb = new StringBuffer();
+		for (String name : names) {
+			for (SupportedLanguage language : languages) {
+				DcemTemplate dcemTemplate = getTemplateByNameLanguage(name, language);
+				if (dcemTemplate == null || dcemTemplate.getLanguage() != language) {
+					try {
+						String templateName = name + '_' + language.getLocale().getLanguage() + DcemConstants.TEMPLATE_TYPE;
+						List<FileContent> templateFiles = ResourceFinder.find(loadingClass, scanPackages, templateName);
+						if (templateFiles.isEmpty()) {
+							sb.append("Couldn't add Tempalte: " + scanPackages + "/" + templateName);
+							sb.append ("\n");
+							continue;
+						}
 
-				dcemTemplate = new DcemTemplate();
-				dcemTemplate.setName(name);
-				if (language == SupportedLanguage.English) {
-					dcemTemplate.setDefaultTemplate(true);
+						dcemTemplate = new DcemTemplate();
+						dcemTemplate.setName(name);
+						if (language == SupportedLanguage.English) {
+							dcemTemplate.setDefaultTemplate(true);
+						}
+						dcemTemplate.setLanguage(language);
+						dcemTemplate.setContent(StringUtils.getStringFromUtf8(templateFiles.get(0).getContent()));
+						addOrUpdateTemplate(dcemTemplate, new DcemAction(AdminModule.MODULE_ID, null, DcemConstants.ACTION_ADD), false);
+					} catch (Exception e) {
+						sb.append("Couldn't add Tempalte " + name);
+						sb.append ("\n");
+						logger.warn("Couldn't add Tempalte " + name, e);
+					}
 				}
-				dcemTemplate.setLanguage(language);
-				dcemTemplate.setContent(StringUtils.getStringFromUtf8(templateFiles.get(0).getContent()));
-				addOrUpdateTemplate(dcemTemplate, new DcemAction(AdminModule.MODULE_ID, null, DcemConstants.ACTION_ADD), false);
-			} catch (Exception e) {
-				logger.warn("Couldn't add Tempalte " + name, e);
-				return null;
 			}
 		}
-		return dcemTemplate;
-
+		return sb.toString();
 	}
 
 	/**
