@@ -272,9 +272,9 @@ public abstract class LoginViewAbstract implements Serializable {
 		} finally {
 			loginReEnter.set(false);
 		}
-		PrimeFaces.current().ajax().update("loginForm:randomCode");
-		PrimeFaces.current().ajax().update("loginForm:status");
-		PrimeFaces.current().ajax().update("loginForm:timeLeft");
+		PrimeFaces.current().ajax().update("progressForm:randomCode");
+		PrimeFaces.current().ajax().update("progressForm:status");
+		PrimeFaces.current().ajax().update("progressForm:timeLeft");
 		loginReEnter.set(false);
 		return progress;
 	}
