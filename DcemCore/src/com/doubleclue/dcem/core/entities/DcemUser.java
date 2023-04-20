@@ -784,5 +784,19 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	public void setDcemUserExtJobtitle(DcemUserExtension dcemUserExtJobtitle) {
 		this.dcemUserExtJobtitle = dcemUserExtJobtitle;
 	}
+	
+	public String getDepartmentName() {
+		if (dcemUserExt != null) {
+			return dcemUserExt.getDepartment().getName();
+		}
+		return null;
+	}
+	
+	public String getJobTitle() {
+		if (dcemUserExt != null) {
+			return dcemUserExt.getJobTitle();
+		}
+		return null;
+	}
 
 }

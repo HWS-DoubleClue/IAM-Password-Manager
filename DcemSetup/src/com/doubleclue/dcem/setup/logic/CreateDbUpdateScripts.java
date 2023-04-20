@@ -21,6 +21,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.AnnotationException;
@@ -59,13 +60,12 @@ public class CreateDbUpdateScripts {
 		persistenceRes = Thread.currentThread().getContextClassLoader().getResources("META-INF/persistence.xml");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		File outputDirTemp = new File(outputDirPathTemp, databaseConfig.getDatabaseType());
-		if (outputDirTemp.exists() == false) {
-			outputDirTemp.mkdirs();
-		}
+		FileUtils.deleteDirectory(outputDirTemp);
+		outputDirTemp.mkdirs();
 		while (persistenceRes.hasMoreElements()) {
 			URL persistenceFileUrl = persistenceRes.nextElement();
 			String path = persistenceFileUrl.getPath();
-			logger.info("MigratingTables.main() Path=" + path);
+			logger.info("MigratingTables Path=" + path);
 			HashSet<String> classesMap = new HashSet<String>();
 
 			DocumentBuilder builder = null;
@@ -155,6 +155,7 @@ public class CreateDbUpdateScripts {
 
 			try {
 				String outputSqlFile = outputDirTemp.getPath() + File.separatorChar + moduleName + "Tables.sql";
+				logger.info("Output File Path=" + outputSqlFile);
 				File outfile = new File(outputSqlFile);
 				if (outfile.exists()) {
 					outfile.delete();
