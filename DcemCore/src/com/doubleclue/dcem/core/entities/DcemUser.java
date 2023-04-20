@@ -786,7 +786,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	}
 	
 	public String getDepartmentName() {
-		if (dcemUserExt != null) {
+		if (dcemUserExt != null && dcemUserExt.getDepartment() != null) {
 			return dcemUserExt.getDepartment().getName();
 		}
 		return null;
