@@ -1275,10 +1275,12 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 .ui-datatable.borderless tbody, .ui-datatable.borderless tbody td {
 	border-style: none;
 	word-wrap: break-word;
+	padding: 1px 2px 1px 2px;
 }
 
 .ui-datatable.borderless th {
 	text-align: left;
+	padding: 0px 2px 0px 2px;
 }
 
 .ui-treetable.borderless tbody, .ui-treetable.borderless tbody td {
