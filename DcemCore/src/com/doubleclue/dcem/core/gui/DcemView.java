@@ -496,6 +496,8 @@ public abstract class DcemView implements Serializable {
 
 		viewVariables = new LinkedList<ViewVariable>();
 		displayViewVariables = new LinkedList<ViewVariable>();
+		DcemAction dcemAction = new DcemAction(subject, DcemConstants.ACTION_MANAGE);
+		boolean managed = operatorSessionBean.isPermission(dcemAction);
 		if (subject != null && subject.getKlass() != null) {
 			viewVariables = DcemUtils.getViewVariables(subject.getKlass(), resourceBundle, subject.getName(), restrictions);
 			for (ViewVariable viewVariable : viewVariables) {

@@ -73,9 +73,7 @@ public class OtpTokenEntity extends EntityInterface {
 	@Column(name = "dc_id")
 	@TableGenerator(name = "coreSeqStoreOtpToken", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "OPT_TOKEN.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 20)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreOtpToken")
-	// @DcemGui (columnWidth="45px", displayMode=DisplayModes.INPUT_DISABLED)
 	private Integer id;
-
 
 	@DcemGui
 	@Enumerated(EnumType.ORDINAL)

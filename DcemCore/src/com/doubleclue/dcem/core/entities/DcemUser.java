@@ -117,7 +117,6 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	@Column(name = "dc_id")
 	@TableGenerator(name = "coreSeqStoreCoreUser", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "CORE_USER.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreCoreUser")
-	// @DcemGui (columnWidth="45px", displayMode=DisplayModes.INPUT_DISABLED)
 	private Integer id;
 	
 	@DcemGui (name= "Photo", subClass = "photo", variableType = VariableType.IMAGE)

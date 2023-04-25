@@ -14,9 +14,11 @@ import java.util.LinkedList;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.apache.commons.compress.harmony.unpack200.bytecode.OperandManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultStreamedContent;
@@ -28,6 +30,7 @@ import com.doubleclue.dcem.core.gui.converters.DefaultConvertor;
 import com.doubleclue.dcem.core.jpa.FilterItem;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.jpa.VariableType;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.utils.MethodProperty;
 
 /**
@@ -38,6 +41,10 @@ public class ViewVariable implements Serializable {
 	private static final long serialVersionUID = 4725468617809734809L;
 
 	private static final Logger logger = LogManager.getLogger(ViewVariable.class);
+	
+	@Inject 
+	OperatorSessionBean operatorSessionBean;
+	
 
 	String id;
 	String displayName;
@@ -119,24 +126,6 @@ public class ViewVariable implements Serializable {
 		return dcemGui.styleClass();
 	}
 
-	public String getColumnWidth() {
-		if (dcemGui.columnWidth().isEmpty()) {
-			if (dcemGui.styleClass().equals("shortInput")) {
-				return "50px";
-			} else if (dcemGui.styleClass().equals("mediumInput")) {
-				return "150px";
-			} else if (dcemGui.styleClass().equals("longInput")) {
-				return "350px";
-			} else if (dcemGui.styleClass().equals("xlongInput")) {
-				return "450px";
-			}
-			return "";
-		} else {
-			return dcemGui.columnWidth();
-		}
-
-	}
-
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
@@ -171,6 +160,12 @@ public class ViewVariable implements Serializable {
 		getMethodProperties(klassObject);
 		MethodProperty lastMethodProperty = null;
 		for (MethodProperty methodProperty : methodProperties) {
+			if (dcemGui.anonymousRestricted().isEmpty() == false) {
+				System.out.println("ViewVariable.getRecordData()");
+//				if (operatorSessionBean.isPermission(null)) {
+//					
+//				}
+			}
 			try {
 				lastMethodProperty = methodProperty;
 				if (klassObject != null) {

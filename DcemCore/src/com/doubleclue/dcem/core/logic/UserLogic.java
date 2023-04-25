@@ -857,6 +857,11 @@ public class UserLogic {
 	public DcemUserExtension getDcemUserExtension(DcemUser dcemUser) {
 		return   em.find(DcemUserExtension.class, dcemUser.getId());
 	}
+	
+	public DcemUser getSuperAdmin () {
+		return adminModule.getAdminTenantData().getSuperAdmin();
+	}	
+	
 
 	@DcemTransactional
 	public void updateDcemUserExtension(DcemUser dcemUser, DcemUserExtension dcemUserExtension) {

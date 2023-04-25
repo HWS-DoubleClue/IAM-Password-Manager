@@ -20,6 +20,7 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.TenantEntity;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
@@ -49,6 +50,14 @@ public class ActionLogic {
 			return query.getSingleResult();
 		} catch (NoResultException e) {
 			return null;
+		}
+	}
+	
+	@DcemTransactional
+	public void addDcemActionIfNotExists (DcemAction dcemAction) throws DcemException {
+		DcemAction  action = getDcemAction(dcemAction);
+		if (action == null) {
+			addDcemAction(dcemAction);
 		}
 	}
 

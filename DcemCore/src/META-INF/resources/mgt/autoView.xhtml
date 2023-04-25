@@ -63,7 +63,7 @@
 
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
 
-				<p:columns id="columns" value="#{autoView.visibleVariables}" var="item" columnIndexVar="colIndex" filterBy="#{item.id}" width="#{item.columnWidth}"
+				<p:columns id="columns" value="#{autoView.visibleVariables}" var="item" columnIndexVar="colIndex" filterBy="#{item.id}" 
 					style="text-align: left; word-break: break;  white-space: normal; " visible="#{item.visible}" field="#{item.id}">
 
 					<f:facet name="header">

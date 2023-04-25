@@ -46,7 +46,6 @@ public class AuthGatewayEntity extends EntityInterface {
 	@Column(name = "dc_id")
 	@TableGenerator(name = "coreSeqStoreAppAuthApp", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "APP_AUTHAPP.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreAppAuthApp")
-	// @DcemGui(columnWidth = "45px", displayMode = DisplayModes.INPUT_DISABLED)
 	private Integer id;
 
 	@DcemGui

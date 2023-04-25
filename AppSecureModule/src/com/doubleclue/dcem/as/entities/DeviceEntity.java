@@ -80,7 +80,6 @@ public class DeviceEntity extends EntityInterface {
 	@Column(name = "dc_id")
 	@TableGenerator(name = "coreSeqStoreAppDevice", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "APP_DEVICE.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreAppDevice")
-	// @DcemGui(columnWidth = "45px", displayMode = DisplayModes.INPUT_DISABLED)
 	private Integer id;
 
 	@DcemGui(name = "user", subClass = "loginId")

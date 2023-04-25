@@ -49,7 +49,6 @@ public class ActivationCodeEntity extends EntityInterface {
 	@Column(name = "dc_id")
 	@TableGenerator(name = "coreSeqStoreAppAc", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "APP_AC.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreAppAc")
-	// @DcemGui (columnWidth="45px", displayMode=DisplayModes.INPUT_DISABLED)
 	private Integer id;
 
 	@ManyToOne

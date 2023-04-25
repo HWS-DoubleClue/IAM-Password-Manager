@@ -22,7 +22,6 @@ public @interface DcemGui {
 	public String styleClass () default "";		  	// Additional JSF styles Class for this field
 	public String name () default "";		  		// the displayed name of the field.
 	public String subClass () default "";		  	// the displayed name of the field.
-	public String columnWidth () default "";	  	// the displayed name of the field.
 	public String converterId () default "";		// the converter.
 	public String dbMetaAttributeName () default "";		// the db parent Name
 	public String separator() default "";
@@ -37,4 +36,6 @@ public @interface DcemGui {
 	public boolean required() default false;
 	public boolean masterOnly() default false;
 	public VariableType variableType() default VariableType.UNKNOWN;
+	public String anonymousRestricted() default "";
+	
 }

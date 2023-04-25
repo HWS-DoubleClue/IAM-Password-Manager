@@ -66,7 +66,6 @@ public class RadiusClientEntity extends EntityInterface {
 	@Column(name = "dc_id")
 	@TableGenerator( name = "coreSeqStoreRadiusClient", table = "core_seq", pkColumnName = "seq_name", pkColumnValue="RADIUS_CLIENT.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1 )
     @GeneratedValue( strategy = GenerationType.TABLE, generator = "coreSeqStoreRadiusClient" )
-//	@DcemGui (columnWidth="45px", displayMode=DisplayModes.INPUT_DISABLED)
     private Integer id;
 	
     @Column(name = "name", nullable=false)

@@ -63,7 +63,6 @@ public class AsVersionEntity extends EntityInterface implements Cloneable {
 	@Column(name = "dc_id")
 	@TableGenerator(name = "coreSeqStoreAppVersion", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "APP_VERSION.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreAppVersion")
-	// @DcemGui(columnWidth = "45px", displayMode = DisplayModes.INPUT_DISABLED)
 	private Integer id;
 
 	@Column(name = "dc_name", length = 128)

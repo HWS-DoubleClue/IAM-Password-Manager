@@ -243,10 +243,8 @@ public class AsModule extends DcemModule {
 			if (dcemConfiguration == null) { // first time that DCEM is run
 				try {
 					keyPair = SecureUtils.generateKeyPair(DcemConstants.DEFAULT_KEY_PAIR_SIZE);
-
 					dcemConfiguration = new DcemConfiguration(AsModule.MODULE_ID, AsConstants.CA_PRIVATE_KEY, keyPair.getPrivate().getEncoded());
 					configLogic.setDcemConfiguration(dcemConfiguration);
-
 					X509Certificate certificate = SecureServerUtils.createCertificate(keyPair.getPublic(), keyPair.getPrivate(), AsConstants.DCEM_AS_CA_ISSUER,
 							AsConstants.DCEM_AS_CA_ISSUER, null, null, null);
 
@@ -282,7 +280,6 @@ public class AsModule extends DcemModule {
 					logger.error("Couldn't load Key Pair", e);
 				}
 			}
-
 			connectionKey = DcemCluster.getDcemCluster().getClusterConfig().getName();
 			try {
 				connectionKeyArray = connectionKey.getBytes(DcemConstants.CHARSET_UTF8);
@@ -320,12 +317,6 @@ public class AsModule extends DcemModule {
 	@Override
 	public DcemView getDefaultView() {
 		return null;
-		// try {
-		// return CdiUtils.getReference("deviceView");
-		// } catch (Exception exp) {
-		// exp.printStackTrace();
-		// return null;
-		// }
 	}
 
 	/*

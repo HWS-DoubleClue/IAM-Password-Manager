@@ -1514,7 +1514,7 @@ public class CloudSafeLogic {
 
 	@DcemTransactional
 	public void saveMultipleFiles(List<DcemUploadFile> uploadedFiles, DcemUser dcemUser, String filePassword, Date expiryDate, boolean passwordProtected,
-			boolean encryptProtected, CloudSafeEntity parent, DcemUser lastModifiedUser, DcemGroup groupOwner) throws Exception {
+			boolean encryptProtected, CloudSafeEntity parent, DcemUser lastModifiedUser, DcemGroup groupOwner, CloudSafeOwner cloudSafeOwner) throws Exception {
 		HashSet<String> hashSet = new HashSet<>();
 		for (DcemUploadFile uploadedFile : uploadedFiles) {
 			if (hashSet.contains(uploadedFile.fileName)) {
@@ -1526,15 +1526,21 @@ public class CloudSafeLogic {
 			CloudSafeEntity cloudSafeEntity = new CloudSafeEntity();
 			cloudSafeEntity.setName(uploadedFile.fileName);
 			cloudSafeEntity.setDiscardAfter(expiryDate);
-			if (groupOwner == null) {
-				cloudSafeEntity.setOwner(CloudSafeOwner.USER);
+			switch (cloudSafeOwner) {
+			case GLOBAL:
+				cloudSafeEntity.setGroup(groupLogic.getRootGroup());
+				cloudSafeEntity.setUser(userLogic.getSuperAdmin());
+				break;
+			case USER:
 				cloudSafeEntity.setGroup(groupLogic.getRootGroup());
 				cloudSafeEntity.setUser(dcemUser);
-			} else {
-				cloudSafeEntity.setOwner(CloudSafeOwner.GROUP);
+			case GROUP:
 				cloudSafeEntity.setGroup(groupOwner);
-				cloudSafeEntity.setUser(userLogic.getUser(DcemConstants.SUPER_ADMIN_OPERATOR));
+				cloudSafeEntity.setUser(userLogic.getSuperAdmin());
+			default:
+				break;
 			}
+			cloudSafeEntity.setOwner(cloudSafeOwner);
 			cloudSafeEntity.setParent(parent);
 			cloudSafeEntity.setLastModifiedUser(lastModifiedUser);
 			cloudSafeEntity.setGcm(true);
@@ -1913,7 +1919,7 @@ public class CloudSafeLogic {
 		} else {
 			cloudSafeEntity.setOwner(CloudSafeOwner.GROUP);
 			cloudSafeEntity.setGroup(ownerGroup);
-			DcemUser superAdmin = userLogic.getDistinctUser(DcemConstants.SUPER_ADMIN_OPERATOR);
+			DcemUser superAdmin = userLogic.getSuperAdmin();
 			cloudSafeEntity.setUser(superAdmin);
 		}
 		em.merge(cloudSafeEntity);

@@ -322,13 +322,17 @@ public class CloudSafeView extends AbstractPortalView {
 				} else {
 					dcemUser = loggedInUser;
 				}
-
+				CloudSafeOwner cloudSafeOwner = CloudSafeOwner.USER;
+				if (selectedDcemGroup != null) {
+					cloudSafeOwner = CloudSafeOwner.GROUP;
+				}
+				
 				if (parent != null && (parent.isOption(CloudSafeOptions.PWD) || parent.isOption(CloudSafeOptions.FPD))) {
 					cloudSafeLogic.saveMultipleFiles(uploadedFiles, dcemUser, passwordToEncryptContent, expiryDate, passwordProtected, true, parent,
-							loggedInUser, selectedDcemGroup);
+							loggedInUser, selectedDcemGroup, cloudSafeOwner);
 				} else {
 					cloudSafeLogic.saveMultipleFiles(uploadedFiles, dcemUser, filePassword, expiryDate, passwordProtected, true, parent, loggedInUser,
-							selectedDcemGroup);
+							selectedDcemGroup, cloudSafeOwner);
 				}
 
 			} catch (DcemException exception) {
@@ -376,7 +380,7 @@ public class CloudSafeView extends AbstractPortalView {
 			if (parent.isOption((CloudSafeOptions.PWD)) || parent.isOption((CloudSafeOptions.FPD))) {
 				filePassword = passwordToEncryptContent;
 			}
-			cloudSafeLogic.saveMultipleFiles(uploadedFiles, loggedInUser, filePassword, expiryDate, passwordProtected, true, parent, loggedInUser, null);
+			cloudSafeLogic.saveMultipleFiles(uploadedFiles, loggedInUser, filePassword, expiryDate, passwordProtected, true, parent, loggedInUser, null, CloudSafeOwner.USER);
 		} catch (DcemException exception) {
 			logger.info(exception);
 			JsfUtils.addErrorMessage(portalSessionBean.getErrorMessage(exception));

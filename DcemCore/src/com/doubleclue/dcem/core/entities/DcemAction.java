@@ -41,7 +41,6 @@ public class DcemAction extends EntityInterface implements Serializable {
 	@Column(name = "dc_id")
 	@TableGenerator(name = "coreSeqStoreDcemAction", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "SEM_ACTION.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreDcemAction")
-	// @DcemGui(columnWidth = "40px")
 	private Integer id;
 
 	@Column(length = 64, nullable = false)

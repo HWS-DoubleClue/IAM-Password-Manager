@@ -391,7 +391,7 @@ public class AdminModule extends DcemModule {
 			logger.error("Could initialize Tenant Branding for " + tenantEntity.getName(), e);
 		}
 	}
-
+	
 	public AdminTenantData getAdminTenantData() {
 		return (AdminTenantData) moduleTenantMap.get(TenantIdResolver.getCurrentTenantName());
 	}

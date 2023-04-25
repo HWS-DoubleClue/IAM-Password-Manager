@@ -61,7 +61,7 @@ public class DomainEntity extends EntityInterface implements Serializable {
 	@Column(name = "name", length = 64, nullable = false)
 	@NotNullOrEmptyString(message = "{ldapdialog.name}")
 	@Size(min = 2, max = 64)
-	@DcemGui(columnWidth = "120px")
+	@DcemGui()
 	private String name;
 
 	@Enumerated(EnumType.ORDINAL)
