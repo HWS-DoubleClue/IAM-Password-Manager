@@ -194,7 +194,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	@Transient
 	private DcemUserExtension dcemUserExtCountry;
 	
-	@DcemGui (name= "Department", subClass = "department", dbMetaAttributeName = "dcemUserExt")
+	@DcemGui (name= "Department", subClass = "department", dbMetaAttributeName = "dcemUserExt", style = "white-space: nowrap")
 	@Transient
 	private DcemUserExtension dcemUserExtDepartment;
 	

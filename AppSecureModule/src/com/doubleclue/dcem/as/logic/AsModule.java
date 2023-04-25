@@ -598,6 +598,7 @@ public class AsModule extends DcemModule {
 
 	@SuppressWarnings("unchecked")
 	@DcemTransactional
+	@Override
 	public void initializeTenant(TenantEntity tenantEntity) throws DcemException {
 
 		String tenantName = tenantEntity.getName();

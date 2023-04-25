@@ -36,6 +36,6 @@ public @interface DcemGui {
 	public boolean required() default false;
 	public boolean masterOnly() default false;
 	public VariableType variableType() default VariableType.UNKNOWN;
-	public String anonymousRestricted() default "";
+	public boolean restricted() default false;
 	
 }

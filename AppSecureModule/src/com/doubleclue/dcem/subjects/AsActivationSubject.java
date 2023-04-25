@@ -16,25 +16,20 @@ public class AsActivationSubject extends SubjectAbs {
 
 	public AsActivationSubject() {
 
-		rawActions.add(new RawAction(DcemConstants.ACTION_ADD,
-				new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
+		rawActions.add(new RawAction(DcemConstants.ACTION_ADD, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
 				ActionSelection.CREATE_OBJECT));
-		rawActions.add(new RawAction(DcemConstants.ACTION_EDIT,
-				new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
+		rawActions.add(new RawAction(DcemConstants.ACTION_EDIT, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
 				ActionSelection.ONE_ONLY));
-		rawActions.add(new RawAction(DcemConstants.ACTION_DELETE,
-				new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
+		rawActions.add(new RawAction(DcemConstants.ACTION_DELETE, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
 				ActionSelection.ONE_OR_MORE));
 
 		RawAction rawAction = new RawAction(AsConstants.ACTION_SHOW_ACTIVATION_CODE,
-				new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
-				ActionSelection.ONE_ONLY);
+				new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }, ActionSelection.ONE_ONLY);
 		rawAction.setIcon("fa fa-eye");
 		rawActions.add(rawAction);
 
 		rawActions.add(new RawAction(DcemConstants.ACTION_VIEW, null));
-		rawActions.add(new RawAction(DcemConstants.ACTION_MANAGE,
-				new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }));
+		rawActions.add(new RawAction(DcemConstants.ACTION_MANAGE, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }));
 
 	}
 

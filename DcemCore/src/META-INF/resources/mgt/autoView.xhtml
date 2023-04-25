@@ -65,7 +65,6 @@
 
 				<p:columns id="columns" value="#{autoView.visibleVariables}" var="item" columnIndexVar="colIndex" filterBy="#{item.id}" 
 					style="text-align: left; word-break: break;  white-space: normal; " visible="#{item.visible}" field="#{item.id}">
-
 					<f:facet name="header">
 						<p:outputLabel value="#{item.displayName}" rendered="#{item.variableType ne 'IMAGE'}" />
 						<p:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
@@ -90,7 +89,7 @@
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
 						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />
 					</p:avatar>
-					<h:outputText rendered="#{item.variableType ne 'IMAGE'}" id="row2" value="#{item.getRecordData(record)}" />
+					<h:outputText rendered="#{item.variableType ne 'IMAGE'}" id="row2" style="#{item.style}" value="#{item.getRecordData(record)}" />
 				</p:columns>
 			</p:dataTable>
 

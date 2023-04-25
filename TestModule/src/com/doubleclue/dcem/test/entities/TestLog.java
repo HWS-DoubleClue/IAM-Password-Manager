@@ -53,7 +53,6 @@ public class TestLog extends EntityInterface {
     private TestLogAction action;
 	
 	@Column(length = 1024, nullable = true)
-	@DcemGui (columnWidth="200px")
 	private String details;
 
 	public Number getId() {

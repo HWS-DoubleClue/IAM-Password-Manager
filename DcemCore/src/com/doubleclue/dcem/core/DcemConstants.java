@@ -493,7 +493,7 @@ public final class DcemConstants {
 	public static final String COUNTRY_CODE_INDIA = "IN";
 
 	public static final String ACTION_ORGANIGRAM = "organigram";
-	public static final String ACTION_REVEAL = "revieal";
+	public static final String ACTION_REVEAL = "reveal";
 
 
 

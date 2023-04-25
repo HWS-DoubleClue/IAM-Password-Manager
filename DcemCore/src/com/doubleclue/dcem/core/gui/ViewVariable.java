@@ -5,6 +5,7 @@ import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 
+import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.gui.converters.DefaultConvertor;
 import com.doubleclue.dcem.core.jpa.FilterItem;
@@ -32,6 +35,7 @@ import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.jpa.VariableType;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.utils.MethodProperty;
+import com.doubleclue.dcem.core.weld.CdiUtils;
 
 /**
  * @author Emanuel Galea
@@ -41,10 +45,9 @@ public class ViewVariable implements Serializable {
 	private static final long serialVersionUID = 4725468617809734809L;
 
 	private static final Logger logger = LogManager.getLogger(ViewVariable.class);
-	
-	@Inject 
+
 	OperatorSessionBean operatorSessionBean;
-	
+	ViewNavigator viewNavigator;
 
 	String id;
 	String displayName;
@@ -59,8 +62,7 @@ public class ViewVariable implements Serializable {
 
 	ArrayList<MethodProperty> methodProperties = null;
 	ArrayList<SingularAttribute<?, ?>> attributes;
-
-	ViewNavigator viewNavigator;
+	Method restrictedMethod;
 
 	public ViewVariable() {
 	}
@@ -159,12 +161,30 @@ public class ViewVariable implements Serializable {
 	public String getRecordData(Object klassObject) {
 		getMethodProperties(klassObject);
 		MethodProperty lastMethodProperty = null;
+
 		for (MethodProperty methodProperty : methodProperties) {
-			if (dcemGui.anonymousRestricted().isEmpty() == false) {
-				System.out.println("ViewVariable.getRecordData()");
-//				if (operatorSessionBean.isPermission(null)) {
-//					
-//				}
+			try {
+				if (dcemGui.restricted() == true) {
+					try {
+						if (restrictedMethod == null) {
+							restrictedMethod = klassObject.getClass().getMethod("isRestricted");
+						}
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+					if (((boolean) restrictedMethod.invoke(klassObject)) == true) {
+						if (viewNavigator == null) {
+							viewNavigator = CdiUtils.getReference(ViewNavigator.class);
+							operatorSessionBean = CdiUtils.getReference(OperatorSessionBean.class);
+						}
+						if (operatorSessionBean.isPermission(viewNavigator.getActiveView().getRevealAction(), viewNavigator.getActiveView().getManageAction()) == false) {
+							return "---";
+						}
+					}
+				}
+			} catch (Exception e1) {
+				logger.debug(lastMethodProperty, e1);
+				return e1.getMessage();
 			}
 			try {
 				lastMethodProperty = methodProperty;

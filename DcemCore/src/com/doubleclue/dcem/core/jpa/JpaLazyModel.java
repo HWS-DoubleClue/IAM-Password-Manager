@@ -41,10 +41,13 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 	protected List<T> data;
 	JpaSelectProducer<T> jpaSelectProducer;
 	List<FilterProperty> preFilterProperties;
-
 	List<FilterProperty> filterProperties;
 
 	DcemView dcemView;
+	Map<String, SortMeta> sortBy;
+	Map<String, FilterMeta> filterBy;
+	
+	
 
 	public JpaLazyModel(EntityManager entityManager, DcemView dcemView) {
 		this.entityManager = entityManager;
@@ -105,10 +108,16 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 	// public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, FilterMeta> filterBy) {
 	// public List<T> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
 
+	public List<T> load(int first, int pageSize) {
+		return load (first, pageSize, sortBy, filterBy);  // getlastest sortby
+	}
+	
 	@Override
 	public List<T> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
 		// long start = System.currentTimeMillis();
-	//	System.out.println("JpaLazyModel.load()  filterBy " + filterBy);
+		// System.out.println("JpaLazyModel.load() filterBy " + filterBy);
+		this.sortBy = sortBy;
+		this.filterBy = filterBy;
 		if (dcemView.getPredefinedFilterId() > 0) {
 			try {
 				PredefinedFilter predefinedFilter = dcemView.getPredefinedFilter();
@@ -137,21 +146,23 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 			}
 			try {
 				filterOrders = new ArrayList<FilterOrder>();
-				for (SortMeta sortMeta : sortBy.values()) {
-					ViewVariable viewVariable = getViewVariable(sortMeta.getField());
-					boolean descending;
-					switch (sortMeta.getOrder()) {
-					case ASCENDING:
-						descending = false;
-						break;
-					case DESCENDING:
-						descending = true;
-						break;
-					default:
-						continue;
+				if (sortBy != null) {
+					for (SortMeta sortMeta : sortBy.values()) {
+						ViewVariable viewVariable = getViewVariable(sortMeta.getField());
+						boolean descending;
+						switch (sortMeta.getOrder()) {
+						case ASCENDING:
+							descending = false;
+							break;
+						case DESCENDING:
+							descending = true;
+							break;
+						default:
+							continue;
+						}
+						filterOrders.add(
+								new FilterOrder(viewVariable.getAttributes(), viewVariable.getId(), descending, viewVariable.getFilterItem().getSortRank()));
 					}
-					filterOrders
-							.add(new FilterOrder(viewVariable.getAttributes(), viewVariable.getId(), descending, viewVariable.getFilterItem().getSortRank()));
 				}
 				Collections.sort(filterOrders, new FilterOrderCompare());
 				data = jpaSelectProducer.selectCriteriaQuery(filterOrders, filterProperties, first, pageSize);
@@ -183,22 +194,24 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 	}
 
 	private List<FilterProperty> getMetaFilterProperties(Map<String, FilterMeta> filterBy, List<ViewVariable> variables) {
-		List<FilterProperty> properties = new ArrayList<>(filterBy.size());
+		List<FilterProperty> properties = new ArrayList<>();
 		ViewVariable viewVariable;
-		for (FilterMeta filterMeta : filterBy.values()) {
-			viewVariable = null;
-			for (ViewVariable viewVariable2 : variables) {
-				if (viewVariable2.getId().equals(filterMeta.getField())) {
-					viewVariable = viewVariable2;
-					break;
+		if (filterBy != null) {
+			for (FilterMeta filterMeta : filterBy.values()) {
+				viewVariable = null;
+				for (ViewVariable viewVariable2 : variables) {
+					if (viewVariable2.getId().equals(filterMeta.getField())) {
+						viewVariable = viewVariable2;
+						break;
+					}
 				}
-			}
-			if (viewVariable == null) {
-				continue;
-			}
-			FilterProperty filterProperty = getFilterProperty(viewVariable, filterMeta.getFilterValue());
-			if (filterProperty != null) {
-				properties.add(filterProperty);
+				if (viewVariable == null) {
+					continue;
+				}
+				FilterProperty filterProperty = getFilterProperty(viewVariable, filterMeta.getFilterValue());
+				if (filterProperty != null) {
+					properties.add(filterProperty);
+				}
 			}
 		}
 		return properties;

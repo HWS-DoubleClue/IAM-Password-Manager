@@ -79,7 +79,6 @@ public abstract class DcemView implements Serializable {
 	RoleRestrictionLogic roleRestrictionLogic;
 
 	DcemAction viewDcemAction;
-	DcemAction modifyAllDcemAction;
 
 	protected SubjectAbs subject;
 
@@ -88,6 +87,9 @@ public abstract class DcemView implements Serializable {
 	protected List<AutoViewAction> autoViewActions;
 
 	List<DcemAction> viewDcemActions;
+	
+	DcemAction revealAction;
+	DcemAction manageAction;
 
 	protected List<PredefinedFilter> predefinedFilters;
 
@@ -112,6 +114,8 @@ public abstract class DcemView implements Serializable {
 	public List<AutoViewAction> getViewActions() {
 		return autoViewActions;
 	}
+	
+
 
 	public void closeDialog() {
 		if (activeDialog != null) {
@@ -496,8 +500,8 @@ public abstract class DcemView implements Serializable {
 
 		viewVariables = new LinkedList<ViewVariable>();
 		displayViewVariables = new LinkedList<ViewVariable>();
-		DcemAction dcemAction = new DcemAction(subject, DcemConstants.ACTION_MANAGE);
-		boolean managed = operatorSessionBean.isPermission(dcemAction);
+//		DcemAction dcemAction = new DcemAction(subject, DcemConstants.ACTION_MANAGE);
+//		boolean managed = operatorSessionBean.isPermission(dcemAction);
 		if (subject != null && subject.getKlass() != null) {
 			viewVariables = DcemUtils.getViewVariables(subject.getKlass(), resourceBundle, subject.getName(), restrictions);
 			for (ViewVariable viewVariable : viewVariables) {
@@ -548,7 +552,7 @@ public abstract class DcemView implements Serializable {
 
 	private void excelExport(LazyDataModel<?> lazyDataModel, List<ViewVariable> variables, ActionType actionType) {
 
-		List<?> data = lazyDataModel.load(0, maxExport, null, null);
+		List<?> data = ((JpaLazyModel)lazyDataModel).load(0, maxExport);
 		Workbook workbook = new XSSFWorkbook();
 		CreationHelper createHelper = workbook.getCreationHelper();
 
@@ -659,6 +663,24 @@ public abstract class DcemView implements Serializable {
 			}
 		}
 		return list;
+	}
+
+
+
+	public DcemAction getRevealAction() {
+		if (revealAction == null) {
+			revealAction = new DcemAction(subject, DcemConstants.ACTION_REVEAL);
+		}
+		return revealAction;
+	}
+
+
+
+	public DcemAction getManageAction() {
+		if (manageAction == null) {
+			manageAction = new DcemAction(subject, DcemConstants.ACTION_MANAGE);
+		}
+		return manageAction;
 	}
 
 }
