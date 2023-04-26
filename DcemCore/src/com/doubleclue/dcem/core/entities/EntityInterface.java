@@ -12,5 +12,10 @@ public abstract class EntityInterface {
 	public String getRowStyle() {
 		return null;
 	}
+	
+	@JsonIgnore
+	public boolean isRestricted() {
+		return false;
+	}
 
 }

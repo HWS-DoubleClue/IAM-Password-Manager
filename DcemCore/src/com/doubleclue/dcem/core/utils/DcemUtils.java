@@ -83,6 +83,8 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
 
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
+import com.doubleclue.dcem.core.entities.DcemAction;
+import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.entities.RoleRestriction;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -99,6 +101,7 @@ import com.doubleclue.dcem.core.jpa.FilterProperty;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.jpa.VariableType;
 import com.doubleclue.dcem.core.logic.LoginAuthenticator;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.tasks.ReloadTask;
 import com.doubleclue.utils.RandomUtils;
 import com.google.zxing.BarcodeFormat;
@@ -134,8 +137,8 @@ public class DcemUtils {
 			}
 		}
 	}
-	
-	public static String getCountryCode (String country) {
+
+	public static String getCountryCode(String country) {
 		if (country == null) {
 			return null;
 		}
@@ -1092,27 +1095,93 @@ public class DcemUtils {
 		return viewVariables;
 	}
 
-	// public static void copyClassObject(Object sourceObject, Object
-	// destObject) {
-	// Class<?> sourceClass = sourceObject.getClass();
-	// Class<?> destClass = destObject.getClass();
-	// int modifiers;
-	// Field newField;
-	// for (Field sourceField : sourceClass.getDeclaredFields()) {
-	// modifiers = sourceField.getModifiers();
-	// if (Modifier.isStatic(modifiers) || (Modifier.isFinal(modifiers)) ||
-	// (Modifier.isTransient(modifiers))) {
-	// continue;
-	// }
-	// try {
-	// newField = destClass.getDeclaredField(sourceField.getName());
-	// } catch (NoSuchFieldException exp) {
-	//
-	// }
-	//
-	// }
-	//
-	// }
+	public static void setRestricedVariables(EntityInterface entity, OperatorSessionBean operatorSessionBean, DcemAction reveal, DcemAction manage)
+			throws Exception {
+		LinkedList<Class<?>> list = DcemUtils.getHierarchyList(entity.getClass());
+		Field[] fields;
+		for (Class<?> currentClass : list) {
+			fields = currentClass.getDeclaredFields();
+			for (Field field : fields) {
+				if (Modifier.isStatic(field.getModifiers())) {
+					continue;
+				}
+				DcemGui dcemGui = field.getAnnotation(DcemGui.class);
+				if (dcemGui == null) {
+					continue;
+				}
+				if (dcemGui.restricted()) {
+					if (operatorSessionBean.isPermission(reveal, manage) == false) {
+						Method method = null;
+						// for the moment only strings !!!
+						method = getSetterMethodForField(field, entity.getClass(), String.class);
+						method.invoke(entity, (String) null);
+					}
+
+				}
+			}
+		}
+		return;
+	}
+
+	/**
+	 * Returns the corresponding getter method for a field from the specified class
+	 *
+	 * @param field
+	 * @return
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 */
+	public static Method getGetterMethodForField(Field field, Class<?> clazz) throws NoSuchMethodException, SecurityException {
+		String fieldName = field.getName();
+		String getterMethodName = "get" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
+		try {
+			return clazz.getMethod(getterMethodName);
+		} catch (NoSuchMethodException e) {
+			getterMethodName = "is" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
+			return clazz.getMethod(getterMethodName);
+		}
+	}
+
+	/**
+	 * Returns the corresponding getter method for a field from this object
+	 *
+	 * @param field
+	 * @return
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 */
+	public static Method getSetterMethodForField(Field field, Class<?> clazz, Class<?> argType) throws Exception {
+		String fieldName = field.getName();
+		String setterMethodName = "set" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
+		do {
+			try {
+				Method method = clazz.getMethod(setterMethodName, argType);
+				return method;
+			} catch (NoSuchMethodException e) {
+				// Check if the argument is a primitive
+				if (org.apache.commons.lang3.ClassUtils.wrapperToPrimitive(argType) != null) {
+					argType = org.apache.commons.lang3.ClassUtils.wrapperToPrimitive(argType);
+					try {
+						Method method = clazz.getMethod(setterMethodName, argType);
+						return method;
+					} catch (NoSuchMethodException e2) {
+						argType = argType.getSuperclass();
+					}
+				} else {
+					// Check for interfaces
+					for (Class<?> baseArgType : org.apache.commons.lang3.ClassUtils.getAllInterfaces(argType)) {
+						try {
+							Method method = clazz.getMethod(setterMethodName, baseArgType);
+							return method;
+						} catch (NoSuchMethodException e2) {
+						}
+					}
+					argType = null;
+				}
+			}
+		} while (argType != null);
+		throw new NoSuchMethodException(setterMethodName);
+	}
 
 	static public void copyObject(Object sourceObject, Object destObject) {
 
@@ -1295,7 +1364,7 @@ public class DcemUtils {
 	public static Exception reloadTaskNodes(Class<?> klass, String tenantName, String info) {
 		return reloadTaskNodes(klass.getAnnotation(Named.class).value(), tenantName, info);
 	}
-	
+
 	public static Exception reloadTaskNodes(Class<?> klass, String tenantName) {
 		return reloadTaskNodes(klass.getAnnotation(Named.class).value(), tenantName, null);
 	}

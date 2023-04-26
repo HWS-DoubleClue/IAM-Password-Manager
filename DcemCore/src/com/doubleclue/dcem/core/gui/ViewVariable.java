@@ -165,19 +165,16 @@ public class ViewVariable implements Serializable {
 		for (MethodProperty methodProperty : methodProperties) {
 			try {
 				if (dcemGui.restricted() == true) {
-					try {
-						if (restrictedMethod == null) {
-							restrictedMethod = klassObject.getClass().getMethod("isRestricted");
-						}
-					} catch (Exception e2) {
-						e2.printStackTrace();
+					if (restrictedMethod == null) {
+						restrictedMethod = klassObject.getClass().getMethod("isRestricted");
 					}
 					if (((boolean) restrictedMethod.invoke(klassObject)) == true) {
 						if (viewNavigator == null) {
 							viewNavigator = CdiUtils.getReference(ViewNavigator.class);
 							operatorSessionBean = CdiUtils.getReference(OperatorSessionBean.class);
 						}
-						if (operatorSessionBean.isPermission(viewNavigator.getActiveView().getRevealAction(), viewNavigator.getActiveView().getManageAction()) == false) {
+						if (operatorSessionBean.isPermission(viewNavigator.getActiveView().getRevealAction(),
+								viewNavigator.getActiveView().getManageAction()) == false) {
 							return "---";
 						}
 					}
