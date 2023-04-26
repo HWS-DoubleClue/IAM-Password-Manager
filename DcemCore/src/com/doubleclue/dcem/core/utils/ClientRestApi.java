@@ -65,6 +65,11 @@ public class ClientRestApi {
 		return getResponse(url, false, HttpVerb.HTTP_PATCH, authHeader, true, body, contentType, accept, unseruce, timeoutSeconds);
 	}
 
+	public CloseableHttpResponse deleteRequest(String url, String authHeader, boolean unsecure, int timeoutSeconds) throws Exception {
+		return getResponse(url, false, HttpVerb.HTTP_DELETE, authHeader, true, null, null, null, unsecure, timeoutSeconds);
+	}
+
+	
 	public CloseableHttpResponse deleteRequest(String url, UsernamePasswordCredentials credentials, boolean unsecure, int timeoutSeconds) throws Exception {
 		return getResponse(url, false, HttpVerb.HTTP_DELETE, credentials, null, null, unsecure, timeoutSeconds);
 	}
