@@ -84,16 +84,11 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 			try {
 				return method.invoke(t);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		return null;
 	}
 
@@ -104,9 +99,6 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 	public void setData(List<T> data2) {
 		this.data = (List<T>) data2;
 	}
-
-	// public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, FilterMeta> filterBy) {
-	// public List<T> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filterBy) {
 
 	public List<T> load(int first, int pageSize) {
 		return load (first, pageSize, sortBy, filterBy);  // getlastest sortby

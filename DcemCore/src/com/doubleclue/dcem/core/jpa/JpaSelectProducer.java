@@ -278,7 +278,11 @@ public class JpaSelectProducer<T> implements Serializable {
 				switch (filterProperty.filterOperator) {
 				default:
 				case LIKE:
-					predicates.add(cb.like(expression, "%" + (String) filterProperty.getValue() + "%", DcemConstants.JPA_ESCAPE_CHAR));
+					if (((String) filterProperty.getValue()).contains("%")) {
+						predicates.add(cb.like(expression, (String) filterProperty.getValue(), DcemConstants.JPA_ESCAPE_CHAR));
+					} else {
+						predicates.add(cb.like(expression, "%" + (String) filterProperty.getValue() + "%", DcemConstants.JPA_ESCAPE_CHAR));
+					}
 					break;
 				case EQUALS:
 					predicates.add(cb.like(expression, (String) filterProperty.getValue(), DcemConstants.JPA_ESCAPE_CHAR));
