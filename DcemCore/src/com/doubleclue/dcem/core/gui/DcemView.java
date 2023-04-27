@@ -214,7 +214,7 @@ public abstract class DcemView implements Serializable {
 				autoViewAction.getDcemDialog().setActionObject(selectedObject);
 				autoViewAction.getDcemDialog().setSubActionObject(subObject);
 			}
-			if (selectedObject != null && autoViewAction.xhtmlPage.endsWith(DcemConstants.AUTO_DIALOG_PATH)) {
+			if (selectedObject != null && (autoViewAction.xhtmlPage == null || autoViewAction.xhtmlPage.endsWith(DcemConstants.AUTO_DIALOG_PATH))) {
 				autoDialogBean.populatePanelGrid();
 			}
 		}

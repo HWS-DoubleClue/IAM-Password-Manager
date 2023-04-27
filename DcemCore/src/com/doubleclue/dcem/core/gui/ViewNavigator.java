@@ -122,7 +122,11 @@ public class ViewNavigator implements Serializable {
 		if (activeView == null) {
 			return;
 		} else {
-			activeView.triggerAction(autoviewAction);
+			try {
+				activeView.triggerAction(autoviewAction);
+			} catch (Exception e) {
+				JsfUtils.addErrorMessage(e.toString());
+			}
 		}
 	}
 
