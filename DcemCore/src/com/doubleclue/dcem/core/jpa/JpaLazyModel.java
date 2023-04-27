@@ -160,7 +160,7 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 				data = jpaSelectProducer.selectCriteriaQuery(filterOrders, filterProperties, first, pageSize);
 			} catch (DcemException exp) {
 				logger.warn("jpaSelectProducer.selectCriteriaQuery", exp);
-				JsfUtils.addErrorMessage(exp.toString());
+				JsfUtils.addErrorMessage(exp.getLocalizedMessage());
 				data = null;
 			} catch (Exception e) {
 				logger.warn("jpaSelectProducer.selectCriteriaQuery", e);
@@ -344,6 +344,9 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 			int dataSize = (int) jpaSelectProducer.createCountCriteriaQuery(dcemView.getSubject().getKlass(), filterProperties);
 			setRowCount(dataSize);
 			return dataSize;
+		} catch (DcemException exp) {
+			JsfUtils.addErrorMessage(exp.getLocalizedMessage());
+			return 0;
 		} catch (Exception exp) {
 			logger.warn("jpaSelectProducer.createCountCriteriaQuery", exp);
 			JsfUtils.addErrorMessage(exp.toString() + "For " + dcemView.getSubject().getKlass());
