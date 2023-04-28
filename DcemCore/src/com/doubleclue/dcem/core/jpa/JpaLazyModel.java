@@ -74,6 +74,9 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 
 	@Override
 	public String getRowKey(T t) {
+		if (getId(t) == null) {
+			return "0";
+		}
 		return getId(t).toString();
 	}
 

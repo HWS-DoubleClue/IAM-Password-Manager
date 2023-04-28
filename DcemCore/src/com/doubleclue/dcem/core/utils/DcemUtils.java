@@ -1114,7 +1114,7 @@ public class DcemUtils {
 						Method method = null;
 						// for the moment only strings !!!
 						method = getSetterMethodForField(field, entity.getClass(), String.class);
-						method.invoke(entity, (String) null);
+						method.invoke(entity, (String) "---");
 					}
 
 				}

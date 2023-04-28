@@ -55,6 +55,7 @@ import com.doubleclue.dcem.core.logging.LogUtils;
 import com.doubleclue.dcem.core.logic.DiagConstants;
 import com.doubleclue.dcem.core.logic.DiagnosticLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
+import com.doubleclue.dcem.core.logic.TextResourceLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.logic.module.ModulePreferences;
 import com.doubleclue.dcem.core.tasks.MonitoringTask;
@@ -113,6 +114,9 @@ public class SystemModule extends DcemModule {
 
 	@SuppressWarnings("restriction")
 	com.sun.management.OperatingSystemMXBean operatingSystemMXBean;
+	
+	@Inject
+	TextResourceLogic textResourceLogic;
 
 	public final static String MODULE_ID = "system";
 	public final static String RESOUCE_NAME = "com.doubleclue.dcem.core.resources.Messages";
@@ -500,6 +504,11 @@ public class SystemModule extends DcemModule {
 		if (coreTenantData == null) {
 			coreTenantData = new SystemTenantData();
 			super.initializeTenant(tenantEntity, coreTenantData);
+		}
+		try {
+			textResourceLogic.createDefaultTextResources(false);
+		} catch (Exception e) {
+			logger.warn ("Couldn't update Text Resources", e);
 		}
 	}
 
