@@ -406,8 +406,12 @@ public class JpaSelectProducer<T> implements Serializable {
 					continue;
 				}
 				if (attribute.getJavaType().getSimpleName().equals("LocalDateTime")) {
-					Expression<LocalDateTime> expressionLocalDate = preFrom.<LocalDateTime> get((SingularAttribute<Object, LocalDateTime>) attribute);
-					predicates.add(cb.between(expressionLocalDate, (LocalDateTime) filterProperty.getValue(), (LocalDateTime) filterProperty.getToValue()));
+					Expression<LocalDateTime> expressionLdt = preFrom.<LocalDateTime> get((SingularAttribute<Object, LocalDateTime>) attribute);
+					predicates.add(cb.between(expressionLdt, (LocalDateTime) filterProperty.getValue(), (LocalDateTime) filterProperty.getToValue()));
+				} else if (attribute.getJavaType().getSimpleName().equals("LocalDate")) {
+					LocalDate localDate = LocalDate.from((LocalDateTime) filterProperty.getToValue());
+					Expression<LocalDate> expressionLocalDate = preFrom.<LocalDate> get((SingularAttribute<Object, LocalDate>) attribute);
+					predicates.add(cb.between(expressionLocalDate, localDate, localDate));
 				} else {
 					Expression<Date> expressionDate = preFrom.<Date> get((SingularAttribute<Object, Date>) attribute);
 					predicates.add(cb.between(expressionDate, DcemUtils.convertToDate((LocalDateTime) filterProperty.getValue()),
