@@ -2,6 +2,7 @@ package com.doubleclue.dcem.core.gui.converters;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -60,10 +61,15 @@ public class DefaultConvertor implements Converter {
 			if (context != null) {
 				locale = context.getViewRoot().getLocale();
 			}
-			DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM);
-			return ((LocalDateTime)value).format(dtf);
+			return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale).format((LocalDateTime)value);
 		}
-
+		if (value instanceof LocalDate) {
+			Locale locale = Locale.getDefault();
+			if (context != null) {
+				locale = context.getViewRoot().getLocale();
+			}
+			return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale).format(((LocalDate)value));
+		}
 		return value.toString();
 	}
 
