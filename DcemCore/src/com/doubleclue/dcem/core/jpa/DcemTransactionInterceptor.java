@@ -106,6 +106,10 @@ public class DcemTransactionInterceptor {
 				if (exp.getCause() instanceof javax.validation.ConstraintViolationException) {
 					throw new DcemException(DcemErrorCodes.CONSTRAIN_VIOLATION, exp.getCause().getMessage(), exp);
 				}
+				if (exp.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+					throw new DcemException(DcemErrorCodes.CONSTRAIN_VIOLATION_DB, exp.getCause().getMessage(), exp);
+				}
+				
 				ConstraintViolationException cve = DcemUtils.getConstainViolation(exp.getCause());
 				if (cve != null) {
 					throw new DcemException(DcemErrorCodes.CONSTRAIN_VIOLATION_DB, "from: " + method + "-" + cve.getConstraintName(), exp);
