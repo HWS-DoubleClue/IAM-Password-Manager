@@ -218,7 +218,7 @@ public final class DcemConstants {
 	public final static String OTP_MODULE_ID = "otp";
 	public final static String AS_MODULE_ID = "as";
 	public final static String USER_PORTAL_MODULE_ID = "up";
-	public final static String PERFORMANCE_DECK_MODULE_ID = "performancedeck";
+	public final static String PERFORMANCE_DECK_MODULE_ID = "pd";
 
 	public static final String AS_MODULE_ACTIVATION_LOGIC = "asActivtionLogic";
 
