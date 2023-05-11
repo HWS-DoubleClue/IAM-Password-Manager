@@ -789,23 +789,23 @@ public class DcemApplicationBean implements Serializable {
 	public Template getTemplateFromConfig(DcemTemplate dcemTemplate) throws Exception {
 		getFreeMarkerConfiguration();
 		Template template = null;
+		String name = dcemTemplate.getFullName() + "-" + TenantIdResolver.getCurrentTenantName();
 		try {
-			String name = dcemTemplate.getFullName() + "-" + TenantIdResolver.getCurrentTenantName();
 			template = freeMarkerConfiguration.getTemplate(name);
 		} catch (TemplateNotFoundException e) {
 			DcFreeMarkerStringLoader stringLoader = (DcFreeMarkerStringLoader) freeMarkerConfiguration.getTemplateLoader();
-			stringLoader.putTemplate(dcemTemplate.getName(), dcemTemplate.getContent());
+			stringLoader.putTemplate(name, dcemTemplate.getContent());
 			// Wait until the template is loaded in the configuration
 			for (int sleepCounter = 0; sleepCounter < 20; sleepCounter++) {
 				try {
-					template = freeMarkerConfiguration.getTemplate(dcemTemplate.getName());
+					template = freeMarkerConfiguration.getTemplate(name);
 					break;
 				} catch (TemplateNotFoundException exp) {
 					Thread.sleep(500);
 				}
 			}
 			if (template == null) {
-				throw new TemplateNotFoundException(dcemTemplate.getName(), null, "The template could not be loaded after 10 seconds");
+				throw new TemplateNotFoundException(name, null, "The template could not be loaded after 10 seconds");
 			}
 		} catch (Exception e) {
 			throw e;
