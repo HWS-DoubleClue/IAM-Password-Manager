@@ -1331,7 +1331,7 @@ public class AppServices {
 		if (cloudSafeEntity.getUser().getId().equals(userId) == false) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_CANNOT_DELETE_SHARED_FILE, cloudSafeEntity.getName());
 		}
-		List<CloudSafeDto> list = cloudSafeLogic.deleteCloudSafe(cloudSafeEntity, userLogic.getUser(userId));
+		List<CloudSafeDto> list = cloudSafeLogic.deleteCloudSafe(cloudSafeEntity, userLogic.getUser(userId), true);
 		if (list.isEmpty() == false) {
 			cloudSafeLogic.deleteCloudSafeFilesContent(list);
 		}

@@ -1108,13 +1108,8 @@ public class CloudSafeLogic {
 		}
 	}
 
-	/**
-	 * This will not delete the contents. Contents have to be remove after Transaction
-	 * @param list
-	 * @throws Exception
-	 */
 	@DcemTransactional
-	public List<CloudSafeDto> deleteCloudSafeFiles(List<CloudSafeEntity> list, DcemUser loggedInUser) throws Exception {
+	public List<CloudSafeDto> deleteCloudSafeFiles(List<CloudSafeEntity> list, DcemUser loggedInUser, boolean shouldRecycle) throws Exception {
 		List<CloudSafeDto> allDeletedFiles = new ArrayList<CloudSafeDto>();
 		for (CloudSafeEntity cloudSafeEntity : list) {
 			if (loggedInUser != null && cloudSafeEntity.getOwner() == CloudSafeOwner.USER && asModule.getModulePreferences().isEnableAuditUser() == true
@@ -1132,11 +1127,41 @@ public class CloudSafeLogic {
 				cloudSafeEntity.setDiscardAfter(expiryDate.getTime());
 				em.merge(cloudSafeEntity);
 			} else {
-				allDeletedFiles.addAll(deleteCloudSafe(cloudSafeEntity, loggedInUser));
+				allDeletedFiles.addAll(deleteCloudSafe(cloudSafeEntity, loggedInUser, shouldRecycle));
 			}
 		}
 		return allDeletedFiles;
 	}
+
+	/**
+	 * This will not delete the contents. Contents have to be remove after Transaction
+	 * @param list
+	 * @throws Exception
+	 */
+	// @DcemTransactional
+	// public List<CloudSafeDto> deleteCloudSafeFiles(List<CloudSafeEntity> list, DcemUser loggedInUser) throws Exception {
+	// List<CloudSafeDto> allDeletedFiles = new ArrayList<CloudSafeDto>();
+	// for (CloudSafeEntity cloudSafeEntity : list) {
+	// if (loggedInUser != null && cloudSafeEntity.getOwner() == CloudSafeOwner.USER && asModule.getModulePreferences().isEnableAuditUser() == true
+	// && cloudSafeEntity.isRecycled() == false) {
+	// DcemAction dcemAction = new DcemAction(asCloudSafeSubject, DcemConstants.ACTION_DELETE);
+	// String shareUser = "";
+	// if (loggedInUser.getId() != cloudSafeEntity.getUser().getId()) {
+	// shareUser = AUDIT_SHARED_BY + cloudSafeEntity.getUser().getDisplayNameOrLoginId();
+	// }
+	// auditingLogic.addAudit(dcemAction, loggedInUser, "File: " + cloudSafeEntity.getName() + shareUser);
+	// }
+	// if (cloudSafeEntity.getOwner() == CloudSafeOwner.GROUP) {
+	// Calendar expiryDate = Calendar.getInstance();
+	// expiryDate.add(Calendar.WEEK_OF_YEAR, 1);
+	// cloudSafeEntity.setDiscardAfter(expiryDate.getTime());
+	// em.merge(cloudSafeEntity);
+	// } else {
+	// allDeletedFiles.addAll(deleteCloudSafe(cloudSafeEntity, loggedInUser));
+	// }
+	// }
+	// return allDeletedFiles;
+	// }
 
 	@DcemTransactional
 	public void deleteCloudSafeFilesContent(List<CloudSafeDto> list) throws DcemException {
@@ -1151,10 +1176,10 @@ public class CloudSafeLogic {
 	 * @throws DcemException
 	 */
 	@DcemTransactional
-	public List<CloudSafeDto> deleteCloudSafe(CloudSafeEntity cloudSafeEntity, DcemUser loggedInUser) throws DcemException {
+	public List<CloudSafeDto> deleteCloudSafe(CloudSafeEntity cloudSafeEntity, DcemUser loggedInUser, boolean shouldRecycle) throws DcemException {
 		// Check if entity is within Recycling Bin
 		boolean recycled = checkEntityIsRecycled(cloudSafeEntity);
-		if (recycled) {
+		if (recycled == true || shouldRecycle == false) {
 			if (cloudSafeEntity.isFolder()) {
 				return deleteCloudSafeFolder(cloudSafeEntity);
 			} else {
@@ -1424,13 +1449,13 @@ public class CloudSafeLogic {
 		CloudSafeLimitEntity limitEntity = getCloudSafeLimitEntity(user.getId());
 
 		// 1. Check expiry dates
-//		Date expiryDate = limitEntity != null ? limitEntity.getExpiryDate() : null;
-//		if (expiryDate != null && now.after(expiryDate)) {
-//			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_USER_EXPIRY_DATE_REACHED,
-//					"This user cannot use CloudSafe because the expiry date has passed: " + getStringFromDate(expiryDate));
-//		} else if (now.after(licenceKeyContent.getExpiresOn())) {
-//			throw new DcemException(DcemErrorCodes.LICENCE_EXPIRED, "This user cannot use CloudSafe because the licence has expired");
-//		}
+		// Date expiryDate = limitEntity != null ? limitEntity.getExpiryDate() : null;
+		// if (expiryDate != null && now.after(expiryDate)) {
+		// throw new DcemException(DcemErrorCodes.CLOUD_SAFE_USER_EXPIRY_DATE_REACHED,
+		// "This user cannot use CloudSafe because the expiry date has passed: " + getStringFromDate(expiryDate));
+		// } else if (now.after(licenceKeyContent.getExpiresOn())) {
+		// throw new DcemException(DcemErrorCodes.LICENCE_EXPIRED, "This user cannot use CloudSafe because the licence has expired");
+		// }
 
 		// 2. Check against user's Cloud Safe limit
 		long userLimit = limitEntity != null ? limitEntity.getLimit() : getDefaultUserLimit();
@@ -1513,9 +1538,11 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public void saveMultipleFiles(List<DcemUploadFile> uploadedFiles, DcemUser dcemUser, String filePassword, Date expiryDate, boolean passwordProtected,
-			boolean encryptProtected, CloudSafeEntity parent, DcemUser lastModifiedUser, DcemGroup groupOwner, CloudSafeOwner cloudSafeOwner) throws Exception {
+	public List<CloudSafeEntity> saveMultipleFiles(List<DcemUploadFile> uploadedFiles, DcemUser dcemUser, String filePassword, Date expiryDate,
+			boolean passwordProtected, boolean encryptProtected, CloudSafeEntity parent, DcemUser lastModifiedUser, DcemGroup groupOwner,
+			CloudSafeOwner cloudSafeOwner) throws Exception {
 		HashSet<String> hashSet = new HashSet<>();
+		List<CloudSafeEntity> savedFiles = new ArrayList<>();
 		for (DcemUploadFile uploadedFile : uploadedFiles) {
 			if (hashSet.contains(uploadedFile.fileName)) {
 				continue;
@@ -1544,7 +1571,6 @@ public class CloudSafeLogic {
 			cloudSafeEntity.setParent(parent);
 			cloudSafeEntity.setLastModifiedUser(lastModifiedUser);
 			cloudSafeEntity.setGcm(true);
-
 			if (passwordProtected) {
 				if (uploadedFile.fileName.endsWith(AsConstants.EXTENSION_PASSWORD_SAFE)) {
 					throw new DcemException(DcemErrorCodes.PASSWORD_NOT_SUPPORTED_KDBX, uploadedFile.fileName);
@@ -1559,12 +1585,14 @@ public class CloudSafeLogic {
 			} else {
 				cloudSafeEntity.setOptions(CloudSafeOptions.ENC.name());
 			}
-
 			cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, filePassword == null ? null : filePassword.toCharArray(),
 					new FileInputStream(uploadedFile.file), (int) uploadedFile.file.length(), lastModifiedUser);
 			hashSet.add(uploadedFile.fileName);
+			savedFiles.add(cloudSafeEntity);
 		}
+		return savedFiles;
 	}
+
 
 	@DcemTransactional
 	public void addCloudSafeFolder(CloudSafeEntity cloudSafeEntity) throws DcemException {
