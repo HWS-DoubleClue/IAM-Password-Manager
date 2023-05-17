@@ -136,7 +136,7 @@ public class AuthGatewayServices {
 			requestParam.setSessionId(appSession.getWsSession().getSessionId());
 			requestParam.setReportInfo("From: " + authUserParam.getWorkstationName());
 
-			if (authMethod == AuthMethod.SESSION_RECONNECT) {
+			if ((authMethod == AuthMethod.SESSION_RECONNECT || authMethod == null) && passcode != null) {
 				requestParam.setSessionCookie(passcode);
 			}
 

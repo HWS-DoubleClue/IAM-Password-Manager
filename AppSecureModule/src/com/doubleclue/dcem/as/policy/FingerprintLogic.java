@@ -21,6 +21,9 @@ public class FingerprintLogic {
 	EntityManager em;
 
 	public boolean verifyFingerprint(Integer userId, Integer id, String fingerprint) {
+		if (fingerprint == null) { 
+			return false;
+		}
 		UserFingerprintEntity userFingerprintEntity = getFingerprint(userId, id);
 		if (userFingerprintEntity == null) {
 			return false;

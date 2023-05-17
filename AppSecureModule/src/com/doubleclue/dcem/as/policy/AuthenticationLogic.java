@@ -205,7 +205,7 @@ public class AuthenticationLogic {
 			
 			PolicyEntity policyEntity = policyLogic.getPolicy(authApplication, subId, dcemUser);
 //			System.out.println("USER " + dcemUser +  ",  networkAddress: " + networkAddress + ", Policy " + policyEntity);
-			List<AuthMethod> methods = policyLogic.getAuthMethods(policyEntity, authApplication, subId, dcemUser);
+			List<AuthMethod> methods = policyLogic.getAuthMethods(policyEntity, authApplication, subId, dcemUser, requestParam.getSessionCookie());
 			if (methods.isEmpty()) {
 				throw new DcemException(DcemErrorCodes.NO_AUTH_METHOD_FOUND, null);
 			}

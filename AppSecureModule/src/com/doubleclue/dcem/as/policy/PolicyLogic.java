@@ -396,7 +396,7 @@ public class PolicyLogic implements ReloadClassInterface {
 
 	public List<AuthMethod> getAuthMethods(AuthApplication authApplication, int subId, DcemUser user) throws DcemException {
 		PolicyEntity policyEntity = getPolicy(authApplication, subId, user);
-		return getAuthMethods(policyEntity, authApplication, subId, user);
+		return getAuthMethods(policyEntity, authApplication, subId, user, null);
 	}
 
 	/**
@@ -408,7 +408,7 @@ public class PolicyLogic implements ReloadClassInterface {
 	 * @return
 	 * @throws DcemException
 	 */
-	public List<AuthMethod> getAuthMethods(PolicyEntity policyEntity, AuthApplication authApplication, int subId, DcemUser user) throws DcemException {
+	public List<AuthMethod> getAuthMethods(PolicyEntity policyEntity, AuthApplication authApplication, int subId, DcemUser user, String sessionCookie) throws DcemException {
 
 		DcemPolicy dcemPolicy = policyEntity.getDcemPolicy();
 		if (dcemPolicy.isDenyAccess()) { // ignore rest of policy rules
@@ -417,7 +417,7 @@ public class PolicyLogic implements ReloadClassInterface {
 			if (user != null) {
 				if (dcemPolicy.isRefrain2FaWithInTime() == true) {
 					PolicyAppEntity appEntity = getDetachedPolicyApp(authApplication, subId);
-					if (fingerPrintLogic.verifyFingerprint(user.getId(), appEntity.getId(), null)) {
+					if (fingerPrintLogic.verifyFingerprint(user.getId(), appEntity.getId(), sessionCookie)) {
 						List<AuthMethod> list = new ArrayList<>(1);
 						list.add(AuthMethod.PASSWORD);
 						return list;
