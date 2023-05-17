@@ -35,8 +35,6 @@ public class FingerprintLogic {
 			if (new Date().before(userFingerprintEntity.getTimestamp()) && userFingerprintEntity.getFingerprint().equals(fingerprint)) {
 				return true;
 			}
-		} else if (new Date().before(userFingerprintEntity.getTimestamp())) {
-			return true;
 		}
 		return false;
 	}
