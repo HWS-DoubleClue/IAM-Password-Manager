@@ -87,7 +87,7 @@ public abstract class DcemView implements Serializable {
 	protected List<AutoViewAction> autoViewActions;
 
 	List<DcemAction> viewDcemActions;
-	
+
 	DcemAction revealAction;
 	DcemAction manageAction;
 
@@ -114,8 +114,6 @@ public abstract class DcemView implements Serializable {
 	public List<AutoViewAction> getViewActions() {
 		return autoViewActions;
 	}
-	
-
 
 	public void closeDialog() {
 		if (activeDialog != null) {
@@ -204,7 +202,7 @@ public abstract class DcemView implements Serializable {
 		}
 		subObject = selectedObject;
 		activeDialog = autoViewAction.getDcemDialog();
-		
+
 		if (actioType == ActionType.DIALOG || actioType == ActionType.CREATE_OBJECT) {
 			if (autoDialogBean != null) {
 				setActionObject(selectedObject);
@@ -236,9 +234,18 @@ public abstract class DcemView implements Serializable {
 		// options.put("contentHeight", "auto");
 		options.put("position", "top");
 		options.put("headerElement", "customheader");
+
+		options.put("contentHeight", activeDialog.getHeight());
+		options.put("position", "top");
+		options.put("headerElement", "customheader");
 		if (activeDialog.getHeight() != null) {
-			options.put("height", activeDialog.getHeight());
+			if (activeDialog.getHeight().contains("vh")) {
+				options.put("height", "auto");
+			} else {
+				options.put("height", activeDialog.getHeight());
+			}
 		}
+
 		if (activeDialog.getWidth() != null) {
 			options.put("width", activeDialog.getWidth());
 		}
@@ -500,8 +507,8 @@ public abstract class DcemView implements Serializable {
 
 		viewVariables = new LinkedList<ViewVariable>();
 		displayViewVariables = new LinkedList<ViewVariable>();
-//		DcemAction dcemAction = new DcemAction(subject, DcemConstants.ACTION_MANAGE);
-//		boolean managed = operatorSessionBean.isPermission(dcemAction);
+		// DcemAction dcemAction = new DcemAction(subject, DcemConstants.ACTION_MANAGE);
+		// boolean managed = operatorSessionBean.isPermission(dcemAction);
 		if (subject != null && subject.getKlass() != null) {
 			viewVariables = DcemUtils.getViewVariables(subject.getKlass(), resourceBundle, subject.getName(), restrictions);
 			for (ViewVariable viewVariable : viewVariables) {
@@ -552,7 +559,7 @@ public abstract class DcemView implements Serializable {
 
 	private void excelExport(LazyDataModel<?> lazyDataModel, List<ViewVariable> variables, ActionType actionType) {
 
-		List<?> data = ((JpaLazyModel)lazyDataModel).load(0, maxExport);
+		List<?> data = ((JpaLazyModel) lazyDataModel).load(0, maxExport);
 		Workbook workbook = new XSSFWorkbook();
 		CreationHelper createHelper = workbook.getCreationHelper();
 
@@ -650,7 +657,7 @@ public abstract class DcemView implements Serializable {
 		List<FilterMeta> list = new LinkedList<FilterMeta>();
 		FilterMeta filterMeta = null;
 		for (ViewVariable viewVariable : viewVariables) {
-			if (viewVariable.getFilterItem().getFilterOperator() != FilterOperator.NONE &&  viewVariable.getFilterValue() != null) {
+			if (viewVariable.getFilterItem().getFilterOperator() != FilterOperator.NONE && viewVariable.getFilterValue() != null) {
 				if (viewVariable.getFilterToValue() != null) {
 					List<Object> listValues = new ArrayList<>();
 					listValues.add(viewVariable.getFilterValue());
@@ -665,16 +672,12 @@ public abstract class DcemView implements Serializable {
 		return list;
 	}
 
-
-
 	public DcemAction getRevealAction() {
 		if (revealAction == null) {
 			revealAction = new DcemAction(subject, DcemConstants.ACTION_REVEAL);
 		}
 		return revealAction;
 	}
-
-
 
 	public DcemAction getManageAction() {
 		if (manageAction == null) {
