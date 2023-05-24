@@ -222,6 +222,7 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 		VariableType variableType = viewVariable.getVariableType();
 		Object filterValueTo = viewVariable.getFilterToValue();
 		switch (variableType) {
+		case LIST:
 		case STRING:
 			if (filterValue == null) {
 				if ((viewVariable.getFilterValue() == null) || ((String) viewVariable.getFilterValue()).isEmpty()) {

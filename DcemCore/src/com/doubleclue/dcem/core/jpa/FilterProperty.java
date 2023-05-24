@@ -2,11 +2,12 @@ package com.doubleclue.dcem.core.jpa;
 
 import java.util.ArrayList;
 
+import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 public class FilterProperty {
 		
-	ArrayList<SingularAttribute<?, ?>> attributes;
+	ArrayList<Attribute<?, ?>> attributes;
 	Object value;
 	Object toValue;
 	
@@ -14,7 +15,7 @@ public class FilterProperty {
 	
 	FilterOperator filterOperator;
 	
-	public FilterProperty(ArrayList<SingularAttribute<?, ?>> attributes, Object value, Object toValue, VariableType variableType, FilterOperator filterOperator	) {
+	public FilterProperty(ArrayList<Attribute<?, ?>> attributes, Object value, Object toValue, VariableType variableType, FilterOperator filterOperator	) {
 		super();
 		this.attributes = attributes;
 		this.value = value;
@@ -43,11 +44,11 @@ public class FilterProperty {
 //		this.variableType = variableType;
 //	}
 
-	public ArrayList<SingularAttribute<?, ?>> getAttributes() {
+	public ArrayList<Attribute<?, ?>> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(ArrayList<SingularAttribute<?, ?>> attributes) {
+	public void setAttributes(ArrayList<Attribute<?, ?>> attributes) {
 		this.attributes = attributes;
 	}
 	

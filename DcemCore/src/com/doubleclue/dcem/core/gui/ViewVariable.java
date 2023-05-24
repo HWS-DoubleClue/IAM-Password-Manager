@@ -56,14 +56,14 @@ public class ViewVariable implements Serializable {
 	IPhoto iPhoto;
 
 	ArrayList<MethodProperty> methodProperties = null;
-	ArrayList<SingularAttribute<?, ?>> attributes;
+	ArrayList<Attribute<?, ?>> attributes;
 	Method restrictedMethod;
 
 	public ViewVariable() {
 	}
 
 	public ViewVariable(String id, String displayName, String helpText, VariableType variableType, DcemGui dcemGui, Object value,
-			ArrayList<SingularAttribute<?, ?>> attributes) {
+			ArrayList<Attribute<?, ?>> attributes) {
 		super();
 		this.id = id;
 		this.displayName = displayName;
@@ -76,7 +76,7 @@ public class ViewVariable implements Serializable {
 	}
 
 	public ViewVariable(String id, String displayName, String helpText, VariableType variableType, DcemGui dcemGui, Object value,
-			ArrayList<SingularAttribute<?, ?>> attributes, FilterItem filterItem) {
+			ArrayList<Attribute<?, ?>> attributes, FilterItem filterItem) {
 		super();
 		this.id = id;
 		this.displayName = displayName;
@@ -258,18 +258,18 @@ public class ViewVariable implements Serializable {
 		this.variableType = variableType;
 	}
 
-	public void addAttribute(SingularAttribute<?, ?> attribute) {
+	public void addAttribute(Attribute<?, ?> attribute) {
 		if (attributes == null) {
-			attributes = new ArrayList<SingularAttribute<?, ?>>();
+			attributes = new ArrayList<Attribute<?, ?>>();
 		}
 		attributes.add(attribute);
 	}
 
-	public ArrayList<SingularAttribute<?, ?>> getAttributes() {
+	public ArrayList<Attribute<?, ?>> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(ArrayList<SingularAttribute<?, ?>> attributes) {
+	public void setAttributes(ArrayList<Attribute<?, ?>> attributes) {
 		this.attributes = attributes;
 	}
 

@@ -139,7 +139,7 @@ public class JpaSelectProducer<T> implements Serializable {
 				if (length == 0) {
 					return orders;
 				}
-				SingularAttribute<?, ?> attribute = filterOrder.getAttributes().get(length - 1);
+				Attribute<?, ?> attribute = filterOrder.getAttributes().get(length - 1);
 
 				From<?, ?> from = null;
 				from = root;
@@ -147,7 +147,7 @@ public class JpaSelectProducer<T> implements Serializable {
 				if (length > 1) {
 					// search and create the Joins
 					for (int i = 0; i < length - 1; i++) {
-						SingularAttribute<?, ?> joinAttribute = filterOrder.getAttributes().get(i);
+						Attribute<?, ?> joinAttribute = filterOrder.getAttributes().get(i);
 						from = getJoins(from.getJoins(), attribute.getDeclaringType().getJavaType(), joinAttribute);
 						if (from == null) {
 							from = root.join(joinAttribute.getName(), JoinType.LEFT);
@@ -249,7 +249,7 @@ public class JpaSelectProducer<T> implements Serializable {
 			if (filterProperty.getAttributes() == null || filterProperty.getAttributes().size() == 0) {
 				throw new DcemException(DcemErrorCodes.MISSING_META_DATA_ATRIBUTES, filterProperty.toString());
 			}
-			SingularAttribute<?, ?> attribute = filterProperty.getAttributes().get(length - 1);
+			Attribute<?, ?> attribute = filterProperty.getAttributes().get(length - 1);
 
 			From<?, ?> from = null;
 			From<?, ?> preFrom = null;
@@ -258,7 +258,7 @@ public class JpaSelectProducer<T> implements Serializable {
 			if (length > 1) {
 				// search and create the Joins
 				for (int i = 0; i < length - 1; i++) {
-					SingularAttribute<?, ?> joinAttribute = filterProperty.getAttributes().get(i);
+					Attribute<?, ?> joinAttribute = filterProperty.getAttributes().get(i);
 					from = getJoins(preFrom.getJoins(), attribute.getDeclaringType().getJavaType(), joinAttribute);
 					if (from == null) {
 						preFrom = preFrom.join(joinAttribute.getName(), JoinType.LEFT);
@@ -269,7 +269,10 @@ public class JpaSelectProducer<T> implements Serializable {
 			}
 
 			switch (filterProperty.variableType) {
-
+			
+			case LIST: 
+				System.out.println("JpaSelectProducer.getPredicates()");
+				break;
 			case STRING: {
 				if (filterProperty.getValue() == null) {
 					continue;
