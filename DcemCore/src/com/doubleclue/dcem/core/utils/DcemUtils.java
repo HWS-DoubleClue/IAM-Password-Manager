@@ -10,6 +10,8 @@ import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
@@ -67,6 +69,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMultipart;
 import javax.persistence.Convert;
+import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -88,7 +91,6 @@ import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.entities.RoleRestriction;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
-import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.DcemGui;
 import com.doubleclue.dcem.core.gui.JsfUtils;
@@ -96,8 +98,6 @@ import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.gui.ViewVariable;
 import com.doubleclue.dcem.core.jpa.EpochDateConverter;
 import com.doubleclue.dcem.core.jpa.FilterItem;
-import com.doubleclue.dcem.core.jpa.FilterOperator;
-import com.doubleclue.dcem.core.jpa.FilterProperty;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.jpa.VariableType;
 import com.doubleclue.dcem.core.logic.LoginAuthenticator;
@@ -170,7 +170,7 @@ public class DcemUtils {
 	 * @return
 	 */
 	static public ViewVariable convertFieldToViewVariable(Field field, ResourceBundle resourceBundle, String viewName, Object objectKlass,
-			ArrayList<SingularAttribute<?, ?>> attributes) {
+			ArrayList<Attribute<?, ?>> attributes) {
 		Class<?> cls;
 		String displayName = null;
 		String helpText = null;
@@ -291,8 +291,8 @@ public class DcemUtils {
 			if (dcemGui.filterToValue().isEmpty() == false) {
 				filterToValue = Boolean.parseBoolean(dcemGui.filterToValue());
 			}
-		} else if ((cls.equals(Date.class)) || (cls.equals(Timestamp.class)) || (cls.equals(java.sql.Date.class) || 
-				(cls.equals(LocalDateTime.class) || (cls.equals(LocalDate.class))))) {
+		} else if ((cls.equals(Date.class)) || (cls.equals(Timestamp.class))
+				|| (cls.equals(java.sql.Date.class) || (cls.equals(LocalDateTime.class) || (cls.equals(LocalDate.class))))) {
 			Convert convert = field.getAnnotation(Convert.class);
 			if (convert != null && convert.converter().equals(EpochDateConverter.class)) {
 				variableType = VariableType.EPOCH_DATE;
@@ -306,9 +306,22 @@ public class DcemUtils {
 			}
 		} else if (dcemGui.variableType() == VariableType.IMAGE) {
 			// ok
+
 		} else {
 			// it is a Class
 			if (dcemGui.subClass().isEmpty() == false) {
+				if (cls.equals(List.class)) {
+					variableType = VariableType.LIST;
+					if (dcemGui.filterValue().isEmpty() == false) {
+						filterValue = dcemGui.filterValue();
+					}
+					Type [] types = ((ParameterizedType)field.getGenericType()).getActualTypeArguments();
+//					types[0];
+//					((ParameterizedType) field.getClass()
+//				            .getGenericSuperclass()).getActualTypeArguments();
+					
+					
+				}
 				subClass = dcemGui.subClass();
 				Field subField;
 				try {
@@ -337,8 +350,7 @@ public class DcemUtils {
 						return retViewVariable;
 					}
 				} catch (NoSuchFieldException | SecurityException exp2) {
-					logger.warn("SubClass field not found: " + subClass, exp2);
-					exp2.printStackTrace();
+					logger.error("SubClass field not found: " + subClass, exp2);
 					return null;
 				}
 
