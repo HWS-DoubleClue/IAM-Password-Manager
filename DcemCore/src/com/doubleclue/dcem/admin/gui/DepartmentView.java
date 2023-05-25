@@ -7,6 +7,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.admin.subjects.DepartmentSubject;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.gui.AutoViewBean;
@@ -17,7 +18,6 @@ import com.doubleclue.dcem.core.gui.JsfUtils;
 @SessionScoped
 public class DepartmentView extends DcemView {
 
-
 	@Inject
 	private DepartmentSubject departmentSubject;
 
@@ -26,12 +26,12 @@ public class DepartmentView extends DcemView {
 
 	@Inject
 	private DepartmentDialog departmentDialog;
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	ResourceBundle resourceBundle;
 
 	@PostConstruct
@@ -39,10 +39,11 @@ public class DepartmentView extends DcemView {
 		departmentDialog.setParentView(this);
 		subject = departmentSubject;
 		ResourceBundle resourceBundle = JsfUtils.getBundle(DcemConstants.CORE_RESOURCE, operatorSessionBean.getLocale());
+		ResourceBundle adminResourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
 		addAutoViewAction(DcemConstants.ACTION_ADD, resourceBundle, departmentDialog, DcemConstants.DEPARTMENT_DIALOG);
-	//	addAutoViewAction(DcemConstants.ACTION_COPY, resourceBundle, departmentDialog, DcemConstants.TEMPLATE_DIALOG);
+		// addAutoViewAction(DcemConstants.ACTION_COPY, resourceBundle, departmentDialog, DcemConstants.TEMPLATE_DIALOG);
 		addAutoViewAction(DcemConstants.ACTION_EDIT, resourceBundle, departmentDialog, DcemConstants.DEPARTMENT_DIALOG);
-		addAutoViewAction(DcemConstants.ACTION_ORGANIGRAM, resourceBundle, departmentDialog, DcemConstants.DEPARTMENT_ORGAMIGRAM_DIALOG);
+		addAutoViewAction(DcemConstants.ACTION_ORGANIGRAM, adminResourceBundle, departmentDialog, DcemConstants.DEPARTMENT_ORGAMIGRAM_DIALOG);
 		addAutoViewAction(DcemConstants.ACTION_DELETE, resourceBundle, departmentDialog, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);
 	}
 
@@ -58,5 +59,5 @@ public class DepartmentView extends DcemView {
 	public void setResourceBundle(ResourceBundle resourceBundle) {
 		this.resourceBundle = resourceBundle;
 	}
-		
+
 }

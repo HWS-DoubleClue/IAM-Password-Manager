@@ -39,7 +39,7 @@ public class TemplateDialog extends DcemDialog {
 	
 	
 	public String getHeight () {
-		return "650";
+		return "700";
 	}
 	
 	public String getWidth () {
