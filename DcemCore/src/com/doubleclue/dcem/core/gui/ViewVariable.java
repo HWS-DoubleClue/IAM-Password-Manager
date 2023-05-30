@@ -5,32 +5,24 @@ import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
-import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.apache.commons.compress.harmony.unpack200.bytecode.OperandManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 
-import com.doubleclue.dcem.core.DcemConstants;
-import com.doubleclue.dcem.core.entities.DcemAction;
-import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.gui.converters.DefaultConvertor;
 import com.doubleclue.dcem.core.jpa.FilterItem;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
@@ -443,14 +435,6 @@ public class ViewVariable implements Serializable {
 
 	public void setDcemGui(DcemGui dcemGui) {
 		this.dcemGui = dcemGui;
-	}
-
-	public IPhoto getiPhoto() {
-		return iPhoto;
-	}
-
-	public void setiPhoto(IPhoto iPhoto) {
-		this.iPhoto = iPhoto;
 	}
 
 }
