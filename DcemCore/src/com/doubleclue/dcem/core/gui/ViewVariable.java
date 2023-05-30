@@ -12,10 +12,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.SingularAttribute;
 
@@ -59,6 +61,7 @@ public class ViewVariable implements Serializable {
 	FilterItem filterItem = new FilterItem();
 	boolean restricted;
 	boolean visible = true;
+	IPhoto iPhoto;
 
 	ArrayList<MethodProperty> methodProperties = null;
 	ArrayList<SingularAttribute<?, ?>> attributes;
@@ -221,47 +224,19 @@ public class ViewVariable implements Serializable {
 	}
 
 	public StreamedContent getRecordImage(Object klassObject) {
-		getMethodProperties(klassObject);
-		MethodProperty lastMethodProperty = null;
-		for (MethodProperty methodProperty : methodProperties) {
-			try {
-				lastMethodProperty = methodProperty;
-				if (klassObject != null) {
-					klassObject = methodProperty.getMethod().invoke(klassObject);
-				}
-			} catch (IllegalArgumentException exp) {
-				PropertyDescriptor pd;
-				try {
-					pd = new PropertyDescriptor(methodProperty.getName(), klassObject.getClass());
-					Method getterMethod = pd.getReadMethod();
-					methodProperty.setMethod(getterMethod);
-					klassObject = getterMethod.invoke(klassObject);
-					logger.debug("Class does not match");
-				} catch (Exception e) {
-					logger.warn(lastMethodProperty, exp);
-					return null;
-				}
-			} catch (Exception exp) {
-				logger.warn(lastMethodProperty, exp);
-				return null;
-			}
-		}
-
+		byte[] image = null;
 		if (klassObject != null) {
-			// TODO quick and Dirty solution
-			if (klassObject instanceof DcemUserExtension) {
-				byte[] image = ((DcemUserExtension) klassObject).getPhoto();
+			try {
+				image = ((IPhoto) klassObject).getPhoto();
 				if (image != null) {
 					InputStream in = new ByteArrayInputStream(image);
 					return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
-				} else {
-					return JsfUtils.getDefaultUserImage();
 				}
+			} catch (Exception e) {
+				logger.warn("Most probable the IPhoto interfaces is missing in entity", e);
 			}
-		} else {
-			return JsfUtils.getDefaultUserImage();
 		}
-		return null;
+		return JsfUtils.getDefaultUserImage();
 	}
 
 	@Override
@@ -468,6 +443,14 @@ public class ViewVariable implements Serializable {
 
 	public void setDcemGui(DcemGui dcemGui) {
 		this.dcemGui = dcemGui;
+	}
+
+	public IPhoto getiPhoto() {
+		return iPhoto;
+	}
+
+	public void setiPhoto(IPhoto iPhoto) {
+		this.iPhoto = iPhoto;
 	}
 
 }
