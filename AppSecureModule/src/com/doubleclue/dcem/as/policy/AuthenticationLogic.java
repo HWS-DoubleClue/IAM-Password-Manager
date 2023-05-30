@@ -589,21 +589,13 @@ public class AuthenticationLogic {
 	}
 
 	private UserFingerprintEntity createFingerPrint(FingerprintId fpId, DcemPolicy dcemPolicy) {
-		boolean createFp = false;
-		String sessionCookie = null;
-		if (dcemPolicy.getRememberBrowserFingerPrint() > 0) {
-			if (dcemPolicy.isRefrain2FaWithInTime() == true) {
-				createFp = true;
-			} else if (dcemPolicy.isEnableSessionAuthentication() == true) {
-				sessionCookie = RandomUtils.generateRandomAlphaNumericString(48);
-				createFp = true;
-			}
+		if ((dcemPolicy.getRememberBrowserFingerPrint() > 0) && (dcemPolicy.isEnableSessionAuthentication() == true)) {
+			String sessionCookie = RandomUtils.generateRandomAlphaNumericString(48);
+			return new UserFingerprintEntity(fpId, sessionCookie, dcemPolicy.getRememberBrowserFingerPrint() * 60);
 		}
-		if (createFp == false) {
-			return null;
-		}
-		return new UserFingerprintEntity(fpId, sessionCookie, dcemPolicy.getRememberBrowserFingerPrint() * 60);
+		return null;
 	}
+
 
 	private DcemUser createDomainAccount(String userLoginId, String password, boolean ignorePassword) throws Exception {
 		/*
