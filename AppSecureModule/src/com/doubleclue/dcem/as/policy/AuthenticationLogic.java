@@ -128,7 +128,7 @@ public class AuthenticationLogic {
 
 	@Inject
 	AsFidoLogic fidoLogic;
-	
+
 	@Inject
 	LicenceLogic licenceLogic;
 
@@ -199,12 +199,11 @@ public class AuthenticationLogic {
 					throw new DcemException(DcemErrorCodes.MUST_USE_AZURE_DIRECT_LOGIN, "loginId: " + userLoginId);
 				}
 			}
-							
-			
+
 			String networkAddress = requestParam.getNetworkAddress();
-			
+
 			PolicyEntity policyEntity = policyLogic.getPolicy(authApplication, subId, dcemUser);
-//			System.out.println("USER " + dcemUser +  ",  networkAddress: " + networkAddress + ", Policy " + policyEntity);
+			// System.out.println("USER " + dcemUser + ", networkAddress: " + networkAddress + ", Policy " + policyEntity);
 			List<AuthMethod> methods = policyLogic.getAuthMethods(policyEntity, authApplication, subId, dcemUser, requestParam.getSessionCookie());
 			if (methods.isEmpty()) {
 				throw new DcemException(DcemErrorCodes.NO_AUTH_METHOD_FOUND, null);
@@ -323,8 +322,8 @@ public class AuthenticationLogic {
 					userLogic.resetPasswordCounter(dcemUser);
 				}
 				userLogic.setUserLogin(dcemUser);
-				DcemReporting report = new DcemReporting(getAppName(appEntity), getReportAction(authMethod, networkBypass), dcemUser, null, requestParam.getLocation(),
-						requestParam.getReportInfo(), AlertSeverity.OK);
+				DcemReporting report = new DcemReporting(getAppName(appEntity), getReportAction(authMethod, networkBypass), dcemUser, null,
+						requestParam.getLocation(), requestParam.getReportInfo(), AlertSeverity.OK);
 				reportingLogic.addReporting(report);
 			}
 			return authenticateResponse;
@@ -348,8 +347,8 @@ public class AuthenticationLogic {
 						info = info + " " + exp.getMessage();
 					}
 					if (exp.getErrorCode() != DcemErrorCodes.DATABASE_CONNECTION_ERROR) {
-						DcemReporting report = new DcemReporting(getAppName(appEntity_), getReportAction(authMethod_, networkBypass_), dcemUser_, exp.getErrorCode().name(),
-								requestParam.getLocation(), info, AlertSeverity.FAILURE);
+						DcemReporting report = new DcemReporting(getAppName(appEntity_), getReportAction(authMethod_, networkBypass_), dcemUser_,
+								exp.getErrorCode().name(), requestParam.getLocation(), info, AlertSeverity.FAILURE);
 						reportingLogic.addReporting(report);
 					}
 					logger.info("Authentication Failed, Cause: " + exp.toString() + " from: " + authApplication.name() + "/" + subId + ", " + userLoginId_);
@@ -431,7 +430,8 @@ public class AuthenticationLogic {
 			dataMap.add(new AsMapEntry(DcemConstants.AUTH_MAP_SOURCE, appEntity.getAuthApplication().name()));
 		}
 		apiMessage.setDataMap(dataMap);
-		AddMessageResponse addMessageResponse = messageHandler.sendMessage(apiMessage, dcemUser, operatorSessionBean.getDcemUser(), authApplication, subId, policyEntity, location);
+		AddMessageResponse addMessageResponse = messageHandler.sendMessage(apiMessage, dcemUser, operatorSessionBean.getDcemUser(), authApplication, subId,
+				policyEntity, location);
 		long msgId = addMessageResponse.getMsgId();
 		authenticateResponse.setSecureMsgId(msgId);
 		authenticateResponse.setSecureMsgTimeToLive(addMessageResponse.getTimeToLive());
@@ -582,27 +582,18 @@ public class AuthenticationLogic {
 			errorCode = pendingMsg.getMsgStatus().name();
 		}
 		userLogic.setUserLogin(dcemUser);
-		DcemReporting report = new DcemReporting(getAppName(pendingMsg.getPolicyTransaction().getPolicyAppEntity()), getReportAction(AuthMethod.PUSH_APPROVAL, false),
-				dcemUser, errorCode, pendingMsg.getInfo(), pendingMsg.getDeviceName(), AlertSeverity.OK);
+		DcemReporting report = new DcemReporting(getAppName(pendingMsg.getPolicyTransaction().getPolicyAppEntity()),
+				getReportAction(AuthMethod.PUSH_APPROVAL, false), dcemUser, errorCode, pendingMsg.getInfo(), pendingMsg.getDeviceName(), AlertSeverity.OK);
 		reportingLogic.addReporting(report);
 		return;
 	}
 
 	private UserFingerprintEntity createFingerPrint(FingerprintId fpId, DcemPolicy dcemPolicy) {
-		boolean createFp = false;
-		String sessionCookie = null;
-		if (dcemPolicy.getRememberBrowserFingerPrint() > 0) {
-			if (dcemPolicy.isRefrain2FaWithInTime() == true) {
-				createFp = true;
-			} else if (dcemPolicy.isEnableSessionAuthentication() == true) {
-				sessionCookie = RandomUtils.generateRandomAlphaNumericString(48);
-				createFp = true;
-			}
+		if ((dcemPolicy.getRememberBrowserFingerPrint() > 0) && (dcemPolicy.isEnableSessionAuthentication() == true)) {
+			String sessionCookie = RandomUtils.generateRandomAlphaNumericString(48);
+			return new UserFingerprintEntity(fpId, sessionCookie, dcemPolicy.getRememberBrowserFingerPrint() * 60);
 		}
-		if (createFp == false) {
-			return null;
-		}
-		return new UserFingerprintEntity(fpId, sessionCookie, dcemPolicy.getRememberBrowserFingerPrint() * 60);
+		return null;
 	}
 
 	private DcemUser createDomainAccount(String userLoginId, String password, boolean ignorePassword) throws Exception {
@@ -610,35 +601,35 @@ public class AuthenticationLogic {
 		 * create user automatically if it is a domain user with correct password
 		 */
 		DcemUser dcemUser = null;
-			DomainApi domainApi = domainLogic.getDomainFromEmail(userLoginId, null);
-			if (domainApi == null) {
-				String[] domainUser = userLoginId.split(DcemConstants.DOMAIN_SEPERATOR_REGEX);
-				if (domainUser.length > 1) {
-					domainUser[0] = domainUser[0].toUpperCase();
-					dcemUser = new DcemUser(domainUser[0], domainUser[1]);
-					domainApi = domainLogic.getDomainApi(domainUser[0]);
-					dcemUser.setDomainEntity(domainApi.getDomainEntity());
-				} else {
-					return null;
-				}
+		DomainApi domainApi = domainLogic.getDomainFromEmail(userLoginId, null);
+		if (domainApi == null) {
+			String[] domainUser = userLoginId.split(DcemConstants.DOMAIN_SEPERATOR_REGEX);
+			if (domainUser.length > 1) {
+				domainUser[0] = domainUser[0].toUpperCase();
+				dcemUser = new DcemUser(domainUser[0], domainUser[1]);
+				domainApi = domainLogic.getDomainApi(domainUser[0]);
+				dcemUser.setDomainEntity(domainApi.getDomainEntity());
 			} else {
-				dcemUser = new DcemUser(domainApi.getDomainEntity(), null, userLoginId);
-				dcemUser.setUserPrincipalName(userLoginId);
-				dcemUser.setDisplayName(userLoginId);
+				return null;
 			}
-			if (ignorePassword == false) {
-				try {
-                domainLogic.verifyDomainLogin(dcemUser, password.getBytes(DcemConstants.CHARSET_UTF8));
+		} else {
+			dcemUser = new DcemUser(domainApi.getDomainEntity(), null, userLoginId);
+			dcemUser.setUserPrincipalName(userLoginId);
+			dcemUser.setDisplayName(userLoginId);
+		}
+		if (ignorePassword == false) {
+			try {
+				domainLogic.verifyDomainLogin(dcemUser, password.getBytes(DcemConstants.CHARSET_UTF8));
 			} catch (DcemException exp) {
-					if ((exp.getErrorCode() == DcemErrorCodes.DB_TRANSACTION_ERROR) && (exp.getCause() instanceof GraphServiceException)) {
-						throw new DcemException(DcemErrorCodes.CREATE_ACCOUNT_INVALID_CREDENTIALS, null, exp.getCause());
-					}
+				if ((exp.getErrorCode() == DcemErrorCodes.DB_TRANSACTION_ERROR) && (exp.getCause() instanceof GraphServiceException)) {
+					throw new DcemException(DcemErrorCodes.CREATE_ACCOUNT_INVALID_CREDENTIALS, null, exp.getCause());
 				}
-            } else {
-                dcemUser = domainLogic.getUser(dcemUser.getDomainEntity().getName(), dcemUser.getAccountName());
-            }
-			dcemUser.setLanguage(adminModule.getPreferences().getUserDefaultLanguage());
-			userLogic.addOrUpdateUserWoAuditing(dcemUser);
+			}
+		} else {
+			dcemUser = domainLogic.getUser(dcemUser.getDomainEntity().getName(), dcemUser.getAccountName());
+		}
+		dcemUser.setLanguage(adminModule.getPreferences().getUserDefaultLanguage());
+		userLogic.addOrUpdateUserWoAuditing(dcemUser);
 		return dcemUser;
 	}
 
