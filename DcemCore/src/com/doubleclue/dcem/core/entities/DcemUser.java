@@ -48,6 +48,7 @@ import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.gui.DcemGui;
+import com.doubleclue.dcem.core.gui.IPhoto;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.jpa.DbEncryptConverter;
 import com.doubleclue.dcem.core.jpa.DbEncryptConverterBinary;
@@ -91,7 +92,7 @@ import com.doubleclue.dcem.core.weld.WeldRequestContext;
 				+ DcemConstants.JPA_ESCAPE_CHAR_QUOTES),
 
 })
-public class DcemUser extends EntityInterface implements Serializable, Cloneable {
+public class DcemUser extends EntityInterface implements Serializable, Cloneable, IPhoto {
 
 	private static final long serialVersionUID = 1L;
 
@@ -796,6 +797,14 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 			return dcemUserExt.getJobTitle();
 		}
 		return null;
+	}
+
+	@Override
+	public byte[] getPhoto() {
+		if (dcemUserExt == null) {
+			return null;
+		}
+		return dcemUserExt.getPhoto();
 	}
 
 }
