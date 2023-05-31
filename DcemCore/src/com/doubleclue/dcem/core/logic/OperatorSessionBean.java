@@ -203,13 +203,7 @@ public class OperatorSessionBean implements Serializable {
 		this.loggedIn = loggedIn;
 	}
 
-	// verifyAndSetCredentials
-
-	public boolean hasPermission(String permission) {
-		// TODO
-		return true;
-	}
-
+	
 	// private void setMaxInactiveInterval(HttpServletRequest httpServletRequest) {
 	// // String servletPath = httpServletRequest.getServletPath().toLowerCase();
 	//

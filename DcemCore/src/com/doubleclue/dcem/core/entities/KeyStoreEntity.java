@@ -22,6 +22,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
 import org.primefaces.model.SortOrder;
 
 import com.doubleclue.dcem.core.config.KeyStorePurpose;
@@ -73,6 +74,7 @@ public class KeyStoreEntity extends EntityInterface {
 	Date expiresOn;
 	
 	@Lob
+	@Type(type="org.hibernate.type.BinaryType")
 	private byte[] keyStore;
 
 	boolean disabled = false;
