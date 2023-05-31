@@ -5,7 +5,6 @@ import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,20 +14,15 @@ import java.util.LinkedList;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.apache.commons.compress.harmony.unpack200.bytecode.OperandManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 
-import com.doubleclue.dcem.core.DcemConstants;
-import com.doubleclue.dcem.core.entities.DcemAction;
-import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.gui.converters.DefaultConvertor;
 import com.doubleclue.dcem.core.jpa.FilterItem;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
@@ -59,6 +53,7 @@ public class ViewVariable implements Serializable {
 	FilterItem filterItem = new FilterItem();
 	boolean restricted;
 	boolean visible = true;
+	IPhoto iPhoto;
 
 	ArrayList<MethodProperty> methodProperties = null;
 	ArrayList<SingularAttribute<?, ?>> attributes;
@@ -221,47 +216,19 @@ public class ViewVariable implements Serializable {
 	}
 
 	public StreamedContent getRecordImage(Object klassObject) {
-		getMethodProperties(klassObject);
-		MethodProperty lastMethodProperty = null;
-		for (MethodProperty methodProperty : methodProperties) {
-			try {
-				lastMethodProperty = methodProperty;
-				if (klassObject != null) {
-					klassObject = methodProperty.getMethod().invoke(klassObject);
-				}
-			} catch (IllegalArgumentException exp) {
-				PropertyDescriptor pd;
-				try {
-					pd = new PropertyDescriptor(methodProperty.getName(), klassObject.getClass());
-					Method getterMethod = pd.getReadMethod();
-					methodProperty.setMethod(getterMethod);
-					klassObject = getterMethod.invoke(klassObject);
-					logger.debug("Class does not match");
-				} catch (Exception e) {
-					logger.warn(lastMethodProperty, exp);
-					return null;
-				}
-			} catch (Exception exp) {
-				logger.warn(lastMethodProperty, exp);
-				return null;
-			}
-		}
-
+		byte[] image = null;
 		if (klassObject != null) {
-			// TODO quick and Dirty solution
-			if (klassObject instanceof DcemUserExtension) {
-				byte[] image = ((DcemUserExtension) klassObject).getPhoto();
+			try {
+				image = ((IPhoto) klassObject).getPhoto();
 				if (image != null) {
 					InputStream in = new ByteArrayInputStream(image);
 					return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
-				} else {
-					return JsfUtils.getDefaultUserImage();
 				}
+			} catch (Exception e) {
+				logger.warn("Most probable the IPhoto interfaces is missing in entity", e);
 			}
-		} else {
-			return JsfUtils.getDefaultUserImage();
 		}
-		return null;
+		return JsfUtils.getDefaultUserImage();
 	}
 
 	@Override
