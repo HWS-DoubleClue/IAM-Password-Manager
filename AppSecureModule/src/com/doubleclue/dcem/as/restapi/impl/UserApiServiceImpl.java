@@ -97,7 +97,7 @@ public class UserApiServiceImpl {
 		}
 
 		try {
-			List<DcemUser> dcemUsers = jpaSelectProducer.selectCriteriaQueryFilters(filters, firstResult, page);
+			List<DcemUser> dcemUsers = jpaSelectProducer.selectCriteriaQueryFilters(filters, firstResult, page, null);
 			List<AsApiUser> users = new LinkedList<>();
 			for (DcemUser user : dcemUsers) {
 				AsApiUser apiUser = new AsApiUser();
@@ -279,7 +279,7 @@ public class UserApiServiceImpl {
 		}
 
 		try {
-			List<ActivationCodeEntity> dbActivationCodes = jpaSelectProducer.selectCriteriaQueryFilters(filterItems, firstResult, page);
+			List<ActivationCodeEntity> dbActivationCodes = jpaSelectProducer.selectCriteriaQueryFilters(filterItems, firstResult, page, null);
 			List<AsApiActivationCode> activationCodes = new LinkedList<>();
 			for (ActivationCodeEntity activationCodeEntity : dbActivationCodes) {
 				AsApiActivationCode asApiActivationCode = new AsApiActivationCode();

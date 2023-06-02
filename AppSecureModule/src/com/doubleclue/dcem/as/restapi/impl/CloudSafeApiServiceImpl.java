@@ -124,7 +124,7 @@ public class CloudSafeApiServiceImpl {
 		}
 
 		try {
-			List<CloudSafeEntity> properties = jpaSelectProducer.selectCriteriaQueryFilters(filterItems, firstResult, page);
+			List<CloudSafeEntity> properties = jpaSelectProducer.selectCriteriaQueryFilters(filterItems, firstResult, page, null);
 			List<AsApiCloudSafeFile> asApiPropertys = new LinkedList<>();
 			for (CloudSafeEntity cloudDataWoContentEntity : properties) {
 				try {

@@ -160,7 +160,7 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 					}
 				}
 				Collections.sort(filterOrders, new FilterOrderCompare());
-				data = jpaSelectProducer.selectCriteriaQuery(filterOrders, filterProperties, first, pageSize);
+				data = jpaSelectProducer.selectCriteriaQuery(filterOrders, filterProperties, first, pageSize, dcemView);
 			} catch (DcemException exp) {
 				logger.warn("jpaSelectProducer.selectCriteriaQuery", exp);
 				JsfUtils.addErrorMessage(exp.getLocalizedMessage());
@@ -345,7 +345,7 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 			if (preFilterProperties != null) {
 				filterProperties.addAll(preFilterProperties);
 			}
-			int dataSize = (int) jpaSelectProducer.createCountCriteriaQuery(dcemView.getSubject().getKlass(), filterProperties);
+			int dataSize = (int) jpaSelectProducer.createCountCriteriaQuery(dcemView.getSubject().getKlass(), filterProperties, dcemView);
 			setRowCount(dataSize);
 			return dataSize;
 		} catch (DcemException exp) {

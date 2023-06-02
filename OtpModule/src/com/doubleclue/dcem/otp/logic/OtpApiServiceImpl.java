@@ -87,8 +87,7 @@ public class OtpApiServiceImpl implements OtpModuleApi {
 			}
 			if (entity.getUser() != null) {
 				if (entity.getUser() != dcemUser) {
-					throw new DcemException(DcemErrorCodes.TOKEN_BELONGS_TO_SOMEONE_ELSE,
-							asApiOtpToken.getAssignedTo());
+					throw new DcemException(DcemErrorCodes.TOKEN_BELONGS_TO_SOMEONE_ELSE, asApiOtpToken.getAssignedTo());
 				} else if (asApiOtpToken.getOtpId() == 0) {
 					throw new DcemException(DcemErrorCodes.TOKEN_ALREADY_ASSIGNED, asApiOtpToken.getAssignedTo());
 				}
@@ -102,8 +101,7 @@ public class OtpApiServiceImpl implements OtpModuleApi {
 				} catch (Exception e) {
 					throw new DcemException(DcemErrorCodes.PASSCODE_NOT_NUMERIC, null);
 				}
-				if (generatePassCode(entity.getSecretKey(), entity.getOtpType(), inPasscode,
-						passcode.length()) == false) {
+				if (generatePassCode(entity.getSecretKey(), entity.getOtpType(), inPasscode, passcode.length()) == false) {
 					throw new DcemException(DcemErrorCodes.INVALID_OTP, asApiOtpToken.getAssignedTo());
 				}
 			}
@@ -113,8 +111,7 @@ public class OtpApiServiceImpl implements OtpModuleApi {
 	}
 
 	@Override
-	public Response queryOtpTokens(List<ApiFilterItem> filters, Integer offset, Integer maxResults,
-			SecurityContext securityContext) {
+	public Response queryOtpTokens(List<ApiFilterItem> filters, Integer offset, Integer maxResults, SecurityContext securityContext) {
 
 		try {
 			List<AsApiOtpToken> tokens = queryOtpTokenEntities(filters, offset, maxResults, false);
@@ -151,9 +148,8 @@ public class OtpApiServiceImpl implements OtpModuleApi {
 		try {
 			OtpTokenEntity foundToken = null;
 			for (OtpTokenEntity otpTokenEntity : tokens) {
-				
-				if (generatePassCode(otpTokenEntity.getSecretKey(), otpTokenEntity.getOtpType(), inPasscode,
-						passcode.length()) == true) {
+
+				if (generatePassCode(otpTokenEntity.getSecretKey(), otpTokenEntity.getOtpType(), inPasscode, passcode.length()) == true) {
 					foundToken = otpTokenEntity;
 					break;
 				}
@@ -284,10 +280,9 @@ public class OtpApiServiceImpl implements OtpModuleApi {
 	}
 
 	@Override
-	public List<AsApiOtpToken> queryOtpTokenEntities(List<ApiFilterItem> filters, Integer offset, Integer maxResults,
-			boolean includeSecretKey) throws DcemException {
-		JpaSelectProducer<OtpTokenEntity> jpaSelectProducer = new JpaSelectProducer<OtpTokenEntity>(entityManager,
-				OtpTokenEntity.class);
+	public List<AsApiOtpToken> queryOtpTokenEntities(List<ApiFilterItem> filters, Integer offset, Integer maxResults, boolean includeSecretKey)
+			throws DcemException {
+		JpaSelectProducer<OtpTokenEntity> jpaSelectProducer = new JpaSelectProducer<OtpTokenEntity>(entityManager, OtpTokenEntity.class);
 		int firstResult = 0;
 		if (offset != null) {
 			firstResult = offset.intValue();
@@ -296,8 +291,7 @@ public class OtpApiServiceImpl implements OtpModuleApi {
 		if (maxResults != null && maxResults.intValue() < page) {
 			page = maxResults.intValue();
 		}
-		List<OtpTokenEntity> otpTokenEntities = jpaSelectProducer.selectCriteriaQueryFilters(filters, firstResult,
-				page);
+		List<OtpTokenEntity> otpTokenEntities = jpaSelectProducer.selectCriteriaQueryFilters(filters, firstResult, page, null);
 		List<AsApiOtpToken> tokens = new LinkedList<>();
 		for (OtpTokenEntity entity : otpTokenEntities) {
 			AsApiOtpToken asApiOtpToken = new AsApiOtpToken();

@@ -69,7 +69,7 @@ public class DeviceApiServiceImpl {
 		}
 
 		try {
-			List<DeviceEntity> deviceEntities = jpaSelectProducer.selectCriteriaQueryFilters(filters, firstResult, page);
+			List<DeviceEntity> deviceEntities = jpaSelectProducer.selectCriteriaQueryFilters(filters, firstResult, page, null);
 			List<AsApiDevice> devices = new LinkedList<>();
 			for (DeviceEntity deviceEntity : deviceEntities) {
 				AsApiDevice apiDevice = new AsApiDevice();
@@ -170,7 +170,7 @@ public class DeviceApiServiceImpl {
 		}
 
 		try {
-			List<FidoAuthenticatorEntity> entities = jpaSelectProducer.selectCriteriaQueryFilters(filterItems, firstResult, page);
+			List<FidoAuthenticatorEntity> entities = jpaSelectProducer.selectCriteriaQueryFilters(filterItems, firstResult, page, null);
 			List<AsApiFidoAuthenticator> fidoAuthenticators = new LinkedList<>();
 			for (FidoAuthenticatorEntity entity : entities) {
 				AsApiFidoAuthenticator fidoAuthenticator = new AsApiFidoAuthenticator();

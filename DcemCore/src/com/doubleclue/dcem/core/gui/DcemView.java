@@ -15,6 +15,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +44,7 @@ import com.doubleclue.dcem.core.entities.RoleRestriction;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.jpa.JpaLazyModel;
+import com.doubleclue.dcem.core.jpa.JpaPredicate;
 import com.doubleclue.dcem.core.logic.ActionType;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.PredefinedFilter;
@@ -48,7 +52,7 @@ import com.doubleclue.dcem.core.logic.RoleRestrictionLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 
-public abstract class DcemView implements Serializable {
+public abstract class DcemView implements JpaPredicate, Serializable {
 
 	protected static final Logger logger = LogManager.getLogger(DcemView.class);
 	/**
@@ -84,7 +88,7 @@ public abstract class DcemView implements Serializable {
 
 	protected JpaLazyModel<?> lazyModel;
 
-	protected List<AutoViewAction> autoViewActions;
+	protected List<AutoViewAction> autoViewActions = new LinkedList<AutoViewAction>();
 
 	List<DcemAction> viewDcemActions;
 
@@ -351,11 +355,13 @@ public abstract class DcemView implements Serializable {
 		this.actionObject = actionObject;
 	}
 
-	public void addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage) {
+	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage) {
 		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, null);
 		if (autoViewAction != null) {
 			autoViewActions.add(autoViewAction);
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -365,12 +371,14 @@ public abstract class DcemView implements Serializable {
 	 * @param xhtmlPage
 	 * @param viewLink
 	 */
-	public void addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, ViewLink viewLink) {
+	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, ViewLink viewLink) {
 
 		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, viewLink);
 		if (autoViewAction != null) {
 			autoViewActions.add(autoViewAction);
+			return true;
 		}
+		return false;
 	}
 
 	protected AutoViewAction createAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage,
@@ -388,16 +396,13 @@ public abstract class DcemView implements Serializable {
 		}
 		// DcemAction dcemAction = subject.getDcemActionByName(actionName);
 
-		DcemAction dcemActionPre = new DcemAction(subject.getModuleId(), subject.getName(), actionName);
+		DcemAction dcemActionPre = new DcemAction(subject, actionName);
 		DcemAction dcemAction = operatorSessionBean.getPermission(dcemActionPre);
 		if (dcemAction == null) {
-			logger.info("No Action Found! " + dcemActionPre.toString());
+//			logger.debug("No Action Found! " + dcemActionPre.toString());
 			return null;
 		}
 		if (dcemActionManage != null || dcemAction != null) {
-			if (autoViewActions == null) {
-				autoViewActions = new LinkedList<AutoViewAction>();
-			}
 			return new AutoViewAction(dcemAction, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);
 		}
 		return null;
@@ -685,5 +690,11 @@ public abstract class DcemView implements Serializable {
 		}
 		return manageAction;
 	}
+
+	@Override
+	public List<Predicate> getPredicates(CriteriaBuilder criteriaBuilder, Root<?> root) {
+		return new ArrayList<Predicate>();
+	}
+
 
 }

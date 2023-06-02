@@ -424,7 +424,7 @@ public class AsDeviceLogic {
 		if (maxResults != null && maxResults.intValue() < page) {
 			page = maxResults.intValue();
 		}
-		return jpaSelectProducer.selectCriteriaQueryFilters(filterItems, firstResult, page);
+		return jpaSelectProducer.selectCriteriaQueryFilters(filterItems, firstResult, page, null);
 	}
 
 	public void killUserDevices(DcemUser dcemUser) {

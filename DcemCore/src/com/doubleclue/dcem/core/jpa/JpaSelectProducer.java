@@ -73,12 +73,11 @@ public class JpaSelectProducer<T> implements Serializable {
 		this.entityClass = entityClass;
 	}
 
-	public long createCountCriteriaQuery(Class<?> entityClass, List<FilterProperty> filterProperties) throws DcemException {
+	public long createCountCriteriaQuery(Class<?> entityClass, List<FilterProperty> filterProperties, JpaPredicate jpaPredicate  ) throws DcemException {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<?> root = criteriaQuery.from(entityClass);
-
-		Predicate whereCond = getPredicates(criteriaBuilder, root, filterProperties);
+		Predicate whereCond = getPredicates(criteriaBuilder, root, filterProperties, jpaPredicate.getPredicates(criteriaBuilder, root));
 		if (whereCond != null) {
 			criteriaQuery.where(whereCond);
 		}
@@ -98,7 +97,7 @@ public class JpaSelectProducer<T> implements Serializable {
 	 * @return
 	 * @throws DcemException
 	 */
-	public List<T> selectCriteriaQuery(List<FilterOrder> filterOrders, List<FilterProperty> filterProperties, int firstResult, int maxResult)
+	public List<T> selectCriteriaQuery(List<FilterOrder> filterOrders, List<FilterProperty> filterProperties, int firstResult, int maxResult, JpaPredicate jpaPredicate)
 			throws DcemException {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(entityClass);
@@ -110,8 +109,15 @@ public class JpaSelectProducer<T> implements Serializable {
 				criteriaQuery.orderBy(orders);
 			}
 		}
+		List<Predicate> prePredicates;
+		if (jpaPredicate == null) {
+			prePredicates = new ArrayList<>();
+		} else {
+			prePredicates = jpaPredicate.getPredicates(criteriaBuilder, root);
+		}
+		
 		if (filterProperties != null) {
-			Predicate whereCond = getPredicates(criteriaBuilder, root, filterProperties);
+			Predicate whereCond = getPredicates(criteriaBuilder, root, filterProperties, prePredicates);
 			if (whereCond != null) {
 				criteriaQuery.where(whereCond);
 			}
@@ -231,12 +237,11 @@ public class JpaSelectProducer<T> implements Serializable {
 	 * @param cb
 	 * @param root
 	 * @param filterProperties
+	 * @param predicates 
 	 * @return
 	 * @throws DcemException
 	 */
-	private Predicate getPredicates(CriteriaBuilder cb, Root<?> root, List<FilterProperty> filterProperties) throws DcemException {
-
-		List<Predicate> predicates = new ArrayList<Predicate>();
+	private Predicate getPredicates(CriteriaBuilder cb, Root<?> root, List<FilterProperty> filterProperties, List<Predicate> predicates) throws DcemException {
 
 		for (FilterProperty filterProperty : filterProperties) {
 			if (filterProperty.filterOperator == null || filterProperty.filterOperator.equals(FilterOperator.NONE)) {
@@ -459,7 +464,8 @@ public class JpaSelectProducer<T> implements Serializable {
 		// }
 	}
 
-	public List<T> selectCriteriaQueryFilters(List<ApiFilterItem> filters, int firstResult, int maxResult) throws DcemException {
+
+	public List<T> selectCriteriaQueryFilters(List<ApiFilterItem> filters, int firstResult, int maxResult, JpaPredicate jpaPredicate) throws DcemException {
 		List<ViewVariable> viewVariables = DcemUtils.getViewVariables(entityClass, null, "", null);
 		for (ApiFilterItem apiFilterItem : filters) {
 			ViewVariable viewVariable = getViewVariable(viewVariables, apiFilterItem.getName());
@@ -518,7 +524,7 @@ public class JpaSelectProducer<T> implements Serializable {
 		}
 		Collections.sort(filterOrders, new FilterOrderCompare());
 
-		return selectCriteriaQuery(filterOrders, filterProperties, firstResult, maxResult);
+		return selectCriteriaQuery(filterOrders, filterProperties, firstResult, maxResult, jpaPredicate);
 	}
 
 	private String getViewVariableIds(List<ViewVariable> viewVariables) {

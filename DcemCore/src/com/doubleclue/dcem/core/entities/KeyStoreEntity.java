@@ -74,7 +74,6 @@ public class KeyStoreEntity extends EntityInterface {
 	Date expiresOn;
 	
 	@Lob
-	@Type(type="org.hibernate.type.BinaryType")
 	private byte[] keyStore;
 
 	boolean disabled = false;

@@ -631,9 +631,8 @@ public class DcemMain {
 			// SecureServerUtils.getCertificateRefactorAlias(keyStore, purpose,
 			// keyStoreEntity.getPassword());
 		} catch (Exception e) {
-			logger.warn(e);
-			JsfUtils.addErrorMessage("Please check file format and password. " + e.getMessage());
-			return;
+			logger.warn("Cannot load Keystore, please check file format and password", e);
+			throw e;
 		}
 
 		File ksFile = new File(LocalPaths.getCertsDirectory(), purpose.name() + ".p12");
