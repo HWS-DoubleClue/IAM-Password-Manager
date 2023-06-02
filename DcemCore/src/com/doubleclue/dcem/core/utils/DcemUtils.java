@@ -1504,7 +1504,7 @@ public class DcemUtils {
 		return outputStream.toByteArray();
 	}
 
-	public static byte[] resizeImage(byte[] image) throws Exception {
+	public static byte[] resizeImage(byte[] image, int maxLength) throws Exception {
 		try {
 			return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, DcemConstants.PHOTO_MAX, false);
 		} catch (DcemException exp) {

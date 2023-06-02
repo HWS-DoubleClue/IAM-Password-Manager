@@ -1003,7 +1003,7 @@ public class DomainLdap implements DomainApi {
 			Attribute attribute = attributes.get(AD_USER_THUMBNAIL_PHOTO);
 			if (attribute != null) {
 				photo = (byte[]) attribute.get();
-				photo = DcemUtils.resizeImage(photo);
+				photo = DcemUtils.resizeImage(photo, DcemConstants.PHOTO_MAX);
 			}
 			return photo;
 		} catch (Exception e) {

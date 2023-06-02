@@ -486,7 +486,8 @@ public final class DcemConstants {
 	public static int PHOTO_HEIGHT = 64;
 	public static int PHOTO_WIDTH_MIN = 32;
 	public static int PHOTO_HEIGHT_MIN = 32;
-	public static int PHOTO_MAX = 32000;
+	public static int PHOTO_MAX = 8096;
+	public static int IMAGE_MAX = 32000;
 	
 	public static final String COUNTRY_CODE_GERMAN = "DE";
 	public static final String COUNTRY_CODE_MALTA = "MT";

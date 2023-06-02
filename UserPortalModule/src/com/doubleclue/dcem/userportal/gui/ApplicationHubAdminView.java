@@ -334,7 +334,7 @@ public class ApplicationHubAdminView extends DcemView {
 				ApplicationHubEntity applicatioHubEntityExisting = upAppHubLogic.getApplicationByName(applicatioHubEntity.getName());
 				if (applicatioHubEntityExisting != null) {
 					if (applicatioHubEntity.getLogo() != null) {
-						applicatioHubEntity.setLogo(DcemUtils.resizeImage(applicatioHubEntity.getLogo()));
+						applicatioHubEntity.setLogo(DcemUtils.resizeImage(applicatioHubEntity.getLogo(), DcemConstants.IMAGE_MAX));
 					}
 					if (replaceExisting == true) {
 						applicatioHubEntityExisting.setLogo(applicatioHubEntity.getLogo());
@@ -389,7 +389,7 @@ public class ApplicationHubAdminView extends DcemView {
 
 			if (currentApp.getLogo() != null) {
 				try {
-					currentApp.setLogo(DcemUtils.resizeImage(currentApp.getLogo()));
+					currentApp.setLogo(DcemUtils.resizeImage(currentApp.getLogo(), DcemConstants.IMAGE_MAX));
 				} catch (DcemException exp) {
 					if (exp.getErrorCode() == DcemErrorCodes.IMAGE_TOO_BIG) {
 						JsfUtils.addErrorMessage(exp.getLocalizedMessage());

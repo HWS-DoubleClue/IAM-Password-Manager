@@ -371,7 +371,7 @@ public class DomainAzure implements DomainApi {
 			ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
 			KaraUtils.copyStream(inputStream, arrayOutputStream);
 			byte[] photo = arrayOutputStream.toByteArray();
-			photo = DcemUtils.resizeImage(photo);
+			photo = DcemUtils.resizeImage(photo,  DcemConstants.PHOTO_MAX);
 			return photo;
 		} catch (GraphServiceException gse) {
 			// if (gse.getServiceError().code.equals("ImageNotFound")) {

@@ -1292,7 +1292,7 @@ public class PasswordSafeView extends AbstractPortalView {
 			Entry addingEntry;
 			if (uploadedImage != null) {
 			//	uploadedImage.length;
-				uploadedImage = DcemUtils.resizeImage(uploadedImage);
+				uploadedImage = DcemUtils.resizeImage(uploadedImage, DcemConstants.IMAGE_MAX);
 				UUID iconUuid = addCustomIconToKeepassFile(uploadedImage);
 				addingEntry = new EntryBuilder(currentEntry.getEntry()).customIconUuid(iconUuid).build();
 			} else {
@@ -1488,7 +1488,7 @@ public class PasswordSafeView extends AbstractPortalView {
 
 	public void uploadFileLogoListener(FileUploadEvent event) {
 		try {
-			uploadedImage =  DcemUtils.resizeImage(event.getFile().getContent());
+			uploadedImage =  DcemUtils.resizeImage(event.getFile().getContent(), DcemConstants.IMAGE_MAX);
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage(e.toString());
 		}

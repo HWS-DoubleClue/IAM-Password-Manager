@@ -262,7 +262,7 @@ public class UserProfileView extends AbstractPortalView {
 			return;
 		}
 		try {
-			photoProfile = DcemUtils.resizeImage(event.getFile().getContent());
+			photoProfile = DcemUtils.resizeImage(event.getFile().getContent(), DcemConstants.IMAGE_MAX);
 		} catch (DcemException e) {
 			JsfUtils.addErrorMessage(e.getLocalizedMessage());
 			logger.error("upload photo failed " + e.toString());
