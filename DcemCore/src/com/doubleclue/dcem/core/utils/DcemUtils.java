@@ -1495,8 +1495,9 @@ public class DcemUtils {
 		BufferedImage outputImage = resampler.filter(inputImage, null);
 		try {
 			ImageIO.write(outputImage, "png", outputStream);
-		} catch (IOException e) {
-
+		} catch (Exception e) {
+			logger.error("Couldn't resize image", e);
+			
 		}
 		if (outputStream.toByteArray().length > maxLenght) {
 			throw new DcemException(DcemErrorCodes.IMAGE_TOO_BIG, "wrong widht or height");

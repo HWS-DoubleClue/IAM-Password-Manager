@@ -482,11 +482,11 @@ public final class DcemConstants {
 
 	public static final String DEFAULT_APP_ICON =  "/appHub/DC_Logo_transp_01.2.png";
 	
-	public static int PHOTO_WIDTH = 64;
-	public static int PHOTO_HEIGHT = 64;
-	public static int PHOTO_WIDTH_MIN = 32;
-	public static int PHOTO_HEIGHT_MIN = 32;
-	public static int PHOTO_MAX = 8096;
+	public static int PHOTO_WIDTH = 128;
+	public static int PHOTO_HEIGHT = 128;
+	public static int PHOTO_WIDTH_MIN = 64;
+	public static int PHOTO_HEIGHT_MIN = 64;
+	public static int PHOTO_MAX = 8096 * 2;
 	public static int IMAGE_MAX = 32000;
 	
 	public static final String COUNTRY_CODE_GERMAN = "DE";

@@ -54,7 +54,7 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 	private String timezone;
 
 	@DcemGui(name = "Photo")
-	@Column(length = 8096, nullable = true)
+	@Column(length = 8096*2, nullable = true)
 	private byte[] photo;
 	
 	@DcemGui (name = "Department", subClass = "name")
