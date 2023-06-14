@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -73,6 +75,9 @@ import javax.persistence.metamodel.Attribute;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Equator;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
@@ -766,10 +771,37 @@ public class DcemUtils {
 				if (oldField.isAnnotationPresent(javax.persistence.Version.class)) {
 					continue;
 				}
+				if (oldField.isAnnotationPresent(DcemGui.class)) {
+					if(oldField.getAnnotation(DcemGui.class).ignoreCompare() == true) {
+						continue;
+					}
+				}
 				newField = newObjectClass.getDeclaredField(oldField.getName());
 				newField.setAccessible(true);
 				oldField.setAccessible(true);
-				Class<?> cls = oldField.getType();
+				Class<?> cls = oldField.getType();	
+				
+				if (oldField.isAnnotationPresent(DcemGui.class)) {					
+					if(oldField.getAnnotation(DcemGui.class).variableType() == VariableType.IMAGE) {
+						byte[] oldImage = (((byte[]) oldField.get(oldObject)) != null) ? (byte[]) oldField.get(oldObject) : null;
+						byte[] newImage = (((byte[]) newField.get(newObject)) != null) ? (byte[]) newField.get(newObject) : null;
+						
+						if (Objects.deepEquals(oldImage, newImage) == false) {
+							stringBuilder.append(oldField.getName());
+							stringBuilder.append(": ");
+							stringBuilder.append(Objects.isNull(oldImage) ? "null" : ":IMAGE AVAILABLE:");
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append(Objects.isNull(newImage) ? "null" : (Objects.isNull(oldImage) ? ":IMAGE INSERTED:" : ":IMAGE UPDATED:"));
+							stringBuilder.append(fin);
+						}
+						continue;
+					}
+					
+					if(oldField.getAnnotation(DcemGui.class).variableType() == VariableType.OTHER) {
+						continue;
+					}
+				}
+				
 				if (cls.equals(String.class)) {
 					String oldString = (((String) oldField.get(oldObject)) != null) ? (String) oldField.get(oldObject) : "null";
 					String newString = (((String) newField.get(newObject)) != null) ? (String) newField.get(newObject) : "null";
@@ -779,6 +811,10 @@ public class DcemUtils {
 						DcemGui dcemGui = oldField.getAnnotation(DcemGui.class);
 						if (dcemGui != null && dcemGui.password()) {
 							stringBuilder.append(newString.equals("null") ? newString : ":PASSWORD:");
+						} else if (dcemGui != null && dcemGui.variableType() == VariableType.STRING) {
+							stringBuilder.append(oldString.equals("null") ? oldString : ":LONG TEXT AVAILABLE:");
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append(newString.equals("null") ? newString : (oldString.equals("null") ? ":LONG TEXT INSERTED:" : ":LONG TEXT UPDATED:"));
 						} else {
 							stringBuilder.append(oldString);
 							stringBuilder.append(unicodeRightArrow);
@@ -862,6 +898,74 @@ public class DcemUtils {
 							stringBuilder.append(fin);
 						}
 					}
+				} else if (cls.equals(List.class)) {
+					List<?> oldList = Objects.isNull(oldField.get(oldObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(oldObject);
+					List<?> newList = Objects.isNull(oldField.get(newObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(newObject);
+					if(oldList.size() != 0 && newList.size() != 0) {
+						if(oldList.get(0).getClass().getSuperclass() == EntityInterface.class) {								
+							List<? extends EntityInterface> oldEntityList = (List<? extends EntityInterface>) oldList;
+							List<? extends EntityInterface> newEntityList = (List<? extends EntityInterface>) newList;
+							if(CollectionUtils.isEqualCollection(oldEntityList, newEntityList) == false) {
+								stringBuilder.append(oldField.getName());
+								stringBuilder.append(": ");
+								stringBuilder.append(oldEntityList.size() == 0 ? "null" : ":LIST AVAILABLE:");
+								stringBuilder.append(unicodeRightArrow);
+								stringBuilder.append(newEntityList.size() == 0 ? "null" : (oldEntityList.size() == 0 ? ":LIST INSERTED:" : ":LIST UPDATED:"));
+								stringBuilder.append(fin);
+							}
+						} else {
+							if(CollectionUtils.isEqualCollection(oldList, newList) == false) {
+								stringBuilder.append(oldField.getName());
+								stringBuilder.append(": ");
+								stringBuilder.append(oldList.size() == 0 ? "null" : ":LIST AVAILABLE:");
+								stringBuilder.append(unicodeRightArrow);
+								stringBuilder.append(newList.size() == 0 ? "null" : (oldList.size() == 0 ? ":LIST INSERTED:" : ":LIST UPDATED:"));
+								stringBuilder.append(fin);
+							}
+						}
+					}
+				} else if (cls.getSuperclass() == EntityInterface.class) {
+					EntityInterface oldEntity = Objects.isNull(oldField.get(oldObject)) ? new EntityInterface() {
+														@Override
+														public Number getId() {
+															return null;
+														}
+								
+														@Override
+														public void setId(Number id) { }
+												} : (EntityInterface) oldField.get(oldObject);
+					EntityInterface newEntity = Objects.isNull(oldField.get(newObject)) ? new EntityInterface() {
+														@Override
+														public Number getId() {
+															return null;
+														}
+								
+														@Override
+														public void setId(Number id) { }
+												} : (EntityInterface) oldField.get(newObject);
+					if(oldEntity.getId() != null || newEntity.getId() != null) { 
+						if(oldEntity.equals(newEntity) == false) {
+							stringBuilder.append(oldField.getName());
+							stringBuilder.append(": ");												
+							stringBuilder.append((Objects.isNull(oldEntity.getId()) == false ? oldEntity : "null"));
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append((Objects.isNull(newEntity.getId()) == false ? newEntity : "null"));
+							stringBuilder.append(fin);
+						}
+					}
+				} else if (cls.isEnum() == true) {
+					Enum<?> oldEnum = Objects.isNull(oldField.get(oldObject)) ? null : (Enum<?>) oldField.get(oldObject);
+					Enum<?> newEnum = Objects.isNull(oldField.get(newObject)) ? null : (Enum<?>) oldField.get(newObject);
+					if(Objects.isNull(oldEnum) == false || Objects.isNull(newEnum) == false) { 
+						if(oldEnum != newEnum) {
+							stringBuilder.append(oldField.getName());
+							stringBuilder.append(": ");												
+							stringBuilder.append((Objects.isNull(oldEnum) == false ? oldEnum: "null"));
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append((Objects.isNull(newEnum) == false ? newEnum : "null"));
+							stringBuilder.append(fin);
+						}
+					}
 				} else {
 					if (oldField.getAnnotation(DcemGui.class) != null || oldField.getName().equals(DcemConstants.USERPORTAL_PREFERNCESES_TYPE_COMPARE)) {
 						Object oldFieldValue = oldField.get(oldObject);
@@ -872,7 +976,7 @@ public class DcemUtils {
 						if (oldFieldValue == null && newFieldValue != null) {
 							stringBuilder.append(oldField.getName());
 							stringBuilder.append(": ");
-							stringBuilder.append("NULL");
+							stringBuilder.append("null");
 							stringBuilder.append(unicodeRightArrow);
 							stringBuilder.append(newFieldValue.toString());
 							stringBuilder.append(fin);
@@ -881,7 +985,7 @@ public class DcemUtils {
 							stringBuilder.append(": ");
 							stringBuilder.append(oldFieldValue.toString());
 							stringBuilder.append(unicodeRightArrow);
-							stringBuilder.append("NULL");
+							stringBuilder.append("null");
 							stringBuilder.append(fin);
 						} else {
 							if (oldFieldValue.equals(newFieldValue) == false) {
@@ -1548,7 +1652,6 @@ public class DcemUtils {
 			ImageIO.write(outputImage, "png", outputStream);
 		} catch (Exception e) {
 			logger.error("Couldn't resize image", e);
-
 		}
 		if (outputStream.toByteArray().length > maxLenght) {
 			throw new DcemException(DcemErrorCodes.IMAGE_TOO_BIG, "wrong widht or height");

@@ -37,5 +37,5 @@ public @interface DcemGui {
 	public boolean masterOnly() default false;
 	public VariableType variableType() default VariableType.UNKNOWN;
 	public boolean restricted() default false;
-	
+	public boolean ignoreCompare() default false;
 }

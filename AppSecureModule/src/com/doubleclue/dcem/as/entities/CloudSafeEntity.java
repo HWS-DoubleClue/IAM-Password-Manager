@@ -2,6 +2,7 @@ package com.doubleclue.dcem.as.entities;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -513,35 +514,35 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public void setGroup(DcemGroup group) {
 		this.group = group;
 	}
+	
+	
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((device == null) ? 0 : device.hashCode());
-		result = prime * result + ((deviceName == null) ? 0 : deviceName.hashCode());
-		result = prime * result + ((discardAfter == null) ? 0 : discardAfter.hashCode());
-		result = prime * result + ((group == null) ? 0 : group.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + (isFolder ? 1231 : 1237);
-		result = prime * result + ((isGcm == null) ? 0 : isGcm.hashCode());
-		result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-		result = prime * result + ((lastModifiedUser == null) ? 0 : lastModifiedUser.hashCode());
-		result = prime * result + (int) (length ^ (length >>> 32));
-		result = prime * result + ((lengthString == null) ? 0 : lengthString.hashCode());
-		result = prime * result + ((loginId == null) ? 0 : loginId.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (newEntity ? 1231 : 1237);
-		result = prime * result + ((options == null) ? 0 : options.hashCode());
-		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + (recycled ? 1231 : 1237);
-		result = prime * result + (restrictDownload ? 1231 : 1237);
-		result = prime * result + Arrays.hashCode(salt);
-		result = prime * result + ((user == null) ? 0 : user.hashCode());
-		result = prime * result + (writeAccess ? 1231 : 1237);
-		return result;
-	}
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result + ((device == null) ? 0 : device.hashCode());
+//		result = prime * result + ((deviceName == null) ? 0 : deviceName.hashCode());
+//		result = prime * result + ((discardAfter == null) ? 0 : discardAfter.hashCode());
+//		result = prime * result + ((group == null) ? 0 : group.hashCode());
+//		result = prime * result + ((id == null) ? 0 : id.hashCode());
+//		result = prime * result + (isFolder ? 1231 : 1237);
+//		result = prime * result + ((isGcm == null) ? 0 : isGcm.hashCode());
+//		result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
+//		result = prime * result + ((lastModifiedUser == null) ? 0 : lastModifiedUser.hashCode());
+//		result = prime * result + (int) (length ^ (length >>> 32));
+//		result = prime * result + ((lengthString == null) ? 0 : lengthString.hashCode());
+//		result = prime * result + ((loginId == null) ? 0 : loginId.hashCode());
+//		result = prime * result + ((name == null) ? 0 : name.hashCode());
+//		result = prime * result + (newEntity ? 1231 : 1237);
+//		result = prime * result + ((options == null) ? 0 : options.hashCode());
+//		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+//		result = prime * result + (recycled ? 1231 : 1237);
+//		result = prime * result + (restrictDownload ? 1231 : 1237);
+//		result = prime * result + ((user == null) ? 0 : user.hashCode());
+//		result = prime * result + (writeAccess ? 1231 : 1237);
+//		return result;
+//	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -640,6 +641,23 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		CloudSafeEntity other = (CloudSafeEntity) obj;
+//		return Objects.equals(id, other.id);
+//	}
 
 	public boolean isFile() {
 		return isFolder == false;
