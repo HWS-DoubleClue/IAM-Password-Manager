@@ -1,7 +1,5 @@
 package com.doubleclue.dcem.core.gui;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -10,12 +8,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.SingularAttribute;
+import javax.persistence.metamodel.ListAttribute;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +27,7 @@ import com.doubleclue.dcem.core.jpa.FilterItem;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.jpa.VariableType;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
+import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.MethodProperty;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 
@@ -54,6 +54,7 @@ public class ViewVariable implements Serializable {
 	boolean restricted;
 	boolean visible = true;
 	IPhoto iPhoto;
+	Class<?> listClass; // if set this variable is a List
 
 	ArrayList<MethodProperty> methodProperties = null;
 	ArrayList<Attribute<?, ?>> attributes;
@@ -156,7 +157,6 @@ public class ViewVariable implements Serializable {
 	public String getRecordData(Object klassObject) {
 		getMethodProperties(klassObject);
 		MethodProperty lastMethodProperty = null;
-
 		for (MethodProperty methodProperty : methodProperties) {
 			try {
 				if (dcemGui.restricted() == true) {
@@ -180,14 +180,15 @@ public class ViewVariable implements Serializable {
 			}
 			try {
 				lastMethodProperty = methodProperty;
-				if (klassObject != null) {
+				if (methodProperty.isListObject()) {
+					List<?> list = (List<?>) methodProperty.getMethod().invoke(klassObject);
+					return list.toString();
+				} else if (klassObject != null) {
 					klassObject = methodProperty.getMethod().invoke(klassObject);
 				}
 			} catch (IllegalArgumentException exp) {
-				PropertyDescriptor pd;
 				try {
-					pd = new PropertyDescriptor(methodProperty.getName(), klassObject.getClass());
-					Method getterMethod = pd.getReadMethod();
+					Method getterMethod = DcemUtils.getGetterMethodFromString(methodProperty.getName(), klassObject.getClass());
 					methodProperty.setMethod(getterMethod);
 					klassObject = getterMethod.invoke(klassObject);
 					logger.debug("Class does not match");
@@ -205,6 +206,9 @@ public class ViewVariable implements Serializable {
 		}
 		if (lastMethodProperty.getConverter() != null) {
 			try {
+				if (variableType == VariableType.RATING) {
+					//return klassObject;
+				}
 				return lastMethodProperty.getConverter().getAsString(FacesContext.getCurrentInstance(), null, klassObject);
 			} catch (Exception exp) {
 				logger.warn(exp);
@@ -212,6 +216,47 @@ public class ViewVariable implements Serializable {
 			}
 		} else {
 			return klassObject.toString();
+		}
+	}
+
+	private void getMethodProperties(Object klassObject) {
+		if (methodProperties == null) {
+			MethodProperty methodProperty;
+			if (attributes.size() == 0) {
+				methodProperties = new ArrayList<MethodProperty>(1);
+				methodProperty = new MethodProperty(id);
+				try {
+					Method getterMethod = DcemUtils.getGetterMethodFromString(id, klassObject.getClass());
+					methodProperty.setMethod(getterMethod);
+					methodProperty.setConverter(getConverter());
+					methodProperties.add(methodProperty);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				methodProperties = new ArrayList<MethodProperty>(attributes.size());
+				Class<?> lastKlass = klassObject.getClass();
+				for (Attribute<?, ?> attribute : attributes) {
+					methodProperty = new MethodProperty(attribute.getName());
+					try {
+
+						Method getterMethod = DcemUtils.getGetterMethodFromString(attribute.getName(), lastKlass);
+						methodProperty.setMethod(getterMethod);
+						methodProperty.setConverter(getConverter());
+						if (attribute instanceof ListAttribute<?, ?>) {
+							methodProperty.setListObject(true);
+							/*Field field = lastKlass.getDeclaredField(attribute.getName());
+							Type[] types = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();*/
+							lastKlass = listClass;
+						} else {
+							lastKlass = getterMethod.getReturnType();
+						}
+					} catch (Exception exp) {
+						logger.warn("Converter not found" + dcemGui.converterId() + " for Field:" + id, exp);
+					}
+					methodProperties.add(methodProperty);
+				}
+			}
 		}
 	}
 
@@ -365,47 +410,24 @@ public class ViewVariable implements Serializable {
 		}
 		return list;
 	}
+	
+	public List<String> getRatings(Object klassObject) {
+		String value = getRecordData(klassObject);
+		float rating = Float.parseFloat(value);
+		List<String> list = new ArrayList<>();
+		list.add(rating > 0 ? "-on" : "");
+		list.add(rating > 1 ? "-on" : "");
+		list.add(rating > 2 ? "-on" : "");
+		list.add(rating > 3 ? "-on" : "");
+		list.add(rating > 4 ? "-on" : "");
+		return list;
+	}
 
 	public void enumChange() {
 		if (getFilterValue() == null || ((String) getFilterValue()).isEmpty()) {
 			filterItem.setFilterOperator(FilterOperator.NONE);
 		} else {
 			filterItem.setFilterOperator(FilterOperator.EQUALS);
-		}
-	}
-
-	private void getMethodProperties(Object klassObject) {
-		if (methodProperties == null) {
-			MethodProperty methodProperty;
-			if (attributes.size() == 0) {
-				methodProperties = new ArrayList<MethodProperty>(1);
-				PropertyDescriptor pd = null;
-				try {
-					pd = new PropertyDescriptor(id, klassObject.getClass());
-				} catch (IntrospectionException e) {
-					e.printStackTrace();
-				}
-				methodProperty = new MethodProperty(id);
-				methodProperty.setMethod(pd.getReadMethod());
-				methodProperty.setConverter(getConverter());
-				methodProperties.add(methodProperty);
-			} else {
-				methodProperties = new ArrayList<MethodProperty>(attributes.size());
-				Class<?> lastKlass = klassObject.getClass();
-				for (Attribute<?, ?> attribute : attributes) {
-					methodProperty = new MethodProperty(attribute.getName());
-					try {
-						PropertyDescriptor pd = new PropertyDescriptor(attribute.getName(), lastKlass);
-						Method getterMethod = pd.getReadMethod();
-						methodProperty.setMethod(getterMethod);
-						lastKlass = getterMethod.getReturnType();
-						methodProperty.setConverter(getConverter());
-					} catch (Exception exp) {
-						logger.warn("Converter not found" + dcemGui.converterId() + " for Field:" + id, exp);
-					}
-					methodProperties.add(methodProperty);
-				}
-			}
 		}
 	}
 
@@ -435,6 +457,14 @@ public class ViewVariable implements Serializable {
 
 	public void setDcemGui(DcemGui dcemGui) {
 		this.dcemGui = dcemGui;
+	}
+
+	public Class<?> getListClass() {
+		return listClass;
+	}
+
+	public void setListClass(Class<?> listClass) {
+		this.listClass = listClass;
 	}
 
 }

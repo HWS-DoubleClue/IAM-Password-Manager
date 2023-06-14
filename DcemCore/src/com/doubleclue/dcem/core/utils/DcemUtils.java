@@ -70,7 +70,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMultipart;
 import javax.persistence.Convert;
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.SingularAttribute;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 
@@ -242,14 +241,14 @@ public class DcemUtils {
 		if (metaClass != null) {
 			try {
 				if (dcemGui.dbMetaAttributeName().isEmpty()) {
-					Field fieldx = metaClass.getField(field.getName());
-					attributes.add((SingularAttribute<?, ?>) metaClass.getField(field.getName()).get(metaClass));
+					// Field fieldx = metaClass.getField(field.getName());
+					attributes.add((Attribute<?, ?>) metaClass.getField(field.getName()).get(metaClass));
 					// attributes.add((SingularAttribute<?, ?>)
 					// metaClass.getDeclaredField(field.getName()).get(metaClass));
 				} else {
 					// attributes.add((SingularAttribute<?, ?>)
 					// metaClass.getDeclaredField(dcemGui.dbMetaAttributeName()).get(metaClass));
-					attributes.add((SingularAttribute<?, ?>) metaClass.getField(dcemGui.dbMetaAttributeName()).get(metaClass));
+					attributes.add((Attribute<?, ?>) metaClass.getField(dcemGui.dbMetaAttributeName()).get(metaClass));
 				}
 			} catch (Exception exp) {
 				logger.debug(exp);
@@ -315,47 +314,81 @@ public class DcemUtils {
 					if (dcemGui.filterValue().isEmpty() == false) {
 						filterValue = dcemGui.filterValue();
 					}
-					Type [] types = ((ParameterizedType)field.getGenericType()).getActualTypeArguments();
-//					types[0];
-//					((ParameterizedType) field.getClass()
-//				            .getGenericSuperclass()).getActualTypeArguments();
-					
-					
-				}
-				subClass = dcemGui.subClass();
-				Field subField;
-				try {
-					subField = cls.getDeclaredField(subClass);
-					ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass, attributes);
-					if (subViewVariable == null) {
+					Type[] types = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+					try {
+						Class<?> listClass = Class.forName(types[0].getTypeName());
+						Field subField = listClass.getDeclaredField(dcemGui.subClass());
+						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass, attributes);
+						if (subViewVariable == null) {
+							return null;
+						}
+						if (subViewVariable.getDcemGui().subClass().isEmpty()) {
+							variableType = subViewVariable.getVariableType();
+							ViewVariable retViewVariable = new ViewVariable(field.getName() + "." + subViewVariable.getId(), displayName, helpText,
+									variableType, dcemGui, value, attributes);
+							retViewVariable.setKlass(subViewVariable.getKlass());
+							if (objectKlass == null) {
+								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
+										dcemGui.sortOrder());
+								retViewVariable.setFilterItem(filterItem);
+							}
+							retViewVariable.setListClass(listClass);
+							return retViewVariable;
+						} else {
+							variableType = subViewVariable.getVariableType();
+							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
+									dcemGui.sortOrder());
+							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui, value, attributes,
+									filterItem);
+							retViewVariable.setKlass(subViewVariable.getKlass());
+							retViewVariable.setListClass(listClass);
+							return retViewVariable;
+						}
+						// System.out.println("DcemUtils.convertFieldToViewVariable()");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				} else {
+					subClass = dcemGui.subClass();
+					Field subField;
+					try {
+						subField = cls.getDeclaredField(subClass);
+						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass, attributes);
+						if (subViewVariable == null) {
+							return null;
+						}
+						if (subViewVariable.getDcemGui().subClass().isEmpty()) {
+							variableType = subViewVariable.getVariableType();
+							ViewVariable retViewVariable = new ViewVariable(field.getName() + "." + subViewVariable.getId(), displayName, helpText,
+									variableType, dcemGui, value, attributes);
+							retViewVariable.setKlass(subViewVariable.getKlass());
+							if (objectKlass == null) {
+								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
+										dcemGui.sortOrder());
+								retViewVariable.setFilterItem(filterItem);
+							}
+							return retViewVariable;
+						} else {
+							variableType = subViewVariable.getVariableType();
+							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
+									dcemGui.sortOrder());
+							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui, value, attributes,
+									filterItem);
+							retViewVariable.setKlass(subViewVariable.getKlass());
+							return retViewVariable;
+						}
+					} catch (NoSuchFieldException | SecurityException exp2) {
+						logger.error("SubClass field not found: " + subClass, exp2);
 						return null;
 					}
-					if (subViewVariable.getDcemGui().subClass().isEmpty()) {
-						variableType = subViewVariable.getVariableType();
-						ViewVariable retViewVariable = new ViewVariable(field.getName() + "." + subViewVariable.getId(), displayName, helpText, variableType,
-								dcemGui, value, attributes);
-						retViewVariable.setKlass(subViewVariable.getKlass());
-						if (objectKlass == null) {
-							FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
-									dcemGui.sortOrder());
-							retViewVariable.setFilterItem(filterItem);
-						}
-						return retViewVariable;
-					} else {
-						variableType = subViewVariable.getVariableType();
-						FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0, dcemGui.sortOrder());
-						ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui, value, attributes,
-								filterItem);
-						retViewVariable.setKlass(subViewVariable.getKlass());
-						return retViewVariable;
-					}
-				} catch (NoSuchFieldException | SecurityException exp2) {
-					logger.error("SubClass field not found: " + subClass, exp2);
-					return null;
 				}
 
 			} else {
-				variableType = VariableType.OTHER;
+				if (variableType == null) {
+					variableType = VariableType.OTHER;
+				}
 				filterValue = null;
 				filterToValue = null;
 				logger.debug("Other column Type: " + cls.getName());
@@ -1156,6 +1189,24 @@ public class DcemUtils {
 	}
 
 	/**
+	 * Returns the corresponding getter method for a field from the specified class
+	 *
+	 * @param field
+	 * @return
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 */
+	public static Method getGetterMethodFromString(String fieldName, Class<?> clazz) throws NoSuchMethodException, SecurityException {
+		String getterMethodName = "get" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
+		try {
+			return clazz.getMethod(getterMethodName);
+		} catch (NoSuchMethodException e) {
+			getterMethodName = "is" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
+			return clazz.getMethod(getterMethodName);
+		}
+	}
+
+	/**
 	 * Returns the corresponding getter method for a field from this object
 	 *
 	 * @param field
@@ -1497,7 +1548,7 @@ public class DcemUtils {
 			ImageIO.write(outputImage, "png", outputStream);
 		} catch (Exception e) {
 			logger.error("Couldn't resize image", e);
-			
+
 		}
 		if (outputStream.toByteArray().length > maxLenght) {
 			throw new DcemException(DcemErrorCodes.IMAGE_TOO_BIG, "wrong widht or height");

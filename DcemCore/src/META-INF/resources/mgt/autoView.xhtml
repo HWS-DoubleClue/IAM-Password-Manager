@@ -63,22 +63,23 @@
 
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
 
-				<p:columns id="columns" value="#{autoView.visibleVariables}" var="item" columnIndexVar="colIndex" filterBy="#{item.id}" 
+				<p:columns id="columns" value="#{autoView.visibleVariables}" var="item" columnIndexVar="colIndex" filterBy="#{item.id}"
 					style="text-align: left; word-break: break;  white-space: normal; " visible="#{item.visible}" field="#{item.id}">
+
 					<f:facet name="header">
 						<p:outputLabel value="#{item.displayName}" rendered="#{item.variableType ne 'IMAGE'}" />
 						<p:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
 						<h:panelGroup rendered="#{viewNavigator.predefinedFilterId != 0}">
 							<h:outputText value="#{item.displayName}" />
 						</h:panelGroup>
+
 					</f:facet>
 
 					<f:facet name="filter">
 						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'ENUM'}" onchange="PF('viewTable').filter()">
 							<f:selectItems value="#{item.enumItems}" />
 						</p:selectOneMenu>
-						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'BOOLEAN'}"
-							onchange="PF('viewTable').filter()">
+						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'BOOLEAN'}" onchange="PF('viewTable').filter()">
 							<f:selectItems value="#{dcemApplication.booleanOperators}" />
 						</p:selectOneMenu>
 						<p:datePicker rendered="#{item.variableType eq 'DATE' or item.variableType eq 'EPOCH_DATE'}" showButtonBar="true" locale="#{operatorSession.locale}"
@@ -87,9 +88,15 @@
 						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
 					</f:facet>
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
-						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />
+						<p:graphicImage id="image2" value="2" stream="false" />
 					</p:avatar>
 					<h:outputText rendered="#{item.variableType ne 'IMAGE'}" id="row2" style="#{item.style}" value="#{item.getRecordData(record)}" />
+					<h:panelGroup rendered="#{item.variableType eq 'RATING'}">
+						<br></br>
+						<ui:repeat var="val" value="#{item.getRatings(record)}">
+							<div class="ui-rating-star ui-rating-star#{val}" style="cursor: default;"><a></a></div>
+						</ui:repeat>
+					</h:panelGroup>
 				</p:columns>
 			</p:dataTable>
 

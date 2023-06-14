@@ -749,12 +749,6 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 		this.dcemLdapAttributes = dcemLdapAttributes;
 	}
 
-	public byte[] getAvatar() {
-		if (dcemUserExt == null) {
-			return null;
-		}
-		return dcemUserExt.getPhoto();
-	}
 	
 	@Transient
 	public Object clone() throws CloneNotSupportedException {
@@ -801,7 +795,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 
 	@Override
 	public byte[] getPhoto() {
-		if (dcemUserExt == null) {
+		if (getDcemUserExt() == null) {
 			return null;
 		}
 		return dcemUserExt.getPhoto();

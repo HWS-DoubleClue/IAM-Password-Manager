@@ -10,6 +10,7 @@ public class MethodProperty {
 	Method method;
 	Converter converter;
 	Object klassObject = null;
+	boolean listObject;
 
 	public MethodProperty(String name) {
 		this.name = name;
@@ -33,6 +34,9 @@ public class MethodProperty {
 	}
 
 	public void setMethod(Method method) {
+		if (method == null) {
+			System.out.println("MethodProperty.setMethod()");
+		}
 		this.method = method;
 	}
 
@@ -55,6 +59,14 @@ public class MethodProperty {
 	@Override
 	public String toString() {
 		return "MethodProperty [name=" + name + ", method=" + method + ", converter=" + converter + ", klassObject=" + klassObject + "]";
+	}
+
+	public boolean isListObject() {
+		return listObject;
+	}
+
+	public void setListObject(boolean listObject) {
+		this.listObject = listObject;
 	}
 
 }

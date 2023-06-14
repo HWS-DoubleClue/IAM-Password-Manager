@@ -73,7 +73,8 @@ public class KeyStoreEntity extends EntityInterface {
 	@Temporal(TemporalType.TIMESTAMP)
 	Date expiresOn;
 	
-	@Lob
+//	@Lob
+	@Column (length = 32*1024)
 	private byte[] keyStore;
 
 	boolean disabled = false;

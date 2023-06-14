@@ -99,11 +99,12 @@ public class DepartmentDialog extends DcemDialog {
 	@Override
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		String action = this.getAutoViewAction().getDcemAction().getAction();
+		DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
 		if (action.equals(DcemConstants.ACTION_EDIT)) {
-
+			loginId = departmentEntity.getHeadOf().getLoginId();
 		}
 		if (action.equals(DcemConstants.ACTION_COPY)) {
-
+			loginId = departmentEntity.getHeadOf().getLoginId();
 		}
 		parentView = dcemView;
 	}

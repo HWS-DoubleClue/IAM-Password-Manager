@@ -49,6 +49,7 @@ import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.ViewVariable;
 import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.hazelcast.map.impl.query.Query;
 
 import jersey.repackaged.com.google.common.collect.Lists;
 
@@ -79,10 +80,9 @@ public class JpaSelectProducer<T> implements Serializable {
 		Root<?> root = criteriaQuery.from(entityClass);
 		Predicate whereCond = getPredicates(criteriaBuilder, root, filterProperties, jpaPredicate.getPredicates(criteriaBuilder, root));
 		if (whereCond != null) {
-			criteriaQuery.where(whereCond);
+			criteriaQuery.where(whereCond).distinct(true);
 		}
-
-		Expression<Long> count = criteriaBuilder.count(root);
+		Expression<Long> count = criteriaBuilder.countDistinct(root);
 		criteriaQuery.select(count);
 		cachedRowCount = entityManager.createQuery(criteriaQuery).getSingleResult();
 		return cachedRowCount;
@@ -122,7 +122,9 @@ public class JpaSelectProducer<T> implements Serializable {
 				criteriaQuery.where(whereCond);
 			}
 		}
+		criteriaQuery.distinct(true);
 		@SuppressWarnings("unchecked")
+		
 		TypedQuery<T> query = (TypedQuery<T>) entityManager.createQuery(criteriaQuery);
 		query.setFirstResult(firstResult);
 		query.setMaxResults(maxResult);
@@ -272,7 +274,6 @@ public class JpaSelectProducer<T> implements Serializable {
 					}
 				}
 			}
-
 			switch (filterProperty.variableType) {
 			
 			case LIST: 
@@ -417,9 +418,10 @@ public class JpaSelectProducer<T> implements Serializable {
 					Expression<LocalDateTime> expressionLdt = preFrom.<LocalDateTime> get((SingularAttribute<Object, LocalDateTime>) attribute);
 					predicates.add(cb.between(expressionLdt, (LocalDateTime) filterProperty.getValue(), (LocalDateTime) filterProperty.getToValue()));
 				} else if (attribute.getJavaType().getSimpleName().equals("LocalDate")) {
-					LocalDate localDate = LocalDate.from((LocalDateTime) filterProperty.getToValue());
+					LocalDate localDate = LocalDate.from((LocalDateTime) filterProperty.getValue());
+					LocalDate localDateTo = LocalDate.from((LocalDateTime) filterProperty.getToValue());
 					Expression<LocalDate> expressionLocalDate = preFrom.<LocalDate> get((SingularAttribute<Object, LocalDate>) attribute);
-					predicates.add(cb.between(expressionLocalDate, localDate, localDate));
+					predicates.add(cb.between(expressionLocalDate, localDate, localDateTo));
 				} else {
 					Expression<Date> expressionDate = preFrom.<Date> get((SingularAttribute<Object, Date>) attribute);
 					predicates.add(cb.between(expressionDate, DcemUtils.convertToDate((LocalDateTime) filterProperty.getValue()),

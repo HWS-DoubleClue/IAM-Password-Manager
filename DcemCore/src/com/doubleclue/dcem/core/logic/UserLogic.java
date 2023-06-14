@@ -109,7 +109,6 @@ public class UserLogic {
 	@DcemTransactional
 	public void addOrUpdateUser(DcemUser user, DcemAction dcemAction, boolean withAudit, boolean numericPassword, int passwordLength, boolean savePassword)
 			throws DcemException {
-		em.detach(user); // das ist zum testen
 		if (StringUtils.isValidNameId(user.getLoginId()) == false) {
 			throw new DcemException(DcemErrorCodes.ID_WITH_SPECIAL_CHARACTERS, user.getLoginId());
 		}
@@ -381,9 +380,10 @@ public class UserLogic {
 			dcemUserExtension.setPhoto(photo);
 		}
 		updateUserExtensionAttributes(dcemUserExtension, dcemLdapAttributes);
-//		System.out.println("UserLogic.updateExtention( ) " + dcemUserExtension.toString());
-//		em.flush();
-		dcemUser.setDcemUserExt(dcemUserExtension);
+		if (dcemUser.getDcemUserExt() == null) {
+			dcemUser.setDcemUserExt(dcemUserExtension);
+			em.merge(dcemUser);
+		}
 		return;
 	}
 	
@@ -870,6 +870,7 @@ public class UserLogic {
 			dcemUserExtension.setId(dcemUser.getId());
 			em.persist(dcemUserExtension);
 			dcemUser.setDcemUserExt(dcemUserExtension);
+			em.merge(dcemUser);
 		} else {
 			if (dcemUserExtension.getPhoto() != null) {
 				dcemUserExtensionDb.setPhoto(dcemUserExtension.getPhoto());
@@ -878,7 +879,10 @@ public class UserLogic {
 			dcemUserExtensionDb.setTimezone(dcemUserExtension.getTimezone());
 			dcemUserExtensionDb.setDepartment(dcemUserExtension.getDepartment());
 			dcemUserExtensionDb.setJobTitle(dcemUserExtension.getJobTitle());
-			dcemUser.setDcemUserExt(dcemUserExtension);
+			if (dcemUser.getDcemUserExt() == null) {
+				dcemUser.setDcemUserExt(dcemUserExtensionDb);
+				em.merge(dcemUser);
+			}
 		}
 	}
 		
