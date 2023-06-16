@@ -3,6 +3,7 @@ package com.doubleclue.dcem.as.entities;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -58,7 +59,7 @@ public class UserFingerprintEntity implements Serializable {
 		super();
 		this.id = id;
 		this.fingerprint = fingerprint;
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		calendar.add(Calendar.MINUTE, validForMinutes);	
 		this.timestamp = calendar.getTime();
 	}
