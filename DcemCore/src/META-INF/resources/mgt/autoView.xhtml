@@ -88,7 +88,7 @@
 						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
 					</f:facet>
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
-						<p:graphicImage id="image2" value="2" stream="false" />
+						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />
 					</p:avatar>
 					<h:outputText rendered="#{item.variableType ne 'IMAGE'}" id="row2" style="#{item.style}" value="#{item.getRecordData(record)}" />
 					<h:panelGroup rendered="#{item.variableType eq 'RATING'}">
