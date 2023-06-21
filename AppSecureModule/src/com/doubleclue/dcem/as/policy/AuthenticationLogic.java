@@ -255,6 +255,8 @@ public class AuthenticationLogic {
 						networkBypass = true;
 						authMethod = AuthMethod.PASSWORD;
 						authenticateResponse.setAuthMethods(methods);
+					} else if (methods.size() == 1 && methods.get(0) == AuthMethod.PASSWORD) {
+						authMethod = methods.get(0);
 					} else if (policyEntity.getDcemPolicy().getDefaultPolicy() != null && (requestParam.isUseAlternativeAuthMethods() == false)) {
 						authMethod = policyEntity.getDcemPolicy().getDefaultPolicy();
 						List<AuthMethod> retunredMethods = new ArrayList<>(1);
@@ -595,7 +597,6 @@ public class AuthenticationLogic {
 		}
 		return null;
 	}
-
 
 	private DcemUser createDomainAccount(String userLoginId, String password, boolean ignorePassword) throws Exception {
 		/*
