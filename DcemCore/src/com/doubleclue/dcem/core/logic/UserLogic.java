@@ -880,8 +880,8 @@ public class UserLogic {
 			dcemUserExtensionDb.setDepartment(dcemUserExtension.getDepartment());
 			dcemUserExtensionDb.setJobTitle(dcemUserExtension.getJobTitle());
 			if (dcemUser.getDcemUserExt() == null) {
+				dcemUser = em.find(DcemUser.class, dcemUser.getId()) ;
 				dcemUser.setDcemUserExt(dcemUserExtensionDb);
-				em.merge(dcemUser);
 			}
 		}
 	}

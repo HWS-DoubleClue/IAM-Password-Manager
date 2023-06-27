@@ -783,9 +783,10 @@ public class DcemUtils {
 				
 				if (oldField.isAnnotationPresent(DcemGui.class)) {					
 					if(oldField.getAnnotation(DcemGui.class).variableType() == VariableType.IMAGE) {
-						byte[] oldImage = (((byte[]) oldField.get(oldObject)) != null) ? (byte[]) oldField.get(oldObject) : null;
-						byte[] newImage = (((byte[]) newField.get(newObject)) != null) ? (byte[]) newField.get(newObject) : null;
-						
+						Method oldMethod  = getGetterMethodForField (oldField, oldObjectClass);
+						byte[] oldImage = (byte[]) oldMethod.invoke(oldObject);
+						Method newMethod  = getGetterMethodForField (oldField, oldObjectClass);
+						byte[] newImage = (byte[]) newMethod.invoke(newObject);
 						if (Objects.deepEquals(oldImage, newImage) == false) {
 							stringBuilder.append(oldField.getName());
 							stringBuilder.append(": ");
@@ -796,7 +797,6 @@ public class DcemUtils {
 						}
 						continue;
 					}
-					
 					if(oldField.getAnnotation(DcemGui.class).variableType() == VariableType.OTHER) {
 						continue;
 					}
@@ -1002,6 +1002,7 @@ public class DcemUtils {
 			}
 			return stringBuilder.toString();
 		} catch (Exception exp) {
+			exp.printStackTrace();
 			throw new DcemException(DcemErrorCodes.COMPARE_OBJECTS, oldObject.getClass().getName(), exp);
 		}
 	}

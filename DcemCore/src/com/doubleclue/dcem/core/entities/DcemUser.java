@@ -121,6 +121,10 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	private Integer id;
 	
 	@DcemGui (name= "Photo", subClass = "photo", variableType = VariableType.IMAGE)
+	@Transient
+	byte [] photo;
+	
+	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	@JoinColumn(referencedColumnName = "dc_userext_id", foreignKey = @ForeignKey(name = "FK_USER_EXTENSION"), name = "userext", nullable = true, insertable = true, updatable = true)
 	private DcemUserExtension dcemUserExt;
@@ -795,10 +799,14 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 
 	@Override
 	public byte[] getPhoto() {
+		if (photo != null) {
+			return photo;
+		}
 		if (getDcemUserExt() == null) {
 			return null;
 		}
-		return dcemUserExt.getPhoto();
+		photo = dcemUserExt.getPhoto();
+		return photo;
 	}
 
 }
