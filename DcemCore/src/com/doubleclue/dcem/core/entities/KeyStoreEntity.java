@@ -74,7 +74,7 @@ public class KeyStoreEntity extends EntityInterface {
 	Date expiresOn;
 	
 //	@Lob
-	@Column (length = 32*1024)
+	@Column (length = 31*1024)
 	private byte[] keyStore;
 
 	boolean disabled = false;
