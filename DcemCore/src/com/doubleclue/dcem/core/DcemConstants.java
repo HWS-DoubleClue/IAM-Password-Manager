@@ -495,9 +495,8 @@ public final class DcemConstants {
 
 	public static final String ACTION_ORGANIGRAM = "organigram";
 	public static final String ACTION_REVEAL = "reveal";
-
-
-
+	public static final String METHOD_IS_RESTRICTED = "isRestricted";
+	public static final String RESTRICTED_REPLACEMENT = "-----";
 
 
 	

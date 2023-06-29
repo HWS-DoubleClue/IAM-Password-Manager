@@ -22,6 +22,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 
+import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.gui.converters.DefaultConvertor;
 import com.doubleclue.dcem.core.jpa.FilterItem;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
@@ -161,7 +162,7 @@ public class ViewVariable implements Serializable {
 			try {
 				if (dcemGui.restricted() == true) {
 					if (restrictedMethod == null) {
-						restrictedMethod = klassObject.getClass().getMethod("isRestricted");
+						restrictedMethod = klassObject.getClass().getMethod(DcemConstants.METHOD_IS_RESTRICTED);
 					}
 					if (((boolean) restrictedMethod.invoke(klassObject)) == true) {
 						if (viewNavigator == null) {
@@ -170,7 +171,7 @@ public class ViewVariable implements Serializable {
 						}
 						if (operatorSessionBean.isPermission(viewNavigator.getActiveView().getRevealAction(),
 								viewNavigator.getActiveView().getManageAction()) == false) {
-							return "---";
+							return DcemConstants.RESTRICTED_REPLACEMENT;
 						}
 					}
 				}

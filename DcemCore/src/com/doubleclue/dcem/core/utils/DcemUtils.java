@@ -772,20 +772,20 @@ public class DcemUtils {
 					continue;
 				}
 				if (oldField.isAnnotationPresent(DcemGui.class)) {
-					if(oldField.getAnnotation(DcemGui.class).ignoreCompare() == true) {
+					if (oldField.getAnnotation(DcemGui.class).ignoreCompare() == true) {
 						continue;
 					}
 				}
 				newField = newObjectClass.getDeclaredField(oldField.getName());
 				newField.setAccessible(true);
 				oldField.setAccessible(true);
-				Class<?> cls = oldField.getType();	
-				
-				if (oldField.isAnnotationPresent(DcemGui.class)) {					
-					if(oldField.getAnnotation(DcemGui.class).variableType() == VariableType.IMAGE) {
-						Method oldMethod  = getGetterMethodForField (oldField, oldObjectClass);
+				Class<?> cls = oldField.getType();
+
+				if (oldField.isAnnotationPresent(DcemGui.class)) {
+					if (oldField.getAnnotation(DcemGui.class).variableType() == VariableType.IMAGE) {
+						Method oldMethod = getGetterMethodForField(oldField, oldObjectClass);
 						byte[] oldImage = (byte[]) oldMethod.invoke(oldObject);
-						Method newMethod  = getGetterMethodForField (oldField, oldObjectClass);
+						Method newMethod = getGetterMethodForField(oldField, oldObjectClass);
 						byte[] newImage = (byte[]) newMethod.invoke(newObject);
 						if (Objects.deepEquals(oldImage, newImage) == false) {
 							stringBuilder.append(oldField.getName());
@@ -797,11 +797,11 @@ public class DcemUtils {
 						}
 						continue;
 					}
-					if(oldField.getAnnotation(DcemGui.class).variableType() == VariableType.OTHER) {
+					if (oldField.getAnnotation(DcemGui.class).variableType() == VariableType.OTHER) {
 						continue;
 					}
 				}
-				
+
 				if (cls.equals(String.class)) {
 					String oldString = (((String) oldField.get(oldObject)) != null) ? (String) oldField.get(oldObject) : "null";
 					String newString = (((String) newField.get(newObject)) != null) ? (String) newField.get(newObject) : "null";
@@ -814,7 +814,8 @@ public class DcemUtils {
 						} else if (dcemGui != null && dcemGui.variableType() == VariableType.STRING) {
 							stringBuilder.append(oldString.equals("null") ? oldString : ":LONG TEXT AVAILABLE:");
 							stringBuilder.append(unicodeRightArrow);
-							stringBuilder.append(newString.equals("null") ? newString : (oldString.equals("null") ? ":LONG TEXT INSERTED:" : ":LONG TEXT UPDATED:"));
+							stringBuilder
+									.append(newString.equals("null") ? newString : (oldString.equals("null") ? ":LONG TEXT INSERTED:" : ":LONG TEXT UPDATED:"));
 						} else {
 							stringBuilder.append(oldString);
 							stringBuilder.append(unicodeRightArrow);
@@ -901,11 +902,11 @@ public class DcemUtils {
 				} else if (cls.equals(List.class)) {
 					List<?> oldList = Objects.isNull(oldField.get(oldObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(oldObject);
 					List<?> newList = Objects.isNull(oldField.get(newObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(newObject);
-					if(oldList.size() != 0 && newList.size() != 0) {
-						if(oldList.get(0).getClass().getSuperclass() == EntityInterface.class) {								
+					if (oldList.size() != 0 && newList.size() != 0) {
+						if (oldList.get(0).getClass().getSuperclass() == EntityInterface.class) {
 							List<? extends EntityInterface> oldEntityList = (List<? extends EntityInterface>) oldList;
 							List<? extends EntityInterface> newEntityList = (List<? extends EntityInterface>) newList;
-							if(CollectionUtils.isEqualCollection(oldEntityList, newEntityList) == false) {
+							if (CollectionUtils.isEqualCollection(oldEntityList, newEntityList) == false) {
 								stringBuilder.append(oldField.getName());
 								stringBuilder.append(": ");
 								stringBuilder.append(oldEntityList.size() == 0 ? "null" : ":LIST AVAILABLE:");
@@ -914,7 +915,7 @@ public class DcemUtils {
 								stringBuilder.append(fin);
 							}
 						} else {
-							if(CollectionUtils.isEqualCollection(oldList, newList) == false) {
+							if (CollectionUtils.isEqualCollection(oldList, newList) == false) {
 								stringBuilder.append(oldField.getName());
 								stringBuilder.append(": ");
 								stringBuilder.append(oldList.size() == 0 ? "null" : ":LIST AVAILABLE:");
@@ -926,27 +927,29 @@ public class DcemUtils {
 					}
 				} else if (cls.getSuperclass() == EntityInterface.class) {
 					EntityInterface oldEntity = Objects.isNull(oldField.get(oldObject)) ? new EntityInterface() {
-														@Override
-														public Number getId() {
-															return null;
-														}
-								
-														@Override
-														public void setId(Number id) { }
-												} : (EntityInterface) oldField.get(oldObject);
+						@Override
+						public Number getId() {
+							return null;
+						}
+
+						@Override
+						public void setId(Number id) {
+						}
+					} : (EntityInterface) oldField.get(oldObject);
 					EntityInterface newEntity = Objects.isNull(oldField.get(newObject)) ? new EntityInterface() {
-														@Override
-														public Number getId() {
-															return null;
-														}
-								
-														@Override
-														public void setId(Number id) { }
-												} : (EntityInterface) oldField.get(newObject);
-					if(oldEntity.getId() != null || newEntity.getId() != null) { 
-						if(oldEntity.equals(newEntity) == false) {
+						@Override
+						public Number getId() {
+							return null;
+						}
+
+						@Override
+						public void setId(Number id) {
+						}
+					} : (EntityInterface) oldField.get(newObject);
+					if (oldEntity.getId() != null || newEntity.getId() != null) {
+						if (oldEntity.equals(newEntity) == false) {
 							stringBuilder.append(oldField.getName());
-							stringBuilder.append(": ");												
+							stringBuilder.append(": ");
 							stringBuilder.append((Objects.isNull(oldEntity.getId()) == false ? oldEntity : "null"));
 							stringBuilder.append(unicodeRightArrow);
 							stringBuilder.append((Objects.isNull(newEntity.getId()) == false ? newEntity : "null"));
@@ -956,11 +959,11 @@ public class DcemUtils {
 				} else if (cls.isEnum() == true) {
 					Enum<?> oldEnum = Objects.isNull(oldField.get(oldObject)) ? null : (Enum<?>) oldField.get(oldObject);
 					Enum<?> newEnum = Objects.isNull(oldField.get(newObject)) ? null : (Enum<?>) oldField.get(newObject);
-					if(Objects.isNull(oldEnum) == false || Objects.isNull(newEnum) == false) { 
-						if(oldEnum != newEnum) {
+					if (Objects.isNull(oldEnum) == false || Objects.isNull(newEnum) == false) {
+						if (oldEnum != newEnum) {
 							stringBuilder.append(oldField.getName());
-							stringBuilder.append(": ");												
-							stringBuilder.append((Objects.isNull(oldEnum) == false ? oldEnum: "null"));
+							stringBuilder.append(": ");
+							stringBuilder.append((Objects.isNull(oldEnum) == false ? oldEnum : "null"));
 							stringBuilder.append(unicodeRightArrow);
 							stringBuilder.append((Objects.isNull(newEnum) == false ? newEnum : "null"));
 							stringBuilder.append(fin);
@@ -1248,26 +1251,27 @@ public class DcemUtils {
 
 	public static void setRestricedVariables(EntityInterface entity, OperatorSessionBean operatorSessionBean, DcemAction reveal, DcemAction manage)
 			throws Exception {
-		LinkedList<Class<?>> list = DcemUtils.getHierarchyList(entity.getClass());
-		Field[] fields;
-		for (Class<?> currentClass : list) {
-			fields = currentClass.getDeclaredFields();
-			for (Field field : fields) {
-				if (Modifier.isStatic(field.getModifiers())) {
-					continue;
-				}
-				DcemGui dcemGui = field.getAnnotation(DcemGui.class);
-				if (dcemGui == null) {
-					continue;
-				}
-				if (dcemGui.restricted()) {
-					if (operatorSessionBean.isPermission(reveal, manage) == false) {
-						Method method = null;
-						// for the moment only strings !!!
-						method = getSetterMethodForField(field, entity.getClass(), String.class);
-						method.invoke(entity, (String) "---");
+		if (entity.isRestricted() == true) {
+			LinkedList<Class<?>> list = DcemUtils.getHierarchyList(entity.getClass());
+			Field[] fields;
+			for (Class<?> currentClass : list) {
+				fields = currentClass.getDeclaredFields();
+				for (Field field : fields) {
+					if (Modifier.isStatic(field.getModifiers())) {
+						continue;
 					}
-
+					DcemGui dcemGui = field.getAnnotation(DcemGui.class);
+					if (dcemGui == null) {
+						continue;
+					}
+					if (dcemGui.restricted()) {
+						if (operatorSessionBean.isPermission(reveal, manage) == false) {
+							Method method = null;
+							// for the moment only strings !!!
+							method = getSetterMethodForField(field, entity.getClass(), String.class);
+							method.invoke(entity, (String) DcemConstants.RESTRICTED_REPLACEMENT);
+						}
+					}
 				}
 			}
 		}
