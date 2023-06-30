@@ -41,8 +41,7 @@ public class AutoViewBean implements Serializable {
 	OperatorSessionBean sessionBean;
 
 	FacesContext context;
-	
-	
+
 	private static final long serialVersionUID = 3733919546663290317L;
 
 	private static Logger logger = LogManager.getLogger(AutoViewBean.class);
@@ -105,6 +104,16 @@ public class AutoViewBean implements Serializable {
 			Method method = preferences.getClass().getMethod("getManualsLink", (Class[]) null);
 			String methodLink = (String) method.invoke(preferences, (Object[]) null);
 			if (methodLink != null && methodLink.startsWith("http")) {
+				if (methodLink.endsWith("_")) {
+					switch (sessionBean.getDcemUser().getLanguage()) {
+					case German:
+						methodLink = methodLink + Locale.GERMAN.toString().toLowerCase() + DcemConstants.PDF_EXT;
+						break;
+					default:
+						methodLink = methodLink + Locale.ENGLISH.toString().toLowerCase() + DcemConstants.PDF_EXT;
+						break;
+					}
+				}
 				return methodLink;
 			}
 		} catch (Exception e) {
@@ -173,11 +182,11 @@ public class AutoViewBean implements Serializable {
 	public int getCount() {
 		return viewNavigator.getActiveView().getLazyModel().getRowCount();
 	}
-	
+
 	public List<SortMeta> getSortBy() {
 		return viewNavigator.getActiveView().getSortedBy();
 	}
-	
+
 	public List<FilterMeta> getFilterBy() {
 		return viewNavigator.getActiveView().getFilterBy();
 	}
@@ -203,5 +212,4 @@ public class AutoViewBean implements Serializable {
 		return null;
 	}
 
-	
 }
