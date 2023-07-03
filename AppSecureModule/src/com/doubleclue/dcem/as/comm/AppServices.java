@@ -1259,7 +1259,7 @@ public class AppServices {
 				}
 			} catch (DcemException exp) {
 				switch (exp.getErrorCode()) {
-				case DOMAIN_USER_NOT_FOUND:
+				case INVALID_USERID:
 					throw new ExceptionReporting(new DcemReporting(reportAction, dcemUser, AppErrorCodes.CONNECTION_TO_LDAP_FAILED, location, null),
 							appSession.wsSession.getRemoteAddress(), exp);
 				case LDAP_LOGIN_USER_FAILED:

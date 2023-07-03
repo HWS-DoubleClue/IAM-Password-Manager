@@ -645,7 +645,7 @@ public class DomainLdap implements DomainApi {
 				logger.info(e);
 			}
 		}
-		throw new DcemException(DcemErrorCodes.DOMAIN_USER_NOT_FOUND, loginId);
+		throw new DcemException(DcemErrorCodes.INVALID_USERID, loginId);
 	}
 
 	public List<String> getSelectedLdapTree(String tree, int pageSize) throws DcemException {
