@@ -790,6 +790,13 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 		return null;
 	}
 	
+	public DepartmentEntity getDepartment() {
+		if (dcemUserExt != null && dcemUserExt.getDepartment() != null) {
+			return dcemUserExt.getDepartment();
+		}
+		return null;
+	}
+	
 	public String getJobTitle() {
 		if (dcemUserExt != null) {
 			return dcemUserExt.getJobTitle();

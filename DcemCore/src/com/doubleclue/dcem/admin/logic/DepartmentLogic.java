@@ -44,6 +44,13 @@ public class DepartmentLogic {
 		}
 	}
 	
+	public List<DcemUser> getEmployees (DepartmentEntity departmentEntity) {
+		TypedQuery<DcemUser> query = em.createNamedQuery(DepartmentEntity.GET_EMPLOYEES, DcemUser.class);
+		query.setParameter(1, departmentEntity);
+		query.setMaxResults(500);
+		return query.getResultList();
+	}
+	
 	public List<DepartmentEntity> getDepartmentsByHeadOf(DcemUser dcemUser) {
 		TypedQuery<DepartmentEntity> query = em.createNamedQuery(DepartmentEntity.GET_BY_HEAD_OF, DepartmentEntity.class);
 		query.setParameter(1, dcemUser);

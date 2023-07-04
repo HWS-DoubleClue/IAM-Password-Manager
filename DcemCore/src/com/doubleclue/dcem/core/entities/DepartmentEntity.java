@@ -30,13 +30,15 @@ import com.doubleclue.dcem.core.gui.DcemGui;
 @NamedQueries({
 		@NamedQuery(name = DepartmentEntity.GET_FILTER_LIST, query = "SELECT dt.name FROM DepartmentEntity dt WHERE LOWER(dt.name) LIKE LOWER(?1) ORDER BY dt.name"),
 		@NamedQuery(name = DepartmentEntity.GET_BY_NAME, query = "SELECT dt FROM DepartmentEntity dt WHERE LOWER(dt.name) = LOWER(?1)"),
-		@NamedQuery(name = DepartmentEntity.GET_BY_HEAD_OF, query = "SELECT dt FROM DepartmentEntity dt WHERE dt.headOf = ?1 OR dt.deputy = ?1") })
+		@NamedQuery(name = DepartmentEntity.GET_BY_HEAD_OF, query = "SELECT dt FROM DepartmentEntity dt WHERE dt.headOf = ?1 OR dt.deputy = ?1"),
+		@NamedQuery(name = DepartmentEntity.GET_EMPLOYEES, query = "SELECT user FROM DcemUser user LEFT JOIN user.dcemUserExt ue  WHERE  ue.department = ?1 ORDER BY user.displayName")})
 
 public class DepartmentEntity extends EntityInterface {
 
 	public final static String GET_FILTER_LIST = "department.filterList";
 	public static final String GET_BY_NAME = "department.getByName";
 	public static final String GET_BY_HEAD_OF = "department.getByHeadOf";
+	public static final String GET_EMPLOYEES = "department.getEmployees";
 
 	public DepartmentEntity() {
 		super();

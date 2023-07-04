@@ -1,14 +1,22 @@
 package com.doubleclue.dcem.admin.gui;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.primefaces.model.DefaultOrganigramNode;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.OrganigramNode;
+import org.primefaces.model.StreamedContent;
+
 import com.doubleclue.dcem.admin.logic.DepartmentLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemUser;
+import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.entities.DepartmentEntity;
 import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemDialog;
@@ -37,6 +45,8 @@ public class DepartmentDialog extends DcemDialog {
 	String deputyLoginId;
 	String parentDepartment;
 
+	private OrganigramNode rootNode;
+
 	/**
 	 * 
 	 */
@@ -44,12 +54,12 @@ public class DepartmentDialog extends DcemDialog {
 
 	@Override
 	public boolean actionOk() throws Exception {
-		
+
 		DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
 		DcemUser headOf = userLogic.getDistinctUser(loginId);
 		if (headOf == null) {
-				JsfUtils.addErrorMessage(departmentView.getResourceBundle(), "departmentDialog.invalidHeadOf");
-				return false;
+			JsfUtils.addErrorMessage(departmentView.getResourceBundle(), "departmentDialog.invalidHeadOf");
+			return false;
 		}
 		DcemUser deputyUser = null;
 		if (deputyLoginId != null && deputyLoginId.isEmpty() == false) {
@@ -59,10 +69,10 @@ public class DepartmentDialog extends DcemDialog {
 				return false;
 			}
 		}
-		
+
 		DepartmentEntity parentDepartmentEntity = null;
 		if (parentDepartment != null && parentDepartment.isEmpty() == false) {
-			parentDepartmentEntity = departmentLogic.getDepartmentByName (parentDepartment);
+			parentDepartmentEntity = departmentLogic.getDepartmentByName(parentDepartment);
 			if (parentDepartmentEntity == null) {
 				JsfUtils.addErrorMessage(departmentView.getResourceBundle(), "departmentDialog.invalidDepartment");
 				return false;
@@ -90,7 +100,7 @@ public class DepartmentDialog extends DcemDialog {
 	}
 
 	public String getWidth() {
-		return "800";
+		return "1000";
 	}
 
 	/* (non-Javadoc)
@@ -107,6 +117,11 @@ public class DepartmentDialog extends DcemDialog {
 			loginId = departmentEntity.getHeadOf().getLoginId();
 		}
 		parentView = dcemView;
+		rootNode = null;
+	}
+
+	public void leaving() {
+		rootNode = null;
 	}
 
 	public String getLoginId() {
@@ -131,5 +146,53 @@ public class DepartmentDialog extends DcemDialog {
 
 	public void setDeputyLoginId(String deputyLoginId) {
 		this.deputyLoginId = deputyLoginId;
+	}
+
+	public OrganigramNode getRootNode() {
+		if (rootNode == null) {
+			OrganigramNode mainNode;
+			DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
+			DcemUser hod = userLogic.getUser(departmentEntity.getHeadOf().getId());
+			DepartmentEntity departmentEntityHigher = departmentEntity.getParentDepartment();
+			if (departmentEntityHigher != null) {
+				rootNode = new DefaultOrganigramNode("root", departmentEntityHigher.getHeadOf(), null);
+				mainNode = new DefaultOrganigramNode("root", hod, rootNode);
+			} else {
+				rootNode = new DefaultOrganigramNode("root", hod, null);
+				mainNode = rootNode;
+			}
+			rootNode.setExpanded(true);
+			List<DcemUser> users = departmentLogic.getEmployees(departmentEntity);
+			for (DcemUser dcemUser : users) {
+				new DefaultOrganigramNode("employee", dcemUser, mainNode);
+			}
+		}
+		return rootNode;
+	}
+
+	public boolean isDeputy(DcemUser dcemUser) {
+		if (dcemUser == null) {
+			return false;
+		}
+		DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
+		return  (departmentEntity.getDeputy() != null && (dcemUser.getId() == departmentEntity.getDeputy().getId()));
+	}
+
+	public StreamedContent getUserPhoto(DcemUser dcemUser) {
+		if (dcemUser == null) {
+			return null;
+		}
+		DcemUserExtension dcemUserExtension = dcemUser.getDcemUserExt();
+		if (dcemUserExtension != null && dcemUserExtension.getPhoto() != null) {
+			byte[] image = dcemUserExtension.getPhoto();
+			InputStream in = new ByteArrayInputStream(image);
+			return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
+		} else {
+			return JsfUtils.getDefaultUserImage();
+		}
+	}
+
+	public void setRootNode(OrganigramNode rootNode) {
+		this.rootNode = rootNode;
 	}
 }
