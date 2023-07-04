@@ -1,11 +1,6 @@
-create table petshop_orderseq (
-next_val bigint
-) engine=InnoDB;
-
-insert into petshop_orderseq values ( 1 );
 
 create table petshop_pet (
-dc_id integer not null,
+dc_id integer not null auto_increment,
 dc_age integer not null,
 dc_name varchar(128) not null,
 petType integer not null,
@@ -17,17 +12,11 @@ primary key (dc_id)
 ) engine=InnoDB;
 
 create table petshop_petorder (
-dc_id integer not null,
+dc_id integer not null auto_increment,
 dc_date datetime,
 dc_name integer not null,
 primary key (dc_id)
 ) engine=InnoDB;
-
-create table petshop_petseq (
-next_val bigint
-) engine=InnoDB;
-
-insert into petshop_petseq values ( 1 );
 
 alter table petshop_pet
 add constraint UK_PET_NAME unique (dc_name);

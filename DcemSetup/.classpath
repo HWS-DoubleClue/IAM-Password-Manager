@@ -41,9 +41,7 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/RecruitingModule"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SkillsModule"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/BookingsModule"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/TimeTrackingModule"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PerformanceDeckModule"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/shiftsscheduler"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

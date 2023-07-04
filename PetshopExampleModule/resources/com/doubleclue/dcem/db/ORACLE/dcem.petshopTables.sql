@@ -1,5 +1,6 @@
+
 create table petshop_pet (
-dc_id number(10,0) not null,
+dc_id number(10,0) generated as identity,
 dc_age number(10,0) not null,
 dc_name varchar2(128 char) not null,
 petType number(10,0) not null,
@@ -11,7 +12,7 @@ primary key (dc_id)
 );
 
 create table petshop_petorder (
-dc_id number(10,0) not null,
+dc_id number(10,0) generated as identity,
 dc_date timestamp,
 dc_name number(10,0) not null,
 primary key (dc_id)

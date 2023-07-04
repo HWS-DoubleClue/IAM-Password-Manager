@@ -20,11 +20,7 @@ public class PetEntity extends EntityInterface {
 	
 	@Id
 	@Column(name = "dc_id")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="petshop_petseq" )
-	@SequenceGenerator(
-		    name="petshop_petseq",
-		    allocationSize=4
-	)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	Integer id;
 	
 	@Column(name = "dc_name", nullable=false, length = 128)

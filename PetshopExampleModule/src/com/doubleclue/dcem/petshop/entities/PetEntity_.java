@@ -6,7 +6,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2022-11-07T15:48:15.774+0100")
+@Generated(value="Dali", date="2023-07-04T12:54:16.956+0200")
 @StaticMetamodel(PetEntity.class)
 public class PetEntity_ {
 	public static volatile SingularAttribute<PetEntity, Integer> id;
