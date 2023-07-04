@@ -117,7 +117,6 @@ public class PolicyLogic implements ReloadClassInterface {
 				policyApplications.addAll(list);
 			}
 		}
-
 		List<PolicyAppEntity> appEntities = getAllApplications();
 		boolean found = false;
 		String changedName;
@@ -133,7 +132,6 @@ public class PolicyLogic implements ReloadClassInterface {
 					found = true;
 					appEntityDb = appEntity;
 					break;
-
 				}
 			}
 			if (found == false) {
@@ -146,15 +144,12 @@ public class PolicyLogic implements ReloadClassInterface {
 					} else {
 						appEntity.setDisabled(false);
 					}
-
 				}
-
 			}
 			if (changedName != null) {
 				appEntityDb.setSubName(changedName);
 			}
 		}
-
 		for (PolicyAppEntity appEntity : appEntities) {
 			if (policyApplications.contains(appEntity) == false) {
 				List<AppPolicyGroupEntity> assigned = getPolicyGroups(appEntity);
@@ -190,7 +185,6 @@ public class PolicyLogic implements ReloadClassInterface {
 			}
 			return tenantData.getGlobalEntityPolicy();
 		}
-
 		// check if user is in a group
 		PolicyEntity policyEntity = null;
 		int restPolicies = 0;
@@ -207,7 +201,6 @@ public class PolicyLogic implements ReloadClassInterface {
 				}
 			}
 		}
-
 		if (policyEntity == null) {
 			policyEntity = appPolicyEntity; // this is application policy without group
 			if (policyEntity == null) {

@@ -107,7 +107,11 @@ public class ApplicationHubAdminView extends DcemView {
 	@PostConstruct
 	public void init() {
 		subject = applicationHubAdminSubject;
-		applications = upAppHubLogic.migrateApplications26();
+		try {
+			applications = upAppHubLogic.migrateApplications26();
+		} catch (Exception e) {
+			logger.error("Could not laod applications", e);
+		}
 		keepassEntryLogic.migrate26();
 	}
 
