@@ -112,12 +112,23 @@ public class DepartmentDialog extends DcemDialog {
 		DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
 		if (action.equals(DcemConstants.ACTION_EDIT)) {
 			loginId = departmentEntity.getHeadOf().getLoginId();
+			deputyLoginId = departmentEntity.getDeputy().getLoginId();
+			if (departmentEntity.getDeputy() != null) {
+				deputyLoginId = departmentEntity.getDeputy().getLoginId();
+			}
 		}
 		if (action.equals(DcemConstants.ACTION_COPY)) {
 			loginId = departmentEntity.getHeadOf().getLoginId();
+			if (departmentEntity.getDeputy() != null) {
+				deputyLoginId = departmentEntity.getDeputy().getLoginId();
+			}
+		}
+		if (departmentEntity.getParentDepartment() != null) {
+			parentDepartment = departmentEntity.getParentDepartment().getName();
 		}
 		parentView = dcemView;
 		rootNode = null;
+
 	}
 
 	public void leaving() {
@@ -175,7 +186,7 @@ public class DepartmentDialog extends DcemDialog {
 			return false;
 		}
 		DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
-		return  (departmentEntity.getDeputy() != null && (dcemUser.getId() == departmentEntity.getDeputy().getId()));
+		return (departmentEntity.getDeputy() != null && (dcemUser.getId() == departmentEntity.getDeputy().getId()));
 	}
 
 	public StreamedContent getUserPhoto(DcemUser dcemUser) {
