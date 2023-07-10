@@ -902,8 +902,9 @@ public class DcemUtils {
 				} else if (cls.equals(List.class)) {
 					List<?> oldList = Objects.isNull(oldField.get(oldObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(oldObject);
 					List<?> newList = Objects.isNull(oldField.get(newObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(newObject);
-					if (oldList.size() != 0 && newList.size() != 0) {
-						if (oldList.get(0).getClass().getSuperclass() == EntityInterface.class) {
+					if (oldList.size() != 0 || newList.size() != 0) {
+						Class<?> klass = oldList.size() == 0 ? newList.get(0).getClass().getSuperclass() : oldList.get(0).getClass().getSuperclass();
+						if (klass == EntityInterface.class) {
 							List<? extends EntityInterface> oldEntityList = (List<? extends EntityInterface>) oldList;
 							List<? extends EntityInterface> newEntityList = (List<? extends EntityInterface>) newList;
 							if (CollectionUtils.isEqualCollection(oldEntityList, newEntityList) == false) {

@@ -544,109 +544,6 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 //		return result;
 //	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CloudSafeEntity other = (CloudSafeEntity) obj;
-		if (device == null) {
-			if (other.device != null)
-				return false;
-		} else if (!device.equals(other.device))
-			return false;
-		if (deviceName == null) {
-			if (other.deviceName != null)
-				return false;
-		} else if (!deviceName.equals(other.deviceName))
-			return false;
-		if (discardAfter == null) {
-			if (other.discardAfter != null)
-				return false;
-		} else if (!discardAfter.equals(other.discardAfter))
-			return false;
-		if (group == null) {
-			if (other.group != null)
-				return false;
-		} else if (!group.equals(other.group))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (isFolder != other.isFolder)
-			return false;
-		if (isGcm == null) {
-			if (other.isGcm != null)
-				return false;
-		} else if (!isGcm.equals(other.isGcm))
-			return false;
-		if (lastModified == null) {
-			if (other.lastModified != null)
-				return false;
-		} else if (!lastModified.equals(other.lastModified))
-			return false;
-		if (lastModifiedUser == null) {
-			if (other.lastModifiedUser != null)
-				return false;
-		} else if (!lastModifiedUser.equals(other.lastModifiedUser))
-			return false;
-		if (length != other.length)
-			return false;
-		if (lengthString == null) {
-			if (other.lengthString != null)
-				return false;
-		} else if (!lengthString.equals(other.lengthString))
-			return false;
-		if (loginId == null) {
-			if (other.loginId != null)
-				return false;
-		} else if (!loginId.equals(other.loginId))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (newEntity != other.newEntity)
-			return false;
-		if (options == null) {
-			if (other.options != null)
-				return false;
-		} else if (!options.equals(other.options))
-			return false;
-		if (owner != other.owner)
-			return false;
-		if (parent == null) {
-			if (other.parent != null)
-				return false;
-		} else if (!parent.equals(other.parent))
-			return false;
-		if (recycled != other.recycled)
-			return false;
-		if (restrictDownload != other.restrictDownload)
-			return false;
-		if (!Arrays.equals(salt, other.salt))
-			return false;
-		if (user == null) {
-			if (other.user != null)
-				return false;
-		} else if (!user.equals(other.user))
-			return false;
-		if (writeAccess != other.writeAccess)
-			return false;
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
 //	@Override
 //	public boolean equals(Object obj) {
 //		if (this == obj)
@@ -656,8 +553,111 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 //		if (getClass() != obj.getClass())
 //			return false;
 //		CloudSafeEntity other = (CloudSafeEntity) obj;
-//		return Objects.equals(id, other.id);
+//		if (device == null) {
+//			if (other.device != null)
+//				return false;
+//		} else if (!device.equals(other.device))
+//			return false;
+//		if (deviceName == null) {
+//			if (other.deviceName != null)
+//				return false;
+//		} else if (!deviceName.equals(other.deviceName))
+//			return false;
+//		if (discardAfter == null) {
+//			if (other.discardAfter != null)
+//				return false;
+//		} else if (!discardAfter.equals(other.discardAfter))
+//			return false;
+//		if (group == null) {
+//			if (other.group != null)
+//				return false;
+//		} else if (!group.equals(other.group))
+//			return false;
+//		if (id == null) {
+//			if (other.id != null)
+//				return false;
+//		} else if (!id.equals(other.id))
+//			return false;
+//		if (isFolder != other.isFolder)
+//			return false;
+//		if (isGcm == null) {
+//			if (other.isGcm != null)
+//				return false;
+//		} else if (!isGcm.equals(other.isGcm))
+//			return false;
+//		if (lastModified == null) {
+//			if (other.lastModified != null)
+//				return false;
+//		} else if (!lastModified.equals(other.lastModified))
+//			return false;
+//		if (lastModifiedUser == null) {
+//			if (other.lastModifiedUser != null)
+//				return false;
+//		} else if (!lastModifiedUser.equals(other.lastModifiedUser))
+//			return false;
+//		if (length != other.length)
+//			return false;
+//		if (lengthString == null) {
+//			if (other.lengthString != null)
+//				return false;
+//		} else if (!lengthString.equals(other.lengthString))
+//			return false;
+//		if (loginId == null) {
+//			if (other.loginId != null)
+//				return false;
+//		} else if (!loginId.equals(other.loginId))
+//			return false;
+//		if (name == null) {
+//			if (other.name != null)
+//				return false;
+//		} else if (!name.equals(other.name))
+//			return false;
+//		if (newEntity != other.newEntity)
+//			return false;
+//		if (options == null) {
+//			if (other.options != null)
+//				return false;
+//		} else if (!options.equals(other.options))
+//			return false;
+//		if (owner != other.owner)
+//			return false;
+//		if (parent == null) {
+//			if (other.parent != null)
+//				return false;
+//		} else if (!parent.equals(other.parent))
+//			return false;
+//		if (recycled != other.recycled)
+//			return false;
+//		if (restrictDownload != other.restrictDownload)
+//			return false;
+//		if (!Arrays.equals(salt, other.salt))
+//			return false;
+//		if (user == null) {
+//			if (other.user != null)
+//				return false;
+//		} else if (!user.equals(other.user))
+//			return false;
+//		if (writeAccess != other.writeAccess)
+//			return false;
+//		return true;
 //	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CloudSafeEntity other = (CloudSafeEntity) obj;
+		return Objects.equals(id, other.id);
+	}
 
 	public boolean isFile() {
 		return isFolder == false;
