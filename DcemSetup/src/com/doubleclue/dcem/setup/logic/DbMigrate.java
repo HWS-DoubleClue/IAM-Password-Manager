@@ -47,6 +47,7 @@ import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.tasks.TaskExecutor;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
+import com.doubleclue.dcem.system.logic.SystemModule;
 import com.doubleclue.dcem.userportal.entities.ApplicationHubEntity;
 import com.doubleclue.dcem.userportal.logic.MyApplication;
 import com.doubleclue.dcem.userportal.logic.UpAppHubLogic;
@@ -181,7 +182,7 @@ public class DbMigrate {
 		int updateTo;
 		conn.setAutoCommit(false);
 		for (ModuleMigrationVersion moduleMigration : migrationModules) {
-			if (moduleMigration.isMasterOnly() && tenantEntity.isMaster() == false) {
+			if (moduleMigration.isMasterOnly() && tenantEntity.isMaster() == false && (moduleMigration.getId() != SystemModule.MODULE_ID)) {
 				// ignore tenant for this Module
 				continue;
 			}
