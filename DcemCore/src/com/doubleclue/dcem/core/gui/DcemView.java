@@ -649,10 +649,12 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 			case ASCENDING:
 				sortMeta = SortMeta.builder().field(viewVariable.id).order(SortOrder.ASCENDING).build();
 				list.add(sortMeta);
+				break;
 			case DESCENDING:
 				sortMeta = SortMeta.builder().field(viewVariable.id).order(SortOrder.DESCENDING).build();
 				list.add(sortMeta);
-			default:
+				break;
+			default: break;
 			}
 		}
 		return list;
