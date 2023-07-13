@@ -369,7 +369,6 @@ public class AdminModule extends DcemModule {
 			adminTenantData = new AdminTenantData();
 			super.initializeTenant(tenantEntity, adminTenantData);
 		}
-		licenceLogic.loadLicenceKeyContent();
 		String tenantName = tenantEntity.getName();
 		DcemCluster dcemCluster = DcemCluster.getInstance();
 		FlakeIdGenerator reportIdGenerator = dcemCluster.getIdGenerator("reportIdGenerator@" + tenantName);
@@ -389,6 +388,11 @@ public class AdminModule extends DcemModule {
 			}
 		} catch (Exception e) {
 			logger.error("Could initialize Tenant Branding for " + tenantEntity.getName(), e);
+		}
+		try {
+			licenceLogic.loadLicenceKeyContent();
+		} catch (Exception e) {
+			logger.error("Could initialize Tenant Licencing for " + tenantEntity.getName(), e);
 		}
 	}
 	

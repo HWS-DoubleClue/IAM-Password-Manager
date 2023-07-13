@@ -107,7 +107,8 @@ public class LicenceLogic implements ReloadClassInterface {
 	public void checkForLicence(AuthApplication application, boolean allowChanceAfterExpiration) throws DcemException {
 		AdminTenantData adminTenantData = adminModule.getTenantData();
 		LicenceKeyContent licenceKeyContent = adminTenantData.getLicenceKeyContent();
-		if (userLogic.getTotalUserCount() >= licenceKeyContent.getMaxUsers()) {
+		
+		if (licenceKeyContent == null || userLogic.getTotalUserCount() >= licenceKeyContent.getMaxUsers()) {
 			if (allowChanceAfterExpiration) {
 				if (expiredLicenceUserShouldAuthenticate == true) {
 					expiredLicenceUserShouldAuthenticate = !expiredLicenceUserShouldAuthenticate;
@@ -117,6 +118,9 @@ public class LicenceLogic implements ReloadClassInterface {
 					expiredLicenceUserShouldAuthenticate = !expiredLicenceUserShouldAuthenticate;
 				}
 			}
+		}
+		if (licenceKeyContent == null) {
+			return;
 		}
 		Date expiryDate = licenceKeyContent.getExpiresOn();
 		if (expiryDate.before(new Date()) && (application == null || application != AuthApplication.DCEM)) {
