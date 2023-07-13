@@ -110,9 +110,10 @@ public class DepartmentDialog extends DcemDialog {
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		String action = this.getAutoViewAction().getDcemAction().getAction();
 		DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
+		deputyLoginId = null;
+		loginId = null;
 		if (action.equals(DcemConstants.ACTION_EDIT)) {
 			loginId = departmentEntity.getHeadOf().getLoginId();
-			deputyLoginId = departmentEntity.getDeputy().getLoginId();
 			if (departmentEntity.getDeputy() != null) {
 				deputyLoginId = departmentEntity.getDeputy().getLoginId();
 			}
@@ -128,7 +129,6 @@ public class DepartmentDialog extends DcemDialog {
 		}
 		parentView = dcemView;
 		rootNode = null;
-
 	}
 
 	public void leaving() {

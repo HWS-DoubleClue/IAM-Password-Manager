@@ -2,6 +2,7 @@ package com.doubleclue.dcem.admin.logic;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -455,4 +456,15 @@ public class AdminModule extends DcemModule {
 		}
 		return;
 	}
+	
+	public LocalDateTime convertToLocalDateTime (Date dateToConvert) {
+	    return dateToConvert.toInstant()
+	      .atZone(getTimezone().toZoneId())
+	      .toLocalDateTime();
+	}
+	
+	
+	
+	
+	
 }
