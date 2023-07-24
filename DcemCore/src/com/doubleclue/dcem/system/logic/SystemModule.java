@@ -142,7 +142,7 @@ public class SystemModule extends DcemModule {
 	@Override
 	public void init() throws DcemException {
 		operatingSystemMXBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-		setMasterOnly(false);
+		setMasterOnly(true);
 	}
 
 	/*

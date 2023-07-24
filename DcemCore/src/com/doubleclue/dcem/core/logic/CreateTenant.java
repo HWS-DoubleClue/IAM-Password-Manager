@@ -50,6 +50,7 @@ import com.doubleclue.dcem.core.licence.LicenceKeyContent;
 import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.doubleclue.dcem.system.logic.SystemModule;
 import com.doubleclue.utils.FileContent;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ProductVersion;
@@ -257,7 +258,7 @@ public class CreateTenant {
 				if (module.isHasDbTables() == false) {
 					continue;
 				}
-				if (module.isMasterOnly() && masterTenant == false) {
+				if (module.isMasterOnly() && masterTenant == false && (module.getId() != SystemModule.MODULE_ID)) {
 					continue;
 				}
 				String fileName = "com/doubleclue/dcem/db/" + dbType.name() + "/dcem." + module.getId() + "Tables.sql";
