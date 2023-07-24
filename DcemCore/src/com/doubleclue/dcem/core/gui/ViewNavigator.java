@@ -258,7 +258,7 @@ public class ViewNavigator implements Serializable {
 				continue;
 			}
 
-			if (operatorSessionBean.isPermission(dcemModule.getDcemActions()) == false) {
+			if (operatorSessionBean.isModulePermission(dcemModule.getId()) == false) {
 				continue; // ignore if role has no module View or Manage Action.
 			}
 			if (dcemModule.isMasterOnly() && TenantIdResolver.isCurrentTenantMaster() == false) {
@@ -268,7 +268,6 @@ public class ViewNavigator implements Serializable {
 			if (subjects != null) {
 				DefaultSubMenu subMenu = DefaultSubMenu.builder().label(dcemModule.getName()).build();
 				for (SubjectAbs subject : subjects) {
-
 					// List<DcemAction> actions = subject.getDcemActions();
 					if (operatorSessionBean.isPermission(subject.getDcemActions()) == false) {
 						continue; // ignore if role has Actions for this subject

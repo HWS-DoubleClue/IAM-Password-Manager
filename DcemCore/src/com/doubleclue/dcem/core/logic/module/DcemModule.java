@@ -279,14 +279,6 @@ public abstract class DcemModule implements Serializable {
 		return moduleTenantMap.get(TenantIdResolver.getCurrentTenantName());
 	}
 
-	public List<DcemAction> getDcemActions() {
-		List<DcemAction> dcemActions = new ArrayList<>(rawActions.size());
-		for (RawAction rawAction : rawActions) {
-			dcemActions.add(new DcemAction(this.getId(), DcemConstants.EMPTY_SUBJECT_NAME, rawAction.getName()));
-		}
-		return dcemActions;
-	}
-
 	public void initializeDb(DcemUser superAdmin) throws DcemException {
 
 	}

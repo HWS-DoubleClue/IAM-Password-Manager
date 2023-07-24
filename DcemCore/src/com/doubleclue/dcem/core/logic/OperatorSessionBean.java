@@ -49,9 +49,7 @@ import com.doubleclue.dcem.core.gui.ViewNavigator;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.utils.StringUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Named("operatorSession")
@@ -128,6 +126,21 @@ public class OperatorSessionBean implements Serializable {
 		}
 		for (DcemAction dcemAction : list) {
 			if (isPermission(dcemAction) == true) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if at least one of the permission there
+	 * 
+	 * @param list
+	 * @return
+	 */
+	public boolean isModulePermission(String moduleId) {
+		for (DcemAction dcemAction : haveAction) {
+			if (dcemAction.getModuleId().equals(moduleId)) {
 				return true;
 			}
 		}
