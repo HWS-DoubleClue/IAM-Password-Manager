@@ -1152,6 +1152,13 @@ public class DcemUtils {
 		cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
 		return cal.getTime();
 	}
+	
+	public static Date getLastDateOfMonth(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		return cal.getTime();
+	}
 
 	public static String processTemplate(String template, HashMap<String, String> map) throws DcemException {
 

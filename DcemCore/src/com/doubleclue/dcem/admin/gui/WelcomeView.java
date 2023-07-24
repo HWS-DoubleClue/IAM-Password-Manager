@@ -224,12 +224,7 @@ public class WelcomeView extends DcemView {
 		authMethodsPieChart = dashboardLogic.getAuthMethodsPieChart(currentDate.atStartOfDay(), selectedFormat, resourceBundle);
 	}
 
-	public static Date getLastDateOfMonth(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-		return cal.getTime();
-	}
+	
 
 	public void leavingView() {
 		userActivityBarChart = null;

@@ -142,29 +142,27 @@ public class JpaSelectProducer<T> implements Serializable {
 		List<Order> orders = Lists.newArrayList();
 		if (filterOrders != null && filterOrders.isEmpty() == false) {
 			for (FilterOrder filterOrder : filterOrders) {
-
 				int length = filterOrder.getAttributes().size();
 				if (length == 0) {
 					return orders;
 				}
 				Attribute<?, ?> attribute = filterOrder.getAttributes().get(length - 1);
-
 				From<?, ?> from = null;
-				from = root;
-
+				From<?, ?> preFrom = root;
 				if (length > 1) {
 					// search and create the Joins
 					for (int i = 0; i < length - 1; i++) {
 						Attribute<?, ?> joinAttribute = filterOrder.getAttributes().get(i);
-						from = getJoins(from.getJoins(), attribute.getDeclaringType().getJavaType(), joinAttribute);
+						from = getJoins(preFrom.getJoins(), attribute.getDeclaringType().getJavaType(), joinAttribute);
 						if (from == null) {
-							from = root.join(joinAttribute.getName(), JoinType.LEFT);
+							preFrom = preFrom.join(joinAttribute.getName(), JoinType.LEFT);
+						} else {
+							preFrom = from;
 						}
 					}
 				}
 				Order jpaOrder;
-				Expression<String> expression = from.<String> get(attribute.getName());
-
+				Expression<String> expression = preFrom.<String> get(attribute.getName());
 				if (filterOrder.isDesc()) {
 					jpaOrder = criteriaBuilder.desc(expression);
 				} else {
@@ -257,11 +255,8 @@ public class JpaSelectProducer<T> implements Serializable {
 				throw new DcemException(DcemErrorCodes.MISSING_META_DATA_ATRIBUTES, filterProperty.toString());
 			}
 			Attribute<?, ?> attribute = filterProperty.getAttributes().get(length - 1);
-
 			From<?, ?> from = null;
-			From<?, ?> preFrom = null;
-			preFrom = root;
-
+			From<?, ?> preFrom = root;
 			if (length > 1) {
 				// search and create the Joins
 				for (int i = 0; i < length - 1; i++) {
