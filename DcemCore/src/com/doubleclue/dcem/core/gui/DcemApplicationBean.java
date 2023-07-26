@@ -479,7 +479,7 @@ public class DcemApplicationBean implements Serializable {
 				}
 			}
 		}
-		return null;
+		return subjectName;
 	}
 
 	public List<SelectItem> getNumberOperators() {
