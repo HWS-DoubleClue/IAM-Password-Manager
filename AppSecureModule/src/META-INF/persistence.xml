@@ -23,7 +23,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/x
 		<class>com.doubleclue.dcem.as.entities.CloudSafeContentEntity</class>
 		<class>com.doubleclue.dcem.as.entities.CloudSafeLimitEntity</class>
 
-		<class>com.doubleclue.dcem.core.entities.DcemAction</class>
+<!--  		<class>com.doubleclue.dcem.core.entities.DcemAction</class>
 		<class>com.doubleclue.dcem.core.entities.DcemNode</class>
 		<class>com.doubleclue.dcem.core.entities.DomainEntity</class>
 		<class>com.doubleclue.dcem.core.entities.DcemRole</class>
@@ -32,6 +32,8 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/x
 		<class>com.doubleclue.dcem.core.entities.DcemTemplate</class>
 		<class>com.doubleclue.dcem.core.entities.DcemUser</class>
 		<class>com.doubleclue.dcem.core.entities.DcemGroup</class>
+		 -->
+		
 
 		<properties>
 			<property name="hibernate.show_sql" value="false" />

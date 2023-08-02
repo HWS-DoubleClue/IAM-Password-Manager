@@ -3,10 +3,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,6 +47,16 @@ public class CreateModuleTables {
 		// PersistenceUnitTransactionType.RESOURCE_LOCAL);
 		// List<ParsedPersistenceXmlDescriptor> allDescriptors = parser.doResolve(new HashMap<>());
 
+		List<String> systemClasses = new ArrayList<>();
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemRole");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DomainEntity");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemAction");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemUser");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemUserExtension");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DepartmentEntity");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemGroup");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemTemplate");
+
 		DcemLogLevel dcemLogLevel = DcemLogLevel.INFO;
 		LogUtils.initLog4j(null, null, dcemLogLevel, true);
 		logger = LogManager.getLogger(DcemMain.class);
@@ -59,7 +71,7 @@ public class CreateModuleTables {
 		int ind = modulePath.lastIndexOf(File.separator);
 		modulePath = modulePath.substring(0, ind + 1);
 		modulePath += args[0];
-		
+
 		File moduleFile = new File(modulePath);
 		try {
 			modulePath = moduleFile.getCanonicalPath();
@@ -70,9 +82,9 @@ public class CreateModuleTables {
 		if (moduleFile.exists() == false) {
 			System.err.println("ERROR: The Module directory does not exists. " + modulePath);
 			System.exit(-2);
-		} 
-		
-        String outputResources = "resources";
+		}
+
+		String outputResources = "resources";
 		String outputDir = modulePath + File.separator + "target" + File.separator + "tables";
 		File outputDirFile = new File(outputDir);
 		try {
@@ -82,7 +94,7 @@ public class CreateModuleTables {
 			e1.printStackTrace();
 		}
 		outputDirFile.delete();
-		
+
 		System.out.println("Output Directory = " + outputDir);
 		String persistencePath = modulePath + File.separator + "src" + File.separator + "META-INF" + File.separator + "persistence.xml";
 		File persistenceFile = new File(persistencePath);
@@ -102,6 +114,7 @@ public class CreateModuleTables {
 		}
 		System.out.println("CreateTables.main() Path=" + persistencePath);
 		String moduleName = null;
+		
 		for (DatabaseTypes databaseType : DatabaseTypes.values()) {
 			System.out.println("CreateTables.main() Database Type: " + databaseType);
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -134,7 +147,7 @@ public class CreateModuleTables {
 			try {
 				module = (NodeList) xPath.evaluate("/persistence/persistence-unit/@name", persistenceDocument, XPathConstants.NODESET);
 				result = (NodeList) xPath.evaluate("/persistence/persistence-unit/class/text()", persistenceDocument, XPathConstants.NODESET);
-				
+
 			} catch (XPathExpressionException e) {
 				System.err.println("ERROR: Parsing 'persistence.xml' " + persistencePath);
 				System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
@@ -156,13 +169,24 @@ public class CreateModuleTables {
 				String className = result.item(i).getNodeValue();
 				classesMap.add(className);
 			}
+			for (String className : systemClasses) {
+				try {
+					metadata.addAnnotatedClass(Class.forName(className));
+				} catch (ClassNotFoundException e) {
+					System.out.println();
+					System.err.println("FATAL ERROR: Class not found: " + className);
+					e.printStackTrace();
+					System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
+					System.exit(1);
+				}
+			}
 
 			Iterator<String> iterator = classesMap.iterator();
 			while (iterator.hasNext()) {
 				String className = iterator.next();
 				try {
 					metadata.addAnnotatedClass(Class.forName(className));
-			//		System.out.println("className " + className);
+					// System.out.println("className " + className);
 				} catch (ClassNotFoundException e) {
 					System.out.println();
 					System.err.println("FATAL ERROR: Class not found: " + className);
@@ -172,6 +196,7 @@ public class CreateModuleTables {
 				}
 			}
 			
+
 			SchemaExport schemaExport = new SchemaExport();
 			schemaExport.setDelimiter(";");
 			File file = new File(outputDir + File.separatorChar + databaseType);
@@ -216,7 +241,7 @@ public class CreateModuleTables {
 			System.out.println("						Output directory:		" + outputDirectory.getPath());
 			int ind2 = moduleName.indexOf('.');
 			if (ind2 != -1) {
-				moduleName = moduleName.substring(ind2+1);
+				moduleName = moduleName.substring(ind2 + 1);
 			}
 			ConvertSqlFiles.convertSqlDirectories(inputDirectory, outputDirectory, moduleName);
 		} catch (Exception e) {

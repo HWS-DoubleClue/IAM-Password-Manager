@@ -5,6 +5,8 @@
 
 		<class>com.doubleclue.dcem.userportal.entities.ApplicationHubEntity</class>
 		<class>com.doubleclue.dcem.userportal.entities.KeepassEntryEntity</class>
+		<class>com.doubleclue.dcem.userportal.entities.DbJsonConverterAppHub</class>
+<!--  	
 		<class>com.doubleclue.dcem.core.entities.DcemGroup</class>
 		<class>com.doubleclue.dcem.core.entities.DcemRole</class>
 		<class>com.doubleclue.dcem.core.entities.DomainEntity</class>
@@ -12,8 +14,8 @@
 		<class>com.doubleclue.dcem.core.entities.DcemUser</class>
 		<class>com.doubleclue.dcem.core.entities.DcemAction</class>		
 		<class>com.doubleclue.dcem.core.entities.DomainConfig</class>
-		<class>com.doubleclue.dcem.userportal.entities.DbJsonConverterAppHub</class>	
 		<class>com.doubleclue.dcem.core.entities.DepartmentEntity</class>
+		-->	
 		
 		<properties>
 			<property name="hibernate.show_sql" value="false" />

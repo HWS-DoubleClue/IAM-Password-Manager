@@ -1,16 +1,15 @@
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,12 +29,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
-import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.utils.ConvertSqlFiles;
 
 public class CreateTables {
-	
-	
+
 	public static void main(String[] args) {
 
 		HashSet<String> defaulModules = new HashSet<>();
@@ -46,8 +43,17 @@ public class CreateTables {
 		defaulModules.add("dcem.oauth");
 		defaulModules.add("dcem.otp");
 		defaulModules.add("dcem.saml");
-		defaulModules.add("dcem.saml");	
-			
+		defaulModules.add("dcem.saml");
+		
+		List<String> systemClasses = new ArrayList<>();
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemRole");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DomainEntity");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemAction");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemUser");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemUserExtension");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DepartmentEntity");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemGroup");
+		systemClasses.add("com.doubleclue.dcem.core.entities.DcemTemplate");
 
 		if (args.length < 1) {
 			System.err.println("Need Workspace Location as first parameter");
@@ -66,28 +72,17 @@ public class CreateTables {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			Map<String, String> settings = new HashMap<>();
+			// settings.put("connection.driver_class", "com.mysql.jdbc.Driver");
+			settings.put("hibernate.dialect", databaseType.getHibernateDialect());
+			settings.put("hibernate.connection.url", "jdbc:derby:memory:myDB;create=true");
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
+			boolean systemModule = false;
 			while (persistenceRes.hasMoreElements()) {
 				URL persistenceFileUrl = persistenceRes.nextElement();
 				String path = persistenceFileUrl.getPath();
-				// if (path.contains("/bin/")) {
-				// continue;
-				// }
 				System.out.println("CreateTables.main() Path=" + path);
-				// int ind = path.indexOf("Module/");
-				// if (ind == -1) {
-				// continue;
-				// }
-				// int ind2 = path.lastIndexOf('/', ind);
-				// if (ind2 == -1) {
-				// continue;
-				// }
-				// String moduleName = path.substring(ind2 + 1, ind);
-				// System.out.println("Creating Tables for " + moduleName);
-
 				HashSet<String> classesMap = new HashSet<String>();
-
 				DocumentBuilder builder = null;
 				try {
 					builder = factory.newDocumentBuilder();
@@ -95,15 +90,6 @@ public class CreateTables {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-				// cfg.setProperty("hibernate.hbm2ddl.auto", "create");
-				// cfg.setProperty("hibernate.dialect", databaseType.getHibernateDialect());
-				// cfg.setProperty("hibernate.id.new_generator_mappings", "true");
-
-				Map<String, String> settings = new HashMap<>();
-				// settings.put("connection.driver_class", "com.mysql.jdbc.Driver");
-				settings.put("hibernate.dialect", databaseType.getHibernateDialect());
-				settings.put("hibernate.connection.url", "jdbc:derby:memory:myDB;create=true");
 				// settings.put("hibernate.connection.username", "root");
 				// settings.put("hibernate.connection.password", "");
 				// settings.put("hibernate.id.new_generator_mappings", "true");
@@ -141,16 +127,34 @@ public class CreateTables {
 					System.out.println("ERROR:  No Module Defined in " + path);
 					continue;
 				}
+
 				String moduleName = module.item(0).getNodeValue();
 				if (defaulModules.contains(moduleName) == false) {
 					continue;
+				}
+				if (moduleName.equals("dcem.system")) {
+					systemModule = true;
+				} else {
+					systemModule = false;
 				}
 				System.out.println("CreateTables.main() moduelName: " + moduleName);
 				for (int i = 0; i < result.getLength(); i++) {
 					String className = result.item(i).getNodeValue();
 					classesMap.add(className);
 				}
-
+				if (systemModule == false) {
+					for (String className : systemClasses) {
+						try {
+							metadata.addAnnotatedClass(Class.forName(className));
+						} catch (ClassNotFoundException e) {
+							System.out.println();
+							System.err.println("FATAL ERROR: Class not found: " + className);
+							e.printStackTrace();
+							System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
+							System.exit(1);
+						}
+					}
+				}
 				Iterator<String> iterator = classesMap.iterator();
 				while (iterator.hasNext()) {
 					String className = iterator.next();
@@ -161,7 +165,7 @@ public class CreateTables {
 						continue;
 					}
 				}
-
+				
 				SchemaExport export = new SchemaExport();
 				export.setDelimiter(";");
 				File file = new File(outputDir + File.separatorChar + databaseType);
@@ -177,7 +181,7 @@ public class CreateTables {
 					export.setOutputFile(outputFile);
 					export.setFormat(true);
 					export.setHaltOnError(true);
-								EnumSet<TargetType> targetTypes = EnumSet.of(TargetType.SCRIPT);
+					EnumSet<TargetType> targetTypes = EnumSet.of(TargetType.SCRIPT);
 					export.execute(targetTypes, SchemaExport.Action.CREATE, metadata.buildMetadata());
 					System.out.println("CreateTables.main() exported for: " + outputFile);
 				} catch (AnnotationException exp) {
