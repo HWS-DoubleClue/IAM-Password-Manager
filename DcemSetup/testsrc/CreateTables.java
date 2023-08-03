@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.doubleclue.dcem.core.entities.DependencyClasses;
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
 import com.doubleclue.dcem.core.utils.ConvertSqlFiles;
 
@@ -45,16 +46,6 @@ public class CreateTables {
 		defaulModules.add("dcem.saml");
 		defaulModules.add("dcem.saml");
 		
-		List<String> systemClasses = new ArrayList<>();
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemRole");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DomainEntity");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemAction");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemUser");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemUserExtension");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DepartmentEntity");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemGroup");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemTemplate");
-
 		if (args.length < 1) {
 			System.err.println("Need Workspace Location as first parameter");
 			System.exit(-1);
@@ -143,16 +134,8 @@ public class CreateTables {
 					classesMap.add(className);
 				}
 				if (systemModule == false) {
-					for (String className : systemClasses) {
-						try {
-							metadata.addAnnotatedClass(Class.forName(className));
-						} catch (ClassNotFoundException e) {
-							System.out.println();
-							System.err.println("FATAL ERROR: Class not found: " + className);
-							e.printStackTrace();
-							System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
-							System.exit(1);
-						}
+					for (Class<?> klass : DependencyClasses.getCoreDependencyClasses()) {
+						metadata.addAnnotatedClass(klass);
 					}
 				}
 				Iterator<String> iterator = classesMap.iterator();

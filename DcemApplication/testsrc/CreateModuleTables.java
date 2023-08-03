@@ -3,12 +3,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -32,6 +30,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.doubleclue.dcem.app.DcemMain;
+import com.doubleclue.dcem.core.entities.DependencyClasses;
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
 import com.doubleclue.dcem.core.logging.DcemLogLevel;
 import com.doubleclue.dcem.core.logging.LogUtils;
@@ -46,16 +45,6 @@ public class CreateModuleTables {
 		// PersistenceXmlParser parser = new PersistenceXmlParser(new ClassLoaderServiceImpl(),
 		// PersistenceUnitTransactionType.RESOURCE_LOCAL);
 		// List<ParsedPersistenceXmlDescriptor> allDescriptors = parser.doResolve(new HashMap<>());
-
-		List<String> systemClasses = new ArrayList<>();
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemRole");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DomainEntity");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemAction");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemUser");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemUserExtension");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DepartmentEntity");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemGroup");
-		systemClasses.add("com.doubleclue.dcem.core.entities.DcemTemplate");
 
 		DcemLogLevel dcemLogLevel = DcemLogLevel.INFO;
 		LogUtils.initLog4j(null, null, dcemLogLevel, true);
@@ -169,12 +158,12 @@ public class CreateModuleTables {
 				String className = result.item(i).getNodeValue();
 				classesMap.add(className);
 			}
-			for (String className : systemClasses) {
+			for (Class<?> klass : DependencyClasses.getCoreDependencyClasses()) {
 				try {
-					metadata.addAnnotatedClass(Class.forName(className));
-				} catch (ClassNotFoundException e) {
+					metadata.addAnnotatedClass(klass);
+				} catch (Exception e) {
 					System.out.println();
-					System.err.println("FATAL ERROR: Class not found: " + className);
+					System.err.println("FATAL ERROR: Class not found: " + klass.getCanonicalName());
 					e.printStackTrace();
 					System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
 					System.exit(1);

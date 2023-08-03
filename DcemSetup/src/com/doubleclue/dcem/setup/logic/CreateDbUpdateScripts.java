@@ -37,6 +37,7 @@ import org.w3c.dom.NodeList;
 
 import com.doubleclue.dcem.core.config.DatabaseConfig;
 import com.doubleclue.dcem.core.config.LocalPaths;
+import com.doubleclue.dcem.core.entities.DependencyClasses;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
@@ -138,6 +139,10 @@ public class CreateDbUpdateScripts {
 				String className = result.item(i).getNodeValue();
 				classesMap.add(className);
 			}
+			
+			for (Class<?> klass : DependencyClasses.getCoreDependencyClasses()) {
+				metadata.addAnnotatedClass(klass);
+			}
 
 			Iterator<String> iterator = classesMap.iterator();
 			while (iterator.hasNext()) {
@@ -145,8 +150,8 @@ public class CreateDbUpdateScripts {
 				try {
 					metadata.addAnnotatedClass(Class.forName(className));
 				} catch (ClassNotFoundException e) {
-					logger.debug(e);
-					continue;
+					logger.error(e);
+					throw e;
 				}
 			}
 
