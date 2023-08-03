@@ -80,9 +80,11 @@ public class JpaSelectProducer<T> implements Serializable {
 		Root<?> root = criteriaQuery.from(entityClass);
 		Predicate whereCond = getPredicates(criteriaBuilder, root, filterProperties, jpaPredicate.getPredicates(criteriaBuilder, root));
 		if (whereCond != null) {
-			criteriaQuery.where(whereCond).distinct(true);
+			criteriaQuery.where(whereCond);
+			//criteriaQuery.where(whereCond).distinct(true);
 		}
-		Expression<Long> count = criteriaBuilder.countDistinct(root);
+	//	Expression<Long> count = criteriaBuilder.countDistinct(root);
+		Expression<Long> count = criteriaBuilder.count(root);
 		criteriaQuery.select(count);
 		cachedRowCount = entityManager.createQuery(criteriaQuery).getSingleResult();
 		return cachedRowCount;
@@ -122,7 +124,7 @@ public class JpaSelectProducer<T> implements Serializable {
 				criteriaQuery.where(whereCond);
 			}
 		}
-		criteriaQuery.distinct(true);
+//		criteriaQuery.distinct(true);
 		@SuppressWarnings("unchecked")
 		
 		TypedQuery<T> query = (TypedQuery<T>) entityManager.createQuery(criteriaQuery);
