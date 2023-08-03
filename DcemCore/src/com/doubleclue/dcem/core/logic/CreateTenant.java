@@ -289,11 +289,18 @@ public class CreateTenant {
 			dbVersion.setVersionStr(productVersion.getVersionStr());
 			JdbcUtils.insertVersion(conn, dbVersion);
 			conn.commit();
+		} catch (Exception e) {
+			throw e;
 		} finally {
 			if (stmt != null) {
 				stmt.close();
 			}
-			conn.close();
+			try {
+				conn.close();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+
 		}
 		return;
 	}

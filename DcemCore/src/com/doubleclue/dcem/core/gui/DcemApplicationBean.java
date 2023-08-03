@@ -411,17 +411,16 @@ public class DcemApplicationBean implements Serializable {
 	public List<DcemModule> getSortedEnabledModules() {
 		String[] disabledModules = adminModule.getAdminTenantData().getDisabledModules();
 		String[] pluginModules = adminModule.getAdminTenantData().getEnabledPluginModules();
-		if (disabledModules == null || disabledModules.length == 0) {
-			return sortedModules;
-		}
 		List<DcemModule> list = new ArrayList<DcemModule>(sortedModules.size());
 		boolean disabled;
 		for (DcemModule dcemModule : sortedModules) {
 			disabled = false;
-			for (String id : disabledModules) {
-				if (dcemModule.getId().compareToIgnoreCase(id) == 0) {
-					disabled = true;
-					break;
+			if (disabledModules != null) {
+				for (String id : disabledModules) {
+					if (dcemModule.getId().compareToIgnoreCase(id) == 0) {
+						disabled = true;
+						break;
+					}
 				}
 			}
 			if (disabled == false) {
