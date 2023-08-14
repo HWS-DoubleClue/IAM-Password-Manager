@@ -30,6 +30,9 @@ public class LdapView extends DcemView {
 
 	@Inject
 	private DomainDialogBean domainDialogBean;
+	
+	@Inject
+	private AzureMigrationDialog azureMigrationDialog;
 
 	ResourceBundle resourceBundle;
 
@@ -51,6 +54,7 @@ public class LdapView extends DcemView {
 		addAutoViewAction( DcemConstants.ACTION_EDIT,  resourceBundle, domainDialogBean, DcemConstants.DOMAIN_DIALOG_PATH);
 		addAutoViewAction( DcemConstants.ACTION_DELETE,  resourceBundle, domainDialogBean, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);
 		addAutoViewAction(DcemConstants.ACTION_COPY, resourceBundle, domainDialogBean, DcemConstants.DOMAIN_DIALOG_PATH);
+		addAutoViewAction(DcemConstants.ACTION_AZURE_MIGRATION, resourceBundle, azureMigrationDialog, DcemConstants.AZURE_MIGRATION_DIALOG_PATH);
 	}
 	
 	public void reload() {

@@ -23,6 +23,7 @@ import com.doubleclue.dcem.core.gui.AutoViewBean;
 import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.DomainType;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
@@ -112,7 +113,7 @@ public class DomainDialogBean extends DcemDialog {
 			domainEntity.setBaseDN("");
 		}
 		domainLogic.addOrUpdateDcemLdap(domainEntity, this.getAutoViewAction().getDcemAction());
-		Exception exception = DcemUtils.reloadTaskNodes(DomainLogic.class, null);
+		Exception exception = DcemUtils.reloadTaskNodes(DomainLogic.class, TenantIdResolver.getCurrentTenantName());
 		if (exception != null) {
 			throw exception;
 		}

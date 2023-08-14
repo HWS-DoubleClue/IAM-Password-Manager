@@ -12,6 +12,7 @@ import com.doubleclue.dcem.core.entities.DcemConfiguration;
 import com.doubleclue.dcem.core.entities.TenantBrandingEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
 import com.doubleclue.dcem.core.tasks.ReloadClassInterface;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -61,6 +62,7 @@ public class TenantBrandingLogic implements ReloadClassInterface {
 		}
 		configLogic.setDcemConfiguration(dcemConfiguration);
 	}
+	
 	@Override
 	public void reload(String info) throws DcemException {
 		TenantBrandingEntity tenantBrandingEntity = getTenantBrandingEntity();

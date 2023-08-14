@@ -66,6 +66,7 @@ public class MfaLoginView extends LoginViewAbstract {
 		}
 		try { 
 			operatorSessionBean.loggedInOperator(dcemUser, null);
+			viewNavigator.getMenuModel();
 			if (mgtUrlView != null && mgtUrlView.isEmpty() == false) {
 				viewNavigator.setActiveView(mgtUrlView);
 			} else {

@@ -95,8 +95,8 @@ public class UserLogic {
 
 	@Inject
 	LicenceLogic licenceLogic;
-	
-	@Inject 
+
+	@Inject
 	DepartmentLogic departmentLogic;
 
 	AsModuleApi asModuleApi;
@@ -386,23 +386,26 @@ public class UserLogic {
 		}
 		return;
 	}
-	
-	private void updateUserExtensionAttributes (DcemUserExtension dcemUserExtension, DcemLdapAttributes dcemLdapAttributes ) throws DcemException {
+
+	private void updateUserExtensionAttributes(DcemUserExtension dcemUserExtension, DcemLdapAttributes dcemLdapAttributes) throws DcemException {
 		if (dcemLdapAttributes.country != null) {
 			dcemUserExtension.setCountry(dcemLdapAttributes.country);
 		}
 		if (dcemLdapAttributes.jobTitle != null) {
 			dcemUserExtension.setJobTitle(dcemLdapAttributes.jobTitle);
 		}
-		dcemUserExtension.getCountry();
 		if (dcemLdapAttributes.department != null) {
-			DepartmentEntity departmentEntity = departmentLogic.getDepartmentByName(dcemLdapAttributes.department);
-			DcemUser manager = dcemLdapAttributes.getManager();
-			DcemUser headOf = getDistinctUser (manager.getLoginId());
-			if (headOf == null) {
-				addOrUpdateUserWoAuditing(manager);
-				headOf = manager;
+			DcemUser headOf = null;
+			if (dcemLdapAttributes.getManagerId() != null) {
+				headOf = getUserByDn(dcemLdapAttributes.getManagerId());
 			}
+			if (headOf == null) {
+				headOf = domainLogic.getUserFromDomains(dcemLdapAttributes.getManagerId());
+				if (headOf != null) {
+					addOrUpdateUserWoAuditing(headOf);
+				}
+			}
+			DepartmentEntity departmentEntity = departmentLogic.getDepartmentByName(dcemLdapAttributes.department);
 			if (departmentEntity == null) {
 				departmentEntity = new DepartmentEntity();
 				departmentEntity.setName(dcemLdapAttributes.department);
@@ -417,9 +420,18 @@ public class UserLogic {
 					departmentEntity.setHeadOf(headOf);
 				}
 			}
-			
-			
+
 		}
+	}
+
+	private DcemUser getUserByDn(String dn) {
+		TypedQuery<DcemUser> query = em.createNamedQuery(DcemUser.GET_USER_BY_DN, DcemUser.class);
+		query.setParameter(1, dn);
+		List<DcemUser> list = query.getResultList();
+		if (list.isEmpty()) {
+			return null;
+		}
+		return list.get(0);
 	}
 
 	public DcemUser getUser(int id) {
@@ -659,8 +671,6 @@ public class UserLogic {
 	// query.setParameter(1, ldap);
 	// return query.getResultList();
 	// }
-	
-	
 
 	@DcemTransactional
 	public void deleteUsers(List<Object> list, DcemAction dcemAction) throws DcemException {
@@ -855,13 +865,12 @@ public class UserLogic {
 	}
 
 	public DcemUserExtension getDcemUserExtension(DcemUser dcemUser) {
-		return   em.find(DcemUserExtension.class, dcemUser.getId());
+		return em.find(DcemUserExtension.class, dcemUser.getId());
 	}
-	
-	public DcemUser getSuperAdmin () {
+
+	public DcemUser getSuperAdmin() {
 		return adminModule.getAdminTenantData().getSuperAdmin();
-	}	
-	
+	}
 
 	@DcemTransactional
 	public void updateDcemUserExtension(DcemUser dcemUser, DcemUserExtension dcemUserExtension) {
@@ -880,10 +889,17 @@ public class UserLogic {
 			dcemUserExtensionDb.setDepartment(dcemUserExtension.getDepartment());
 			dcemUserExtensionDb.setJobTitle(dcemUserExtension.getJobTitle());
 			if (dcemUser.getDcemUserExt() == null) {
-				dcemUser = em.find(DcemUser.class, dcemUser.getId()) ;
+				dcemUser = em.find(DcemUser.class, dcemUser.getId());
 				dcemUser.setDcemUserExt(dcemUserExtensionDb);
 			}
 		}
 	}
-		
+
+	public List<DcemUser> getAllDomainUsers(DomainEntity azureDomainEntity) {
+		TypedQuery<DcemUser> query = em.createNamedQuery(DcemUser.GET_DOMAIN_USERS, DcemUser.class);
+		query.setParameter(1, azureDomainEntity);
+		return query.getResultList();
+
+	}
+
 }

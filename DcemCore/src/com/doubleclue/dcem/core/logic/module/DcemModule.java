@@ -128,7 +128,12 @@ public abstract class DcemModule implements Serializable {
 	abstract public ModulePreferences getDefaultPreferences();
 
 	public ModulePreferences getModulePreferences() {
-		return getModuleTenantData().getModulePreferences();
+		try {
+			return getModuleTenantData().getModulePreferences();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	abstract public String getName();
