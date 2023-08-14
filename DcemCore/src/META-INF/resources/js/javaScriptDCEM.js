@@ -121,7 +121,7 @@ function switchPwdVisibleState(eyeBtn) {
 
 function startTimer(duration) {
     var timer = duration, minutes, seconds;
-//     console.log("duration " + timer);
+   //  console.log("duration " + timer);
     setInterval(function () {
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);

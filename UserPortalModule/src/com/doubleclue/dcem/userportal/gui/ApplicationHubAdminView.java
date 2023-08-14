@@ -32,6 +32,7 @@ import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.AttributeTypeEnum;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.utils.DcemUtils;
@@ -406,7 +407,7 @@ public class ApplicationHubAdminView extends DcemView {
 				}
 			}
 			upAppHubLogic.updateApplication(currentApp);
-			DcemUtils.reloadTaskNodes(UpAppHubLogic.class);
+			DcemUtils.reloadTaskNodes(UpAppHubLogic.class, TenantIdResolver.getCurrentTenantName());
 			hideDialog("addAppDlg");
 			refreshAppHub();
 		} catch (DcemException e) {

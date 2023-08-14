@@ -35,6 +35,8 @@ public final class DcemConstants {
 	public static final String USER_VIEW_PATH = "/modules/admin/userDialog.xhtml";
 	public static final String GROUP_DIALOG_PATH = "/modules/admin/groupDialog.xhtml";
 	public static final String DOMAIN_DIALOG_PATH = "/modules/admin/domainDialog.xhtml";
+	public static final String AZURE_MIGRATION_DIALOG_PATH = "/modules/admin/azureMigrationDialog.xhtml";
+	
 	public static final String SHOW_MEMBEROF_DIALOG = "/modules/admin/userMemberOfDialog.xhtml";
 	public static final String GROUP_MEMBERS_DIALOG_PATH = "/modules/admin/groupMembersDialog.xhtml";
 	public static final String DEPARTMENT_ORGAMIGRAM_DIALOG = "/modules/admin/departmentOrganigramDialog.xhtml";
@@ -73,6 +75,7 @@ public final class DcemConstants {
 	public static final String ACTION_SHOW_PN_TOKEN = "showPushNotificationToken";
 	public final static String ACTION_EXCEL_EXPORT_ALL = "excelExportAll";
 	public static final String ACTION_START = "start";
+	public static final String ACTION_AZURE_MIGRATION = "azureMigration";
 
 	public final static String AUTO_DIALOG_ID = "AUTO_DIALOG";
 
@@ -497,6 +500,8 @@ public final class DcemConstants {
 	public static final String ACTION_REVEAL = "reveal";
 	public static final String METHOD_IS_RESTRICTED = "isRestricted";
 	public static final String RESTRICTED_REPLACEMENT = "-----";
+
+	
 
 
 	

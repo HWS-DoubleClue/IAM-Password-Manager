@@ -159,6 +159,7 @@ public class AdminModule extends DcemModule {
 
 	public String getTitle() {
 		String name = "";
+		TenantIdResolver.getCurrentTenantName();
 		String bannerTextEnterpriseManagment = getTenantData().getTenantBrandingEntity().getBannerTextEnterpriseManagment();
 		if (bannerTextEnterpriseManagment != null && bannerTextEnterpriseManagment.isEmpty() == false) {
 			return bannerTextEnterpriseManagment;
@@ -451,10 +452,10 @@ public class AdminModule extends DcemModule {
 	public void deleteUserFromDb(DcemUser dcemUser) throws DcemException {
 		List<DepartmentEntity> list = departmentLogic.getDepartmentsByHeadOf(dcemUser);
 		for (DepartmentEntity departmentEntity : list) {
-			if (departmentEntity.getHeadOf().getId() == dcemUser.getId()) {
+			if (departmentEntity.getHeadOf() != null && departmentEntity.getHeadOf().getId() == dcemUser.getId()) {
 				departmentEntity.setHeadOf(null);
 			}
-			if (departmentEntity.getDeputy().getId() == dcemUser.getId()) {
+			if (departmentEntity.getDeputy() != null && departmentEntity.getDeputy().getId() == dcemUser.getId()) {
 				departmentEntity.setDeputy(null);
 			}
 		}

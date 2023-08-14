@@ -417,7 +417,6 @@ public class DomainLdap implements DomainApi {
 								attributes.get(domainEntity.getLoginAttribute()).get().toString());
 						dcemUser.ldapSync(getDcemLdapAttributes(attributes));
 						dcemUser.setDcemLdapAttributes(getDcemLdapAttributes(attributes));
-						System.out.println(dcemUser.getObjectGuidString());
 						users.add(dcemUser);
 					} catch (NamingException e) {
 						logger.info(e);
@@ -787,6 +786,9 @@ public class DomainLdap implements DomainApi {
 	}
 
 	private List<DcemGroup> getLdapGroups(String filterName, String filter, int pageSize) throws DcemException {
+		if (filter == null) {
+			filter = "*";
+		}
 		filter = filter.replace("\\,", "\\\\2c");
 		String searchFilter = "(&(objectClass=" + domainEntity.getDomainConfig().getGroupAttribute() + ")(" + filterName + "=" + filter + "))";
 		String name = GROUP_NAME;

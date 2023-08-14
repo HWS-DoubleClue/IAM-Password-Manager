@@ -31,6 +31,7 @@ import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.gui.ViewNavigator;
 import com.doubleclue.dcem.core.jpa.DatabaseTypes;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.AuditingLogic;
 import com.doubleclue.dcem.core.logic.JpaLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
@@ -137,7 +138,7 @@ public class TenantDialog extends DcemDialog {
 			if (this.getAutoViewAction().getDcemAction().getAction().equals(DcemConstants.ACTION_ADD)) {
 				asModuleApi.onCreateTenant(tenantEntity);
 			}
-			Exception exception = DcemUtils.reloadTaskNodes(TenantLogic.class, null);
+			Exception exception = DcemUtils.reloadTaskNodes(TenantLogic.class, TenantIdResolver.getCurrentTenantName());
 			if (exception != null) {
 				logger.warn("Couldn't reloadRaskNodes", exception);
 				JsfUtils.addErrorMessage(exception.toString());

@@ -80,7 +80,7 @@ public class DomainAzure implements DomainApi {
 	private static final String AZURE_STATE = "state";
 	// private static final String SELECT_USER_ATTRIBUTES = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails,
 	// onPremisesImmutableId";
-	private static final String SELECT_USER_ATTRIBUTES_EXT = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId, profilePhoto, department, country, jobTitle";
+	private static final String SELECT_USER_ATTRIBUTES_EXT = "displayName, mobilePhone, id, userPrincipalName, preferredLanguage, businessPhones, otherMails, onPremisesImmutableId, profilePhoto, department, country, jobTitle, manager";
 	private static final String SCOPE = "https://graph.microsoft.com/.default";
 	private final DomainEntity domainEntity;
 	private final static Set<String> SCOPE_USER_PASSWORD = Collections.singleton("");
@@ -176,6 +176,9 @@ public class DomainAzure implements DomainApi {
 	public List<DcemGroup> getGroups(String filter, int PAGE_SIZE) throws DcemException {
 		List<QueryOption> options = new ArrayList<QueryOption>();
 		QueryOption queryOption = null;
+		if (filter == null) {
+			filter = "*";
+		}
 		if (filter.endsWith("*")) {
 			if (filter.length() > 1) {
 				queryOption = new QueryOption("$filter", "startswith(displayName, '" + filter.substring(0, filter.length() - 1) + "')");
@@ -255,7 +258,7 @@ public class DomainAzure implements DomainApi {
 	public DcemUser getUser(String loginId) throws DcemException {
 		try {
 			String userId = URLEncoder.encode(loginId, "UTF-8");
-			User user = getSearchGraphClient().users().byId(userId).buildRequest().get();
+			User user = getSearchGraphClient().users().byId(userId).buildRequest().expand("manager").select(SELECT_USER_ATTRIBUTES_EXT).get();
 			if (user.id == null) {
 				throw new DcemException(DcemErrorCodes.INVALID_USERID, loginId);
 			}
@@ -263,8 +266,8 @@ public class DomainAzure implements DomainApi {
 		} catch (Exception e) {
 			throw new DcemException(DcemErrorCodes.INVALID_USERID, loginId, e);
 		}
-
 	}
+	
 
 	@Override
 	public DomainUsers getGroupMembers(DcemGroup dcemGroup, String filter) throws DcemException {
@@ -331,10 +334,6 @@ public class DomainAzure implements DomainApi {
 			options.add(new QueryOption("$filter",
 					createQueryOptionText("startswith", new String[] { "displayName", "givenName", "surname", "onPremisesImmutableId" }, filter)));
 		}
-		// if (groupDn != null) {
-		// queryOption = new QueryOption("$filter", "memberOf eq '" + groupDn + "'");
-		// options.add(queryOption);
-		// }
 		UserCollectionPage userCollectionPage = null;
 		try {
 			userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).expand("manager").select(SELECT_USER_ATTRIBUTES_EXT).get();
@@ -430,8 +429,7 @@ public class DomainAzure implements DomainApi {
 		dcemLdapAttributes.setDepartment(user.department);
 		DirectoryObject manager = user.manager;
 		if (manager != null) {
-			DcemUser dcemManager = getUser(manager.id);
-			dcemLdapAttributes.setManager(dcemManager);
+			dcemLdapAttributes.setManagerId(manager.id);
 		}
 //		System.out.println("DomainAzure.createDcemUser() " + dcemLdapAttributes.toString() + " Manager " + manager);
 		dcemUser.setDcemLdapAttributes(dcemLdapAttributes);

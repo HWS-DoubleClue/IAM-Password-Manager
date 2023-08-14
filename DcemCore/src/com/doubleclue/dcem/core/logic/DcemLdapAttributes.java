@@ -16,7 +16,7 @@ public class DcemLdapAttributes {
 	String country;
 	String department;
 	String jobTitle;
-	DcemUser manager;
+	String managerId;
 	byte [] objectGuid;
 	byte [] photo;
 	
@@ -151,20 +151,20 @@ public class DcemLdapAttributes {
 				+ preferredLanguage + ", country=" + country + ", department=" + department + "]";
 	}
 
-	public DcemUser getManager() {
-		return manager;
-	}
-
-	public void setManager(DcemUser manager) {
-		this.manager = manager;
-	}
-
 	public String getJobTitle() {
 		return jobTitle;
 	}
 
 	public void setJobTitle(String jobTitle) {
 		this.jobTitle = jobTitle;
+	}
+
+	public String getManagerId() {
+		return managerId;
+	}
+
+	public void setManagerId(String managerId) {
+		this.managerId = managerId;
 	}
 
 	

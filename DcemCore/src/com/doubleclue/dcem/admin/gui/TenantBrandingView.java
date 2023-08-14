@@ -33,6 +33,7 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.GenericDcemDialog;
 import com.doubleclue.dcem.core.gui.JsfUtils;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 
@@ -162,7 +163,7 @@ public class TenantBrandingView extends DcemView {
 		try {
 			branding.setTimezone(countryTimezone);
 			tenantBrandingLogic.setTenantBrandingEntity(branding);
-			DcemUtils.reloadTaskNodes(TenantBrandingLogic.class, null);
+			DcemUtils.reloadTaskNodes(TenantBrandingLogic.class, TenantIdResolver.getCurrentTenantName());
 			JsfUtils.addInformationMessage(AdminModule.RESOURCE_NAME, "tenantBranding.save.ok");
 			
 			TimeZone timeZone = adminModule.getTimezone();

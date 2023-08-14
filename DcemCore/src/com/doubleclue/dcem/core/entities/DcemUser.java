@@ -87,6 +87,8 @@ import com.doubleclue.dcem.core.weld.WeldRequestContext;
 		// FROM DcemUser user where
 		// user.loginId = ?1 AND user.ldapEntity=?2")
 		@NamedQuery(name = DcemUser.GET_USERS, query = "SELECT u FROM DcemUser u WHERE u.id IN (?1)"),
+		@NamedQuery(name = DcemUser.GET_DOMAIN_USERS, query = "SELECT u FROM DcemUser u WHERE u.domainEntity = ?1"),
+		@NamedQuery(name = DcemUser.GET_USER_BY_DN, query = "SELECT u FROM DcemUser u WHERE u.userDn = ?1"),
 		@NamedQuery(name = DcemUser.GET_USER_LDAP, query = "SELECT user FROM DcemUser user WHERE user.loginId = ?1"),
 		@NamedQuery(name = DcemUser.GET_FILTERED_USERS_BY_DOMAIN, query = "SELECT user FROM DcemUser user WHERE user.domainEntity = ?1 AND user.loginId LIKE ?2 ESCAPE "
 				+ DcemConstants.JPA_ESCAPE_CHAR_QUOTES),
@@ -110,6 +112,8 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	public final static String GET_TOTAL_USER_COUNT = "getTotalUserCount";
 	public final static String GET_USER_BY_DISPLAYNAME = "DcemUser.getUserByDisplay";
 	public final static String GET_USERS_DISPLAYNAME = "DcemUser.getUsersDisplayName";
+	public static final String GET_DOMAIN_USERS = "DcemUser.getDomainUsers";
+	public static final String GET_USER_BY_DN = "DcemUser.userByDn";
 
 	// public final static String GET_USER_LOGIN_WITH_DOMAIN =
 	// "DcemUser.userLoginWithDomain";
@@ -192,7 +196,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	private int failActivations;
 
 	@Column(length = 255, nullable = true)
-	@DcemGui(displayMode = DisplayModes.INPUT_ONLY_DISABLED, visible = false)
+	@DcemGui(visible = false, name = "Distinguish Name/ID")
 	private String userDn;
 	
 	@DcemGui (name= "Country", subClass = "country", dbMetaAttributeName = "dcemUserExt")

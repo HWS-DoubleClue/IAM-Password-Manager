@@ -23,6 +23,7 @@ import org.primefaces.model.Visibility;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
+import org.primefaces.model.menu.MenuElement;
 import org.primefaces.model.menu.MenuModel;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
@@ -176,6 +177,19 @@ public class ViewNavigator implements Serializable {
 		if (activeView != null && activeView.getSubject().getViewName().equals(viewName) == false) {
 			activeView.leavingView();
 		}
+		boolean found = false;
+		if (menuModel != null) {
+			for (MenuElement element : menuModel.getElements()) {
+				if (element.getId().equals(moduleId)) {
+					found = true;
+					break;
+				}
+			}
+			if (found == false) {
+				logger.warn("No permission Module Name " + moduleId + " user:" + operatorSessionBean.getDcemUser().getLoginId());
+				return;
+			}
+		}
 		DcemModule module = applicationBean.getModule(moduleId);
 		if (module == null) {
 			logger.warn("Invalid Module Name " + moduleId + " user:" + operatorSessionBean.getDcemUser().getLoginId());
@@ -267,6 +281,7 @@ public class ViewNavigator implements Serializable {
 			SortedSet<SubjectAbs> subjects = applicationBean.getModuleSubjects(dcemModule);
 			if (subjects != null) {
 				DefaultSubMenu subMenu = DefaultSubMenu.builder().label(dcemModule.getName()).build();
+				subMenu.setId(dcemModule.getId());
 				for (SubjectAbs subject : subjects) {
 					// List<DcemAction> actions = subject.getDcemActions();
 					if (operatorSessionBean.isPermission(subject.getDcemActions()) == false) {

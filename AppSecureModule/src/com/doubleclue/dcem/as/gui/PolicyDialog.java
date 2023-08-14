@@ -29,6 +29,7 @@ import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.ViewNavigator;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.GroupLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.utils.DcemUtils;
@@ -134,7 +135,7 @@ public class PolicyDialog extends DcemDialog {
 		}
 
 		viewNavigator.getActiveView().closeDialog();
-		Exception exception = DcemUtils.reloadTaskNodes(PolicyLogic.class, null);
+		Exception exception = DcemUtils.reloadTaskNodes(PolicyLogic.class, TenantIdResolver.getCurrentTenantName());
 		if (exception != null) {
 			JsfUtils.addErrorMessage(exception.toString());
 			return;
@@ -167,7 +168,7 @@ public class PolicyDialog extends DcemDialog {
 			return false;
 		}
 		policyLogic.addOrUpdatePolicy(policyEntity, this.getAutoViewAction().getDcemAction(), true);
-		Exception exception = DcemUtils.reloadTaskNodes(PolicyLogic.class, null);
+		Exception exception = DcemUtils.reloadTaskNodes(PolicyLogic.class, TenantIdResolver.getCurrentTenantName());
 		if (exception != null) {
 			throw exception;
 		}

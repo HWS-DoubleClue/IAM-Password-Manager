@@ -74,7 +74,7 @@ public class RadiusClientDialog extends DcemDialog {
 		radiusClientSettings.setSupportedCharset(supportedChar);
 		clientEntity.setRadiusClientSettings(radiusClientSettings);
 		jpaLogic.addOrUpdateEntity((EntityInterface) clientEntity, this.getAutoViewAction().getDcemAction());
-		Exception exception = DcemUtils.reloadTaskNodes(RadiusModule.class, null);
+		Exception exception = DcemUtils.reloadTaskNodes(RadiusModule.class, TenantIdResolver.getCurrentTenantName());
 		if (exception != null) {
 			throw exception;
 		}
@@ -89,7 +89,7 @@ public class RadiusClientDialog extends DcemDialog {
 			JsfUtils.addErrorMessage("Couldn't delete NAS Client." + e.toString());
 			return;
 		}
-		DcemUtils.reloadTaskNodes(RadiusModule.class, null);
+		DcemUtils.reloadTaskNodes(RadiusModule.class, TenantIdResolver.getCurrentTenantName());
 	}
 
 	public List<SelectItem> getAttributeTypes() {
