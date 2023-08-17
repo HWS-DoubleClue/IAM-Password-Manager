@@ -19,9 +19,10 @@
 	<classpathentry excluding="**" kind="src" output="bin" path="resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="testbin" path="testsrc">
+	<classpathentry including="**/*.java" kind="src" output="testbin" path="testsrc">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
