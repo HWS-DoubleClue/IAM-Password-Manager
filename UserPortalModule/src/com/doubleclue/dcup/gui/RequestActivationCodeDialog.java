@@ -91,17 +91,12 @@ public class RequestActivationCodeDialog implements Serializable {
 	public String actionRequestActivationCode() throws DcemException {
 		portalSessionBean.isActionEnable(ActionItem.NETWORK_DEVICE_ADD_ACTION);
 		try {
-
 			if (sendBy == null) {
 				JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error.NO_SEND_METHOD_SELECTED"));
 				return null;
 			}
-			DcemUser dcemUser = userLogic.getUser(portalSessionBean.getUserName());
-			if (dcemUser == null) {
-				throw new DcemException(DcemErrorCodes.INVALID_USERID, portalSessionBean.getUserName());
-			}
 			ActivationCodeEntity asActivationCode = new ActivationCodeEntity();
-			asActivationCode.setUser(dcemUser);
+			asActivationCode.setUser(portalSessionBean.getDcemUser());
 			if (asActivationCode.getValidTill() == null) {
 				int hours = asModule.getPreferences().getActivationCodeDefaultValidTill();
 				Calendar calendar = Calendar.getInstance();
@@ -109,19 +104,15 @@ public class RequestActivationCodeDialog implements Serializable {
 				asActivationCode.setValidTill(calendar.getTime());
 			}
 			activationParameters = activationLogic.addUpdateActivationCode(asActivationCode, new DcemAction(activationSubject, DcemConstants.ACTION_ADD), sendBy, true);
-			
 			LocalDateTime nowDate = Instant.ofEpochMilli(asActivationCode.getValidTill().getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
 			DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(portalSessionBean.getLocale());
 			dateTxt = nowDate.format(formatter);
-			
 			ObjectMapper objectMapper = new ObjectMapper();
 			try {
 				pngImage = DcemUtils.createQRCode(objectMapper.writeValueAsString(activationParameters), 200, 200);
 			} catch (Throwable e) {
 				new DcemException(DcemErrorCodes.CANNOT_CREATE_QRCODE, "Couldn't Create QrCode", e);
 			}			
-			
-//			JsfUtils.addInfoMessage(portalSessionBean.getResourceBundle(), "deviceView.smartDeviceAdded", asActivationCode.getActivationCode(), dateTxt);
 		} catch (DcemException e) {
 			JsfUtils.addErrorMessage(portalSessionBean.getErrorMessage(e));
 		} catch (Exception e) {

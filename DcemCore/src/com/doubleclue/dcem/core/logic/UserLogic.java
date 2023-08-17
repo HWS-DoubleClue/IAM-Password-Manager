@@ -7,15 +7,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -46,7 +42,6 @@ import com.doubleclue.dcem.core.entities.UrlTokenEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
-import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.jpa.DbFactoryProducer;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
@@ -402,7 +397,13 @@ public class UserLogic {
 			if (headOf == null) {
 				headOf = domainLogic.getUserFromDomains(dcemLdapAttributes.getManagerId());
 				if (headOf != null) {
-					addOrUpdateUserWoAuditing(headOf);
+					DcemUser dcemHeadOf = getUserByUpn(headOf.getUserPrincipalName());
+					if (dcemHeadOf == null) {
+						addOrUpdateUserWoAuditing(headOf);
+					} else {
+						headOf = dcemHeadOf;
+					}
+					
 				}
 			}
 			DepartmentEntity departmentEntity = departmentLogic.getDepartmentByName(dcemLdapAttributes.department);
@@ -427,6 +428,16 @@ public class UserLogic {
 	private DcemUser getUserByDn(String dn) {
 		TypedQuery<DcemUser> query = em.createNamedQuery(DcemUser.GET_USER_BY_DN, DcemUser.class);
 		query.setParameter(1, dn);
+		List<DcemUser> list = query.getResultList();
+		if (list.isEmpty()) {
+			return null;
+		}
+		return list.get(0);
+	}
+	
+	private DcemUser getUserByUpn(String upn) {
+		TypedQuery<DcemUser> query = em.createNamedQuery(DcemUser.GET_USER_BY_UPN, DcemUser.class);
+		query.setParameter(1, upn);
 		List<DcemUser> list = query.getResultList();
 		if (list.isEmpty()) {
 			return null;

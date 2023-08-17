@@ -89,6 +89,7 @@ import com.doubleclue.dcem.core.weld.WeldRequestContext;
 		@NamedQuery(name = DcemUser.GET_USERS, query = "SELECT u FROM DcemUser u WHERE u.id IN (?1)"),
 		@NamedQuery(name = DcemUser.GET_DOMAIN_USERS, query = "SELECT u FROM DcemUser u WHERE u.domainEntity = ?1"),
 		@NamedQuery(name = DcemUser.GET_USER_BY_DN, query = "SELECT u FROM DcemUser u WHERE u.userDn = ?1"),
+		@NamedQuery(name = DcemUser.GET_USER_BY_UPN, query = "SELECT u FROM DcemUser u WHERE u.userPrincipalName = ?1"),
 		@NamedQuery(name = DcemUser.GET_USER_LDAP, query = "SELECT user FROM DcemUser user WHERE user.loginId = ?1"),
 		@NamedQuery(name = DcemUser.GET_FILTERED_USERS_BY_DOMAIN, query = "SELECT user FROM DcemUser user WHERE user.domainEntity = ?1 AND user.loginId LIKE ?2 ESCAPE "
 				+ DcemConstants.JPA_ESCAPE_CHAR_QUOTES),
@@ -114,6 +115,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	public final static String GET_USERS_DISPLAYNAME = "DcemUser.getUsersDisplayName";
 	public static final String GET_DOMAIN_USERS = "DcemUser.getDomainUsers";
 	public static final String GET_USER_BY_DN = "DcemUser.userByDn";
+	public static final String GET_USER_BY_UPN = "DcemUser.userByUpn";
 
 	// public final static String GET_USER_LOGIN_WITH_DOMAIN =
 	// "DcemUser.userLoginWithDomain";
@@ -122,6 +124,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	@Column(name = "dc_id")
 	@TableGenerator(name = "coreSeqStoreCoreUser", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "CORE_USER.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreCoreUser")
+	@DcemGui (visible = false)
 	private Integer id;
 	
 	@DcemGui (name= "Photo", subClass = "photo", variableType = VariableType.IMAGE)
@@ -256,6 +259,8 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	DcemLdapAttributes dcemLdapAttributes;
 
 	private static final Logger logger = LogManager.getLogger(DcemUser.class);
+
+	
 
 	@PostLoad
 	public void postLoad() throws Exception {

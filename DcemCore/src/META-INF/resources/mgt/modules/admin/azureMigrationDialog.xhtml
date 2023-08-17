@@ -33,20 +33,30 @@
 				<p></p>
 				<h2>This utiltiy will migrate all users attached to Active Directory to the selected Azure Domain</h2>
 				<p></p>
-				<br></br>
 				<p:outputLabel value="Select Azure Destination Domain: " />
 				<p:selectOneMenu id="ldapDomain" value="#{azureMigrationDialog.azureDomain}" style="width:125px">
 					<f:selectItems value="#{azureMigrationDialog.azureDomains}" />
 				</p:selectOneMenu>
 				<p></p>
-				<br></br>
+
+				<p:commandButton id="start" value="Start Migration to Azure" style="margin-left: 3em; font-weight: bold !Important; background-color: red !Important"
+					action="#{azureMigrationDialog.actionStartMigration}" update="pTable" />
+
+				<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" style="margin-left: 5em;" immediate="true" action="#{viewNavigator.actionCloseDialog}"
+					icon="fa fa-close" />
 				<p></p>
-				
-				<p:commandButton id="start" value="Start Migration to Azure" style="margin-left: 3em; font-weight: bold !Important; background-color: red !Important" 
-					action="#{azureMigrationDialog.actionStartMigration}"  />
-				
-				<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" style="margin-left: 5em;" immediate="true"
-					action="#{viewNavigator.actionCloseDialog}" icon="fa fa-close" />
+					<p:dataTable id="pTable" value="#{azureMigrationDialog.getUserStatus()}" var="user" widgetVar="pTable" scrollable="true" scrollHeight="500">
+
+						<p:column headerText="User/Group" sortBy="#{user.name}">
+							<h:outputText value="#{user.name}" />
+						</p:column>
+
+						<p:column headerText="Status" sortBy="#{user.status}">
+							<h:outputText value="#{user.status}" />
+						</p:column>
+
+				</p:dataTable>
+
 
 			</h:form>
 		</h:panelGroup>

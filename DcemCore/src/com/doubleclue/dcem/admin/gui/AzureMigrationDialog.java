@@ -65,6 +65,8 @@ public class AzureMigrationDialog extends DcemDialog {
 	private static final Logger logger = LogManager.getLogger(AzureMigrationDialog.class);
 
 	String azureDomain;
+	
+	List<MigrationUserStatus> listMigrationUserStatus;
 
 	public AzureMigrationDialog() {
 	}
@@ -73,15 +75,15 @@ public class AzureMigrationDialog extends DcemDialog {
 		DomainEntity adDomainEntity = (DomainEntity) getActionObject();
 		DomainEntity azureDomainEntity = getSelectedAzureDomain();
 		try {
-			List<String> reports = domainLogic.migrateAdToAzure(adDomainEntity, azureDomainEntity);
-			for (String msg : reports) {
-				JsfUtils.addInfoMessage(msg);
-			}
+			listMigrationUserStatus = domainLogic.migrateAdToAzure(adDomainEntity, azureDomainEntity);
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage(e.toString());
 			logger.error("", e);
 		}
-
+	}
+	
+	public List<MigrationUserStatus> getUserStatus() {
+		return listMigrationUserStatus;
 	}
 
 	@Override
@@ -123,7 +125,7 @@ public class AzureMigrationDialog extends DcemDialog {
 		if (getAzureDomains().isEmpty() == true) {
 			throw new Exception("Please add an Azure Domain first!");
 		}
-
+		listMigrationUserStatus = null;
 	}
 
 	public String getAzureDomain() {
@@ -132,6 +134,11 @@ public class AzureMigrationDialog extends DcemDialog {
 
 	public void setAzureDomain(String azureDomain) {
 		this.azureDomain = azureDomain;
+	}
+	
+	@Override
+	public void leavingDialog() {
+		listMigrationUserStatus = null;
 	}
 
 }
