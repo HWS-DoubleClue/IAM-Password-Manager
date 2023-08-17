@@ -22,6 +22,7 @@ import javax.persistence.TypedQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.doubleclue.dcem.admin.gui.MigrationUserStatus;
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
@@ -52,6 +53,9 @@ public class DomainLogic implements ReloadClassInterface {
 	public final static String MEMBER_OF = "memberOf";
 	public final static String MEMBER = "member";
 	public final static String GROUP_NAME = "name";
+	public final static String NOT_FOUND_IN_AZURE = "Not found in Azure";
+	public final static String AlREADY_IN_AZURE = "Already migrated to Azure";
+	public final static String MIGRATED = "Migrated";
 	public static int PAGE_SIZE = 2000;
 
 	@Inject
@@ -477,13 +481,13 @@ public class DomainLogic implements ReloadClassInterface {
 		}
 
 	}
-/*
- * 
- * 
- */
+
+	/*
+	 * 
+	 * 
+	 */
 	@DcemTransactional
-	public List<String> migrateAdToAzure(DomainEntity adDomainEntity, DomainEntity azureDomainEntity) throws Exception {
-		List<String> reports = new ArrayList<String>(2);
+	public List<MigrationUserStatus> migrateAdToAzure(DomainEntity adDomainEntity, DomainEntity azureDomainEntity) throws Exception {
 		List<DcemUser> adUsers = userLogic.getAllDomainUsers(adDomainEntity);
 		DomainAzure domainAzure = getDomainAzure();
 		System.out.println("AzureMigrationDialog.actionStartMigration() USERS: " + adUsers.size());
@@ -491,13 +495,18 @@ public class DomainLogic implements ReloadClassInterface {
 		int existsUsers = 0;
 		int migratedUsers = 0;
 		int notExistsInAzure = 0;
+		List<MigrationUserStatus> list = new ArrayList<MigrationUserStatus>();
 		for (DcemUser dcemUser : adUsers) {
 			try {
+				
 				azureUser = domainAzure.getUser(dcemUser.getUserPrincipalName());
+				if (azureUser.getLoginId().indexOf("glenn") > 0) {
+					System.out.println("DomainLogic.migrateAdToAzure()");
+				}
 				DcemUser user = userLogic.getDistinctUser(azureUser.getLoginId());
 				if (user != null) {
 					existsUsers++;
-					logger.info("User already exists: " + azureUser.getLoginId());
+					list.add(new MigrationUserStatus(dcemUser.getLoginId(), AlREADY_IN_AZURE));
 					continue;
 				}
 				dcemUser.setLoginId(azureUser.getLoginId());
@@ -506,27 +515,27 @@ public class DomainLogic implements ReloadClassInterface {
 				byte[] photo = domainAzure.getUserPhoto(dcemUser);
 				userLogic.updateExtention(dcemUser, photo, azureUser.getDcemLdapAttributes());
 				migratedUsers++;
-				logger.info("User migrated to Azure: " + azureUser.getLoginId());
+				list.add(new MigrationUserStatus(dcemUser.getLoginId(), MIGRATED));
 			} catch (DcemException e) {
 				if (e.getErrorCode() == DcemErrorCodes.INVALID_USERID) {
-					logger.info("User NOT found in Azure: " + dcemUser.getLoginId());
+					list.add(new MigrationUserStatus(dcemUser.getLoginId(), NOT_FOUND_IN_AZURE));
 					notExistsInAzure++;
 					continue;
 				}
 				throw e;
 			}
 		}
-		reports.add(String.format("Migrated Users: %s. Users not found in Azure: %d. Users already exists in Azure: %d", migratedUsers, notExistsInAzure, existsUsers));
-		String groupReport = migrateGroupsAdToAzure(adDomainEntity, azureDomainEntity);
-		reports.add (groupReport);
-		return reports;
+		list.add(new MigrationUserStatus("USERS REPORT", String.format("Migrated Users: %s. Users not found in Azure: %d. Users already exists in Azure: %d", migratedUsers, notExistsInAzure,
+				 existsUsers)));
+		// reports.add();
+		migrateGroupsAdToAzure(adDomainEntity, azureDomainEntity, list);
+		return list;
 	}
-	
 
-	private String migrateGroupsAdToAzure(DomainEntity adDomainEntity, DomainEntity azureDomainEntity) throws Exception {
+	private void migrateGroupsAdToAzure(DomainEntity adDomainEntity, DomainEntity azureDomainEntity, List<MigrationUserStatus> list) throws Exception {
 		List<DcemGroup> groups = groupLogic.getGroupsByLdap(adDomainEntity);
 		DomainAzure domainAzure = getDomainAzure();
-//		System.out.println("AzureMigrationDialog.actionStartMigration() USERS: " + adUsers.size());
+		// System.out.println("AzureMigrationDialog.actionStartMigration() USERS: " + adUsers.size());
 		DcemGroup azureGroup = null;
 		int existsGroups = 0;
 		int migratedGroups = 0;
@@ -534,9 +543,9 @@ public class DomainLogic implements ReloadClassInterface {
 		List<DcemGroup> listGroup;
 		for (DcemGroup dcemGroup : groups) {
 			try {
-				listGroup = domainAzure.getGroups (dcemGroup.getRawName(), 10);
+				listGroup = domainAzure.getGroups(dcemGroup.getRawName(), 10);
 				if (listGroup.size() == 0) {
-					logger.info("Group does not exists in Azure: " + dcemGroup.getName());
+					list.add(new MigrationUserStatus("Group: " + dcemGroup.getName(), NOT_FOUND_IN_AZURE));
 					notExistsInAzure++;
 					continue;
 				}
@@ -544,24 +553,21 @@ public class DomainLogic implements ReloadClassInterface {
 				DcemGroup existingGroup = groupLogic.getGroup(azureGroup.getName());
 				if (existingGroup != null) {
 					existsGroups++;
-					logger.info("Group already exists: " + dcemGroup.getName());
+					list.add(new MigrationUserStatus("Group: " + dcemGroup.getName(), AlREADY_IN_AZURE));
 					continue;
 				}
 				dcemGroup.setName(azureGroup.getName());
 				dcemGroup.setGroupDn(azureGroup.getGroupDn());
 				dcemGroup.setDomainEntity(azureDomainEntity);
 				migratedGroups++;
-				logger.info("User migrated to Azure: " + azureGroup.getName());
+				list.add(new MigrationUserStatus("Group: " + dcemGroup.getName(), MIGRATED));
 			} catch (DcemException e) {
-				if (e.getErrorCode() == DcemErrorCodes.INVALID_USERID) {
-					logger.info("User NOT found in Azure: " + dcemGroup.getName());
-					notExistsInAzure++;
-					continue;
-				}
 				throw e;
 			}
 		}
-		return String.format("Migrated Groups: %s. Groups not found in Azure: %d. Groups already exists in Azure: %d", migratedGroups, notExistsInAzure, existsGroups);
+		list.add(new MigrationUserStatus("GROUP _REPORT", String.format("Migrated Groups: %s. Groups not found in Azure: %d. Groups already exists in Azure: %d", migratedGroups, notExistsInAzure,
+				existsGroups)));
+		return;
 	}
 
 }
