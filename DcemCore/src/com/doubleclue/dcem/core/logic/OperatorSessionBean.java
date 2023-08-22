@@ -186,6 +186,8 @@ public class OperatorSessionBean implements Serializable {
 		if (tenantEntity != null) {
 			try {
 				dcemUser = userLogic.getDistinctUser(DcemConstants.SUPER_ADMIN_OPERATOR);
+				userLogic.enableUserWoAuditing(dcemUser);
+				dcemUser.setDisabled(false);
 				loggedInOperator(dcemUser, httpServletRequest);
 				masterAdminGuest = true;
 				httpServletRequest.getSession().removeAttribute(DcemConstants.URL_TENANT_SWITCH);

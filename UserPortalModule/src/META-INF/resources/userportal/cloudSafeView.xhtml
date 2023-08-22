@@ -464,8 +464,8 @@
 				<p:outputLabel value="#{DcupMsg['cloudSafe.downloadFileName']}: " />
 				<p:outputLabel id="folderName" value="#{cloudSafeView.folderName}" />
 				<p></p>
-				<p:outputLabel for="folderPassword" value="#{DcupMsg['label.password']}" />
-				<p:password id="folderPassword" style="margin-left: 1em" value="#{cloudSafeView.filePassword}" autocomplete="off" required="true" toggleMask="true" />
+		<!--	NOT SUPPORTED ANYMORE	<p:outputLabel for="folderPassword" value="#{DcupMsg['label.password']}" />
+			    <p:password id="folderPassword" style="margin-left: 1em" value="#{cloudSafeView.filePassword}" autocomplete="off" required="true" toggleMask="true" /> -->
 				<p></p>
 				<p:commandButton id="openFolderbtn" icon="fa fa-folder-open-o" value="#{DcupMsg['button.open']}" ajax="true" action="#{cloudSafeView.openFolder}">
 				</p:commandButton>
@@ -691,6 +691,7 @@
 								<h:outputLabel escape="false" value="#{DcupMsg['warning.password.cloudSafeAddFolder']}" />
 							</h:panelGroup>
 							<p></p>
+							<!--   NOT SUPPORTED
 							<h:panelGrid columns="2" cellpadding="4" cellspacing="4" rendered="#{cloudSafeView.passwordProtected == true}">
 								<p:outputLabel for="folderPassword" value="#{DcupMsg['dialog.passwordCloud']}" />
 								<p:password id="folderPassword" value="#{cloudSafeView.filePassword}" feedback="true" validatorMessage="#{DcupMsg['registration.noMatchPassword']}"
@@ -700,6 +701,7 @@
 								<p:password id="folderPassword2" value="#{cloudSafeView.filePassword}" toggleMask="true" />
 
 							</h:panelGrid>
+							-->
 							<p></p>
 
 						</p:fieldset>
