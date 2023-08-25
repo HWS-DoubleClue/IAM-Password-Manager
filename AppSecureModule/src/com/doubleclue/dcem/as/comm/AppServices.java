@@ -525,7 +525,13 @@ public class AppServices {
 			loginResponse.setLdapUser(true);
 		}
 
-		LicenceKeyContent licenceKeyContent = licenceLogic.getLicenceKeyContent();
+		LicenceKeyContent licenceKeyContent;
+		try {
+			licenceKeyContent = licenceLogic.getLicenceKeyContent();
+		} catch (DcemException e) {
+			throw new ExceptionReporting(new DcemReporting(reportAction, deviceDetached.getUser(), AppErrorCodes.LICENCE_EXPIRED, location,
+					"device: " + deviceDetached.getName() + ", domain: " + appSession.getDomainName()), null);
+		}
 		appSession.setDevice(deviceDetached);
 		loginResponse.setPasscodeValidFor(asModule.getPreferences().getPasscodeValidFor());
 		loginResponse.setLicenceExpiresOn(licenceKeyContent.getExpiresOn().getTime());

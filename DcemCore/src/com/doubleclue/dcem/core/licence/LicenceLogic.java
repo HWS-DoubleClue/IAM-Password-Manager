@@ -435,9 +435,13 @@ public class LicenceLogic implements ReloadClassInterface {
 	}
 
 
-	public LicenceKeyContent getLicenceKeyContent() {
+	public LicenceKeyContent getLicenceKeyContent() throws DcemException {
 		AdminTenantData adminTenantData = adminModule.getTenantData();
-		return adminTenantData.getLicenceKeyContent();
+		LicenceKeyContent licenceKeyContent = adminTenantData.getLicenceKeyContent();
+		if (licenceKeyContent == null) {
+			throw new DcemException (DcemErrorCodes.LICENCE_NOT_AVAILABLE, "");
+		}
+		return licenceKeyContent;
 	}
 
 
@@ -459,7 +463,7 @@ public class LicenceLogic implements ReloadClassInterface {
 	}
 
 
-	public LicenceKeyContentUsage getLicenceKeyContentUsage() {
+	public LicenceKeyContentUsage getLicenceKeyContentUsage() throws DcemException {
 		AsModuleApi asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
 		return new LicenceKeyContentUsage(userLogic.getTotalUserCount(), asModuleApi.getCloudSafeUsageMb(),
 				getLicenceKeyContent());

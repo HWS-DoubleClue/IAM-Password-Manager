@@ -131,7 +131,7 @@ public abstract class DcemModule implements Serializable {
 		try {
 			return getModuleTenantData().getModulePreferences();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			return null;
 		}
 	}

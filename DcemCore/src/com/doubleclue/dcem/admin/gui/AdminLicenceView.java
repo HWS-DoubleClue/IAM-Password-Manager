@@ -10,12 +10,15 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.admin.subjects.AdminLicenceSubject;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.TenantEntity;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
@@ -29,7 +32,7 @@ import com.doubleclue.dcem.core.logic.TenantLogic;
 public class AdminLicenceView extends DcemView {
 
 	
-
+	private static final Logger logger = LogManager.getLogger(AdminLicenceView.class);
 	
 
 	@Inject
@@ -61,12 +64,20 @@ public class AdminLicenceView extends DcemView {
 		licenceDialog.setParentView(this);
 		addAutoViewAction(DcemConstants.ACTION_IMPORT_LICENCE_KEY, resourceBundle, licenceDialog,
 				DcemConstants.LICENCE_DIALOG_PATH);
-		licenceKeyContent = licenceLogic.getLicenceKeyContent();
+		try {
+			licenceKeyContent = licenceLogic.getLicenceKeyContent();
+		} catch (DcemException e) {
+			logger.warn(e);
+		}
 	}
 	
 	@Override
 	public void reload() {
-		licenceKeyContent = licenceLogic.getLicenceKeyContent();
+		try {
+			licenceKeyContent = licenceLogic.getLicenceKeyContent();
+		} catch (DcemException e) {
+			JsfUtils.addErrorMessage("No license found: " + e.toString());
+		}
 		TenantEntity tenantEntity;
 		if (isCurrentMaster()) {
 			tenantEntity = tenantLogic.getTenantById(Integer.parseInt(selectedTenantOptions));

@@ -87,7 +87,7 @@ public class AdminModule extends DcemModule {
 
 	@Inject
 	UserLogic userLogic;
-	
+
 	@Inject
 	DepartmentLogic departmentLogic;
 
@@ -143,18 +143,23 @@ public class AdminModule extends DcemModule {
 	}
 
 	public boolean isUserPortalDisabled() {
-		if (getPreferences().isDisableUserPortal()) {
-			return true;
-		}
-		AdminTenantData adminTenantData = getTenantData();
-		if (adminTenantData.getDisabledModules() != null) {
-			for (String moduleId : adminTenantData.getDisabledModules()) {
-				if (moduleId.equals("up")) {
-					return true;
+		try {
+			if (getPreferences().isDisableUserPortal()) {
+				return true;
+			}
+			AdminTenantData adminTenantData = getTenantData();
+			if (adminTenantData.getDisabledModules() != null) {
+				for (String moduleId : adminTenantData.getDisabledModules()) {
+					if (moduleId.equals("up")) {
+						return true;
+					}
 				}
 			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e);
+			return false;
 		}
-		return false;
 	}
 
 	public String getTitle() {
@@ -397,7 +402,7 @@ public class AdminModule extends DcemModule {
 			logger.error("Could initialize Tenant Licencing for " + tenantEntity.getName(), e);
 		}
 	}
-	
+
 	public AdminTenantData getAdminTenantData() {
 		return (AdminTenantData) moduleTenantMap.get(TenantIdResolver.getCurrentTenantName());
 	}
@@ -461,15 +466,9 @@ public class AdminModule extends DcemModule {
 		}
 		return;
 	}
-	
-	public LocalDateTime convertToLocalDateTime (Date dateToConvert) {
-	    return dateToConvert.toInstant()
-	      .atZone(getTimezone().toZoneId())
-	      .toLocalDateTime();
+
+	public LocalDateTime convertToLocalDateTime(Date dateToConvert) {
+		return dateToConvert.toInstant().atZone(getTimezone().toZoneId()).toLocalDateTime();
 	}
-	
-	
-	
-	
-	
+
 }

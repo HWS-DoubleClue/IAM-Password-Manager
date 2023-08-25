@@ -32,6 +32,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.catalina.core.StandardContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -71,7 +72,6 @@ import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ProductVersion;
 import com.doubleclue.utils.SecureUtils;
 
-import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
@@ -126,9 +126,12 @@ public class DcemApplicationBean implements Serializable {
 	LicenceLogic licenceLogic;
 
 	ServletContext servletContext;
+	
 
 	public static boolean debugMode = false;
 	public static boolean jUnitTestMode = false;
+	static StandardContext standardContext;
+	
 
 	private static List<DcemException> initExceptions = new ArrayList<>(1);
 
@@ -826,6 +829,14 @@ public class DcemApplicationBean implements Serializable {
 			long epoch = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 			((DcFreeMarkerStringLoader) freeMarkerConfiguration.getTemplateLoader()).updataTemplateCache(epoch);
 		}
+	}
+
+	public static void setStandardContext(StandardContext standardContext_) {
+		standardContext = standardContext_;
+	}
+	
+	public static StandardContext getStandardContext() {
+		return standardContext;
 	}
 
 }

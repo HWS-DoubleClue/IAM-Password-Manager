@@ -376,19 +376,19 @@ public class DcemMain {
 		tomcat.setBaseDir(".");
 
 		String webappDirLocation = "WebContent";
-		StandardContext context = null;
+		StandardContext standardContext = null;
 		try {
 			String webAppName = clusterConfig.getWebAppName();
 			if (webAppName.charAt(0) != '/') {
 				webAppName = '/' + webAppName;
 			}
-			context = (StandardContext) tomcat.addWebapp(webAppName, new File(webappDirLocation).getAbsolutePath());
+			standardContext = (StandardContext) tomcat.addWebapp(webAppName, new File(webappDirLocation).getAbsolutePath());
 		} catch (Exception exp) {
 			fatalExit(null, "Couldn't start tomcat web app: " + clusterConfig.getWebAppName() + ", from directory: " + webappDirLocation, exp);
 		}
 		tomcat.getHost().setAppBase(".");
 		tomcat.setSilent(true);
-		context.setCookies(true);
+		standardContext.setCookies(true);
 
 		try {
 			Context rootContext = (StandardContext) tomcat.addWebapp("", new File(webappDirLocation + "/custom").getAbsolutePath());
@@ -415,20 +415,20 @@ public class DcemMain {
 		server.addLifecycleListener(listener);
 
 		File additionWebInfClasses = new File("bin");
-		WebResourceRoot resources = new StandardRoot(context);
+		WebResourceRoot resources = new StandardRoot(standardContext);
 		resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", additionWebInfClasses.getAbsolutePath(), "/"));
-		context.setResources(resources);
-		StandardJarScanner jarScanner = (StandardJarScanner) context.getJarScanner();
+		standardContext.setResources(resources);
+		StandardJarScanner jarScanner = (StandardJarScanner) standardContext.getJarScanner();
 		jarScanner.setScanBootstrapClassPath(true);
 		jarScanner.setScanClassPath(true);
 		// if this is set to true the websockets are deployed successfully
 		jarScanner.setScanAllDirectories(true);
 		jarScanner.setScanAllFiles(true);
 		jarScanner.setJarScanFilter(new DcemJarScanFilter());
-		context.setAddWebinfClassesResources(true);
-		context.setDelegate(true);
-		context.getResources().setCacheObjectMaxSize(5000);
-		context.getResources().setCacheMaxSize(100000);
+		standardContext.setAddWebinfClassesResources(true);
+		standardContext.setDelegate(true);
+		standardContext.getResources().setCacheObjectMaxSize(5000);
+		standardContext.getResources().setCacheMaxSize(100000);
 
 		try {
 			List<Integer> portsInUseExternally = new ArrayList<Integer>();
@@ -441,20 +441,20 @@ public class DcemMain {
 
 				switch (connectionService.getConnectionServicesType()) {
 				case MANAGEMENT:
-					addFilter(context, LoginWebFilter.class.getSimpleName(), LoginWebFilter.class.getName(), DcemConstants.WEB_MGT_CONTEXT + "/*", enabled);
+					addFilter(standardContext, LoginWebFilter.class.getSimpleName(), LoginWebFilter.class.getName(), DcemConstants.WEB_MGT_CONTEXT + "/*", enabled);
 					break;
 				case SAML:
-					addFilter(context, DcemConstants.SAML_SERVLET_FILTER_NAME, DcemConstants.SAML_SERVLET_FILTER_CLASS,
+					addFilter(standardContext, DcemConstants.SAML_SERVLET_FILTER_NAME, DcemConstants.SAML_SERVLET_FILTER_CLASS,
 							new String[] { DcemConstants.SAML_SERVLET_PATH + "/*" }, enabled);
 					break;
 				case OPENN_ID_OAUTH:
-					addFilter(context, DcemConstants.OAUTH_SERVLET_FILTER_NAME, DcemConstants.OAUTH_SERVLET_FILTER_CLASS,
+					addFilter(standardContext, DcemConstants.OAUTH_SERVLET_FILTER_NAME, DcemConstants.OAUTH_SERVLET_FILTER_CLASS,
 							new String[] { DcemConstants.OAUTH_SERVLET_PATH + "/*" }, enabled);
 					break;
 				case USER_PORTAL:
-					addFilter(context, DcemConstants.USERPORTAL_SERVLET_FILTER_NAME, DcemConstants.USERPORTAL_SERVLET_FILTER_CLASS,
+					addFilter(standardContext, DcemConstants.USERPORTAL_SERVLET_FILTER_NAME, DcemConstants.USERPORTAL_SERVLET_FILTER_CLASS,
 							DcemConstants.USERPORTAL_SERVLET_FILTER, enabled);
-					addFilter(context, DcemConstants.TESTMODULE_SERVLET_FILTER_NAME, DcemConstants.TESTMODULE_SERVLET_FILTER_CLASS,
+					addFilter(standardContext, DcemConstants.TESTMODULE_SERVLET_FILTER_NAME, DcemConstants.TESTMODULE_SERVLET_FILTER_CLASS,
 							DcemConstants.TESTMODULE_SERVLET_FILTER, enabled);
 					break;
 				default:
@@ -474,25 +474,25 @@ public class DcemMain {
 					}
 					switch (connectionService.getConnectionServicesType()) {
 					case HEALTH_CHECK:
-						addServlet(context, DcemConstants.HEALTHCHECK_SERVLET_NAME, DcemConstants.HEALTHCHECK_SERVLET_CLASS,
+						addServlet(standardContext, DcemConstants.HEALTHCHECK_SERVLET_NAME, DcemConstants.HEALTHCHECK_SERVLET_CLASS,
 								DcemConstants.HEALTHCHECK_SERVLET_PATH);
 						break;
 					case OPENN_ID_OAUTH:
-						addServlet(context, DcemConstants.OAUTH_SERVLET_NAME, DcemConstants.OAUTH_SERVLET_CLASS,
+						addServlet(standardContext, DcemConstants.OAUTH_SERVLET_NAME, DcemConstants.OAUTH_SERVLET_CLASS,
 								new String[] { DcemConstants.OAUTH_SERVLET_PATH, DcemConstants.OAUTH_SERVLET_PATH + "/.well-known/oauth-authorization-server",
 										DcemConstants.OAUTH_SERVLET_PATH + "/.well-known/openid-configuration", DcemConstants.OAUTH_SERVLET_PATH + "/userinfo",
 										DcemConstants.OAUTH_SERVLET_PATH + "/jwks" });
 						break;
 					case SAML:
-						addServlet(context, DcemConstants.SAML_SERVLET_NAME, DcemConstants.SAML_SERVLET_CLASS,
+						addServlet(standardContext, DcemConstants.SAML_SERVLET_NAME, DcemConstants.SAML_SERVLET_CLASS,
 								new String[] { DcemConstants.SAML_SERVLET_PATH, DcemConstants.SAML_SERVLET_PATH + "/idp_metadata.xml" });
 						break;
 					case USER_PORTAL:
-						addServlet(context, DcemConstants.USERPORTAL_SERVLET_NAME, DcemConstants.USERPORTAL_SERVLET_CLASS,
+						addServlet(standardContext, DcemConstants.USERPORTAL_SERVLET_NAME, DcemConstants.USERPORTAL_SERVLET_CLASS,
 								DcemConstants.USERPORTAL_SERVLET_PATH);
-						addServlet(context, DcemConstants.WEBDAV_SERVLET_NAME, DcemConstants.WEBDAV_SERVLET_CLASS, DcemConstants.WEBDAV_SERVLET_PATH);
-						addServlet(context, DcemConstants.TEST_SP_SERVLET_NAME, DcemConstants.TEST_SP_SERVLET_CLASS, DcemConstants.TEST_SP_SERVLET_PATH);
-						addServlet(context, DcemConstants.LICENCE_SERVLET_NAME, DcemConstants.LICENCE_SERVLET_CLASS, DcemConstants.LICENCE_SERVLET_PATH);
+						addServlet(standardContext, DcemConstants.WEBDAV_SERVLET_NAME, DcemConstants.WEBDAV_SERVLET_CLASS, DcemConstants.WEBDAV_SERVLET_PATH);
+						addServlet(standardContext, DcemConstants.TEST_SP_SERVLET_NAME, DcemConstants.TEST_SP_SERVLET_CLASS, DcemConstants.TEST_SP_SERVLET_PATH);
+						addServlet(standardContext, DcemConstants.LICENCE_SERVLET_NAME, DcemConstants.LICENCE_SERVLET_CLASS, DcemConstants.LICENCE_SERVLET_PATH);
 						break;
 
 					default:
@@ -516,6 +516,7 @@ public class DcemMain {
 		dbFactoryProducer.disposeUnmanagedEntityManager(entityManager);
 
 		try {
+			DcemApplicationBean.setStandardContext(standardContext);
 			tomcat.getEngine().setJvmRoute(dcemNode.getName());
 			tomcat.start();
 
