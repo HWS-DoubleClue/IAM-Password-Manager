@@ -27,11 +27,13 @@ import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
+import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.tasks.ReloadClassInterface;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.utils.FileContent;
 import com.doubleclue.utils.ResourceFinder;
 import com.doubleclue.utils.StringUtils;
+import com.fasterxml.jackson.databind.Module;
 
 @ApplicationScoped
 @Named("templateLogic")
@@ -122,7 +124,7 @@ public class TemplateLogic implements ReloadClassInterface {
 	}
 
 	@DcemTransactional
-	public String getUpdateTemplateByName(Class<?> loadingClass, String [] names, SupportedLanguage [] languages, String scanPackages) {
+	public String getUpdateTemplateByName(Class<?> loadingClass, String[] names, SupportedLanguage[] languages, String scanPackages) {
 		StringBuffer sb = new StringBuffer();
 		for (String name : names) {
 			for (SupportedLanguage language : languages) {
@@ -133,7 +135,7 @@ public class TemplateLogic implements ReloadClassInterface {
 						List<FileContent> templateFiles = ResourceFinder.find(loadingClass, scanPackages, templateName);
 						if (templateFiles.isEmpty()) {
 							sb.append("Couldn't add Tempalte: " + scanPackages + "/" + templateName);
-							sb.append ("\n");
+							sb.append("\n");
 							continue;
 						}
 
@@ -147,7 +149,7 @@ public class TemplateLogic implements ReloadClassInterface {
 						addOrUpdateTemplate(dcemTemplate, new DcemAction(AdminModule.MODULE_ID, null, DcemConstants.ACTION_ADD), false);
 					} catch (Exception e) {
 						sb.append("Couldn't add Tempalte " + name);
-						sb.append ("\n");
+						sb.append("\n");
 						logger.warn("Couldn't add Tempalte " + name, e);
 					}
 				}
@@ -246,6 +248,57 @@ public class TemplateLogic implements ReloadClassInterface {
 	@Override
 	public void reload(String templateName) throws DcemException {
 		applicationBean.removeFreeMarkerTemplate(templateName);
+	}
+
+	@DcemTransactional
+	public int updateAllTemplates() throws Exception {
+		List<DcemTemplate> templates = getActiveTemplates();
+		int count = updateTemplateModule (templates, AdminModule.class, DcemConstants.TEMPLATE_RESOURCES, DcemConstants.TEMPLATE_TYPE);
+		for (DcemModule dcemModule : applicationBean.getSortedModules()) {
+			if (dcemModule.isPluginModule()) {
+				count = count + updateTemplateModule (templates, dcemModule.getClass(), DcemConstants.TEMPLATE_RESOURCES + "/" + dcemModule.getId(), DcemConstants.TEMPLATE_TYPE);
+			}
+		}
+		return count;
+	}
+	
+	private int updateTemplateModule (List<DcemTemplate> templates,  Class loadingClass, String pakageName, String templateType) throws Exception {
+		List<FileContent> templateFiles = ResourceFinder.find(loadingClass, DcemConstants.TEMPLATE_RESOURCES, DcemConstants.TEMPLATE_TYPE);
+		SupportedLanguage supportedLanguage;
+		int count = 0;
+		for (FileContent fileContent : templateFiles) {
+			String fileName = fileContent.getName().substring(0, fileContent.getName().length() - DcemConstants.TEMPLATE_TYPE.length());
+			String locale = fileName.substring(fileName.length() - 2);
+			if (fileName.charAt(fileName.length() - 3) != '_') {
+				logger.warn("Invalid Tempalte name format. " + fileName);
+				continue;
+			}
+			fileName = fileName.substring(0, fileName.length() - 3);
+			supportedLanguage = DcemUtils.getSuppotedLanguage(locale); // default is always english
+			if (isNewTemplate(templates, fileName, supportedLanguage)) {
+				DcemTemplate dcemTemplate = new DcemTemplate();
+				dcemTemplate.setName(fileName);
+				if (supportedLanguage == SupportedLanguage.English) {
+					dcemTemplate.setDefaultTemplate(true);
+				}
+				dcemTemplate.setLanguage(supportedLanguage);
+				dcemTemplate.setContent(new String(fileContent.getContent(), DcemConstants.CHARSET_UTF8));
+				addOrUpdateTemplate(dcemTemplate, new DcemAction(AdminModule.MODULE_ID, null, DcemConstants.ACTION_ADD), false);
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public boolean isNewTemplate(List<DcemTemplate> templates, String fileName, SupportedLanguage supportedLanguage) {
+		boolean isNew = true;
+		for (DcemTemplate template : templates) {
+			if (template.getName().equals(fileName) && (template.getLanguage() == supportedLanguage)) {
+				isNew = false;
+				break;
+			}
+		}
+		return isNew;
 	}
 
 }

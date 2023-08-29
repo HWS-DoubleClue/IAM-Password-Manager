@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -126,12 +127,10 @@ public class DcemApplicationBean implements Serializable {
 	LicenceLogic licenceLogic;
 
 	ServletContext servletContext;
-	
 
 	public static boolean debugMode = false;
 	public static boolean jUnitTestMode = false;
 	static StandardContext standardContext;
-	
 
 	private static List<DcemException> initExceptions = new ArrayList<>(1);
 
@@ -515,16 +514,19 @@ public class DcemApplicationBean implements Serializable {
 				tenantMap.remove(tenantEntity.getName().toUpperCase());
 			}
 		}
-
 		for (TenantEntity tenantEntity : dbTenants) {
 			if (tenantMap.get(tenantEntity.getName().toUpperCase()) == null) {
 				// New Tenant
 				tenantMap.put(tenantEntity.getName().toUpperCase(), tenantEntity);
-				Future<Exception> future = taskExecutor.submit(new CallInittializeTenant(tenantEntity, sortedModules));
+				Future<Hashtable<String, Exception>> future = taskExecutor.submit(new CallInittializeTenant(tenantEntity, sortedModules));
 				try {
-					Exception exp = future.get();
-					if (exp != null) {
-						throw exp;
+					Hashtable<String, Exception> exceptionTable = future.get();
+					if (exceptionTable != null && exceptionTable.isEmpty() == false) {
+						for (String moduleId : exceptionTable.keySet()) {
+							reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.UNEXPECTED_ERROR,
+									"TENANT-Module " + tenantEntity.getName() + "-" + moduleId + " : " + exceptionTable.get(moduleId).getMessage(), AlertSeverity.ERROR, false);
+						}
+
 					}
 				} catch (Exception e) {
 					String msg = "Error on initialization Tenant: " + tenantEntity.getName() + " Cause: " + e.toString();
@@ -834,7 +836,7 @@ public class DcemApplicationBean implements Serializable {
 	public static void setStandardContext(StandardContext standardContext_) {
 		standardContext = standardContext_;
 	}
-	
+
 	public static StandardContext getStandardContext() {
 		return standardContext;
 	}

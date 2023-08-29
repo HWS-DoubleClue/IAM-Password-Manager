@@ -7,6 +7,7 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
 import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.logic.ActionSelection;
+import com.doubleclue.dcem.core.logic.ActionType;
 import com.doubleclue.dcem.core.logic.RawAction;
 
 @SuppressWarnings("serial")
@@ -18,6 +19,12 @@ public class TemplateSubject extends SubjectAbs {
 		rawActions.add(new RawAction (DcemConstants.ACTION_COPY, new String [] {DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN}, ActionSelection.ONE_ONLY));
 		rawActions.add(new RawAction (DcemConstants.ACTION_EDIT, new String []  {DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN}, ActionSelection.ONE_ONLY));
 		rawActions.add(new RawAction (DcemConstants.ACTION_DELETE, new String []  {DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN}, ActionSelection.ONE_OR_MORE));
+		
+		RawAction rawActionRecover = new RawAction (DcemConstants.ACTION_RECOVER_TEMPLATES, new String []  {DcemConstants.SYSTEM_ROLE_SUPERADMIN}, ActionSelection.IGNORE);
+		rawActionRecover.setActionType(ActionType.EL_METHOD);
+		rawActionRecover.setElMethodExpression("#{templateDialog.updateAllTemplates()}");
+		rawActions.add(rawActionRecover);
+
 
 		RawAction rawAction = new RawAction (DcemConstants.ACTION_SHOW, new String []  {DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN}, ActionSelection.ONE_ONLY);
 		rawAction.setIcon("fa fa-eye");

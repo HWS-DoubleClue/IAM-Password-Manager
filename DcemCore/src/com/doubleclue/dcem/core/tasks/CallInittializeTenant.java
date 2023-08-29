@@ -1,11 +1,14 @@
 package com.doubleclue.dcem.core.tasks;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
@@ -16,7 +19,7 @@ import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.core.weld.WeldContextUtils;
 import com.doubleclue.dcem.core.weld.WeldRequestContext;
 
-public class CallInittializeTenant implements Callable<Exception> {
+public class CallInittializeTenant implements Callable<Hashtable<String, Exception>> {
 
 	private static final Logger logger = LogManager.getLogger(CallInittializeTenant.class);
 
@@ -28,11 +31,12 @@ public class CallInittializeTenant implements Callable<Exception> {
 	}
 
 	@Override
-	public Exception call() {
+	public Hashtable<String, Exception> call() {
 		TenantIdResolver.setCurrentTenant(tenantEntity);
 		WeldRequestContext requestContext = null;
 		try {
-			Thread.currentThread().setName(this.getClass().getSimpleName());
+			Hashtable<String, Exception> exceptionTable = new Hashtable<>();
+ 			Thread.currentThread().setName(this.getClass().getSimpleName());
 			requestContext = WeldContextUtils.activateRequestContext();
 			
 			for (DcemModule dcemModule : modules) {
@@ -44,10 +48,12 @@ public class CallInittializeTenant implements Callable<Exception> {
 					dcemModule.initializeTenant(tenantEntity);
 				} catch (DcemException exp) {
 					logger.fatal("Tenant Initialization failed by module: " + dcemModule.getName(), exp);
-					return exp;
+					exceptionTable.put(dcemModule.getName(), exp);
+//					return exp;
 				} catch (Exception exp) {
 					logger.fatal("Tenant Initialization failed by module: " + dcemModule.getName(), exp);
-					return exp;
+					exceptionTable.put(dcemModule.getName(), exp);
+//					return exp;
 				}
 			}
 	 		LicenceLogic licenceLogic = CdiUtils.getReference(LicenceLogic.class);
@@ -55,17 +61,18 @@ public class CallInittializeTenant implements Callable<Exception> {
 				licenceLogic.reload(null);
 			} catch (DcemException exp) {
 				logger.warn("Loading licence failed during tenant initialisation: " + exp.getMessage());
-				return exp;
+				exceptionTable.put(AdminModule.MODULE_ID + "-LICENSE", exp);
+				return exceptionTable;
 			}
 			try {
 				ActionLogic actionLogic = CdiUtils.getReference(ActionLogic.class);
 				actionLogic.createDbActions(tenantEntity);
-				
 			} catch (Exception exp) {
 				logger.warn("Couldn't add module actions: ", exp);
-				return exp;
+				exceptionTable.put(AdminModule.MODULE_ID + "-CreateAction", exp);
+				return exceptionTable;
 			}
-			return null;
+			return exceptionTable;
 		} finally {
 			WeldContextUtils.deactivateRequestContext(requestContext);
 		}

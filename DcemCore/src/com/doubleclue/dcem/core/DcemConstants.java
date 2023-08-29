@@ -208,6 +208,7 @@ public final class DcemConstants {
 	public static final String ACTION_CONFIGURE = "configure";
 	public static final String ACTION_TEST_USER_POLICY = "testUserPolicy";
 	public static final String ACTION_RESET_STAY_LOGIN = "resetStayLogin";
+	public static final String ACTION_RECOVER_TEMPLATES = "recoverTemplates";
 
 	public static final String CONFIG_KEY_LICENCE = "LICENCE_KEY";
 
@@ -501,9 +502,7 @@ public final class DcemConstants {
 	public static final String METHOD_IS_RESTRICTED = "isRestricted";
 	public static final String RESTRICTED_REPLACEMENT = "-----";
 
-	
 
 
-	
 
 }

@@ -48,6 +48,7 @@ public class TemplateView extends DcemView {
 		addAutoViewAction(DcemConstants.ACTION_SHOW, resourceBundle, templateDialog, DcemConstants.TEMPLATE_DIALOG);
 
 		addAutoViewAction(DcemConstants.ACTION_DELETE, resourceBundle, templateDialog, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);
+		addAutoViewAction(DcemConstants.ACTION_RECOVER_TEMPLATES, resourceBundle, templateDialog, DcemConstants.TEMPLATE_DIALOG);
 
 //		addAutoViewAction(Constants.ACTION_SHOW, resourceBundle, templateDialog, AsConst.TEMPLATE_DIALOG);
 

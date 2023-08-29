@@ -230,8 +230,9 @@ public class DbMigrate {
 	@DcemTransactional
 	public void updateTemplates() throws Exception {
 		List<DcemTemplate> templates = templateLogic.getActiveTemplates();
-		List<FileContent> templateFiles = ResourceFinder.find(DbLogic.class, SetupConstants.TEMPLATE_RESOURCES, SetupConstants.TEMPLATE_TYPE);
+		List<FileContent> templateFiles = ResourceFinder.find(AdminModule.class, SetupConstants.TEMPLATE_RESOURCES, SetupConstants.TEMPLATE_TYPE);
 		SupportedLanguage supportedLanguage;
+		logger.info("  Updating Templates for Tenant: " + TenantIdResolver.getCurrentTenantName());
 		for (FileContent fileContent : templateFiles) {
 			String fileName = fileContent.getName().substring(0, fileContent.getName().length() - SetupConstants.TEMPLATE_TYPE.length());
 			String locale = fileName.substring(fileName.length() - 2);
@@ -241,7 +242,7 @@ public class DbMigrate {
 			}
 			fileName = fileName.substring(0, fileName.length() - 3);
 			supportedLanguage = DcemUtils.getSuppotedLanguage(locale); // default is always english
-			if (isNewTemplate(templates, fileName, supportedLanguage)) {
+			if (templateLogic.isNewTemplate(templates, fileName, supportedLanguage)) {
 				DcemTemplate dcemTemplate = new DcemTemplate();
 				dcemTemplate.setName(fileName);
 				if (supportedLanguage == SupportedLanguage.English) {
@@ -272,16 +273,7 @@ public class DbMigrate {
 		}
 	}
 
-	public boolean isNewTemplate(List<DcemTemplate> templates, String fileName, SupportedLanguage supportedLanguage) {
-		boolean isNew = true;
-		for (DcemTemplate template : templates) {
-			if (template.getName().equals(fileName) && (template.getLanguage() == supportedLanguage)) {
-				isNew = false;
-				break;
-			}
-		}
-		return isNew;
-	}
+	
 
 	public void migrateTo_2_5_0() {
 

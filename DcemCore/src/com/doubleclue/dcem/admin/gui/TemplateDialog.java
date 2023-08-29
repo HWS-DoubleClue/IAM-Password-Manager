@@ -11,6 +11,7 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.DcemView;
+import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.logic.TemplateLogic;
 
 
@@ -81,6 +82,15 @@ public class TemplateDialog extends DcemDialog {
 			((DcemTemplate) this.getActionObject()).setInUse(false);
 		}
 		parentView = dcemView;
+	}
+	
+	public void updateAllTemplates() {
+		try {
+			int count = asTemplateLogic.updateAllTemplates();
+			JsfUtils.addInfoMessage("Templates Recovered: " + count);
+		} catch (Exception e) {
+			JsfUtils.addErrorMessage(e.toString());
+		}
 	}
 	
 	
