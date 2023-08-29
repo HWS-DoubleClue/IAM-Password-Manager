@@ -36,6 +36,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 
@@ -293,6 +294,18 @@ public class JsfUtils {
 			System.out.println("DcemFilter.getHeadersInfo() HTTP Header=" + key + " Value=" + value);
 		}
 
+		return map;
+	}
+	
+	public static Map<String, String> getHeadersInfo(HttpServletResponse response) {
+		// HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		Map<String, String> map = new HashMap<String, String>();
+//		Enumeration<String> headerNames = response.getHeaderNames();
+		for (String headerName : response.getHeaderNames()) {
+			String headerValue = response.getHeader(headerName);
+			map.put(headerName, headerValue);
+	//		System.out.println("DcemFilter.getHeadersInfo() HTTP Header=" + headerName + " Value=" + headerValue);
+		}
 		return map;
 	}
 

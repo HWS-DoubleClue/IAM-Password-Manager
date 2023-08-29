@@ -34,8 +34,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.Tomcat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
 
 import com.doubleclue.app.sec.api.SecureUtilsApi;
 import com.doubleclue.dcem.admin.logic.AdminModule;
@@ -840,6 +843,27 @@ public class DcemApplicationBean implements Serializable {
 	public static StandardContext getStandardContext() {
 		return standardContext;
 	}
+	
+	public static void addServlet(String servletName, String className, String[] servletPaths) {
+		Tomcat.addServlet(DcemApplicationBean.getStandardContext(), servletName, className);
+		for (String path : servletPaths) {
+			standardContext.addServletMappingDecoded(path, servletName);
+		}
+	}
+	
+	public static void addFilter(String filterName, String className, String[] mappingUrls) {
+			FilterDef filterDef = new FilterDef();
+			filterDef.setFilterName(filterName);
+			filterDef.setFilterClass(className);
+			DcemApplicationBean.getStandardContext().addFilterDef(filterDef);
+			FilterMap filterMap = new FilterMap();
+			filterMap.setFilterName(filterName);
+			for (String url : mappingUrls) {
+				filterMap.addURLPattern(url);
+			}
+			standardContext.addFilterMap(filterMap);
+	}
+
 
 }
 
