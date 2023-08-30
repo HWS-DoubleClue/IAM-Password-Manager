@@ -1561,11 +1561,9 @@ public class CloudSafeLogic {
 			case USER:
 				cloudSafeEntity.setGroup(groupLogic.getRootGroup());
 				cloudSafeEntity.setUser(dcemUser);
-				break;
 			case GROUP:
 				cloudSafeEntity.setGroup(groupOwner);
 				cloudSafeEntity.setUser(userLogic.getSuperAdmin());
-				break;
 			default:
 				break;
 			}
