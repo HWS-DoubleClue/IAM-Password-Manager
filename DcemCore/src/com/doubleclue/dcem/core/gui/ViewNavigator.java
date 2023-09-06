@@ -284,7 +284,7 @@ public class ViewNavigator implements Serializable {
 				subMenu.setId(dcemModule.getId());
 				for (SubjectAbs subject : subjects) {
 					// List<DcemAction> actions = subject.getDcemActions();
-					if (operatorSessionBean.isPermission(subject.getDcemActions()) == false) {
+					if (operatorSessionBean.isPermission(subject.getDcemActions()) == false || subject.isHiddenMenu() == true) {
 						continue; // ignore if role has Actions for this subject
 					}
 					menuItem = DefaultMenuItem.builder().value(subject.getDisplayName()).build();
