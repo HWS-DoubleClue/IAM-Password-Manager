@@ -2,8 +2,10 @@ package com.doubleclue.dcem.core.tasks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,11 +47,11 @@ public class EmailTask extends CoreTask {
 		long start = System.currentTimeMillis();
 //		DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
 		TemplateLogic templateLogic = CdiUtils.getReference(TemplateLogic.class);
-		HashMap<SupportedLanguage, List<String>> mapSortEmailsByLanguage= new HashMap<SupportedLanguage, List<String>>();		
+		HashMap<SupportedLanguage, Set<String>> mapSortEmailsByLanguage= new HashMap<SupportedLanguage, Set<String>>();		
 		for (DcemUser dcemUser : users) {
-			List<String> emails = mapSortEmailsByLanguage.get(dcemUser.getLanguage());
+			Set<String> emails = mapSortEmailsByLanguage.get(dcemUser.getLanguage());
 			if (emails == null) {
-				emails = new ArrayList<String>();
+				emails = new HashSet<String>();
 				mapSortEmailsByLanguage.put(dcemUser.getLanguage(), emails);
 			}
 			if (dcemUser.getEmail() == null || dcemUser.getEmail().isEmpty() == true) {
@@ -66,7 +68,7 @@ public class EmailTask extends CoreTask {
 			dcemTemplateEmail =  templateLogic.getTemplateByNameLanguage(templateName, language);
 			String body = StringUtils.substituteTemplate(dcemTemplateEmail.getContent(), map);
 			try {
-				SendEmail.sendMessage(mapSortEmailsByLanguage.get(language), body, subject, attachment);
+				SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), body, subject, attachment);
 			} catch (DcemException e) {
 				logger.error(e);
 			}
