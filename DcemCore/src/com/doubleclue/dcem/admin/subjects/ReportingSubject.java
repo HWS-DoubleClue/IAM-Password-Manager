@@ -20,6 +20,7 @@ public class ReportingSubject extends SubjectAbs {
 		RawAction exportAll = new RawAction(DcemConstants.ACTION_EXCEL_EXPORT_ALL,
 				new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }, ActionSelection.IGNORE);
 		exportAll.setActionType(ActionType.EXCEL_EXPORT_ALL);
+		exportAll.setAjax(false);
 		exportAll.setIcon("fa fa-file-excel-o");
 		rawActions.add(exportAll);
 	}

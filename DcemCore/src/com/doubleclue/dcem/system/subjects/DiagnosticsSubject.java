@@ -23,12 +23,14 @@ public class DiagnosticsSubject extends SubjectAbs {
         rawAction.setIcon("fa fa-download");
         rawAction.setActionType(ActionType.EL_METHOD);
         rawAction.setElMethodExpression("#{diagnosticsView.downloadDiagnosticFile()}");
+        rawAction.setAjax(false);
         rawActions.add(rawAction);
 
         rawAction = new RawAction(DcemConstants.ACTION_DOWNLOAD_LOG_FILE, new String[]{DcemConstants.SYSTEM_ROLE_SUPERADMIN});
         rawAction.setIcon("fa fa-download");
         rawAction.setActionType(ActionType.EL_METHOD);
         rawAction.setElMethodExpression("#{diagnosticsView.downloadLogFile()}");
+        rawAction.setAjax(false);
         rawActions.add(rawAction);
 
         rawAction = new RawAction(DcemConstants.ACTION_SHOW_DIAGNOSTIC_CHARTS, new String[]{DcemConstants.SYSTEM_ROLE_SUPERADMIN});

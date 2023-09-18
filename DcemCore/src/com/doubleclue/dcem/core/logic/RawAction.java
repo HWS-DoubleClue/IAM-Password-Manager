@@ -18,6 +18,7 @@ public class RawAction implements Serializable {
 	String elMethodExpression;
 	String dependsOnModule;
 	boolean masterOnly;
+	boolean ajax = true;
 	
 	
 	public RawAction(String name, String[] noPermissionForRole) {
@@ -164,6 +165,14 @@ public class RawAction implements Serializable {
 
 	public void setDependsOnModule(String dependsOnModule) {
 		this.dependsOnModule = dependsOnModule;
+	}
+
+	public boolean isAjax() {
+		return ajax;
+	}
+
+	public void setAjax(boolean ajax) {
+		this.ajax = ajax;
 	}
 
 	

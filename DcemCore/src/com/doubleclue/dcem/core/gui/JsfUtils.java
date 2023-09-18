@@ -1104,6 +1104,16 @@ public class JsfUtils {
 		}
 		PrimeFaces.current().dialog().showMessageDynamic(facesMessage);
 	}
+	
+	public static StreamedContent downloadFilePf (String contentType, String fileName, byte[] data) throws IOException {
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+		StreamedContent file = DefaultStreamedContent.builder()
+	                .name(fileName)
+	                .contentType(contentType)
+	                .stream(() -> byteArrayInputStream)
+	                .build();
+		return file;
+	}
 
 	/**
 	 * @param contentType

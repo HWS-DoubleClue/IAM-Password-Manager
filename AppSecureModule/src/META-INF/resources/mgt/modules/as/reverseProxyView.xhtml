@@ -13,13 +13,8 @@
 		<h:form id="form">
 		
 			<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
-				<!-- <p:commandLink value="#{autoAction.actionText}" rendered="#{autoAction.link}" ajax="false"
-					action="#{viewNavigator.setActiveDialog(autoAction)}" styleClass="icon_#{viewNavigator.getActionIcon(autoAction)}">
-				</p:commandLink> -->
-				
-								
 				<p:commandButton styleClass="actionButton" value="#{autoAction.actionText}" rendered="#{autoAction.link == false}"
-					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false"
+					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}"
 					onclick="startAjaxStatus()">
 					<p:ajax event="dialogReturn" update="status pTable" />
 				</p:commandButton>

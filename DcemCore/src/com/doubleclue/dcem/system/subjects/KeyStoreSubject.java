@@ -13,6 +13,12 @@ import com.doubleclue.dcem.system.logic.SystemModule;
 @ApplicationScoped
 public class KeyStoreSubject extends SubjectAbs {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	public KeyStoreSubject() {
 
 		RawAction rawAction = new RawAction(DcemConstants.ACTION_GENERATE, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN}, ActionSelection.CREATE_OBJECT);
@@ -33,12 +39,14 @@ public class KeyStoreSubject extends SubjectAbs {
 		rawAction.setActionType(ActionType.EL_METHOD);
 		rawAction.setElMethodExpression("#{keyStoreDialog.downloadPk12()}");
 		rawAction.setIcon("fa fa-download");
+		rawAction.setAjax(false);
 		rawActions.add(rawAction);
 		
 		rawAction = new RawAction(DcemConstants.ACTION_DOWNLOAD_PEM, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN }, ActionSelection.ONE_ONLY);
 		rawAction.setActionType(ActionType.EL_METHOD);
 		rawAction.setElMethodExpression("#{keyStoreDialog.downloadPem()}");
 		rawAction.setIcon("fa fa-download");
+		rawAction.setAjax(false);
 		rawActions.add(rawAction);
 		
 		rawActions.add(new RawAction(DcemConstants.ACTION_VIEW, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }));
