@@ -25,6 +25,7 @@ public class AsAuthGatewaySubject extends SubjectAbs {
 		downloadAction.setActionType(ActionType.EL_METHOD);
 		downloadAction.setIcon("fa fa-download");
 		downloadAction.setElMethodExpression("#{authAppDialog.actionDownload()}");
+		downloadAction.setAjax(false);
 		rawActions.add(downloadAction);
 		rawActions.add (new RawAction (DcemConstants.ACTION_EDIT, new String [] {DcemConstants.SYSTEM_ROLE_SUPERADMIN}, ActionSelection.ONE_ONLY));
 		rawActions.add (new RawAction (DcemConstants.ACTION_DELETE, new String [] {DcemConstants.SYSTEM_ROLE_SUPERADMIN}, ActionSelection.ONE_OR_MORE));
