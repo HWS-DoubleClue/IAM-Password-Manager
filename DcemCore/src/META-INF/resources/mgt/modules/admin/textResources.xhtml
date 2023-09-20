@@ -19,7 +19,7 @@
 				</p:commandLink>
 
 				<p:commandButton styleClass="actionButton" value="#{autoAction.actionText}" rendered="#{autoAction.link == false}"
-					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false"
+					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}"
 					onclick="startAjaxStatus()">
 					<!--      <p:ajax event="dialogReturn" update="staticValue"/> -->
 				</p:commandButton>

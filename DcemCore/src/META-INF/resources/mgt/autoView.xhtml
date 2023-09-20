@@ -10,11 +10,12 @@
 			<p:tooltip style="font-size: xx-small; white-space: normal" showEvent="focus" hideEvent="keyup" position="top" />
 
 			<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
-				<p:commandLink value="#{autoAction.actionText}" rendered="#{autoAction.link}" ajax="false" action="#{viewNavigator.setActiveDialog(autoAction)}"
+		<!--  		<p:commandLink value="#{autoAction.actionText}" rendered="#{autoAction.link}" ajax="false" action="#{viewNavigator.setActiveDialog(autoAction)}"
 					styleClass="icon_#{viewNavigator.getActionIcon(autoAction)}">
 				</p:commandLink>
+				-->
 				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link == false}" action="#{viewNavigator.setActiveDialog(autoAction)}"
-					icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="false">
+					icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}">
 					<p:ajax event="dialogReturn" update="pTable" />
 				</p:commandButton>
 				<p:spacer width="12" />
