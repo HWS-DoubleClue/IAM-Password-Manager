@@ -463,6 +463,7 @@ public class DomainAzure implements DomainApi {
 				IAuthenticationResult auth = future.get();
 				String accessToken = auth.accessToken();
 				accessTokenExpires = auth.expiresOnDate();
+				logger.info ("Azure AccessToken expires on " + accessTokenExpires);
 				graphServiceClient = getGraphServiceClient(accessToken);
 			} catch (Exception e) {
 				throw new DcemException(DcemErrorCodes.AZURE_DOMAIN_NOT_AUTHORISED, "Could not create a graph client: " + e.getLocalizedMessage());
