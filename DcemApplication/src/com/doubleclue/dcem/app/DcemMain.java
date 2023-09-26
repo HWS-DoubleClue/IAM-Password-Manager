@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -110,8 +111,9 @@ public class DcemMain {
 			System.setProperty("javax.net.ssl.trustStoreType", "Windows-ROOT");
 		}
 		Locale.setDefault(Locale.ENGLISH);
-		Locale.setDefault(Locale.Category.DISPLAY, Locale.ENGLISH);
-
+		Locale.setDefault(Locale.Category.DISPLAY, Locale.ENGLISH); 
+		TimeZone defaultTimeZone = TimeZone.getTimeZone("Europe/Berlin");
+		TimeZone.setDefault(defaultTimeZone);
 		boolean debugMode = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("jdwp") >= 0;
 
 		DcemLogLevel dcemLogLevel = DcemLogLevel.INFO;

@@ -7,11 +7,10 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2023-03-03T12:09:53.661+0100")
+@Generated(value="Dali", date="2023-09-25T00:25:34.472+0200")
 @StaticMetamodel(DcemReporting.class)
 public class DcemReporting_ {
 	public static volatile SingularAttribute<DcemReporting, Long> id;
-	public static volatile SingularAttribute<DcemReporting, LocalDateTime> localDateTime;
 	public static volatile SingularAttribute<DcemReporting, AlertSeverity> severity;
 	public static volatile SingularAttribute<DcemReporting, String> source;
 	public static volatile SingularAttribute<DcemReporting, ReportAction> action;
@@ -20,4 +19,5 @@ public class DcemReporting_ {
 	public static volatile SingularAttribute<DcemReporting, String> location;
 	public static volatile SingularAttribute<DcemReporting, String> info;
 	public static volatile SingularAttribute<DcemReporting, Boolean> showOnDashboard;
+	public static volatile SingularAttribute<DcemReporting, LocalDateTime> localDateTime;
 }

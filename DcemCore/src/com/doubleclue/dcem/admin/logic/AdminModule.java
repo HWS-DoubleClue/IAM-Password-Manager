@@ -416,14 +416,13 @@ public class AdminModule extends DcemModule {
 	}
 
 	public void setLocationApi(String temp) {
-		System.out.println("AdminModule.setLocationApi()");
 	}
 
 	public void setLocationType(String temp) {
 	}
 
 	public TimeZone getTimezone() {
-		return TimeZone.getTimeZone(getTenantData().getTenantBrandingEntity().getTimezone());
+		return getTenantData().getTimezone();
 	}
 
 	public boolean isWindowsSso() {

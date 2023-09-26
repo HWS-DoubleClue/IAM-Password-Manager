@@ -3,6 +3,7 @@ package com.doubleclue.dcem.admin.logic;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ public class DcemReportingLogic {
 		if (adminModule.getPreferences().isReportErrorsOnly() && dcemReporting.getErrorCode() == null) {
 			return;
 		}
+		dcemReporting.setLocalDateTime(LocalDateTime.now());
 		dcemReporting.setId(adminModule.getTenantData().getReportIdGenerator().newId());
 		if (dcemReporting.getSource() == null) {
 			dcemReporting.setSource(AuthApplication.SECURE_APP.name());
@@ -190,7 +192,7 @@ public class DcemReportingLogic {
 		alertMessage.setInfo(message);
 		alertMessage.setSeverity(severity);
 		alertMessage.setErrorCode(errorCode.toString());
-		alertMessage.setLocalDateTime(LocalDateTime.now());
+		alertMessage.setLocalDateTime(LocalDateTime.now(adminModule.getTimezone().toZoneId()));
 
 		if ((checkExists && welcomeViewAlertExists(alertMessage)) == false) {
 			addWelcomeViewAlert(category, alertMessage);

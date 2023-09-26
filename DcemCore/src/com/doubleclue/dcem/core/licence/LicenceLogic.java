@@ -4,6 +4,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -429,7 +430,7 @@ public class LicenceLogic implements ReloadClassInterface {
 		alertMessage.setSeverity(severity);
 		alertMessage.setInfo(message);
 		alertMessage.setShowOnDashboard(true);
-		alertMessage.setLocalDateTime(LocalDateTime.now());
+		alertMessage.setLocalDateTime(LocalDateTime.now(adminModule.getTimezone().toZoneId())); 
 		alertMessage.setSource("Licence Administration");
 		return alertMessage;
 	}

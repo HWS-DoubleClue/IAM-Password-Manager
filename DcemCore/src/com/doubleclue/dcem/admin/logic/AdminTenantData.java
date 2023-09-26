@@ -3,6 +3,7 @@ package com.doubleclue.dcem.admin.logic;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
@@ -18,6 +19,7 @@ public class AdminTenantData extends ModuleTenantData {
 	private Map<String, DbResourceBundle> bundleCache = new Hashtable<String, DbResourceBundle>();
 	private LinkedHashMap<String, DomainApi> domains = new LinkedHashMap<>();
 	private TenantBrandingEntity tenantBrandingEntity;
+	private TimeZone timezone;
 	private FlakeIdGenerator reportIdGenerator;
 	private DcemGroup rootGroup = null;
 	private String [] disabledModules;
@@ -47,6 +49,7 @@ public class AdminTenantData extends ModuleTenantData {
 
 	public void setTenantBrandingEntity(TenantBrandingEntity tenantBrandingEntity) {
 		this.tenantBrandingEntity = tenantBrandingEntity;
+		timezone = TimeZone.getTimeZone(getTenantBrandingEntity().getTimezone());
 	}
 
 	public FlakeIdGenerator getReportIdGenerator() {
@@ -95,6 +98,14 @@ public class AdminTenantData extends ModuleTenantData {
 
 	public void setEnabledPluginModules(String[] enabledPluginModules) {
 		this.enabledPluginModules = enabledPluginModules;
+	}
+
+	public TimeZone getTimezone() {
+		return timezone;
+	}
+
+	public void setTimezone(TimeZone timezone) {
+		this.timezone = timezone;
 	}
 
 	
