@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -1829,7 +1830,7 @@ public class DcWebDavServlet extends DcDefaultServlet {
 
 		String rewrittenUrl = rewriteUrl(href);
 		generatePropFindResponse(generatedXML, rewrittenUrl, path, type, propertiesVector, cloudSafePath.isFolder() == false, false,
-				cloudSafePath.getLastModified().getTime(), cloudSafePath.getLastModified().getTime(), cloudSafePath.getLength(),
+				cloudSafePath.getLastModified().toEpochSecond(ZoneOffset.UTC), cloudSafePath.getLastModified().toEpochSecond(ZoneOffset.UTC), cloudSafePath.getLength(),
 				getServletContext().getMimeType(cloudSafePath.getName()), cloudSafePath.getId().toString() /* getETg*/);
 	}
 

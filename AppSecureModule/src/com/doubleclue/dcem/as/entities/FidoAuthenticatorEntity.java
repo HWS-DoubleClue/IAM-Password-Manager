@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.as.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,8 +15,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import com.doubleclue.dcem.core.entities.DcemUser;
@@ -62,15 +60,14 @@ public class FidoAuthenticatorEntity extends EntityInterface {
 	@Column(updatable = false, nullable = false)
 	private boolean passwordless = false;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(updatable = false, nullable = false)
 	@DcemGui
-	private Date registeredOn;
+	private LocalDateTime registeredOn;
 
-	@Temporal(TemporalType.TIMESTAMP)
+
 	@Column(nullable = false)
 	@DcemGui
-	private Date lastUsed;
+	private LocalDateTime lastUsed;
 
 	@Override
 	public String toString() {
@@ -127,20 +124,20 @@ public class FidoAuthenticatorEntity extends EntityInterface {
 		this.passwordless = passwordless;
 	}
 
-	public Date getRegisteredOn() {
+	public LocalDateTime getRegisteredOn() {
 		return registeredOn;
 	}
 
-	public void setRegisteredOn(Date registeredOn) {
+	public void setRegisteredOn(LocalDateTime registeredOn) {
 		this.registeredOn = registeredOn;
 		this.lastUsed = registeredOn;
 	}
 
-	public Date getLastUsed() {
+	public LocalDateTime getLastUsed() {
 		return lastUsed;
 	}
 
-	public void setLastUsed(Date lastUsed) {
+	public void setLastUsed(LocalDateTime lastUsed) {
 		this.lastUsed = lastUsed;
 	}
 }

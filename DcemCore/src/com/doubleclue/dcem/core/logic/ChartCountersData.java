@@ -1,25 +1,25 @@
 package com.doubleclue.dcem.core.logic;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.doubleclue.dcem.core.jpa.StatisticCounter;
 
 public class ChartCountersData {
 
-	Date date;
+	LocalDateTime date;
 	StatisticCounter statisticCounter;
 
-	public ChartCountersData (Date date, StatisticCounter statisticCounter) {
+	public ChartCountersData (LocalDateTime date, StatisticCounter statisticCounter) {
 		super();
 		this.date = date;
 		this.statisticCounter = statisticCounter;
 	}
 	
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

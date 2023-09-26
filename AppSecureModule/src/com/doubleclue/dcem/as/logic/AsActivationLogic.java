@@ -1,6 +1,9 @@
 package com.doubleclue.dcem.as.logic;
 
 import java.text.DateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -107,7 +110,7 @@ public class AsActivationLogic {
 			DcemTemplate dcemTemplate) throws DcemException {
 		if (dcemAction.getAction().equals(DcemConstants.ACTION_ADD)) {
 			asActivationCode.setId(null);
-			asActivationCode.setCreatedOn(new Date());
+			asActivationCode.setCreatedOn(LocalDateTime.now());
 			if (asActivationCode.getActivationCode() == null || asActivationCode.getActivationCode().isEmpty()) {
 				asActivationCode.setActivationCode(generateActivationCode());
 			}
@@ -120,7 +123,7 @@ public class AsActivationLogic {
 		}
 		String userFullQualifiedId = asModule.getUserFullQualifiedId(asActivationCode.getUser());
 		ActivationParameters activationParameters = new ActivationParameters(userFullQualifiedId, asActivationCode.getActivationCode(),
-				asActivationCode.getValidTill().getTime());
+				asActivationCode.getValidTill().toEpochSecond(ZoneOffset.UTC));
 		sendActivationCode(sendBy, asActivationCode, dcemTemplate, activationParameters);
 		return activationParameters;
 	}
@@ -145,20 +148,19 @@ public class AsActivationLogic {
 	}
 
 	@DcemTransactional
-	public ActivationCodeEntity createActivationCode(DcemUser dcemUser, Date validTill, SendByEnum sendBy, String info) throws DcemException {
+	public ActivationCodeEntity createActivationCode(DcemUser dcemUser, LocalDateTime validTill, SendByEnum sendBy, String info) throws DcemException {
 		return createActivationCode(dcemUser, validTill, sendBy, info, null);
 	}
 
 	@DcemTransactional
-	public ActivationCodeEntity createActivationCode(DcemUser dcemUser, Date validTill, SendByEnum sendBy, String info, DcemTemplate dcemTemplate)
+	public ActivationCodeEntity createActivationCode(DcemUser dcemUser, LocalDateTime validTill, SendByEnum sendBy, String info, DcemTemplate dcemTemplate)
 			throws DcemException {
 		ActivationCodeEntity activationCode = new ActivationCodeEntity();
 		activationCode.setUser(dcemUser);
 		activationCode.setInfo(info);
 		if (validTill == null) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.HOUR_OF_DAY, getPreferences().getActivationCodeDefaultValidTill());
-			validTill = calendar.getTime();
+			validTill = LocalDateTime.now();
+			validTill.plusHours(getPreferences().getActivationCodeDefaultValidTill());
 		}
 		activationCode.setValidTill(validTill);
 		addUpdateActivationCode(activationCode, new DcemAction(DcemConstants.AS_MODULE_ID, null, DcemConstants.ACTION_ADD), sendBy, false, dcemTemplate);
@@ -266,11 +268,9 @@ public class AsActivationLogic {
 		ActivationCodeEntity asActivationCode = new ActivationCodeEntity();
 		asActivationCode.setUser(user);
 		int till = getPreferences().getRequestActivationCodeValidTill();
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MINUTE, till);
-		asActivationCode.setValidTill(calendar.getTime());
+		asActivationCode.setValidTill(LocalDateTime.now().plusHours(till));
 		asActivationCode.setActivationCode(generateActivationCode());
-		asActivationCode.setCreatedOn(new Date());
+		asActivationCode.setCreatedOn(LocalDateTime.now());
 		em.persist(asActivationCode);
 		return asActivationCode.getActivationCode();
 	}
@@ -284,7 +284,7 @@ public class AsActivationLogic {
 
 		TypedQuery<ActivationCodeEntity> query = em.createNamedQuery(ActivationCodeEntity.VALID_CODES, ActivationCodeEntity.class);
 		query.setParameter(1, dcemUser);
-		query.setParameter(2, new Date());
+		query.setParameter(2, LocalDateTime.now());
 		List<ActivationCodeEntity> list = query.getResultList();
 		for (ActivationCodeEntity code : list) {
 			if (code.getActivationCode().equals(activationCode)) {
@@ -297,14 +297,7 @@ public class AsActivationLogic {
 	@DcemTransactional
 	public void deleteExpiredActivationCodes() {
 		Query query = em.createNamedQuery(ActivationCodeEntity.DELETE_EXPIRED);
-		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
-		c.add(Calendar.DATE, -1); // give one day chance
-		c.set(Calendar.HOUR_OF_DAY, 23);
-		c.set(Calendar.MINUTE, 59);
-		c.set(Calendar.SECOND, 59);
-		Date expiryDate = c.getTime();
-		query.setParameter(1, expiryDate);
+		query.setParameter(1, LocalDateTime.now().plusDays(-1));
 		query.executeUpdate();
 	}
 

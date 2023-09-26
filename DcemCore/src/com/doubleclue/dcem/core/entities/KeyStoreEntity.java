@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.core.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -19,10 +19,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Type;
 import org.primefaces.model.SortOrder;
 
 import com.doubleclue.dcem.core.config.KeyStorePurpose;
@@ -70,8 +67,7 @@ public class KeyStoreEntity extends EntityInterface {
 	String ipAddress;
 
 	@DcemGui
-	@Temporal(TemporalType.TIMESTAMP)
-	Date expiresOn;
+	LocalDateTime expiresOn;
 	
 	@Lob
 	private byte[] keyStore;
@@ -85,7 +81,7 @@ public class KeyStoreEntity extends EntityInterface {
 
 	}
 
-	public KeyStoreEntity(KeyStorePurpose purpose, byte[] keyStore, String cn, Date expiresOn, String password,
+	public KeyStoreEntity(KeyStorePurpose purpose, byte[] keyStore, String cn, LocalDateTime expiresOn, String password,
 			DcemNode dcemNode) {
 		super();
 		this.purpose = purpose;
@@ -137,11 +133,11 @@ public class KeyStoreEntity extends EntityInterface {
 		this.password = password;
 	}
 
-	public Date getExpiresOn() {
+	public LocalDateTime getExpiresOn() {
 		return expiresOn;
 	}
 
-	public void setExpiresOn(Date expiresOn) {
+	public void setExpiresOn(LocalDateTime expiresOn) {
 		this.expiresOn = expiresOn;
 	}
 

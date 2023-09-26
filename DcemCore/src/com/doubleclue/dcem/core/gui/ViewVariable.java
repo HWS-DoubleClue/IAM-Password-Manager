@@ -4,12 +4,21 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
@@ -152,7 +161,7 @@ public class ViewVariable implements Serializable {
 		if (dcemGui != null && dcemGui.converterId().length() > 0) {
 			return FacesContext.getCurrentInstance().getApplication().createConverter(dcemGui.converterId());
 		}
-		return new DefaultConvertor();
+		return null;
 	}
 
 	public String getRecordData(Object klassObject) {
@@ -167,9 +176,8 @@ public class ViewVariable implements Serializable {
 					if (((boolean) restrictedMethod.invoke(klassObject)) == true) {
 						if (viewNavigator == null) {
 							viewNavigator = CdiUtils.getReference(ViewNavigator.class);
-							operatorSessionBean = CdiUtils.getReference(OperatorSessionBean.class);
 						}
-						if (operatorSessionBean.isPermission(viewNavigator.getActiveView().getRevealAction(),
+						if (getOperatorSessionBean().isPermission(viewNavigator.getActiveView().getRevealAction(),
 								viewNavigator.getActiveView().getManageAction()) == false) {
 							return DcemConstants.RESTRICTED_REPLACEMENT;
 						}
@@ -205,18 +213,14 @@ public class ViewVariable implements Serializable {
 		if (lastMethodProperty == null) {
 			return "???";
 		}
-		if (lastMethodProperty.getConverter() != null) {
-			try {
-				if (variableType == VariableType.RATING) {
-					//return klassObject;
-				}
+		try {
+			if (lastMethodProperty.getConverter() != null) {
 				return lastMethodProperty.getConverter().getAsString(FacesContext.getCurrentInstance(), null, klassObject);
-			} catch (Exception exp) {
-				logger.warn(exp);
-				return null;
 			}
-		} else {
-			return klassObject.toString();
+			return convertAsString(FacesContext.getCurrentInstance(), null, klassObject);
+		} catch (Exception exp) {
+			logger.warn(exp);
+			return null;
 		}
 	}
 
@@ -259,6 +263,35 @@ public class ViewVariable implements Serializable {
 				}
 			}
 		}
+	}
+
+	private String convertAsString(FacesContext context, UIComponent component, Object value) {
+		if (value == null) {
+			return "";
+		}
+		Locale locale;
+		DateFormat dateformat;
+
+		if (context != null) {
+			locale = context.getViewRoot().getLocale();
+		} else {
+			locale = Locale.getDefault();
+		}
+		String resultValue;
+		switch (variableType) {
+		case DATE:
+			DateFormat dayDateformat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+			resultValue = dayDateformat.format(value);
+			break;
+		case DATE_TIME:
+			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);
+			LocalDateTime ldt = getOperatorSessionBean().getZonedTime((LocalDateTime) value);
+			resultValue = ldt.format(dateTimeFormatter);
+			break;
+		default:
+			resultValue = value.toString();
+		}
+		return resultValue;
 	}
 
 	public StreamedContent getRecordImage(Object klassObject) {
@@ -393,8 +426,8 @@ public class ViewVariable implements Serializable {
 		return klass;
 	}
 
-	public void setKlass(Class klass) {
-		this.klass = klass;
+	public void setKlass(Class cls) {
+		this.klass = cls;
 	}
 
 	public LinkedList<SelectItem> getEnumItems() {
@@ -411,7 +444,7 @@ public class ViewVariable implements Serializable {
 		}
 		return list;
 	}
-	
+
 	public List<String> getRatings(Object klassObject) {
 		String value = getRecordData(klassObject);
 		float rating = Float.parseFloat(value);
@@ -466,6 +499,13 @@ public class ViewVariable implements Serializable {
 
 	public void setListClass(Class<?> listClass) {
 		this.listClass = listClass;
+	}
+
+	private OperatorSessionBean getOperatorSessionBean() {
+		if (operatorSessionBean == null) {
+			operatorSessionBean = CdiUtils.getReference(OperatorSessionBean.class);
+		}
+		return operatorSessionBean;
 	}
 
 }

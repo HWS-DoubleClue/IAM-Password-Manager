@@ -1,21 +1,16 @@
 package com.doubleclue.dcem.core.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ForeignKey;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.doubleclue.dcem.core.logic.UrlTokenType;
 
@@ -36,9 +31,8 @@ public class UrlTokenEntity implements Serializable {
 	@Id
 	private String urlToken;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
-	private Date expiryDate;
+	private LocalDateTime expiryDate;
 
 	@Column(nullable = true)
 	String objectIdentifier;
@@ -55,11 +49,11 @@ public class UrlTokenEntity implements Serializable {
 		this.urlToken = urlToken;
 	}
 
-	public Date getExpiryDate() {
+	public LocalDateTime getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDateTime expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 

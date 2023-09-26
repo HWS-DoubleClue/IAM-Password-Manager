@@ -24,6 +24,7 @@ import org.primefaces.model.file.UploadedFile;
 
 import com.doubleclue.comm.thrift.AppSystemConstants;
 import com.doubleclue.comm.thrift.SdkConfig;
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.as.entities.ActivationCodeEntity;
 import com.doubleclue.dcem.as.logic.AsModule;
 import com.doubleclue.dcem.core.DcemConstants;
@@ -36,6 +37,7 @@ import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.logic.CertificateInfo;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
 import com.doubleclue.dcem.system.logic.KeyStoreLogic;
 import com.doubleclue.dcem.system.logic.SystemModule;
@@ -66,6 +68,9 @@ public class GenerateSdkConfigDialog extends DcemDialog {
 
 	@Inject
 	SystemModule systemModule;
+	
+	@Inject
+	AdminModule adminModule;
 
 	private UploadedFile uploadedFile;
 
@@ -204,7 +209,9 @@ public class GenerateSdkConfigDialog extends DcemDialog {
 			trustStorePem = bos.toByteArray();
 			for (int i = 0; i < certificates.length; i++) {
 				X509Certificate cert = certificates[i];
-				certInfos.add(new CertificateInfo(cert.getIssuerDN().getName(), cert.getSubjectDN().getName(), cert.getNotAfter()));
+				certInfos.add(new CertificateInfo(cert.getIssuerDN().getName(), cert.getSubjectDN().getName(), cert.getNotAfter().toInstant()
+					      .atZone(adminModule.getTimezone().toZoneId())
+					      .toLocalDateTime()));
 			}
 		} catch (Exception e) {
 			logger.info("Couldn't get the certificates", e);
@@ -239,7 +246,9 @@ public class GenerateSdkConfigDialog extends DcemDialog {
 					Enumeration<String> aliases = keyStore.aliases();
 					while (aliases.hasMoreElements()) {
 						X509Certificate cert = (X509Certificate) keyStore.getCertificate(aliases.nextElement());
-						certInfos.add(new CertificateInfo(cert.getIssuerDN().getName(), cert.getSubjectDN().getName(), cert.getNotAfter()));
+						certInfos.add(new CertificateInfo(cert.getIssuerDN().getName(), cert.getSubjectDN().getName(), cert.getNotAfter().toInstant()
+							      .atZone(adminModule.getTimezone().toZoneId())
+							      .toLocalDateTime()));
 					}
 				} catch (Exception exp) {
 					logger.error(exp);

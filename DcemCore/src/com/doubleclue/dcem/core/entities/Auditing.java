@@ -1,7 +1,7 @@
 package com.doubleclue.dcem.core.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,8 +17,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.primefaces.model.SortOrder;
@@ -49,9 +47,8 @@ public class Auditing extends EntityInterface implements Serializable {
 	private Integer id;
 
 	@Column(name = "auditTimeStamp")
-	@Temporal(TemporalType.TIMESTAMP)
 	@DcemGui(sortOrder = SortOrder.DESCENDING)
-	private Date timestamp;
+	private LocalDateTime timestamp;
 
 	@OneToOne(fetch = FetchType.EAGER, optional = true)
 	@JoinColumn(name = "audituserId", foreignKey = @ForeignKey(name = "FK_AUDITING_USER"), referencedColumnName = "dc_id", nullable = true, insertable = true, updatable = false)
@@ -81,7 +78,7 @@ public class Auditing extends EntityInterface implements Serializable {
 	}
 
 	public Auditing(DcemAction dcemAction, String details, DcemUser user) {
-		timestamp = new Date();
+		timestamp = LocalDateTime.now();
 		this.dcemAction = dcemAction;
 		this.details = details;
 		this.dcemUser = user;
@@ -95,15 +92,15 @@ public class Auditing extends EntityInterface implements Serializable {
 		this.details = details;
 	}
 
-	public Date getAuditTimestamp() {
+	public LocalDateTime getAuditTimestamp() {
 		return this.timestamp;
 	}
 
-	public Date getTimestamp() {
+	public LocalDateTime getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 

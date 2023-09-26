@@ -284,6 +284,16 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 				}
 			}
 			break;
+		case DATE_TIME:
+			if (filterValue != null) {
+				List<?> list = (List<?>) filterValue;
+				filterValue = list.get(0);
+				filterValueTo = (list.get(1));
+			} else {
+				filterValue = viewVariable.getFilterValue();
+			}
+			filterOperator = FilterOperator.BETWEEN;
+			break;
 		case DATE:
 			if (filterValue != null) {
 				List<?> list = (List<?>) filterValue;

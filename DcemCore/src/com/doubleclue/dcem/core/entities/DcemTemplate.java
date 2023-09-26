@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.core.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,8 +22,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
@@ -113,8 +111,7 @@ public class DcemTemplate extends EntityInterface {
 	LinkedList <String> tokens;
 	
 	@DcemGui
-	@Temporal(TemporalType.TIMESTAMP)
-	Date lastModified;
+	LocalDateTime lastModified;
 	
 	@DcemGui (filterOperator=FilterOperator.IS_TRUE)
 	boolean active;
@@ -221,11 +218,11 @@ public class DcemTemplate extends EntityInterface {
 		this.version = version;
 	}
 
-	public Date getLastModified() {
+	public LocalDateTime getLastModified() {
 		return lastModified;
 	}
 
-	public void setLastModified(Date lastModified) {
+	public void setLastModified(LocalDateTime lastModified) {
 		this.lastModified = lastModified;
 	}
 	

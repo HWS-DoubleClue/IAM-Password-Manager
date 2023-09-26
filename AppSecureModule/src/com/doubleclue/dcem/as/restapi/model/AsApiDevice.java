@@ -13,7 +13,7 @@
 package com.doubleclue.dcem.as.restapi.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -119,7 +119,7 @@ public class AsApiDevice implements Serializable {
 	private boolean online;
 
 	@JsonProperty("lastTimeLogin")
-	private Date lastTimeLogin = null;
+	private LocalDateTime lastTimeLogin = null;
 
 	@JsonProperty("deleted")
 	private boolean deleted = false;
@@ -232,7 +232,7 @@ public class AsApiDevice implements Serializable {
 		this.online = online;
 	}
 
-	public AsApiDevice lastTimeLogin(Date lastTimeLogin) {
+	public AsApiDevice lastTimeLogin(LocalDateTime lastTimeLogin) {
 		this.lastTimeLogin = lastTimeLogin;
 		return this;
 	}
@@ -242,11 +242,11 @@ public class AsApiDevice implements Serializable {
 	 * @return lastTimeLogin
 	 **/
 	@JsonProperty("lastTimeLogin")
-	public Date getLastTimeLogin() {
+	public LocalDateTime getLastTimeLogin() {
 		return lastTimeLogin;
 	}
 
-	public void setLastTimeLogin(Date lastTimeLogin) {
+	public void setLastTimeLogin(LocalDateTime lastTimeLogin) {
 		this.lastTimeLogin = lastTimeLogin;
 	}
 

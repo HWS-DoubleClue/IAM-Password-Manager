@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.as.policy;
 
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,7 +15,6 @@ import javax.persistence.EntityManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tomcat.jni.User;
 
 import com.doubleclue.comm.thrift.CloudSafeOwner;
 import com.doubleclue.dcem.admin.logic.AdminModule;
@@ -318,7 +318,7 @@ public class AuthenticationLogic {
 				if (userFingerprintEntity != null && authenticateResponse.isStayLoggedInAllowed() == true) {
 					fingerprintLogic.updateFingerprint(userFingerprintEntity);
 					authenticateResponse.setSessionCookie(userFingerprintEntity.getFingerprint());
-					authenticateResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().getTime() / 1000));
+					authenticateResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().toEpochSecond(ZoneOffset.UTC) / 1000));
 				}
 				if (dcemUser.getPassCounter() > 0) {
 					userLogic.resetPasswordCounter(dcemUser);
@@ -570,7 +570,7 @@ public class AuthenticationLogic {
 					if (userFingerprintEntity != null && dcemPolicy.isEnableSessionAuthentication() == true) {
 						fingerprintLogic.updateFingerprint(userFingerprintEntity);
 						apiMessageResponse.setSessionCookie(userFingerprintEntity.getFingerprint());
-						apiMessageResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().getTime() / 1000));
+						apiMessageResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().toEpochSecond(ZoneOffset.UTC) / 1000));
 						apiMessageResponse.setStayLoggedInAllowed(dcemPolicy.isEnableSessionAuthentication());
 					}
 				}

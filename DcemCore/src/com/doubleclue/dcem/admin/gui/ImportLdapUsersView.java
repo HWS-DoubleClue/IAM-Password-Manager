@@ -1,8 +1,8 @@
 package com.doubleclue.dcem.admin.gui;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -83,12 +83,12 @@ public class ImportLdapUsersView extends DcemView {
 	List<DcemGroup> groupSearchMap;
 
 	SendByEnum sendBy;
-	Date validTill;
+	LocalDateTime validTill;
 	boolean createActivationCode;
 	boolean createActivationCodeExisting;
 
 	SendByEnum sendByGroup;
-	Date validTillGroup;
+	LocalDateTime validTillGroup;
 	boolean createActivationCodeGroup;
 	boolean createActivationCodeExistingGroup;
 
@@ -242,11 +242,11 @@ public class ImportLdapUsersView extends DcemView {
 		this.sendByGroup = sendByGroup;
 	}
 
-	public Date getValidTillGroup() {
+	public LocalDateTime getValidTillGroup() {
 		return validTillGroup;
 	}
 
-	public void setValidTillGroup(Date validTillGroup) {
+	public void setValidTillGroup(LocalDateTime validTillGroup) {
 		this.validTillGroup = validTillGroup;
 	}
 
@@ -479,11 +479,11 @@ public class ImportLdapUsersView extends DcemView {
 		this.sendBy = sendBy;
 	}
 
-	public Date getValidTill() {
+	public LocalDateTime getValidTill() {
 		return validTill;
 	}
 
-	public void setValidTill(Date validTill) {
+	public void setValidTill(LocalDateTime validTill) {
 		this.validTill = validTill;
 	}
 

@@ -6,6 +6,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -178,7 +180,7 @@ public class OpenIdUser {
 	}
 
 	public String getJwtString(OpenIdScope[] scopes, OpenIdClaimsRequest claimsRequest, SignatureAlgorithm signatureAlgorithm, String apiSecret, String issuer,
-			String id, long expiresInMillis, String audience, String nonce, String accessToken, String authCode, Date authTime) {
+			String id, long expiresInMillis, String audience, String nonce, String accessToken, String authCode, LocalDateTime authTime) {
 
 		Map<String, Object> jwtClaims = getRequestedClaims(scopes, claimsRequest);
 		jwtClaims.put(OpenIdClaim.ACR.toString(), getAcr());
@@ -382,9 +384,9 @@ public class OpenIdUser {
 		return getClaim(OpenIdClaim.AUTH_CODE_HASH);
 	}
 
-	public void setAuthTime(Date authTime) {
+	public void setAuthTime(LocalDateTime authTime) {
 		if (authTime != null) {
-			setClaim(OpenIdClaim.AUTH_TIME, authTime.getTime() / 1000);
+			setClaim(OpenIdClaim.AUTH_TIME, authTime.toEpochSecond(ZoneOffset.UTC) / 1000);	
 		}
 	}
 

@@ -3,7 +3,9 @@ package com.doubleclue.dcem.core.licence;
 import java.security.spec.AlgorithmParameterSpec;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -123,12 +125,12 @@ public class LicenceLogic implements ReloadClassInterface {
 		if (licenceKeyContent == null) {
 			return;
 		}
-		Date expiryDate = licenceKeyContent.getExpiresOn();
-		if (expiryDate.before(new Date()) && (application == null || application != AuthApplication.DCEM)) {
+		LocalDateTime expiryDate = licenceKeyContent.getLdtExpiresOn();
+		if (expiryDate.isBefore(LocalDateTime.now()) && (application == null || application != AuthApplication.DCEM)) {
 			boolean shouldAllow = false;
 			if (allowChanceAfterExpiration) {
-				int daysPassed = (int) Math.abs(((new Date().getTime() - expiryDate.getTime()) / 24 * 60 * 60 * 1000));
-				if (daysPassed < DcemConstants.LICENCE_ACTIVATION_EXPIRY_GRACE_PERIOD_DAYS) {
+				LocalDateTime localDateTime = LocalDateTime.now().plusDays(LICENCE_WARNING_USER_THRESHOLD_PERCENTAGE);
+				if (expiryDate.isAfter(localDateTime)) {
 					shouldAllow = expiredLicenceUserShouldAuthenticate;
 					expiredLicenceUserShouldAuthenticate = !expiredLicenceUserShouldAuthenticate;
 				}
@@ -330,8 +332,8 @@ public class LicenceLogic implements ReloadClassInterface {
 		List<DcemReporting> alerts = new ArrayList<DcemReporting>();
 		AdminTenantData adminTenantData = adminModule.getTenantData();
 		LicenceKeyContent licenceKeyContent = adminTenantData.getLicenceKeyContent();
-		Date expiryDate = licenceKeyContent.getExpiresOn();
-		Date now = new Date();
+		LocalDateTime expiryDate = licenceKeyContent.getLdtExpiresOn();
+		LocalDateTime now = LocalDateTime.now();
 		int userCount = userLogic.getTotalUserCount();
 		int maxUsers = licenceKeyContent.getMaxUsers();
 
@@ -349,21 +351,21 @@ public class LicenceLogic implements ReloadClassInterface {
 						AlertSeverity.WARNING));
 			}
 		}
-		int daysElapsed = getDaysBetweenDates(now, expiryDate);
-		if (expiryDate.before(now)) {
-			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
-					operatorSessionBean.getLocale());
-			if (daysElapsed < DcemConstants.LICENCE_ACTIVATION_EXPIRY_GRACE_PERIOD_DAYS) {
-				alerts.add(createAlertMessage(getLocalisedWarning("licenceExpiredGracePeriod", df.format(expiryDate)),
-						AlertSeverity.ERROR));
+		
+		
+		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, operatorSessionBean.getLocale());
+		if (expiryDate.isBefore(now)) {
+			LocalDateTime localDateTimeExpire = expiryDate.plusDays(DcemConstants.LICENCE_ACTIVATION_EXPIRY_GRACE_PERIOD_DAYS);
+			
+			if (expiryDate.isBefore(localDateTimeExpire)) {
+				alerts.add(createAlertMessage(getLocalisedWarning("licenceExpiredGracePeriod", df.format(expiryDate)),	AlertSeverity.ERROR));
 			} else {
-				alerts.add(createAlertMessage(getLocalisedWarning("licenceExpired", df.format(expiryDate)),
-						AlertSeverity.ERROR));
+				alerts.add(createAlertMessage(getLocalisedWarning("licenceExpired", df.format(expiryDate)),	AlertSeverity.ERROR));
 			}
 		} else {
-			if (daysElapsed < DcemConstants.LICENCE_ACTIVATION_EXPIRY_GRACE_PERIOD_DAYS) {
-				alerts.add(createAlertMessage(getLocalisedWarning("licenceAlmostExpired", daysElapsed),
-						AlertSeverity.WARNING));
+			LocalDateTime localDateTimeWarinig = expiryDate.minusDays(DcemConstants.LICENCE_ACTIVATION_EXPIRY_GRACE_PERIOD_DAYS);
+			if (localDateTimeWarinig.isBefore(now)) {
+				alerts.add(createAlertMessage(getLocalisedWarning("licenceAlmostExpired", df.format(expiryDate)),	AlertSeverity.WARNING));
 			}
 		}
 		return alerts;
@@ -430,7 +432,7 @@ public class LicenceLogic implements ReloadClassInterface {
 		alertMessage.setSeverity(severity);
 		alertMessage.setInfo(message);
 		alertMessage.setShowOnDashboard(true);
-		alertMessage.setLocalDateTime(LocalDateTime.now(adminModule.getTimezone().toZoneId())); 
+		alertMessage.setLocalDateTime(LocalDateTime.now()); 
 		alertMessage.setSource("Licence Administration");
 		return alertMessage;
 	}

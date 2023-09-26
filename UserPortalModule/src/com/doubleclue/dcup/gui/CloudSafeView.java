@@ -9,8 +9,8 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.Deflater;
@@ -44,6 +44,7 @@ import org.primefaces.model.TreeNode;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.MenuModel;
+
 import com.doubleclue.comm.thrift.CloudSafeOptions;
 import com.doubleclue.comm.thrift.CloudSafeOwner;
 import com.doubleclue.dcem.as.entities.CloudSafeEntity;
@@ -110,7 +111,7 @@ public class CloudSafeView extends AbstractPortalView {
 
 	private List<CloudSafeEntity> currentSelectedFiles;
 	private List<DcemUploadFile> uploadedFiles;
-	private Date expiryDate;
+	private LocalDateTime expiryDate;
 
 	private boolean confirmedUpload = false;
 	private boolean uploadingSharedFile = false;
@@ -252,7 +253,7 @@ public class CloudSafeView extends AbstractPortalView {
 		return DataUnit.getByteCountAsString(limit);
 	}
 
-	public Date getLicenceExpires() {
+	public LocalDateTime getLicenceExpires() {
 		CloudSafeLimitEntity cloudSafeLimitEntity = cloudSafeLogic.getCloudSafeLimitEntity(loggedInUser.getId());
 		return cloudSafeLimitEntity != null ? cloudSafeLimitEntity.getExpiryDate() : null;
 
@@ -1134,11 +1135,11 @@ public class CloudSafeView extends AbstractPortalView {
 		}
 	}
 
-	public Date getExpiryDate() {
+	public LocalDateTime getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDateTime expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 

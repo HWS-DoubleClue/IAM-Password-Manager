@@ -1,7 +1,7 @@
 package com.doubleclue.dcem.as.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,8 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.primefaces.model.SortOrder;
@@ -27,7 +25,6 @@ import com.doubleclue.dcem.as.restapi.model.AsApiMsgStatus;
 import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
-import com.doubleclue.dcem.as.entities.PolicyAppEntity;
 import com.doubleclue.dcem.core.gui.DcemGui;
 import com.doubleclue.dcem.core.outofscope.DbJsonMapConverter;
 import com.doubleclue.dcem.core.utils.DisplayModes;
@@ -63,9 +60,8 @@ public class MessageEntity extends EntityInterface implements Serializable {
 	private long id;
 
 	@Column(nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
 	@DcemGui(sortOrder = SortOrder.DESCENDING)
-	private Date createdOn;
+	private LocalDateTime createdOn;
 
 	@ManyToOne
 	@JoinColumn(name = "userId", nullable = false, foreignKey = @ForeignKey(name = "FK_APP_MSG_USER"), insertable = true, updatable = false)
@@ -141,7 +137,7 @@ public class MessageEntity extends EntityInterface implements Serializable {
 		this.id = id;
 		this.user = user;
 		this.template = template;
-		createdOn = new Date();
+		createdOn = LocalDateTime.now();
 	}
 
 	public DcemUser getUser() {
@@ -168,11 +164,11 @@ public class MessageEntity extends EntityInterface implements Serializable {
 		this.template = template;
 	}
 
-	public Date getCreatedOn() {
+	public LocalDateTime getCreatedOn() {
 		return createdOn;
 	}
 
-	public void setCreatedOn(Date createdOn) {
+	public void setCreatedOn(LocalDateTime createdOn) {
 		this.createdOn = createdOn;
 	}
 

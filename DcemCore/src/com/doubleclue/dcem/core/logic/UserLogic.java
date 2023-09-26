@@ -2,9 +2,9 @@ package com.doubleclue.dcem.core.logic;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -496,7 +496,7 @@ public class UserLogic {
 		if (user.isDisabled()) {
 			return 1;
 		}
-		Date now = new Date();
+		LocalDateTime now = LocalDateTime.now();
 		if (user.getAcSuspendedTill() == null) {
 			return 0;
 		}
@@ -514,9 +514,7 @@ public class UserLogic {
 		int fails = user.getFailActivations();
 		if (fails >= maxFailedActivations) {
 			int tempDisabled = retryActivationDelayinMinutes;
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.MINUTE, tempDisabled);
-			user.setAcSuspendedTill(calendar.getTime());
+			user.setAcSuspendedTill(LocalDateTime.now().plusMinutes(retryActivationDelayinMinutes));
 			return tempDisabled;
 		} else {
 			user.setFailActivations(fails + 1);
@@ -622,9 +620,7 @@ public class UserLogic {
 	public void suspendUser(DcemUser dcemUser) {
 		if (dcemUser != null) {
 			int suspendedDuration = adminModule.getPreferences().getSuspendUserDuration();
-			Calendar suspendedTill = Calendar.getInstance();
-			suspendedTill.add(Calendar.MINUTE, suspendedDuration);
-			dcemUser.setAcSuspendedTill(suspendedTill.getTime());
+			dcemUser.setAcSuspendedTill(LocalDateTime.now().plusMinutes(suspendedDuration));
 			asModuleApi.killUserDevices(dcemUser);
 		}
 	}
@@ -669,7 +665,7 @@ public class UserLogic {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaUpdate<DcemUser> updateCriteria = cb.createCriteriaUpdate(DcemUser.class);
 		Root<DcemUser> root = updateCriteria.from(DcemUser.class);
-		updateCriteria.set(root.get(DcemUser_.lastLogin.getName()), new Date());
+		updateCriteria.set(root.get(DcemUser_.lastLogin.getName()), LocalDateTime.now());
 		updateCriteria.set(root.get(DcemUser_.passCounter.getName()), 0);
 		updateCriteria.where(cb.equal(root.get("id"), user.getId()));
 		em.createQuery(updateCriteria).executeUpdate();

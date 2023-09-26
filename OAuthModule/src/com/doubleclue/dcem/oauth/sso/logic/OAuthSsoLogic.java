@@ -2,7 +2,7 @@ package com.doubleclue.dcem.oauth.sso.logic;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -172,7 +172,7 @@ public class OAuthSsoLogic implements Serializable {
 			OpenIdClaimsRequest userInfoClaimsRequest = authnRequest.getClaimRequestParameter() != null
 					? authnRequest.getClaimRequestParameter().getUserInfo()
 					: null;
-			OAuthTokenEntity tokenEntity = oauthLogic.addUpdateTokenEntity(id, authSkipped ? null : new Date(), true, true, authnRequest.getOpenIdScopes(),
+			OAuthTokenEntity tokenEntity = oauthLogic.addUpdateTokenEntity(id, authSkipped ? null : LocalDateTime.now(), true, true, authnRequest.getOpenIdScopes(),
 					userInfoClaimsRequest);
 
 			boolean addIdToken = false;

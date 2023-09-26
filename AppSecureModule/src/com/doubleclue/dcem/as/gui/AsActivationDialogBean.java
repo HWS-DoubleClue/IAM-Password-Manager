@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.as.gui;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.enterprise.context.Conversation;
@@ -55,12 +55,12 @@ public class AsActivationDialogBean extends DcemDialog {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "activationDialog.invalidUser");
 				return false;
 			}
-			Date date = actionObject.getValidTill();
-			if (date == null) {
+			LocalDateTime localDateTime = actionObject.getValidTill();
+			if (localDateTime == null) {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 				return false;
 			}
-			if (date.before(new Date())) {
+			if (localDateTime.isBefore(LocalDateTime.now())) {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 				return false;
 			}

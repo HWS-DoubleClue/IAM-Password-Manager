@@ -1,10 +1,9 @@
 package com.doubleclue.dcem.core.as;
 
+import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-import com.doubleclue.dcem.admin.gui.WelcomeView.SelectedFormat;
 import com.doubleclue.dcem.admin.logic.SendByEnum;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
@@ -13,9 +12,9 @@ import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.logic.JndiProxyParam;
 
 public interface AsModuleApi {
-	public String createActivationCode(DcemUser dcemUser, Date validTill, SendByEnum sendBy, String info) throws DcemException;
+	public String createActivationCode(DcemUser dcemUser, LocalDateTime validTill, SendByEnum sendBy, String info) throws DcemException;
 
-	public Date getActivationCodeDefaultValidTill();
+	public LocalDateTime getActivationCodeDefaultValidTill();
 
 	public AuthenticateResponse authenticate(AuthApplication authApplication, int subId, String userLoginId, AuthMethod authMethod, String password, String passcode, AuthRequestParam requestParam)
 			throws DcemException;
@@ -39,7 +38,7 @@ public interface AsModuleApi {
 
 	public QueryLoginResponse queryLoginQrCode(String source, String sessionId, boolean pollOnly, int waitMaxTime) throws DcemException;
 
-	public void setUserCloudSafe(String name, String options, Date discardAfter, DcemUser dcemUser, boolean withAuditing, char[] password, byte[] content) throws DcemException;
+	public void setUserCloudSafe(String name, String options, LocalDateTime discardAfter, DcemUser dcemUser, boolean withAuditing, char[] password, byte[] content) throws DcemException;
 
 	public List<AuthMethod> getAllowedAuthMethods(AuthApplication authApplication, int subId, DcemUser dcemUser);
 

@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.as.gui;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
@@ -71,10 +72,8 @@ public class ActivationViewBean extends DcemView {
 		}
 
 		int hours = asModule.getPreferences().getActivationCodeDefaultValidTill();
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.HOUR_OF_DAY, hours);
 		ActivationCodeEntity activationCode = new ActivationCodeEntity();
-		activationCode.setValidTill(calendar.getTime());
+		activationCode.setValidTill(LocalDateTime.now().plusHours(hours));
 		actionObject = activationCode;
 		return activationCode;
 

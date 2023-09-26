@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
@@ -295,14 +296,10 @@ public class DcemUtils {
 			if (dcemGui.filterToValue().isEmpty() == false) {
 				filterToValue = Boolean.parseBoolean(dcemGui.filterToValue());
 			}
-		} else if ((cls.equals(Date.class)) || (cls.equals(Timestamp.class))
-				|| (cls.equals(java.sql.Date.class) || (cls.equals(LocalDateTime.class) || (cls.equals(LocalDate.class))))) {
-			Convert convert = field.getAnnotation(Convert.class);
-			if (convert != null && convert.converter().equals(EpochDateConverter.class)) {
-				variableType = VariableType.EPOCH_DATE;
-			} else {
-				variableType = VariableType.DATE;
-			}
+		} else if ((cls.equals(Date.class)) || (cls.equals(Timestamp.class)) || (cls.equals(LocalDateTime.class))) {
+			variableType = VariableType.DATE_TIME;
+		} else if (cls.equals(java.sql.Date.class) || cls.equals(LocalDate.class)) {
+			variableType = VariableType.DATE;
 		} else if (cls.isEnum()) {
 			variableType = VariableType.ENUM;
 			if (dcemGui.filterValue().isEmpty() == false) {
@@ -406,7 +403,7 @@ public class DcemUtils {
 			FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0, dcemGui.sortOrder());
 			viewVariable.setFilterItem(filterItem);
 		}
-		viewVariable.setKlass(cls);
+		viewVariable.setKlass((Class<Object>) cls);
 		return viewVariable;
 	}
 
@@ -769,8 +766,7 @@ public class DcemUtils {
 	 * @throws NoSuchFieldException
 	 * @throws DcemException
 	 */
-	public static String compareObjects(final Object oldObject, final Object newObject, boolean isNewObject)
-			throws DcemException {
+	public static String compareObjects(final Object oldObject, final Object newObject, boolean isNewObject) throws DcemException {
 		String nullString = isNewObject ? "" : "null";
 		String unicodeRightArrow = isNewObject ? "" : " > ";
 		try {
@@ -782,8 +778,7 @@ public class DcemUtils {
 			int modifiers;
 			for (Field oldField : oldObjectClass.getDeclaredFields()) {
 				modifiers = oldField.getModifiers();
-				if (Modifier.isStatic(modifiers) || (Modifier.isFinal(modifiers))
-						|| (Modifier.isTransient(modifiers))) {
+				if (Modifier.isStatic(modifiers) || (Modifier.isFinal(modifiers)) || (Modifier.isTransient(modifiers))) {
 					continue;
 				}
 				if (oldField.isAnnotationPresent(javax.persistence.Version.class)) {
@@ -810,8 +805,7 @@ public class DcemUtils {
 							stringBuilder.append(": ");
 							stringBuilder.append(Objects.isNull(oldImage) ? nullString : ":IMAGE AVAILABLE:");
 							stringBuilder.append(unicodeRightArrow);
-							stringBuilder.append(Objects.isNull(newImage) ? nullString
-									: (Objects.isNull(oldImage) ? ":IMAGE INSERTED:" : ":IMAGE UPDATED:"));
+							stringBuilder.append(Objects.isNull(newImage) ? nullString : (Objects.isNull(oldImage) ? ":IMAGE INSERTED:" : ":IMAGE UPDATED:"));
 							stringBuilder.append(fin);
 						}
 						continue;
@@ -822,10 +816,8 @@ public class DcemUtils {
 				}
 
 				if (cls.equals(String.class)) {
-					String oldString = (((String) oldField.get(oldObject)) != null) ? (String) oldField.get(oldObject)
-							: nullString;
-					String newString = (((String) newField.get(newObject)) != null) ? (String) newField.get(newObject)
-							: nullString;
+					String oldString = (((String) oldField.get(oldObject)) != null) ? (String) oldField.get(oldObject) : nullString;
+					String newString = (((String) newField.get(newObject)) != null) ? (String) newField.get(newObject) : nullString;
 					if (oldString.equals(newString) == false) {
 						stringBuilder.append(oldField.getName());
 						stringBuilder.append(": ");
@@ -835,8 +827,8 @@ public class DcemUtils {
 						} else if (dcemGui != null && dcemGui.variableType() == VariableType.STRING) {
 							stringBuilder.append(oldString.equals("null") ? oldString : ":LONG TEXT AVAILABLE:");
 							stringBuilder.append(unicodeRightArrow);
-							stringBuilder.append(newString.equals("null") ? newString
-									: (oldString.equals("null") ? ":LONG TEXT INSERTED:" : ":LONG TEXT UPDATED:"));
+							stringBuilder
+									.append(newString.equals("null") ? newString : (oldString.equals("null") ? ":LONG TEXT INSERTED:" : ":LONG TEXT UPDATED:"));
 						} else {
 							stringBuilder.append(oldString);
 							stringBuilder.append(unicodeRightArrow);
@@ -848,8 +840,7 @@ public class DcemUtils {
 					Integer oldInteger = (Integer) oldField.get(oldObject);
 					Integer newInteger = (Integer) newField.get(newObject);
 					if ((oldInteger == null && newInteger != null) || (oldInteger != null && newInteger == null)
-							|| (oldInteger != null && newInteger != null
-									&& oldInteger.intValue() != newInteger.intValue())) {
+							|| (oldInteger != null && newInteger != null && oldInteger.intValue() != newInteger.intValue())) {
 						stringBuilder.append(oldField.getName());
 						stringBuilder.append(": ");
 						stringBuilder.append((oldInteger != null ? oldInteger : nullString));
@@ -862,8 +853,7 @@ public class DcemUtils {
 						Long oldInteger = (Long) oldField.get(oldObject);
 						Long newInteger = (Long) newField.get(newObject);
 						if ((oldInteger == null && newInteger != null) || (oldInteger != null && newInteger == null)
-								|| (oldInteger != null && newInteger != null
-										&& oldInteger.longValue() != newInteger.longValue())) {
+								|| (oldInteger != null && newInteger != null && oldInteger.longValue() != newInteger.longValue())) {
 							stringBuilder.append(oldField.getName());
 							stringBuilder.append(": ");
 							stringBuilder.append((oldInteger != null ? oldInteger : nullString));
@@ -888,8 +878,7 @@ public class DcemUtils {
 					Boolean oldBoolean = (Boolean) oldField.get(oldObject);
 					Boolean newBoolean = (Boolean) newField.get(newObject);
 					if ((oldBoolean == null && newBoolean != null) || (oldBoolean != null && newBoolean == null)
-							|| (oldBoolean != null && newBoolean != null
-									&& oldBoolean.booleanValue() != newBoolean.booleanValue())) {
+							|| (oldBoolean != null && newBoolean != null && oldBoolean.booleanValue() != newBoolean.booleanValue())) {
 						stringBuilder.append(oldField.getName());
 						stringBuilder.append(": ");
 						stringBuilder.append((oldBoolean != null ? oldBoolean : nullString));
@@ -924,13 +913,10 @@ public class DcemUtils {
 						}
 					}
 				} else if (cls.equals(List.class)) {
-					List<?> oldList = Objects.isNull(oldField.get(oldObject)) == true ? new ArrayList<>()
-							: (List<?>) oldField.get(oldObject);
-					List<?> newList = Objects.isNull(oldField.get(newObject)) == true ? new ArrayList<>()
-							: (List<?>) oldField.get(newObject);
+					List<?> oldList = Objects.isNull(oldField.get(oldObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(oldObject);
+					List<?> newList = Objects.isNull(oldField.get(newObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(newObject);
 					if (oldList.size() != 0 || newList.size() != 0) {
-						Class<?> klass = oldList.size() == 0 ? newList.get(0).getClass().getSuperclass()
-								: oldList.get(0).getClass().getSuperclass();
+						Class<?> klass = oldList.size() == 0 ? newList.get(0).getClass().getSuperclass() : oldList.get(0).getClass().getSuperclass();
 						if (klass == EntityInterface.class) {
 							List<? extends EntityInterface> oldEntityList = (List<? extends EntityInterface>) oldList;
 							List<? extends EntityInterface> newEntityList = (List<? extends EntityInterface>) newList;
@@ -939,8 +925,7 @@ public class DcemUtils {
 								stringBuilder.append(": ");
 								stringBuilder.append(oldEntityList.size() == 0 ? nullString : ":LIST AVAILABLE:");
 								stringBuilder.append(unicodeRightArrow);
-								stringBuilder.append(newEntityList.size() == 0 ? "null"
-										: (oldEntityList.size() == 0 ? ":LIST INSERTED:" : ":LIST UPDATED:"));
+								stringBuilder.append(newEntityList.size() == 0 ? "null" : (oldEntityList.size() == 0 ? ":LIST INSERTED:" : ":LIST UPDATED:"));
 								stringBuilder.append(fin);
 							}
 						} else {
@@ -949,8 +934,7 @@ public class DcemUtils {
 								stringBuilder.append(": ");
 								stringBuilder.append(oldList.size() == 0 ? nullString : ":LIST AVAILABLE:");
 								stringBuilder.append(unicodeRightArrow);
-								stringBuilder.append(newList.size() == 0 ? "null"
-										: (oldList.size() == 0 ? ":LIST INSERTED:" : ":LIST UPDATED:"));
+								stringBuilder.append(newList.size() == 0 ? "null" : (oldList.size() == 0 ? ":LIST INSERTED:" : ":LIST UPDATED:"));
 								stringBuilder.append(fin);
 							}
 						}
@@ -987,10 +971,8 @@ public class DcemUtils {
 						}
 					}
 				} else if (cls.isEnum() == true) {
-					Enum<?> oldEnum = Objects.isNull(oldField.get(oldObject)) ? null
-							: (Enum<?>) oldField.get(oldObject);
-					Enum<?> newEnum = Objects.isNull(oldField.get(newObject)) ? null
-							: (Enum<?>) oldField.get(newObject);
+					Enum<?> oldEnum = Objects.isNull(oldField.get(oldObject)) ? null : (Enum<?>) oldField.get(oldObject);
+					Enum<?> newEnum = Objects.isNull(oldField.get(newObject)) ? null : (Enum<?>) oldField.get(newObject);
 					if (Objects.isNull(oldEnum) == false || Objects.isNull(newEnum) == false) {
 						if (oldEnum != newEnum) {
 							stringBuilder.append(oldField.getName());
@@ -1002,8 +984,7 @@ public class DcemUtils {
 						}
 					}
 				} else {
-					if (oldField.getAnnotation(DcemGui.class) != null
-							|| oldField.getName().equals(DcemConstants.USERPORTAL_PREFERNCESES_TYPE_COMPARE)) {
+					if (oldField.getAnnotation(DcemGui.class) != null || oldField.getName().equals(DcemConstants.USERPORTAL_PREFERNCESES_TYPE_COMPARE)) {
 						Object oldFieldValue = oldField.get(oldObject);
 						Object newFieldValue = oldField.get(newObject);
 						if (oldFieldValue == null && newFieldValue == null) {
@@ -1184,7 +1165,7 @@ public class DcemUtils {
 		cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
 		return cal.getTime();
 	}
-	
+
 	public static Date getLastDateOfMonth(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -1750,6 +1731,15 @@ public class DcemUtils {
 	public static boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
 		return os.contains("win");
+	}
+
+	public static LocalDateTime convertEpoch(long epoch) {
+		Instant instant = Instant.ofEpochMilli(epoch);
+		return instant.atZone(ZoneId.of("UTC")).toLocalDateTime();
+	}
+	
+	public static long convertToEpoch(LocalDateTime localDateTime) {
+		return localDateTime.toEpochSecond(ZoneOffset.UTC);
 	}
 
 }

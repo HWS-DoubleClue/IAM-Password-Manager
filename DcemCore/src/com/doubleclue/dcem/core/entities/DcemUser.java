@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.persistence.CascadeType;
@@ -31,8 +31,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
@@ -191,9 +189,8 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	@DcemGui()
 	boolean disabled;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY, visible = true)
-	Date acSuspendedTill; // if NUll then manually disabled.
+	LocalDateTime acSuspendedTill; // if NUll then manually disabled.
 
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY, visible = false)
 	private int failActivations;
@@ -226,8 +223,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	private String saveit;
 
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY, styleClass = "mediumInput", visible = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	Date lastLogin;
+	LocalDateTime lastLogin;
 
 	@Size(max = 32)
 	@Column(name = "prvMobile", length = 32, nullable = true)
@@ -466,11 +462,11 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 		this.jpaVersion = jpaVersion;
 	}
 
-	public Date getAcSuspendedTill() {
+	public LocalDateTime getAcSuspendedTill() {
 		return acSuspendedTill;
 	}
 
-	public void setAcSuspendedTill(Date acSuspendedTill) {
+	public void setAcSuspendedTill(LocalDateTime acSuspendedTill) {
 		this.acSuspendedTill = acSuspendedTill;
 	}
 
@@ -612,11 +608,11 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 		}
 	}
 
-	public Date getLastLogin() {
+	public LocalDateTime getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(Date lastLogin) {
+	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 

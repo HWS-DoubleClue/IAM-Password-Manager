@@ -1,6 +1,7 @@
 package com.doubleclue.dcem.oauth.servlets;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.enterprise.context.SessionScoped;
@@ -396,7 +397,7 @@ public class OAuthServlet extends HttpServlet {
 				if (client.getIdpSettings().isTraceRequests()) {
 					logger.info("OAuth - Received ROPC request:\n" + request.getJson());
 				}
-				OAuthTokenEntity entity = oauthLogic.addUpdateTokenEntity(new OAuthTokenId(client.getId(), user.getId()), new Date(), true, true, null,
+				OAuthTokenEntity entity = oauthLogic.addUpdateTokenEntity(new OAuthTokenId(client.getId(), user.getId()), LocalDateTime.now(), true, true, null,
 						null);
 				OAuthRequest response = new OAuthAccessTokenResponse(entity.getAccessToken(), OAuthTokenType.BEARER,
 						oauthModule.getModulePreferences().getAccessTokenLifetime(), entity.getRefreshToken());
@@ -416,7 +417,7 @@ public class OAuthServlet extends HttpServlet {
 			if (client.getIdpSettings().isTraceRequests()) {
 				logger.info("OAuth - Received Client Credentials request:\n" + request.getJson());
 			}
-			OAuthTokenEntity entity = oauthLogic.addUpdateTokenEntity(new OAuthTokenId(client.getId(), OAuthTokenId.EMPTY_USER), new Date(), true, false,
+			OAuthTokenEntity entity = oauthLogic.addUpdateTokenEntity(new OAuthTokenId(client.getId(), OAuthTokenId.EMPTY_USER), LocalDateTime.now(), true, false,
 					null, null);
 			OAuthRequest response = new OAuthAccessTokenResponse(entity.getAccessToken(), OAuthTokenType.BEARER,
 					oauthModule.getModulePreferences().getAccessTokenLifetime());

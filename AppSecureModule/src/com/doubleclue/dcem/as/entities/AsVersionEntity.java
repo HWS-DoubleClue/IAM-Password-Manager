@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.as.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,8 +17,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
@@ -83,9 +81,8 @@ public class AsVersionEntity extends EntityInterface implements Cloneable {
 	@JoinColumn(nullable = true, foreignKey = @ForeignKey(name = "FK_APP_VERSION_USER"), insertable = true, updatable = true)
 	private DcemUser user;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@DcemGui
-	Date expiresOn;
+	LocalDateTime expiresOn;
 
 	@Column(length = 255)
 	private String downloadUrl;
@@ -203,11 +200,11 @@ public class AsVersionEntity extends EntityInterface implements Cloneable {
 		this.disabled = disabled;
 	}
 
-	public Date getExpiresOn() {
+	public LocalDateTime getExpiresOn() {
 		return expiresOn;
 	}
 
-	public void setExpiresOn(Date expiresOn) {
+	public void setExpiresOn(LocalDateTime expiresOn) {
 		this.expiresOn = expiresOn;
 	}
 

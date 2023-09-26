@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.core.logic;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,11 +44,11 @@ public class UrlTokenLogic {
 		if (urlToken == null) {
 			urlToken = java.util.UUID.randomUUID().toString();
 		}
-		Date expiryDate;
+		LocalDateTime expiryDate;
 		if (validMinutes == 0) {
-			expiryDate = new Date(System.currentTimeMillis() + 86400000);
+			expiryDate = LocalDateTime.now().plusDays(1000);
 		} else {
-			expiryDate = new Date(System.currentTimeMillis() + validMinutes * 60000);
+			expiryDate = LocalDateTime.now().plusMinutes(validMinutes);
 		}
 		entity.setUrlToken(urlToken);
 		entity.setExpiryDate(expiryDate);
@@ -66,7 +66,7 @@ public class UrlTokenLogic {
 			}
 			throw new DcemException(DcemErrorCodes.URL_TOKEN_INVALID, null);
 		}
-		if (entity.getExpiryDate().getTime() < new Date().getTime()) {
+		if (entity.getExpiryDate().isBefore(LocalDateTime.now())) {
 			throw new DcemException(DcemErrorCodes.URT_TOKEN_OUT_OF_DATE, null);
 		}
 		if (entity.getUrlTokenType().toString().equals(type) == false) {

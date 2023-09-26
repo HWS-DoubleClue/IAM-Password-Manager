@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.admin.gui;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -35,7 +35,7 @@ public class AdminActivationDialog extends DcemDialog {
 	@Inject
 	GroupLogic groupLogic;
 
-	Date validTill;
+	LocalDateTime validTill;
 
 	SendByEnum sendBy;
 
@@ -59,8 +59,8 @@ public class AdminActivationDialog extends DcemDialog {
 		if (validTill == null) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 			return false;
-		}
-		if (validTill.before(new Date())) {
+		}   
+		if (validTill.isBefore(LocalDateTime.now())) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 			return false;
 		}
@@ -106,11 +106,11 @@ public class AdminActivationDialog extends DcemDialog {
 
 	}
 
-	public Date getValidTill() {
+	public LocalDateTime getValidTill() {
 		return validTill;
 	}
 
-	public void setValidTill(Date validTill) {
+	public void setValidTill(LocalDateTime validTill) {
 		this.validTill = validTill;
 	}
 

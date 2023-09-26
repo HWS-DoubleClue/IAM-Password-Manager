@@ -1,7 +1,7 @@
 package com.doubleclue.dcem.as.entities;
 
-import java.util.Arrays;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
@@ -20,8 +20,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
@@ -113,7 +111,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		super();
 	}
 
-	public CloudSafeEntity(CloudSafeOwner owner, DcemUser user, DeviceEntity device, String name, Date discardAfter, String options, boolean isFolder,
+	public CloudSafeEntity(CloudSafeOwner owner, DcemUser user, DeviceEntity device, String name, LocalDateTime discardAfter, String options, boolean isFolder,
 			CloudSafeEntity parent, DcemUser lastModifiedUser) {
 		super();
 		this.owner = owner;
@@ -176,13 +174,11 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	// boolean sign;
 
 	@DcemGui
-	@Temporal(TemporalType.TIMESTAMP)
-	Date lastModified;
+	LocalDateTime lastModified;
 
 	@DcemGui
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = true)
-	Date discardAfter;
+	LocalDateTime discardAfter;
 
 	String options;
 
@@ -266,11 +262,11 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.device = device;
 	}
 
-	public Date getLastModified() {
+	public LocalDateTime getLastModified() {
 		return lastModified;
 	}
 
-	public void setLastModified(Date lastModified) {
+	public void setLastModified(LocalDateTime lastModified) {
 		this.lastModified = lastModified;
 	}
 
@@ -315,14 +311,14 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		if (discardAfter == null) {
 			return 0;
 		}
-		return discardAfter.getTime();
+		return discardAfter.toEpochSecond(ZoneOffset.UTC);
 	}
 
-	public Date getDiscardAfter() {
+	public LocalDateTime getDiscardAfter() {
 		return discardAfter;
 	}
 
-	public void setDiscardAfter(Date discardAfter) {
+	public void setDiscardAfter(LocalDateTime discardAfter) {
 		this.discardAfter = discardAfter;
 	}
 

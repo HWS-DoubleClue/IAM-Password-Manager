@@ -43,6 +43,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -380,7 +381,7 @@ public class SecureServerUtils {
 	 * @throws Exception
 	 */
 	public static KeyStore createKeyStore(int keyLength, String cn, Certificate[] inheritCertChain, String ipAddress, char[] password, PrivateKey caPrivatKey,
-			String alias, Date notAfter) throws Exception {
+			String alias, LocalDateTime notAfter) throws Exception {
 		KeyPair keyPair = SecureUtils.generateKeyPair(keyLength);
 
 		X509Certificate issuerCert = null;
@@ -399,9 +400,8 @@ public class SecureServerUtils {
 			caPrivatKey = keyPair.getPrivate(); // selfsign
 			issuerCn = cn;
 		}
-
 		X509Certificate cert = createCertificate(keyPair.getPublic(), caPrivatKey, issuerCn, cn, BigInteger.valueOf(RandomUtils.getRandomLong()), ipAddress,
-				notAfter);
+				 DcemUtils.convertToDate(notAfter));
 		if (inheritCertChain == null) {
 			certChain = new Certificate[1];
 			certChain[0] = cert;

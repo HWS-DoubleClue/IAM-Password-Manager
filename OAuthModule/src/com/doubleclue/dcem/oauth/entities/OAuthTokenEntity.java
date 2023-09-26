@@ -1,8 +1,7 @@
 package com.doubleclue.dcem.oauth.entities;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -10,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @SuppressWarnings("serial")
 @Entity
@@ -31,22 +28,19 @@ public class OAuthTokenEntity implements Serializable {
 	private OAuthTokenId id;
 
 	@Column(name = "last_authenticated")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastAuthenticated;
+	private LocalDateTime lastAuthenticated;
 
 	@Column(name = "access_token")
 	private String accessToken;
 
 	@Column(name = "at_expires_on")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date accessTokenExpiresOn;
+	private LocalDateTime accessTokenExpiresOn;
 
 	@Column(name = "refresh_token")
 	private String refreshToken;
 
 	@Column(name = "rt_expires_on")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date refreshTokenExpiresOn;
+	private LocalDateTime refreshTokenExpiresOn;
 
 	@Column(name = "scope")
 	private String scope;
@@ -69,11 +63,11 @@ public class OAuthTokenEntity implements Serializable {
 		this.id = id;
 	}
 
-	public Date getLastAuthenticated() {
+	public LocalDateTime getLastAuthenticated() {
 		return lastAuthenticated;
 	}
 
-	public void setLastAuthenticated(Date lastAuthenticated) {
+	public void setLastAuthenticated(LocalDateTime lastAuthenticated) {
 		this.lastAuthenticated = lastAuthenticated;
 	}
 
@@ -87,16 +81,14 @@ public class OAuthTokenEntity implements Serializable {
 
 	public void setAccessToken(String accessToken, int accessTokenLifetime) {
 		this.accessToken = accessToken;
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, accessTokenLifetime);
-		this.accessTokenExpiresOn = calendar.getTime();
+		this.accessTokenExpiresOn = LocalDateTime.now().plusSeconds(accessTokenLifetime);
 	}
 
-	public Date getAccessTokenExpiresOn() {
+	public LocalDateTime getAccessTokenExpiresOn() {
 		return accessTokenExpiresOn;
 	}
 
-	public void setAccessTokenExpiresOn(Date accessTokenExpiresOn) {
+	public void setAccessTokenExpiresOn(LocalDateTime accessTokenExpiresOn) {
 		this.accessTokenExpiresOn = accessTokenExpiresOn;
 	}
 
@@ -110,16 +102,14 @@ public class OAuthTokenEntity implements Serializable {
 
 	public void setRefreshToken(String refreshToken, int refreshTokenLifetime) {
 		this.refreshToken = refreshToken;
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, refreshTokenLifetime);
-		this.refreshTokenExpiresOn = calendar.getTime();
+		this.refreshTokenExpiresOn = LocalDateTime.now().plusSeconds(refreshTokenLifetime);
 	}
 
-	public Date getRefreshTokenExpiresOn() {
+	public LocalDateTime getRefreshTokenExpiresOn() {
 		return refreshTokenExpiresOn;
 	}
 
-	public void setRefreshTokenExpiresOn(Date refreshTokenExpiresOn) {
+	public void setRefreshTokenExpiresOn(LocalDateTime refreshTokenExpiresOn) {
 		this.refreshTokenExpiresOn = refreshTokenExpiresOn;
 	}
 

@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,6 +67,7 @@ import com.doubleclue.dcem.core.logic.ConfigLogic;
 import com.doubleclue.dcem.core.logic.GroupLogic;
 import com.doubleclue.dcem.core.logic.JpaLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
+import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
 import com.doubleclue.dcem.subjects.AsCloudSafeSubject;
 import com.doubleclue.utils.KaraUtils;
@@ -337,7 +338,7 @@ public class CloudSafeLogic {
 		if (cloudSafeEntity.isRecycled()) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, "Path: " + path);
 		}
-		if (cloudSafeEntity.getDiscardAfter() != null && cloudSafeEntity.getDiscardAfter().before(new Date())) {
+		if (cloudSafeEntity.getDiscardAfter() != null && cloudSafeEntity.getDiscardAfter().isBefore(LocalDateTime.now())) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, "file expired: " + path);
 		}
 		return cloudSafeEntity;
@@ -349,7 +350,7 @@ public class CloudSafeLogic {
 		query.setParameter(1, dcemUser);
 		query.setParameter(2, groups.size() > 0 ? groups : null);
 		query.setParameter(3, cloudSafeEntity);
-		query.setParameter(4, new Date());
+		query.setParameter(4, LocalDateTime.now());
 		List<CloudSafeShareEntity> list = query.getResultList();
 		CloudSafeShareEntity cloudSafeShareEntity = null;
 
@@ -521,13 +522,11 @@ public class CloudSafeLogic {
 						cloudSafeEntity.getParent() == null ? getCloudSafeRoot().getId() : cloudSafeEntity.getParent().getId(), cloudSafeEntity.getGroup());
 			}
 			if (cloudSafeEntity.getLastModified() != null) {
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(cloudSafeEntity.getLastModified());
-				calendar.add(Calendar.SECOND, 1);
-				logger.debug("UPDATE CloudSafe File" + cloudSafeEntity.getName() + " New Time: " + calendar.getTime() + " Original:"
+				LocalDateTime localDateTime = cloudSafeEntity.getLastModified().plusSeconds(1);
+				logger.debug("UPDATE CloudSafe File" + cloudSafeEntity.getName() + " New Time: " + localDateTime + " Original:"
 						+ originalDbEntity.getLastModified());
-				if (calendar.getTime().before(originalDbEntity.getLastModified())) {
-					logger.debug("CLOUDDATA_OUT_OF_DATE" + cloudSafeEntity.getName() + " New Time: " + calendar.getTime() + " Original:"
+				if (localDateTime.isBefore(originalDbEntity.getLastModified())) {
+					logger.debug("CLOUDDATA_OUT_OF_DATE" + cloudSafeEntity.getName() + " New Time: " + localDateTime + " Original:"
 							+ originalDbEntity.getLastModified());
 					throw new DcemException(DcemErrorCodes.CLOUDDATA_OUT_OF_DATE, originalDbEntity.toString());
 				}
@@ -540,7 +539,7 @@ public class CloudSafeLogic {
 			originalDbEntity.setUser(cloudSafeEntity.getUser());
 			originalDbEntity.setDevice(cloudSafeEntity.getDevice());
 			originalDbEntity.setDiscardAfter(cloudSafeEntity.getDiscardAfter());
-			originalDbEntity.setLastModified(new Date());
+			originalDbEntity.setLastModified(LocalDateTime.now());
 			originalDbEntity.setName(cloudSafeEntity.getName());
 			originalDbEntity.setLastModifiedUser(loggedInUser);
 			originalDbEntity.setLength(cloudSafeEntity.getLength());
@@ -565,7 +564,7 @@ public class CloudSafeLogic {
 					}
 				}
 				cloudSafeEntity.setGcm(true);
-				cloudSafeEntity.setLastModified(new Date());
+				cloudSafeEntity.setLastModified(LocalDateTime.now());
 				cloudSafeEntity.setLastModifiedUser(loggedInUser);
 				em.persist(cloudSafeEntity);
 				cloudSafeEntity.setNewEntity(true);
@@ -614,18 +613,9 @@ public class CloudSafeLogic {
 
 	@DcemTransactional
 	public void deleteExpiredCloudSafe() {
-		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
-		c.add(Calendar.DATE, -1); // give one day chance
-		c.set(Calendar.HOUR_OF_DAY, 23);
-		c.set(Calendar.MINUTE, 59);
-		c.set(Calendar.SECOND, 59);
-		Date expiryDate = c.getTime();
-
 		deleteExpiredCloudShare();
-
 		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_EXPIRED_DATA, CloudSafeEntity.class);
-		query.setParameter(1, expiryDate);
+		query.setParameter(1, LocalDateTime.now().minusDays(1));
 		List<CloudSafeEntity> list = query.getResultList();
 		for (CloudSafeEntity entity : list) {
 			try {
@@ -642,16 +632,8 @@ public class CloudSafeLogic {
 	}
 
 	private void deleteExpiredCloudShare() {
-		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
-		c.add(Calendar.DATE, -1); // give one day chance
-		c.set(Calendar.HOUR_OF_DAY, 23);
-		c.set(Calendar.MINUTE, 59);
-		c.set(Calendar.SECOND, 59);
-		Date expiryDate = c.getTime();
-
 		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_DISCARDED, CloudSafeShareEntity.class);
-		query.setParameter(1, expiryDate);
+		query.setParameter(1, LocalDateTime.now().minusDays(1));
 		List<CloudSafeShareEntity> list = query.getResultList();
 		for (CloudSafeShareEntity entity : list) {
 			em.remove(entity);
@@ -814,7 +796,7 @@ public class CloudSafeLogic {
 		query.setParameter(1, dcemUser);
 		query.setParameter(2, groups.size() > 0 ? groups : null);
 		query.setParameter(3, isNullOrEmpty(nameFilter) ? "%" : nameFilter);
-		query.setParameter(4, new Date());
+		query.setParameter(4, LocalDateTime.now());
 		HashMap<Integer, CloudSafeShareEntity> sharedCloudSafeFilesMap = new HashMap<Integer, CloudSafeShareEntity>();
 		List<CloudSafeShareEntity> list = query.getResultList();
 		for (CloudSafeShareEntity cloudSafeShareEntity : list) {
@@ -839,7 +821,7 @@ public class CloudSafeLogic {
 		query.setParameter(1, dcemUser);
 		query.setParameter(2, groups.size() > 0 ? groups : null);
 		query.setParameter(3, cloudSafeEntity);
-		query.setParameter(4, new Date());
+		query.setParameter(4, LocalDateTime.now());
 		return query.getResultList();
 	}
 
@@ -892,46 +874,7 @@ public class CloudSafeLogic {
 		query.executeUpdate();
 	}
 
-	// public List<CloudSafeKey> getAccessibleCloudSafeKeys(int userId, String
-	// nameFilter, long modifiedFromEpoch,
-	// CloudSafeOwner owner) throws DcemException {
-	// DcemUser user = userLogic.getUser(userId);
-	// if (user == null) {
-	// throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for
-	// Cloud Data Filenames.");
-	// }
-	//
-	// Date now = new Date();
-	// Date modifiedFrom = new Date(modifiedFromEpoch);
-	// String like = nameFilter == null || nameFilter.isEmpty() ? "%" : nameFilter;
-	//
-	// TypedQuery<Object[]> query =
-	// em.createNamedQuery(CloudSafeEntity.GET_OWNED_FILE_KEYS, Object[].class);
-	// query.setParameter(1, like);
-	// query.setParameter(2, now);
-	// query.setParameter(3, user);
-	// query.setParameter(4, owner);
-	// query.setParameter(5, modifiedFrom);
-	// List<Object[]> keyArrays = query.getResultList();
-	//
-	// List<DcemGroup> groups = groupLogic.getUserGroups(user);
-	// query = em.createNamedQuery(CloudSafeShareEntity.GET_USER_SHARE_FILES,
-	// Object[].class);
-	// query.setParameter(1, like);
-	// query.setParameter(2, now);
-	// query.setParameter(3, user);
-	// query.setParameter(4, groups.size() > 0 ? groups : null);
-	// query.setParameter(5, owner);
-	// query.setParameter(6, modifiedFrom);
-	// keyArrays.addAll(query.getResultList());
-	//
-	// List<CloudSafeKey> keys = new ArrayList<>(keyArrays.size());
-	// for (Object[] keyDetails : keyArrays) {
-	// keys.add(new CloudSafeKey((CloudSafeOwner) keyDetails[1], (String)
-	// keyDetails[0]));
-	// }
-	// return keys;
-	// }
+	
 
 	public List<CloudSafeEntity> getCloudSafeAllFileList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, boolean withShareFiles)
 			throws DcemException {
@@ -939,12 +882,11 @@ public class CloudSafeLogic {
 		if (user == null) {
 			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for Cloud Data Filenames.");
 		}
-		Date now = new Date();
-		Date modifiedFrom = new Date(modifiedFromEpoch);
+		LocalDateTime modifiedFrom = DcemUtils.convertEpoch(modifiedFromEpoch);
 		String like = nameFilter == null || nameFilter.isEmpty() ? "%" : nameFilter;
 		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_OWNED_FILE_KEYS, CloudSafeEntity.class);
 		query.setParameter(1, like);
-		query.setParameter(2, now);
+		query.setParameter(2, LocalDateTime.now());
 		query.setParameter(3, user);
 		query.setParameter(4, owner);
 		query.setParameter(5, modifiedFrom);
@@ -964,8 +906,8 @@ public class CloudSafeLogic {
 		if (user == null) {
 			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for Cloud Data Filenames.");
 		}
-		Date now = new Date();
-		Date modifiedFrom = new Date(modifiedFromEpoch);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime modifiedFrom = DcemUtils.convertEpoch(modifiedFromEpoch);
 		String like = nameFilter == null || nameFilter.isEmpty() ? "%" : nameFilter;
 
 		List<DcemGroup> allUsersGroups = groupLogic.getAllUserGroups(user);
@@ -998,7 +940,7 @@ public class CloudSafeLogic {
 				cloudSafeKey.setOwner(CloudSafeOwner.GROUP);
 			}
 			list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
-					cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().getTime() : 0, null, cloudSafeEntity.getLength(), null, true,
+					cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) : 0, null, cloudSafeEntity.getLength(), null, true,
 					false));
 		}
 		if (withShareFiles) {
@@ -1032,7 +974,7 @@ public class CloudSafeLogic {
 					cloudSafeKey.setDbId(cloudSafeEntity.getId());
 					// cloudSafeKey.setOwner(cloudSafeEntity.getOwner());
 					list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
-							cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().getTime() : 0, null, cloudSafeEntity.getLength(),
+							cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) : 0, null, cloudSafeEntity.getLength(),
 							cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null, cloudSafeShareEntity.isWriteAccess(),
 							cloudSafeShareEntity.isRestrictDownload()));
 				}
@@ -1083,7 +1025,7 @@ public class CloudSafeLogic {
 				cloudSafeKey.setDbId(cloudSafeEntity.getId());
 				// cloudSafeKey.setOwner(cloudSafeEntity.getOwner());
 				result.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
-						cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().getTime() : 0, null, cloudSafeEntity.getLength(),
+						cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) : 0, null, cloudSafeEntity.getLength(),
 						cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null, cloudSafeShareEntity.isWriteAccess(),
 						cloudSafeShareEntity.isRestrictDownload()));
 			}
@@ -1122,9 +1064,7 @@ public class CloudSafeLogic {
 				auditingLogic.addAudit(dcemAction, loggedInUser, "File: " + cloudSafeEntity.getName() + shareUser);
 			}
 			if (cloudSafeEntity.getOwner() == CloudSafeOwner.GROUP) {
-				Calendar expiryDate = Calendar.getInstance();
-				expiryDate.add(Calendar.WEEK_OF_YEAR, 1);
-				cloudSafeEntity.setDiscardAfter(expiryDate.getTime());
+				cloudSafeEntity.setDiscardAfter(LocalDateTime.now().plusWeeks(1));
 				em.merge(cloudSafeEntity);
 			} else {
 				allDeletedFiles.addAll(deleteCloudSafe(cloudSafeEntity, loggedInUser, shouldRecycle));
@@ -1133,35 +1073,6 @@ public class CloudSafeLogic {
 		return allDeletedFiles;
 	}
 
-	/**
-	 * This will not delete the contents. Contents have to be remove after Transaction
-	 * @param list
-	 * @throws Exception
-	 */
-	// @DcemTransactional
-	// public List<CloudSafeDto> deleteCloudSafeFiles(List<CloudSafeEntity> list, DcemUser loggedInUser) throws Exception {
-	// List<CloudSafeDto> allDeletedFiles = new ArrayList<CloudSafeDto>();
-	// for (CloudSafeEntity cloudSafeEntity : list) {
-	// if (loggedInUser != null && cloudSafeEntity.getOwner() == CloudSafeOwner.USER && asModule.getModulePreferences().isEnableAuditUser() == true
-	// && cloudSafeEntity.isRecycled() == false) {
-	// DcemAction dcemAction = new DcemAction(asCloudSafeSubject, DcemConstants.ACTION_DELETE);
-	// String shareUser = "";
-	// if (loggedInUser.getId() != cloudSafeEntity.getUser().getId()) {
-	// shareUser = AUDIT_SHARED_BY + cloudSafeEntity.getUser().getDisplayNameOrLoginId();
-	// }
-	// auditingLogic.addAudit(dcemAction, loggedInUser, "File: " + cloudSafeEntity.getName() + shareUser);
-	// }
-	// if (cloudSafeEntity.getOwner() == CloudSafeOwner.GROUP) {
-	// Calendar expiryDate = Calendar.getInstance();
-	// expiryDate.add(Calendar.WEEK_OF_YEAR, 1);
-	// cloudSafeEntity.setDiscardAfter(expiryDate.getTime());
-	// em.merge(cloudSafeEntity);
-	// } else {
-	// allDeletedFiles.addAll(deleteCloudSafe(cloudSafeEntity, loggedInUser));
-	// }
-	// }
-	// return allDeletedFiles;
-	// }
 
 	@DcemTransactional
 	public void deleteCloudSafeFilesContent(List<CloudSafeDto> list) throws DcemException {
@@ -1352,7 +1263,7 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public void setCloudSafeLimits(List<Integer> userIds, long limit, Date expiryDate, boolean passwordSafeEnabled) throws DcemException {
+	public void setCloudSafeLimits(List<Integer> userIds, long limit, LocalDateTime expiryDate, boolean passwordSafeEnabled) throws DcemException {
 
 		validateCloudSafeLimits(userIds, limit, expiryDate);
 
@@ -1377,19 +1288,19 @@ public class CloudSafeLogic {
 		}
 	}
 
-	private void validateCloudSafeLimits(List<Integer> userIds, long limit, Date expiryDate) throws DcemException {
+	private void validateCloudSafeLimits(List<Integer> userIds, long limit, LocalDateTime expiryDate) throws DcemException {
 
 		if (userIds == null || userIds.isEmpty()) {
 			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "No user is defined");
 		} else if (limit < 0) {
 			throw new DcemException(DcemErrorCodes.INVALID_PARAMETER, "The limit cannot be a negative value.");
-		} else if (expiryDate != null && expiryDate.before(new Date())) {
+		} else if (expiryDate != null && expiryDate.isBefore(LocalDateTime.now())) {
 			throw new DcemException(DcemErrorCodes.INVALID_PARAMETER, "The expiry date cannot be in the past.");
 		}
 
 		LicenceKeyContent licenceKeyContent = licenceLogic.getLicenceKeyContent();
-		Date licenceExpiryDate = licenceKeyContent.getExpiresOn();
-		if (expiryDate != null && expiryDate.after(licenceExpiryDate)) {
+		LocalDateTime licenceExpiryDate = licenceKeyContent.getLdtExpiresOn();
+		if (expiryDate != null && expiryDate.isAfter(licenceExpiryDate)) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_LIMIT_EXCEEDS_GLOBAL,
 					"The expiry date " + getStringFromDate(expiryDate) + " exceeds the licence expiry date of " + getStringFromDate(licenceExpiryDate));
 		}
@@ -1421,8 +1332,8 @@ public class CloudSafeLogic {
 		return limitEntity != null ? limitEntity.isPasswordSafeEnabled() : getDefaultPasswordSafeEnabled();
 	}
 
-	private String getStringFromDate(Date date) {
-		return new SimpleDateFormat("dd/MM/yyyy").format((Date) date);
+	private String getStringFromDate(LocalDateTime date) {
+		return new SimpleDateFormat("dd/MM/yyyy").format(date);
 	}
 
 	private long validateCloudSafeContentChange(CloudSafeEntity cloudSafeEntity, long newLength) throws DcemException {
@@ -1443,7 +1354,7 @@ public class CloudSafeLogic {
 		// In Bytes
 		long globalLimit = licenceKeyContent.getCloudSafeStoageMb() * (1024 * 1024);
 		long globalUsed = getGlobalCloudSafeUsageTotal().get();
-		Date now = new Date();
+		LocalDateTime now = LocalDateTime.now();
 
 		DcemUser user = cloudSafeEntity.getUser();
 		CloudSafeLimitEntity limitEntity = getCloudSafeLimitEntity(user.getId());
@@ -1538,7 +1449,7 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public List<CloudSafeEntity> saveMultipleFiles(List<DcemUploadFile> uploadedFiles, DcemUser dcemUser, String filePassword, Date expiryDate,
+	public List<CloudSafeEntity> saveMultipleFiles(List<DcemUploadFile> uploadedFiles, DcemUser dcemUser, String filePassword, LocalDateTime expiryDate,
 			boolean passwordProtected, boolean encryptProtected, CloudSafeEntity parent, DcemUser lastModifiedUser, DcemGroup groupOwner,
 			CloudSafeOwner cloudSafeOwner) throws Exception {
 		HashSet<String> hashSet = new HashSet<>();
@@ -1626,10 +1537,8 @@ public class CloudSafeLogic {
 		cloudSafeEntity.setName(folderName);
 		cloudSafeEntity.setFolder(true);
 		cloudSafeEntity.setParent(selectedFolder);
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, 1);
 		cloudSafeEntity.setGcm(true);
-		cloudSafeEntity.setLastModified(calendar.getTime());
+		cloudSafeEntity.setLastModified(LocalDateTime.now().plusSeconds(1));
 		cloudSafeEntity.setLastModifiedUser(currentUser);
 		if (passwordProtected || folderPassword != null) {
 			if (selectedFolder.getName().equals(DcemConstants.CLOUD_SAFE_ROOT) == false) {
@@ -1724,7 +1633,7 @@ public class CloudSafeLogic {
 					}
 				}
 			}
-			cloudSafeEntity.setLastModified(new Date());
+			cloudSafeEntity.setLastModified(LocalDateTime.now());
 			cloudSafeEntity.setLastModifiedUser(loggedInUser);
 			em.merge(cloudSafeEntity);
 		}
@@ -1849,9 +1758,7 @@ public class CloudSafeLogic {
 
 			addToRecyleBin(cloudSafeEntity, counter, loggedInUser);
 		} else {
-			Calendar expiryDate = Calendar.getInstance();
-			expiryDate.add(Calendar.DAY_OF_MONTH, 30);
-			cloudSafeEntity.setDiscardAfter(expiryDate.getTime());
+			cloudSafeEntity.setDiscardAfter(LocalDateTime.now().plusDays(30));
 			cloudSafeEntity.setRecycled(true);
 			em.merge(cloudSafeEntity);
 			moveCurrentEntry(cloudSafeEntity, null, recycleBinFolder.getId(), loggedInUser);

@@ -2,6 +2,8 @@ package com.doubleclue.dcem.oauth.logic;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -234,7 +236,7 @@ public class OAuthLogic {
 	}
 
 	@DcemTransactional
-	public OAuthTokenEntity addUpdateTokenEntity(OAuthTokenId id, Date authTime, boolean updateAccessToken, boolean updateRefreshToken, OpenIdScope[] scopes,
+	public OAuthTokenEntity addUpdateTokenEntity(OAuthTokenId id, LocalDateTime authTime, boolean updateAccessToken, boolean updateRefreshToken, OpenIdScope[] scopes,
 			OpenIdClaimsRequest userInfoCRP) {
 		OAuthPreferences preferences = oauthModule.getModulePreferences();
 		OAuthTokenEntity entity = getTokenEntity(id);
@@ -374,7 +376,7 @@ public class OAuthLogic {
 		if (!isNullOrEmpty(token)) {
 			OAuthTokenEntity entity = getTokenEntityFromAccessToken(token);
 			if (entity != null && entity.getAccessToken() != null && entity.getAccessTokenExpiresOn() != null
-					&& entity.getAccessTokenExpiresOn().after(new Date())) {
+					&& entity.getAccessTokenExpiresOn().isAfter(LocalDateTime.now())) {
 				return entity;
 			}
 		}
@@ -407,7 +409,7 @@ public class OAuthLogic {
 		if (!isNullOrEmpty(token)) {
 			OAuthTokenEntity entity = getTokenEntityFromRefreshToken(token);
 			if (entity != null && entity.getRefreshToken() != null && entity.getRefreshTokenExpiresOn() != null
-					&& entity.getRefreshTokenExpiresOn().after(new Date())) {
+					&& entity.getRefreshTokenExpiresOn().isAfter(LocalDateTime.now())) {
 				return entity.getId();
 			}
 		}
@@ -693,8 +695,8 @@ public class OAuthLogic {
 				OAuthTokenId tokenId = getTokenId(authnRequest.getClientId(), dcemUser);
 				OAuthTokenEntity tokenEntity = getTokenEntity(tokenId);
 				if (tokenEntity != null) {
-					Date lastAuth = tokenEntity.getLastAuthenticated();
-					shouldAuthenticate = ((new Date().getTime() - lastAuth.getTime()) / 1000) > maxAge;
+					LocalDateTime lastAuth = tokenEntity.getLastAuthenticated();
+					shouldAuthenticate = ((new Date().getTime() - lastAuth.toEpochSecond(ZoneOffset.UTC)) / 1000) > maxAge;
 				}
 			}
 

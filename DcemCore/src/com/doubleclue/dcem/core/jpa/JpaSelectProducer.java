@@ -74,16 +74,16 @@ public class JpaSelectProducer<T> implements Serializable {
 		this.entityClass = entityClass;
 	}
 
-	public long createCountCriteriaQuery(Class<?> entityClass, List<FilterProperty> filterProperties, JpaPredicate jpaPredicate  ) throws DcemException {
+	public long createCountCriteriaQuery(Class<?> entityClass, List<FilterProperty> filterProperties, JpaPredicate jpaPredicate) throws DcemException {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<?> root = criteriaQuery.from(entityClass);
 		Predicate whereCond = getPredicates(criteriaBuilder, root, filterProperties, jpaPredicate.getPredicates(criteriaBuilder, root));
 		if (whereCond != null) {
 			criteriaQuery.where(whereCond);
-			//criteriaQuery.where(whereCond).distinct(true);
+			// criteriaQuery.where(whereCond).distinct(true);
 		}
-	//	Expression<Long> count = criteriaBuilder.countDistinct(root);
+		// Expression<Long> count = criteriaBuilder.countDistinct(root);
 		Expression<Long> count = criteriaBuilder.count(root);
 		criteriaQuery.select(count);
 		cachedRowCount = entityManager.createQuery(criteriaQuery).getSingleResult();
@@ -99,8 +99,8 @@ public class JpaSelectProducer<T> implements Serializable {
 	 * @return
 	 * @throws DcemException
 	 */
-	public List<T> selectCriteriaQuery(List<FilterOrder> filterOrders, List<FilterProperty> filterProperties, int firstResult, int maxResult, JpaPredicate jpaPredicate)
-			throws DcemException {
+	public List<T> selectCriteriaQuery(List<FilterOrder> filterOrders, List<FilterProperty> filterProperties, int firstResult, int maxResult,
+			JpaPredicate jpaPredicate) throws DcemException {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 		Root<?> root = criteriaQuery.from(entityClass);
@@ -117,16 +117,16 @@ public class JpaSelectProducer<T> implements Serializable {
 		} else {
 			prePredicates = jpaPredicate.getPredicates(criteriaBuilder, root);
 		}
-		
+
 		if (filterProperties != null) {
 			Predicate whereCond = getPredicates(criteriaBuilder, root, filterProperties, prePredicates);
 			if (whereCond != null) {
 				criteriaQuery.where(whereCond);
 			}
 		}
-//		criteriaQuery.distinct(true);
+		// criteriaQuery.distinct(true);
 		@SuppressWarnings("unchecked")
-		
+
 		TypedQuery<T> query = (TypedQuery<T>) entityManager.createQuery(criteriaQuery);
 		query.setFirstResult(firstResult);
 		query.setMaxResults(maxResult);
@@ -272,8 +272,8 @@ public class JpaSelectProducer<T> implements Serializable {
 				}
 			}
 			switch (filterProperty.variableType) {
-			
-			case LIST: 
+
+			case LIST:
 				System.out.println("JpaSelectProducer.getPredicates()");
 				break;
 			case STRING: {
@@ -411,10 +411,7 @@ public class JpaSelectProducer<T> implements Serializable {
 				if (filterProperty.getValue() == null) {
 					continue;
 				}
-				if (attribute.getJavaType().getSimpleName().equals("LocalDateTime")) {
-					Expression<LocalDateTime> expressionLdt = preFrom.<LocalDateTime> get((SingularAttribute<Object, LocalDateTime>) attribute);
-					predicates.add(cb.between(expressionLdt, (LocalDateTime) filterProperty.getValue(), (LocalDateTime) filterProperty.getToValue()));
-				} else if (attribute.getJavaType().getSimpleName().equals("LocalDate")) {
+				if (attribute.getJavaType().getSimpleName().equals("LocalDate")) {
 					LocalDate localDate = LocalDate.from((LocalDateTime) filterProperty.getValue());
 					LocalDate localDateTo = LocalDate.from((LocalDateTime) filterProperty.getToValue());
 					Expression<LocalDate> expressionLocalDate = preFrom.<LocalDate> get((SingularAttribute<Object, LocalDate>) attribute);
@@ -462,7 +459,6 @@ public class JpaSelectProducer<T> implements Serializable {
 		return (cb.and(predicates.toArray(new Predicate[predicates.size()])));
 		// }
 	}
-
 
 	public List<T> selectCriteriaQueryFilters(List<ApiFilterItem> filters, int firstResult, int maxResult, JpaPredicate jpaPredicate) throws DcemException {
 		List<ViewVariable> viewVariables = DcemUtils.getViewVariables(entityClass, null, "", null);

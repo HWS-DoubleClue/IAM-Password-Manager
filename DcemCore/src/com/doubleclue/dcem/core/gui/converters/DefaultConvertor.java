@@ -19,7 +19,7 @@ import javax.faces.convert.FacesConverter;
 
 import com.doubleclue.dcem.core.DcemConstants;
 
-@FacesConverter("com.doubleclue.defaultConverter")
+// FacesConverter("com.doubleclue.defaultConverter")
 public class DefaultConvertor implements Converter {
 
 	@Override

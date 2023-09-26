@@ -1,9 +1,8 @@
 package com.doubleclue.dcem.as.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -14,8 +13,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.doubleclue.dcem.as.logic.DataUnit;
@@ -64,9 +61,8 @@ public class CloudSafeLimitEntity extends EntityInterface implements Serializabl
 	private String limitString;
 
 	@Column(name = "expiry_date")
-	@Temporal(TemporalType.TIMESTAMP)
 	@DcemGui
-	private Date expiryDate;
+	private LocalDateTime expiryDate;
 
 	@Column(name = "ps_enabled", nullable = false)
 	@DcemGui
@@ -75,7 +71,7 @@ public class CloudSafeLimitEntity extends EntityInterface implements Serializabl
 	public CloudSafeLimitEntity() {
 	}
 
-	public CloudSafeLimitEntity(DcemUser user, long limit, long used, Date expiryDate, boolean passwordSafeEnabled) {
+	public CloudSafeLimitEntity(DcemUser user, long limit, long used, LocalDateTime expiryDate, boolean passwordSafeEnabled) {
 		this.user = user;
 		this.limit = limit;
 		this.used = used;
@@ -139,11 +135,11 @@ public class CloudSafeLimitEntity extends EntityInterface implements Serializabl
 		this.limitString = limitString;
 	}
 
-	public Date getExpiryDate() {
+	public LocalDateTime getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDateTime expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 

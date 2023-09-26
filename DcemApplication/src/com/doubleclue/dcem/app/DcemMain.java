@@ -114,8 +114,8 @@ public class DcemMain {
 		Locale.setDefault(Locale.Category.DISPLAY, Locale.ENGLISH); 
 		TimeZone defaultTimeZone = TimeZone.getTimeZone("Europe/Berlin");
 		TimeZone.setDefault(defaultTimeZone);
+		
 		boolean debugMode = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("jdwp") >= 0;
-
 		DcemLogLevel dcemLogLevel = DcemLogLevel.INFO;
 		if (debugMode) {
 			dcemLogLevel = DcemLogLevel.DEBUG;

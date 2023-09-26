@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -113,7 +114,7 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	}
 
 	@DcemTransactional
-	public void saveNodeStatistics(Date date) throws JsonProcessingException {
+	public void saveNodeStatistics(LocalDateTime date) throws JsonProcessingException {
 		DcemStatistic semStatistic = new DcemStatistic();
 		semStatistic.setTimestamp(removeSeconds(date));
 		semStatistic.setDcemNode(DcemCluster.getDcemCluster().getDcemNode());
@@ -154,12 +155,12 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	}
 
 	public List<SelectItem> getDiagnosticTimes() {
-		TypedQuery<Date> query = em.createNamedQuery(DcemStatistic.GET_TIMESTAMPS, Date.class);
+		TypedQuery<LocalDateTime> query = em.createNamedQuery(DcemStatistic.GET_TIMESTAMPS, LocalDateTime.class);
 		query.setMaxResults(4000);
-		List<Date> timestamps = query.getResultList();
+		List<LocalDateTime> timestamps = query.getResultList();
 		ArrayList<SelectItem> selectItems = new ArrayList<>(timestamps.size() + 1);
 		selectItems.add(new SelectItem(CURRENT_TIME, CURRENT_TIME));
-		for (Date date : timestamps) {
+		for (LocalDateTime date : timestamps) {
 			selectItems.add(new SelectItem(getDateFormat().format(date), getDateFormat().format(date)));
 		}
 		return selectItems;
@@ -249,12 +250,11 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 					}
 					ChartData chartData = mapNodeCounter.get(counterFilter);
 					if (chartData == null) {
-						chartData = new ChartData(dcemStatistic.getTimestamp(), dcemStatistic.getDcemNode().getName(),
-								numValue);
+						chartData = new ChartData(dcemStatistic.getTimestamp(), dcemStatistic.getDcemNode().getName(), numValue);
 						mapNodeCounter.put(counterFilter, chartData);
 						listChartData.add(chartData);
 					} else {
-						if (chartData.getDate().getTime() != (dcemStatistic.getTimestamp().getTime())) {
+						if (chartData.getDate().equals(dcemStatistic.getTimestamp()) == false) {
 							chartData = new ChartData(dcemStatistic.getTimestamp(),
 									dcemStatistic.getDcemNode().getName(), numValue);
 						} else {
@@ -311,12 +311,8 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		return result;
 	}
 
-	private Date removeSeconds(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar.getTime();
+	private LocalDateTime removeSeconds(LocalDateTime date) {
+		return date.truncatedTo(ChronoUnit.SECONDS);
 	}
 
 	public DateFormat getDateFormat() {

@@ -13,7 +13,7 @@
 package com.doubleclue.dcem.as.restapi.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.doubleclue.dcem.as.entities.CloudSafeEntity;
@@ -88,10 +88,10 @@ public class AsApiCloudSafeFile implements Serializable {
 	private long length = 0;
 
 	@JsonProperty("lastModified")
-	private Date lastModified = null;
+	private LocalDateTime lastModified = null;
 
 	@JsonProperty("discardAfter")
-	private Date discardAfter = null;
+	private LocalDateTime discardAfter = null;
 
 	@JsonProperty("options")
 	private String options = null;
@@ -211,11 +211,11 @@ public class AsApiCloudSafeFile implements Serializable {
 	* Data Format is ISO-8601 (e.g. \&quot;2017-12-10T14:50:12.123+02:00\&quot;)
 	* @return lastModified
 	**/
-	public Date getLastModified() {
+	public LocalDateTime getLastModified() {
 		return lastModified;
 	}
 
-	public void setLastModified(Date lastModified) {
+	public void setLastModified(LocalDateTime lastModified) {
 		this.lastModified = lastModified;
 	}
 
@@ -223,11 +223,11 @@ public class AsApiCloudSafeFile implements Serializable {
 	* Data Format is ISO-8601 (e.g. \&quot;2017-12-10T14:50:12.123+02:00\&quot;)
 	* @return discardAfter
 	**/
-	public Date getDiscardAfter() {
+	public LocalDateTime getDiscardAfter() {
 		return discardAfter;
 	}
 
-	public void setDiscardAfter(Date discardAfter) {
+	public void setDiscardAfter(LocalDateTime discardAfter) {
 		this.discardAfter = discardAfter;
 	}
 
