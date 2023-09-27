@@ -3,6 +3,7 @@ package com.doubleclue.dcem.system.logic;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -71,12 +72,12 @@ public class KeyStoreLogic {
 
 		if (preKeyStoreEntity == null) {
 			preKeyStoreEntity = new KeyStoreEntity(purpose, SecureServerUtils.serializeKeyStore(keyStore, password), certificate.getSubjectDN().getName(),
-					certificate.getNotAfter().toInstant().atZone(adminModule.getTimezone().toZoneId()).toLocalDateTime(), password, dcemNode);
+					certificate.getNotAfter().toInstant().atZone(TimeZone.getDefault().toZoneId()).toLocalDateTime(), password, dcemNode);
 			preKeyStoreEntity.setIpAddress(ipAddress);
 			em.persist(preKeyStoreEntity);
 		} else {
 			preKeyStoreEntity.setCn(certificate.getSubjectDN().getName());
-			preKeyStoreEntity.setExpiresOn(certificate.getNotAfter().toInstant().atZone(adminModule.getTimezone().toZoneId()).toLocalDateTime());
+			preKeyStoreEntity.setExpiresOn(certificate.getNotAfter().toInstant().atZone(TimeZone.getDefault().toZoneId()).toLocalDateTime());
 			preKeyStoreEntity.setPassword(password);
 			preKeyStoreEntity.setKeyStore(SecureServerUtils.serializeKeyStore(keyStore, password));
 			preKeyStoreEntity.setIpAddress(ipAddress);

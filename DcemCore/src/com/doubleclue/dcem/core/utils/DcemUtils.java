@@ -1725,6 +1725,9 @@ public class DcemUtils {
 	}
 
 	public static Date convertToDate(LocalDateTime localDateTime) {
+		if (localDateTime == null) {
+			return null;
+		}
 		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}
 
