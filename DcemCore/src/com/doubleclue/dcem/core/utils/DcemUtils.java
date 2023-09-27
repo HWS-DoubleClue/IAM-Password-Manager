@@ -1793,13 +1793,6 @@ public class DcemUtils {
 		return os.contains("win");
 	}
 
-	public static TimeZone getUserTimeZone(DcemUserExtension dcemUserExtension, TimeZone defaultTimeZone) {
-		if (dcemUserExtension == null || dcemUserExtension.getTimezone() == null) {
-			return defaultTimeZone;
-		}
-		return dcemUserExtension.getTimezone();
-	}
-
 	public static String[] getContinentAndIdFromTimezone(TimeZone timezone) {
 		return getContinentAndIdFromTimezone(timezone.getID());
 	}
