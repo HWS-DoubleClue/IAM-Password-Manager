@@ -3,12 +3,14 @@ package com.doubleclue.dcem.core.logic;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -906,7 +908,34 @@ public class UserLogic {
 		TypedQuery<DcemUser> query = em.createNamedQuery(DcemUser.GET_DOMAIN_USERS, DcemUser.class);
 		query.setParameter(1, azureDomainEntity);
 		return query.getResultList();
+	}
+	
+	public TimeZone getTimeZone (DcemUser dcemUser) {
+		TimeZone timeZone;
+		if (dcemUser.getDcemUserExt() != null && dcemUser.getDcemUserExt().getTimezone() != null) {
+			timeZone = TimeZone.getTimeZone(dcemUser.getDcemUserExt().getTimezone());
+		} else {
+			timeZone = adminModule.getTimezone();
+		}
+		return timeZone;
+	}
+	
+	public LocalDateTime getZonedTime (LocalDateTime localDateTime, DcemUser dcemUser) {
+		TimeZone timeZone = getTimeZone(dcemUser);
+		if (TimeZone.getDefault().equals(timeZone)) {
+			return localDateTime;
+		}
+		ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, TimeZone.getDefault().toZoneId());
+		return zonedDateTime.withZoneSameInstant(timeZone.toZoneId()).toLocalDateTime();
+	}
 
+	public LocalDateTime getDefaultTime(LocalDateTime localDateTime, DcemUser dcemUser) {
+		TimeZone timeZone = getTimeZone(dcemUser);
+		if (TimeZone.getDefault().equals(timeZone)) {
+			return localDateTime;
+		}
+		ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, timeZone.toZoneId());
+		return zonedDateTime.withZoneSameInstant(TimeZone.getDefault().toZoneId()).toLocalDateTime();
 	}
 
 }

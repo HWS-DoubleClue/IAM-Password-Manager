@@ -502,7 +502,7 @@ public final class DcemConstants {
 	public static final String METHOD_IS_RESTRICTED = "isRestricted";
 	public static final String RESTRICTED_REPLACEMENT = "-----";
 
-
+	public static final String SYSTEM_DEFAULT_ZONE = "Europe/Berlin";
 
 
 }

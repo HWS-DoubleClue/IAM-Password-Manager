@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -442,18 +443,14 @@ public class OperatorSessionBean implements Serializable {
 	public void setUserSettings(Map<String, String> userSettings) {
 		this.userSettings = userSettings;
 	}
-	
-	public LocalDateTime getZonedTime (LocalDateTime localDateTime) {
-		TimeZone timeZone;
-		if (dcemUser.getDcemUserExt() != null && dcemUser.getDcemUserExt().getTimezone() != null) {
-			timeZone = TimeZone.getTimeZone(dcemUser.getDcemUserExt().getTimezone());
-		} else {
-			timeZone = adminModule.getTimezone();
-		}
-		if (TimeZone.getDefault().equals(timeZone)) {
-			return localDateTime;
-		}
-		ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, TimeZone.getDefault().toZoneId());
-		return zonedDateTime.withZoneSameInstant(timeZone.toZoneId()).toLocalDateTime();
+
+	public LocalDateTime getZonedTime(LocalDateTime value) {
+		return userLogic.getZonedTime(value, dcemUser);
 	}
+	
+	public LocalDateTime getDefaultZoneTime(LocalDateTime value) {
+		return userLogic.getDefaultTime(value, dcemUser);
+	}
+	
+	
 }

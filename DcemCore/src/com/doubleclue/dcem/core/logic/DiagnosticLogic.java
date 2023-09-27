@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,6 +68,8 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	private DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
 
 	private DateFormat dateFormatFile = new SimpleDateFormat("HH_mm_dd_MM_yyyy");
+	
+	private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
 	@Inject
 	EntityManager em;
@@ -161,7 +165,7 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		ArrayList<SelectItem> selectItems = new ArrayList<>(timestamps.size() + 1);
 		selectItems.add(new SelectItem(CURRENT_TIME, CURRENT_TIME));
 		for (LocalDateTime date : timestamps) {
-			selectItems.add(new SelectItem(getDateFormat().format(date), getDateFormat().format(date)));
+			selectItems.add(new SelectItem(dateTimeFormatter.format(date), dateTimeFormatter.format(date)));
 		}
 		return selectItems;
 	}
@@ -175,10 +179,10 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		ObjectMapper objectMapper = new ObjectMapper();
 		TypeReference<LinkedList<ModuleStatistic>> typeRef = new TypeReference<LinkedList<ModuleStatistic>>() {
 		};
-		Date date = getDateFormat().parse(timeString);
+		LocalDateTime localDateTime = LocalDateTime.parse(timeString, dateTimeFormatter);
 		Map<String, List<ModuleStatistic>> map = new HashMap<>();
 		TypedQuery<DcemStatistic> query = em.createNamedQuery(DcemStatistic.GET_STATISTICS_TIME, DcemStatistic.class);
-		query.setParameter(1, date);
+		query.setParameter(1, localDateTime);
 
 		List<DcemStatistic> statistics = query.getResultList();
 		List<ModuleStatistic> moduleStatistics;
@@ -193,7 +197,7 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		return map;
 	}
 	
-	public List<DcemStatistic> getStatisticsFromTo (Date dateFrom, Date dateTo) {
+	public List<DcemStatistic> getStatisticsFromTo (LocalDateTime dateFrom, LocalDateTime dateTo) {
 		TypedQuery<DcemStatistic> query = em.createNamedQuery(DcemStatistic.GET_STATISTICS_FROM_TO, DcemStatistic.class);
 		query.setParameter(1, dateFrom);
 		query.setParameter(2, dateTo);
@@ -215,8 +219,13 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		if (dateFromStr == null) {
 			return result;
 		}
-		Date dateFrom = getDateFormat().parse(dateFromStr);
-		Date dateTo = getDateFormat().parse(dateToStr);
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+		LocalDateTime dateFrom = LocalDateTime.parse(dateFromStr, format);
+		LocalDateTime dateTo = LocalDateTime.parse(dateToStr, format);
+//		Date dateFrom = getDateFormat().parse(dateFromStr);
+//		Date dateTo = getDateFormat().parse(dateToStr);
+		
+		
 		List<DcemStatistic> statistics = getStatisticsFromTo(dateFrom, dateTo);
 		List<ModuleStatistic> moduleStatistics;
 		Map<String, String> valueMap;
@@ -279,8 +288,11 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		if (dateFromStr == null) {
 			return result;
 		}
-		Date dateFrom = getDateFormat().parse(dateFromStr);
-		Date dateTo = getDateFormat().parse(dateToStr);
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+		LocalDateTime dateFrom = LocalDateTime.parse(dateFromStr, format);
+		LocalDateTime dateTo = LocalDateTime.parse(dateToStr, format);
+//		Date dateFrom = getDateFormat().parse(dateFromStr);
+//		Date dateTo = getDateFormat().parse(dateToStr);
 				
 		List<DcemStatistic> statistics = getStatisticsFromTo(dateFrom, dateTo);
 		

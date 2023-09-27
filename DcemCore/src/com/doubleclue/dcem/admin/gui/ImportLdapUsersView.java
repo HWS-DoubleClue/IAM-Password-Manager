@@ -103,17 +103,21 @@ public class ImportLdapUsersView extends DcemView {
 	int countUsers = 0;
 	int countExistingUsers = 0;
 	int countActivations = 0;
+	AsModuleApi asModuleApi = null;
 
 	@PostConstruct
 	protected void init() {
 		resourceBundle = JsfUtils.getBundle(DcemConstants.CORE_RESOURCE);
 		domainDialogBean.setParentView(this);
 		subject = importLdapUsersSubject;
-		AsModuleApi asModuleApi = null;
 		asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
-		if (asModuleApi != null) {
-			validTill = asModuleApi.getActivationCodeDefaultValidTill();
-		}
+		reload();
+	}
+	
+	@Override
+	public void reload() {
+		validTill = operatorSessionBean.getZonedTime(asModuleApi.getActivationCodeDefaultValidTill());
+		validTillGroup = validTill;
 		List<SelectItem> list = domainLogic.getDomainNames();
 		if (list.isEmpty() == false) {
 			domainName = list.get(0).getValue().toString();
@@ -188,10 +192,10 @@ public class ImportLdapUsersView extends DcemView {
 		int countNewUsers = 0;
 
 		sendBy = sendByGroup;
-		validTillGroup = validTill;
 		createActivationCodeGroup = createActivationCode;
 		createActivationCodeExistingGroup = createActivationCodeExisting;
 		DcemGroup selectedGroup = null;
+		validTill = validTillGroup;
 		for (String groupName : selectedGroups) {
 			selectedGroup = null;
 			try {
@@ -225,8 +229,7 @@ public class ImportLdapUsersView extends DcemView {
 					countNewUsers += countUsers;
 					countGroupActivations += countActivations;
 				} catch (DcemException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.warn(e);
 				}
 			}
 		}
@@ -395,7 +398,7 @@ public class ImportLdapUsersView extends DcemView {
 					continue;
 				}
 				try {
-					asModuleApi.createActivationCode(dcemUser, validTill, sendBy, "Domain Import");
+					asModuleApi.createActivationCode(dcemUser, operatorSessionBean.getDefaultZoneTime(validTill), sendBy, "Domain Import");
 					countActivations++;
 				} catch (DcemException e) {
 					if (e.getErrorCode() == DcemErrorCodes.EMAIL_SEND_MSG_LIMIT) {

@@ -10,6 +10,8 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1333,7 +1335,7 @@ public class CloudSafeLogic {
 	}
 
 	private String getStringFromDate(LocalDateTime date) {
-		return new SimpleDateFormat("dd/MM/yyyy").format(date);
+		return date.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
 	}
 
 	private long validateCloudSafeContentChange(CloudSafeEntity cloudSafeEntity, long newLength) throws DcemException {

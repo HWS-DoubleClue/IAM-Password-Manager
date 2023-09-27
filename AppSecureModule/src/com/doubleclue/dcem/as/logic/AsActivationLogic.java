@@ -2,10 +2,9 @@ package com.doubleclue.dcem.as.logic;
 
 import java.text.DateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +25,6 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.entities.DcemUser;
-import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
@@ -219,9 +217,12 @@ public class AsActivationLogic {
 	 * @param sendBy 
 	 * @throws DcemException
 	 */
-	private void sendActivationByEmail(ActivationCodeEntity asActivationCode, DcemTemplate dcemTemplate, ActivationParameters activationParameters, SendByEnum sendBy)
-			throws DcemException {
+	private void sendActivationByEmail(ActivationCodeEntity asActivationCode, DcemTemplate dcemTemplate, ActivationParameters activationParameters,
+			SendByEnum sendBy) throws DcemException {
+
 		DcemUser dcemUser = asActivationCode.getUser();
+		DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG, FormatStyle.LONG).withZone(userLogic.getTimeZone(dcemUser).toZoneId())
+				.withLocale(dcemUser.getLanguage().getLocale());
 		if (dcemTemplate == null) {
 			dcemTemplate = templateLogic.getTemplateByNameLanguage(DcemConstants.EMAIL_ACTIVATION_BODY_TEMPLATE, dcemUser.getLanguage());
 			if (dcemTemplate == null) {
@@ -232,7 +233,7 @@ public class AsActivationLogic {
 		if (sendBy == SendByEnum.EMAIL) {
 			emailAddress = dcemUser.getEmail();
 		} else {
-			emailAddress =dcemUser.getPrivateEmail();
+			emailAddress = dcemUser.getPrivateEmail();
 		}
 		if (emailAddress == null || emailAddress.isEmpty() == true) {
 			throw new DcemException(DcemErrorCodes.USER_HAS_INVALID_EMAIL, dcemUser.getDisplayName());
@@ -244,9 +245,8 @@ public class AsActivationLogic {
 		map.put(AsConstants.EMAIL_ACTIVATION_TENANT_URL, dcemApplicationBean.getDcemManagementUrl(null));
 		map.put(AsConstants.EMAIL_ACTIVATION_TENANT_LOGIN_ID, dcemUser.getLoginId());
 		map.put(AsConstants.EMAIL_ACTIVATION_CODE_KEY, asActivationCode.getActivationCode());
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, dcemTemplate.getLanguage().getLocale());
-		df.setTimeZone(adminModule.getTimezone());
-		map.put(AsConstants.EMAIL_ACTIVATION_VALID_TILL_KEY, df.format(asActivationCode.getValidTill()));
+
+		map.put(AsConstants.EMAIL_ACTIVATION_VALID_TILL_KEY, userLogic.getZonedTime(asActivationCode.getValidTill(), dcemUser).format(dtf));
 		map.put(AsConstants.EMAIL_ACTIVATION_USER_KEY, dcemUser.getDisplayNameOrLoginId());
 		map.put(AsConstants.EMAIL_ACTIVATION_USER_DOMAIN_KEY, activationParameters.getUsername());
 

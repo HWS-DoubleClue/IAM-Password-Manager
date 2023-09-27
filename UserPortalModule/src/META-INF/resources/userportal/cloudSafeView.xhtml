@@ -327,7 +327,7 @@
 					<p:outputLabel value="#{DcupMsg['label.uploadedFiles']}" />
 					<p:outputLabel id="uploadedFiles" value="#{cloudSafeView.uploadedFiles}" />
 					<p:outputLabel for="inputExpiry" value="#{DcupMsg['label.discardsAfter']}" />
-					<p:datePicker id="inputExpiry" class="calenderUpload" value="#{cloudSafeView.expiryDate}" timeZone="#{adminModule.timezone}"
+					<p:datePicker id="inputExpiry" class="calenderUpload" value="#{cloudSafeView.expiryDate}" 
 						locale="#{portalSessionBean.locale}" pattern="#{portalSessionBean.dateTimePattern}">
 						<p:ajax event="dateSelect" update="inputExpiry" />
 					</p:datePicker>

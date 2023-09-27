@@ -70,7 +70,6 @@ public class ActivationViewBean extends DcemView {
 		if (this.subject.getKlass() == null) {
 			return null;
 		}
-
 		int hours = asModule.getPreferences().getActivationCodeDefaultValidTill();
 		ActivationCodeEntity activationCode = new ActivationCodeEntity();
 		activationCode.setValidTill(LocalDateTime.now().plusHours(hours));

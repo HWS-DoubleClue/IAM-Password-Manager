@@ -17,17 +17,13 @@
 			<p:spacer width="12" />
 		</c:forEach>
 		<p:spacer width="20" />
-<!--
- // #if COMMUNITY_EDITION == false
--->
+
 		<p:outputLabel value="#{asMsg['diagnosticsView.diagnosticTime']}" />
 		<p:selectOneMenu id="diagTime" value="#{diagnosticsView.diagnosticTime}">
 			<f:selectItems value="#{diagnosticsView.getDiagnosticTimes()}" />
 			<p:ajax event="valueChange" process="@this" update="valueTable counterTable" async="true" listener="#{diagnosticsView.reload()}" />
 		</p:selectOneMenu>
-<!-- 
-// #endif 
--->
+
 		<p></p>
 		<p:panel id="toggleable" toggleable="true" collapsed="false" toggleSpeed="1000" widgetVar="panelStatic" style="margin-bottom:20px">
 			<span id="customheader"> <h:outputLabel value="#{asMsg['diagnosticsView.staticValues']}" class="dialogTitle"

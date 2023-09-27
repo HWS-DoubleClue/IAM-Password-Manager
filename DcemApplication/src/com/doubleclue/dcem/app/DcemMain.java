@@ -112,7 +112,7 @@ public class DcemMain {
 		}
 		Locale.setDefault(Locale.ENGLISH);
 		Locale.setDefault(Locale.Category.DISPLAY, Locale.ENGLISH); 
-		TimeZone defaultTimeZone = TimeZone.getTimeZone("Europe/Berlin");
+		TimeZone defaultTimeZone = TimeZone.getTimeZone(DcemConstants.SYSTEM_DEFAULT_ZONE);
 		TimeZone.setDefault(defaultTimeZone);
 		
 		boolean debugMode = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("jdwp") >= 0;

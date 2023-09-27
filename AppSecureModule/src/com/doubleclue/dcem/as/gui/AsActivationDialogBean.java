@@ -18,15 +18,18 @@ import com.doubleclue.dcem.as.logic.AsModule;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemDialog;
+import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
 
 @SuppressWarnings("serial")
 @Named("asActivationDialog")
 @SessionScoped
 public class AsActivationDialogBean extends DcemDialog {
-	
+
 	private static Logger logger = LogManager.getLogger(AsActivationDialogBean.class);
 
 	@Inject
@@ -34,6 +37,9 @@ public class AsActivationDialogBean extends DcemDialog {
 
 	@Inject
 	AsActivationLogic activationLogic;
+	
+	@Inject
+	OperatorSessionBean operatorSessionBean;
 
 	@Inject
 	private UserLogic userLogic;
@@ -44,49 +50,53 @@ public class AsActivationDialogBean extends DcemDialog {
 
 	String domainName;
 
+	LocalDateTime validTill;
+
 	@Override
 	public boolean actionOk() throws Exception {
 
-		ActivationCodeEntity actionObject = (ActivationCodeEntity) this.getActionObject();
-
+		ActivationCodeEntity activationCodeEntity = (ActivationCodeEntity) this.getActionObject();
 		try {
 			DcemUser dcemUser = userLogic.getDistinctUser(loginId);
 			if (dcemUser == null) {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "activationDialog.invalidUser");
 				return false;
 			}
-			LocalDateTime localDateTime = actionObject.getValidTill();
-			if (localDateTime == null) {
+			if (validTill == null) {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 				return false;
 			}
+			LocalDateTime localDateTime = operatorSessionBean.getDefaultZoneTime(validTill);
 			if (localDateTime.isBefore(LocalDateTime.now())) {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 				return false;
 			}
-			actionObject.setUser(dcemUser);
-			activationLogic.addUpdateActivationCode(actionObject, this.getAutoViewAction().getDcemAction(), sendBy, true);
-
-			JsfUtils.addInformationMessage(AsModule.RESOURCE_NAME, "activationDialog.success", actionObject.getActivationCode());
-
-			actionObject.setActivationCode(null); // reset the activation-code so that it is not repeated
+			activationCodeEntity.setValidTill(localDateTime);
+			activationCodeEntity.setUser(dcemUser);
+			activationLogic.addUpdateActivationCode(activationCodeEntity, this.getAutoViewAction().getDcemAction(), sendBy, true);
+			JsfUtils.addInformationMessage(AsModule.RESOURCE_NAME, "activationDialog.success", activationCodeEntity.getActivationCode());
+			activationCodeEntity.setActivationCode(null); // reset the activation-code so that it is not repeated
 			if (this.getAutoViewAction().getDcemAction().equals(DcemConstants.ACTION_ADD)) {
 				return false;
 			}
 			return true;
-
 		} catch (DcemException exp) {
 			logger.info(exp);
 			JsfUtils.addErrorMessage(exp.getLocalizedMessage() + " (" + exp.getMessage() + ")");
 			return false;
-
 		} catch (Exception exp) {
 			logger.info(exp);
 			JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "exception.error", exp.getMessage());
 			return false;
 		}
 	}
-	
+
+	@Override
+	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
+		ActivationCodeEntity actionObject = (ActivationCodeEntity) this.getActionObject();;
+		validTill = operatorSessionBean.getZonedTime(actionObject.getValidTill());
+	}
+
 	public void changeDomain() {
 		loginId = null;
 	}
@@ -95,7 +105,7 @@ public class AsActivationDialogBean extends DcemDialog {
 		if (domainName == null || domainName.isEmpty()) {
 			return userLogic.getCompleteUserList(name, 50);
 		} else {
-			return userLogic.getCompleteUserList(domainName  + DcemConstants.DOMAIN_SEPERATOR +  name, 50);
+			return userLogic.getCompleteUserList(domainName + DcemConstants.DOMAIN_SEPERATOR + name, 50);
 		}
 	}
 
@@ -136,11 +146,18 @@ public class AsActivationDialogBean extends DcemDialog {
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
 	}
-	
+
 	@Override
 	public String getHeight() {
 		return "350px";
 	}
-	
-	
+
+	public LocalDateTime getValidTill() {
+		return validTill;
+	}
+
+	public void setValidTill(LocalDateTime validTill) {
+		this.validTill = validTill;
+	}
+
 }

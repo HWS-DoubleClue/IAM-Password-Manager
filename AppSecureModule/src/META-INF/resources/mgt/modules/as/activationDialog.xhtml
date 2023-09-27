@@ -39,7 +39,6 @@
 				 	<p:autoUpdate />
 				</p:messages>
 
-
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 
 					<p:outputLabel for="user" value="Domain: " rendered="#{viewNavigator.addAction}" />
@@ -56,7 +55,7 @@
 					</h:panelGroup>
 
 					<p:outputLabel value="#{asMsg['activationDialog.validTill']}: " />
-					<p:datePicker id="validTill"  timeZone="#{adminModule.timezone}" value="#{asActivationDialog.actionObject.validTill}" locale="#{operatorSession.locale}"
+					<p:datePicker id="validTill" value="#{asActivationDialog.validTill}" locale="#{operatorSession.locale}"
 					pattern="#{operatorSession.dateTimePattern}" showTime="true"  />
 
 					<p:outputLabel for="info" value="Info: " />
