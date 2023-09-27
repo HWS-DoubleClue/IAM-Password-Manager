@@ -147,7 +147,6 @@
 							<!-- <p:ajax event="rowUnselectCheckbox" /> -->
 							<!-- 	<p:ajax event="rowSelect" /> -->
 
-
 							<p:column selectionMode="multiple" style="width:6em !important;">
 								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.encrypted']}" library="pictures" name="key.png"
 									rendered="#{cloudSafeFile.options == 'PWD' }" />
@@ -156,7 +155,6 @@
 								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.discarded']}" library="pictures" name="dicards.png"
 									rendered="#{cloudSafeFile.discardAfter != null }" />
 							</p:column>
-
 							<p:column headerText="#{DcupMsg['columnTitle.filename']}" sortBy="#{cloudSafeFile.name}" class="columName">
 								<p:commandLink action="#{cloudSafeView.actinClickFolderOrFile(cloudSafeFile)}" immediate="true" update="@form">
 									<p:graphicImage styleClass="viewFileImage" library="pictures" name="icons/16x16/#{cloudSafeView.getFileIcon(cloudSafeFile)}" />
@@ -167,28 +165,24 @@
 									<p:ajax listener="#{cloudSafeView.onDropFile}" update="cloudSafeForm:cloudSafeTable" />
 								</p:droppable>
 							</p:column>
-
 							<p:column headerText="#{DcupMsg['columnTitle.length']}" sortBy="#{cloudSafeFile.lengthKb}" class="columnToBeHidden">
 								<h:outputText value="#{cloudSafeFile.lengthKb}" class="columnToBeHidden" />
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.lastModified']}" sortBy="#{cloudSafeFile.lastModified}" class="columnToBeHidden">
-								<h:outputText value="#{cloudSafeFile.lastModified}" class="columnToBeHidden">
-									<f:convertDateTime dateStyle="medium" type="both" />
+								<h:outputText value="#{cloudSafeFile.lastModified}" class="columnToBeHidden" converter="dcem.LocalDateTimeConverter">
 								</h:outputText>
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.lastModifiedUser']}" sortBy="#{cloudSafeFile.lastModifiedUser.displayName}" class="columnToBeHidden">
-								<h:outputText value="#{cloudSafeFile.lastModifiedUser.displayName}" class="columnToBeHidden" />
+								<h:outputText value="#{cloudSafeFile.lastModifiedUser.displayName}" class="columnToBeHidden"  />
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.discardsAfter']}" sortBy="#{cloudSafeFile.discardAfter}" class="columnToBeHidden">
-								<h:outputText value="#{cloudSafeFile.discardAfter}" class="columnToBeHidden">
-									<f:convertDateTime dateStyle="medium" type="date" />
+								<h:outputText value="#{cloudSafeFile.discardAfter}" class="columnToBeHidden" converter="dcem.LocalDateTimeConverter">
 								</h:outputText>
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.ownerGroup']}" sortBy="#{cloudSafeFile.owner.value}" class="columnToBeHidden">
 								<h:outputText value="#{cloudSafeFile.group.name}" class="columnToBeHidden" rendered="#{cloudSafeFile.owner.value == 3}" />
 							</p:column>
 						</p:dataTable>
-
 					</h:panelGrid>
 				</h:panelGroup>
 
@@ -276,7 +270,7 @@
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.lastModified']}" sortBy="#{cloudSafeFile.cloudSafeEntity.lastModified}" class="columnToBeHidden">
 								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.lastModified}" class="columnToBeHidden">
-									<f:convertDateTime dateStyle="medium" type="both" />
+
 								</h:outputText>
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.lastModifiedUser']}" sortBy="#{cloudSafeFile.cloudSafeEntity.lastModifiedUser.displayName}"
@@ -285,7 +279,7 @@
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.discardsAfter']}" sortBy="#{cloudSafeFile.cloudSafeEntity.discardAfter}" class="columnToBeHidden">
 								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.discardAfter}" class="columnToBeHidden">
-									<f:convertDateTime dateStyle="medium" type="date" />
+
 								</h:outputText>
 							</p:column>
 							<p:column headerText="#{DcupMsg['cloudSafe.restrictDownload']}" class="columnToBeHidden">
@@ -327,8 +321,8 @@
 					<p:outputLabel value="#{DcupMsg['label.uploadedFiles']}" />
 					<p:outputLabel id="uploadedFiles" value="#{cloudSafeView.uploadedFiles}" />
 					<p:outputLabel for="inputExpiry" value="#{DcupMsg['label.discardsAfter']}" />
-					<p:datePicker id="inputExpiry" class="calenderUpload" value="#{cloudSafeView.expiryDate}" 
-						locale="#{portalSessionBean.locale}" pattern="#{portalSessionBean.dateTimePattern}">
+					<p:datePicker id="inputExpiry" class="calenderUpload" value="#{cloudSafeView.expiryDate}" locale="#{portalSessionBean.locale}"
+						pattern="#{portalSessionBean.dateTimePattern}">
 						<p:ajax event="dateSelect" update="inputExpiry" />
 					</p:datePicker>
 
@@ -405,7 +399,7 @@
 				<p:inputText id="fileNameinput" value="#{cloudSafeView.selectedFileName}" maxlength="128" style="width: 22em" />
 				<p />
 				<br></br>
-				<p:commandButton style="width: 10em" icon="fa fa-check" value="#{DcupMsg['button.ok']}" actionListener="#{cloudSafeView.setNewFileName}"/>
+				<p:commandButton style="width: 10em" icon="fa fa-check" value="#{DcupMsg['button.ok']}" actionListener="#{cloudSafeView.setNewFileName}" />
 				<p></p>
 				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" onclick="PF('renameDlg').hide();" style="float: right; margin-right: 1em;"
 					immediate="true" />
@@ -464,7 +458,7 @@
 				<p:outputLabel value="#{DcupMsg['cloudSafe.downloadFileName']}: " />
 				<p:outputLabel id="folderName" value="#{cloudSafeView.folderName}" />
 				<p></p>
-		<!--	NOT SUPPORTED ANYMORE	<p:outputLabel for="folderPassword" value="#{DcupMsg['label.password']}" />
+				<!--	NOT SUPPORTED ANYMORE	<p:outputLabel for="folderPassword" value="#{DcupMsg['label.password']}" />
 			    <p:password id="folderPassword" style="margin-left: 1em" value="#{cloudSafeView.filePassword}" autocomplete="off" required="true" toggleMask="true" /> -->
 				<p></p>
 				<p:commandButton id="openFolderbtn" icon="fa fa-folder-open-o" value="#{DcupMsg['button.open']}" ajax="true" action="#{cloudSafeView.openFolder}">

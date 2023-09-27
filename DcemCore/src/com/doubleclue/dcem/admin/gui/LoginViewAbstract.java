@@ -613,7 +613,7 @@ public abstract class LoginViewAbstract implements Serializable {
 	}
 
 	protected void finishLogin() throws DcemException {
-		TimeZone timeZone = adminModule.getTimezone();
+		TimeZone timeZone = userLogic.getTimeZone(dcemUser);
 		ExternalContext ec = JsfUtils.getExternalContext();
 		HttpServletRequest httpServletRequest = (HttpServletRequest) ec.getRequest();
 		httpServletRequest.getSession().setAttribute((String) DcemConstants.SESSION_TIMEZONE, timeZone);

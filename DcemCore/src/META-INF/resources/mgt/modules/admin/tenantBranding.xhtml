@@ -19,14 +19,13 @@
 
 				<h:panelGroup>
 					<p:outputLabel for="timezone" value="#{AdminMsg['tenantBranding.timezone']}" style="vertical-align: middle;" />
-					<p:selectOneMenu id="timezone" value="#{tenantBrandingView.continentTimezone}" style="margin-left: 1em;">
-						<f:selectItems value="#{tenantBrandingView.continentTimezones}">
-						</f:selectItems>
+					<p:selectOneMenu id="timezone" value="#{tenantBrandingView.continentTimezone}" style="margin-left: 1em; width: 10em !important">
+						<f:selectItems value="#{tenantBrandingView.continentTimezones}" />
 						<p:ajax event="change" update="timezoneCountry" />
 					</p:selectOneMenu>
 
 					<p:outputLabel for="timezoneCountry" value="#{AdminMsg['tenantBranding.timezoneCountry']}" style="vertical-align: middle; margin-left: 4em;" />
-					<p:selectOneMenu id="timezoneCountry" value="#{tenantBrandingView.countryTimezone}" style="margin-left: 1em;">
+					<p:selectOneMenu id="timezoneCountry" value="#{tenantBrandingView.countryTimezone}" style="margin-left: 1em;width: 10em !important">
 						<f:selectItems value="#{tenantBrandingView.countryTimezones}">
 						</f:selectItems>
 					</p:selectOneMenu>
