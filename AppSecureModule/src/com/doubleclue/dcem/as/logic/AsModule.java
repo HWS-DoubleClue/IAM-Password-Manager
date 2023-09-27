@@ -403,7 +403,7 @@ public class AsModule extends DcemModule {
 	public void preferencesValidation(ModulePreferences modulePreferences) throws DcemException {
 		AsPreferences preferences = (AsPreferences) modulePreferences;
 		String fidoAllowedOrigins= "";
-		if (preferences.getFidoAllowedOrigins() == null) {
+		if (preferences.getFidoAllowedOrigins() != null) {
 			fidoAllowedOrigins = preferences.getFidoAllowedOrigins().replaceAll("\\s+", "");
 		}
 		if (fidoAllowedOrigins != null && !fidoAllowedOrigins.isEmpty()) {
