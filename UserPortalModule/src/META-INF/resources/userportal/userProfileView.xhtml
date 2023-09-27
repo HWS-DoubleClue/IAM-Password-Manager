@@ -34,7 +34,7 @@
 						<h:outputLabel value="#{userProfileView.user.loginId}" required="true" redisplay="true" rendered="#{userProfileView.user.domainUser == true}"
 							 />
 
-						<h:outputLabel for="name" value="#{DcupMsg['label.label.userLoginId']}" rendered="#{userProfileView.user.domainUser == false}" />
+						<h:outputLabel for="name" value="#{DcupMsg['label.userLoginId']}" rendered="#{userProfileView.user.domainUser == false}" />
 						<p:inputText id="name"   value="#{userProfileView.user.loginId}" required="true" redisplay="true" rendered="#{userProfileView.user.domainUser == false}" />
 
 						<h:outputLabel for="displayname" value="#{DcupMsg['label.fullName']}" rendered="#{userProfileView.user.domainUser == false}" />
