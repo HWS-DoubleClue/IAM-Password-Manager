@@ -97,7 +97,11 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 	}
 
 	public void setTimezone(TimeZone timezone) {
-		this.timezoneString = timezone.getID();
+		if (timezone == null) {
+			this.timezoneString = null;
+		} else {
+			this.timezoneString = timezone.getID();
+		}
 	}
 
 	public DepartmentEntity getDepartment() {

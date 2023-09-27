@@ -78,6 +78,8 @@ public class UserProfileView extends AbstractPortalView {
 
 	private String countryTimezone;
 
+	private boolean defaultTimezone;
+
 	private UploadedFile uploadPhotoProfile;
 
 	public byte[] getPhotoProfile() {
@@ -163,7 +165,11 @@ public class UserProfileView extends AbstractPortalView {
 				DcemUserExtension dcemUserExtension = new DcemUserExtension();
 				dcemUserExtension.setPhoto(photoProfile);
 				dcemUserExtension.setCountry(country);
-				dcemUserExtension.setTimezoneString(countryTimezone);
+				if (defaultTimezone) {
+					dcemUserExtension.setTimezoneString(null);
+				} else {
+					dcemUserExtension.setTimezoneString(countryTimezone);
+				}
 				profileLogic.updateUserProfile(clonedDcemUser, dcemUserExtension);
 				DcemUser dcemUser = portalSessionBean.updateUser();
 				if (dcemUser.isDomainUser() == true && photoProfile != null) {
@@ -287,13 +293,27 @@ public class UserProfileView extends AbstractPortalView {
 	}
 
 	private void updateTimeZone(DcemUserExtension dcemUserExtension) {
-		TimeZone timeZone = DcemUtils.getUserTimeZone(dcemUserExtension, adminModule.getTimezone());
+		TimeZone timeZone;
+		if (dcemUserExtension == null || dcemUserExtension.getTimezone() == null) {
+			defaultTimezone = true;
+			timeZone = adminModule.getTimezone();
+		} else {
+			defaultTimezone = false;
+			timeZone = dcemUserExtension.getTimezone();
+		}
+		setContinentAndCountryTimezone(timeZone);
+	}
+
+	private void setContinentAndCountryTimezone(TimeZone timeZone) {
 		String[] continentAndCountry = DcemUtils.getContinentAndIdFromTimezone(timeZone);
 		continentTimezone = continentAndCountry[0];
 		countryTimezone = continentAndCountry[1];
 	}
 
 	public List<SelectItem> getContinentTimezones() {
+		if (defaultTimezone) {
+			setContinentAndCountryTimezone(adminModule.getTimezone());
+		}
 		return DcemUtils.getContinentTimezones();
 	}
 
@@ -323,6 +343,14 @@ public class UserProfileView extends AbstractPortalView {
 
 	public void setCountryTimezone(String countryTimezone) {
 		this.countryTimezone = countryTimezone;
+	}
+
+	public boolean isDefaultTimezone() {
+		return defaultTimezone;
+	}
+
+	public void setDefaultTimezone(boolean defaultTimezone) {
+		this.defaultTimezone = defaultTimezone;
 	}
 
 }

@@ -153,8 +153,10 @@
 				<h:panelGrid id="selectTimeZone" columns="2" cellpadding="4"
 					cellspacing="4" style="width: 100%">
 
-					<p:outputLabel value="#{AdminMsg['userDialog.defaultTimezone']} " />
-					<p:selectBooleanCheckbox value="#{userDialog.defaultTimezone}">
+					<p:outputLabel for="selectDefaultTimeZone"
+						value="#{AdminMsg['userDialog.defaultTimezone']} " />
+					<p:selectBooleanCheckbox id="selectDefaultTimeZone"
+						value="#{userDialog.defaultTimezone}">
 						<p:ajax event="change" update="selectTimeZone" />
 					</p:selectBooleanCheckbox>
 
@@ -163,6 +165,7 @@
 						<p:outputLabel for="timezone"
 							value="#{AdminMsg['userDialog.timezoneContinent']}" />
 						<p:selectOneMenu id="timezone"
+							disabled="#{userDialog.defaultTimezone}"
 							value="#{userDialog.continentTimezone}" style="margin-left: 1em;">
 							<f:selectItems value="#{userDialog.continentTimezones}">
 							</f:selectItems>
@@ -175,6 +178,7 @@
 						<p:outputLabel for="timezoneCountry"
 							value="#{AdminMsg['userDialog.timezoneCountry']}" />
 						<p:selectOneMenu id="timezoneCountry"
+							disabled="#{userDialog.defaultTimezone}"
 							value="#{userDialog.countryTimezone}" style="margin-left: 1em;">
 							<f:selectItems value="#{userDialog.countryTimezones}">
 							</f:selectItems>

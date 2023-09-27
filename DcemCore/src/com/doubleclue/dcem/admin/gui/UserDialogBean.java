@@ -132,7 +132,11 @@ public class UserDialogBean extends DcemDialog {
 			DcemUserExtension dcemUserExtension = new DcemUserExtension();
 			dcemUserExtension.setCountry(country);
 			dcemUserExtension.setJobTitle(jobTitle);
-			dcemUserExtension.setTimezoneString(countryTimezone);
+			if (defaultTimezone) {
+				dcemUserExtension.setTimezoneString(null);
+			} else {
+				dcemUserExtension.setTimezoneString(countryTimezone);
+			}
 			dcemUserExtension.setDepartment(departmentEntity);
 			userLogic.updateDcemUserExtension(user, dcemUserExtension);
 			StringUtils.wipeString(user.getInitialPassword());
@@ -439,12 +443,19 @@ public class UserDialogBean extends DcemDialog {
 			defaultTimezone = false;
 			timeZone = dcemUserExtension.getTimezone();
 		}
+		setContinentAndCountryTimezone(timeZone);
+	}
+
+	private void setContinentAndCountryTimezone(TimeZone timeZone) {
 		String[] continentAndCountry = DcemUtils.getContinentAndIdFromTimezone(timeZone);
 		continentTimezone = continentAndCountry[0];
 		countryTimezone = continentAndCountry[1];
 	}
 
 	public List<SelectItem> getContinentTimezones() {
+		if (defaultTimezone) {
+			setContinentAndCountryTimezone(adminModule.getTimezone());
+		}
 		return DcemUtils.getContinentTimezones();
 	}
 

@@ -107,31 +107,39 @@
 							<f:selectItems value="#{userProfileView.availableCountries}" />
 						</p:selectOneMenu>
 
-
-
 						<p:outputLabel for="selectTimeZone"
 							value="#{DcupMsg['label.timezone']}" />
 						<h:panelGrid id="selectTimeZone" columns="2" cellpadding="4"
 							cellspacing="4" style="width: 100%">
-							<p:outputLabel for="timezone"
-								value="#{DcupMsg['label.timezoneContinent']}" />
-							<p:selectOneMenu id="timezone"
-								value="#{userProfileView.continentTimezone}"
-								style="margin-left: 1em;">
-								<f:selectItems value="#{userProfileView.continentTimezones}">
-								</f:selectItems>
-								<p:ajax event="change" update="timezoneCountry" />
-							</p:selectOneMenu>
+							<p:outputLabel value="#{DcupMsg['label.defaultTimezone']} " />
+							<p:selectBooleanCheckbox
+								value="#{userProfileView.defaultTimezone}">
+								<p:ajax event="change" update="selectTimeZone" />
+							</p:selectBooleanCheckbox>
+
+
+								<p:outputLabel for="timezone"
+									value="#{DcupMsg['label.timezoneContinent']}" />
+								<p:selectOneMenu id="timezone"
+									disabled="#{userProfileView.defaultTimezone}"
+									value="#{userProfileView.continentTimezone}"
+									style="margin-left: 1em;">
+									<f:selectItems value="#{userProfileView.continentTimezones}">
+									</f:selectItems>
+									<p:ajax event="change" update="timezoneCountry" />
+								</p:selectOneMenu>
 
 							<p:outputLabel for="timezoneCountry"
-								value="#{DcupMsg['label.timezoneCountry']}" />
-							<p:selectOneMenu id="timezoneCountry"
-								value="#{userProfileView.countryTimezone}"
-								style="margin-left: 1em;">
-								<f:selectItems value="#{userProfileView.countryTimezones}">
-								</f:selectItems>
-							</p:selectOneMenu>
+									value="#{DcupMsg['label.timezoneCountry']}" />
+								<p:selectOneMenu id="timezoneCountry"
+									disabled="#{userProfileView.defaultTimezone}"
+									value="#{userProfileView.countryTimezone}"
+									style="margin-left: 1em;">
+									<f:selectItems value="#{userProfileView.countryTimezones}">
+									</f:selectItems>
+								</p:selectOneMenu>
 						</h:panelGrid>
+
 
 						<p:tooltip for="prvMobile"
 							value="#{DcupMsg['label.prvMobileInfo']}" />
