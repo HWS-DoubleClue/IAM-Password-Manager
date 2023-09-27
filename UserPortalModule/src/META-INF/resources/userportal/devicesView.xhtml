@@ -71,9 +71,7 @@
 					</p:column>
 
 					<p:column headerText="#{DcupMsg['columnTitle.lastLogin']}">
-						<h:outputText value="#{device.lastLoginTime}">
-							<f:convertDateTime type="both" dateType="short" />
-						</h:outputText>
+						<h:outputText value="#{device.lastLoginTime}"  converter="dcem.LocalDateTimeConverter" />
 					</p:column>
 				</p:dataTable>
 				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
@@ -162,10 +160,10 @@
 						<h:outputText value="#{fidoAuthenticator.displayName}" />
 					</p:column>
 					<p:column headerText="#{DcupMsg['columnTitle.registeredOn']}">
-						<h:outputText value="#{portalUtils.getFormattedDate(fidoAuthenticator.registeredOn)}" />
+						<h:outputText value="#{fidoAuthenticator.registeredOn}"  converter="dcem.LocalDateTimeConverter" />
 					</p:column>
 					<p:column headerText="#{DcupMsg['columnTitle.lastUsed']}">
-						<h:outputText value="#{portalUtils.getFormattedDate(fidoAuthenticator.lastUsed)}" />
+						<h:outputText value="#{fidoAuthenticator.lastUsed}"  converter="dcem.LocalDateTimeConverter" />
 					</p:column>
 				</p:dataTable>
 				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
