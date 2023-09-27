@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -31,6 +30,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,8 +77,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Equator;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
@@ -92,6 +90,7 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemAction;
+import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.entities.RoleRestriction;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -162,7 +161,8 @@ public class DcemUtils {
 	 * @param dcemGui
 	 * @return
 	 */
-	static public ViewVariable convertFieldToViewVariable(Field field, ResourceBundle resourceBundle, String viewName, Object objectKlass) {
+	static public ViewVariable convertFieldToViewVariable(Field field, ResourceBundle resourceBundle, String viewName,
+			Object objectKlass) {
 		return convertFieldToViewVariable(field, resourceBundle, viewName, objectKlass, null);
 	}
 
@@ -174,8 +174,8 @@ public class DcemUtils {
 	 * @param viewVariable   Parent ViewVariable
 	 * @return
 	 */
-	static public ViewVariable convertFieldToViewVariable(Field field, ResourceBundle resourceBundle, String viewName, Object objectKlass,
-			ArrayList<Attribute<?, ?>> attributes) {
+	static public ViewVariable convertFieldToViewVariable(Field field, ResourceBundle resourceBundle, String viewName,
+			Object objectKlass, ArrayList<Attribute<?, ?>> attributes) {
 		Class<?> cls;
 		String displayName = null;
 		String helpText = null;
@@ -205,7 +205,8 @@ public class DcemUtils {
 			} catch (MissingResourceException mrex) {
 			}
 			try {
-				helpText = resourceBundle.getString(viewName + "." + DcemConstants.PREF_HELP_RESOURCE + "." + fieldName);
+				helpText = resourceBundle
+						.getString(viewName + "." + DcemConstants.PREF_HELP_RESOURCE + "." + fieldName);
 			} catch (MissingResourceException e) {
 				helpText = dcemGui.help();
 			}
@@ -320,28 +321,30 @@ public class DcemUtils {
 					try {
 						Class<?> listClass = Class.forName(types[0].getTypeName());
 						Field subField = listClass.getDeclaredField(dcemGui.subClass());
-						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass, attributes);
+						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass,
+								attributes);
 						if (subViewVariable == null) {
 							return null;
 						}
 						if (subViewVariable.getDcemGui().subClass().isEmpty()) {
 							variableType = subViewVariable.getVariableType();
-							ViewVariable retViewVariable = new ViewVariable(field.getName() + "." + subViewVariable.getId(), displayName, helpText,
+							ViewVariable retViewVariable = new ViewVariable(
+									field.getName() + "." + subViewVariable.getId(), displayName, helpText,
 									variableType, dcemGui, value, attributes);
 							retViewVariable.setKlass(subViewVariable.getKlass());
 							if (objectKlass == null) {
-								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
-										dcemGui.sortOrder());
+								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue,
+										filterToValue, dcemGui.filterOperator(), 0, dcemGui.sortOrder());
 								retViewVariable.setFilterItem(filterItem);
 							}
 							retViewVariable.setListClass(listClass);
 							return retViewVariable;
 						} else {
 							variableType = subViewVariable.getVariableType();
-							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
-									dcemGui.sortOrder());
-							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui, value, attributes,
-									filterItem);
+							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue,
+									dcemGui.filterOperator(), 0, dcemGui.sortOrder());
+							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText,
+									variableType, dcemGui, value, attributes, filterItem);
 							retViewVariable.setKlass(subViewVariable.getKlass());
 							retViewVariable.setListClass(listClass);
 							return retViewVariable;
@@ -357,27 +360,29 @@ public class DcemUtils {
 					Field subField;
 					try {
 						subField = cls.getDeclaredField(subClass);
-						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass, attributes);
+						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass,
+								attributes);
 						if (subViewVariable == null) {
 							return null;
 						}
 						if (subViewVariable.getDcemGui().subClass().isEmpty()) {
 							variableType = subViewVariable.getVariableType();
-							ViewVariable retViewVariable = new ViewVariable(field.getName() + "." + subViewVariable.getId(), displayName, helpText,
+							ViewVariable retViewVariable = new ViewVariable(
+									field.getName() + "." + subViewVariable.getId(), displayName, helpText,
 									variableType, dcemGui, value, attributes);
 							retViewVariable.setKlass(subViewVariable.getKlass());
 							if (objectKlass == null) {
-								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
-										dcemGui.sortOrder());
+								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue,
+										filterToValue, dcemGui.filterOperator(), 0, dcemGui.sortOrder());
 								retViewVariable.setFilterItem(filterItem);
 							}
 							return retViewVariable;
 						} else {
 							variableType = subViewVariable.getVariableType();
-							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
-									dcemGui.sortOrder());
-							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui, value, attributes,
-									filterItem);
+							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue,
+									dcemGui.filterOperator(), 0, dcemGui.sortOrder());
+							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText,
+									variableType, dcemGui, value, attributes, filterItem);
 							retViewVariable.setKlass(subViewVariable.getKlass());
 							return retViewVariable;
 						}
@@ -398,9 +403,11 @@ public class DcemUtils {
 		}
 
 		attributes.trimToSize();
-		ViewVariable viewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui, value, attributes);
+		ViewVariable viewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui,
+				value, attributes);
 		if (objectKlass == null) {
-			FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0, dcemGui.sortOrder());
+			FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue,
+					dcemGui.filterOperator(), 0, dcemGui.sortOrder());
 			viewVariable.setFilterItem(filterItem);
 		}
 		viewVariable.setKlass((Class<Object>) cls);
@@ -419,8 +426,9 @@ public class DcemUtils {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static HtmlPanelGrid populateTable(List<ViewVariable> viewVariables, HtmlPanelGrid htmlPanelGrid, Object object, String bindObject, boolean withHelp,
-			DcemDialog dcemDialog) throws IllegalArgumentException, IllegalAccessException {
+	public static HtmlPanelGrid populateTable(List<ViewVariable> viewVariables, HtmlPanelGrid htmlPanelGrid,
+			Object object, String bindObject, boolean withHelp, DcemDialog dcemDialog)
+			throws IllegalArgumentException, IllegalAccessException {
 
 		htmlPanelGrid.getChildren().clear();
 		ViewVariable viewVariable;
@@ -448,7 +456,8 @@ public class DcemUtils {
 			htmlPanelGrid.getChildren().add(out);
 			try {
 				HtmlPanelGroup htmlPanelGroup = new HtmlPanelGroup();
-				UIComponent input = getHtmlInput(eFactory, "#{" + bindObject + "." + viewVariable.getId() + "}", viewVariable, object, dcemDialog);
+				UIComponent input = getHtmlInput(eFactory, "#{" + bindObject + "." + viewVariable.getId() + "}",
+						viewVariable, object, dcemDialog);
 				input.setId(viewVariable.getId().replace('.', '_'));
 				htmlPanelGroup.getChildren().add(input);
 				if (withHelp && viewVariable.getHelpText() != null && viewVariable.getHelpText().isEmpty() == false) {
@@ -456,7 +465,8 @@ public class DcemUtils {
 					helpButton.setEscape(false);
 					helpButton.setValue("<i class=\"fa fa-question-circle\" aria-hidden=\"true\"></i>");
 					helpButton.setId("helpButton" + input.getId());
-					helpButton.setStyle("padding:2px;color:#005078;cursor:pointer;font-size: 1.2em;margin-left: 0.5em;");
+					helpButton
+							.setStyle("padding:2px;color:#005078;cursor:pointer;font-size: 1.2em;margin-left: 0.5em;");
 					OverlayPanel op = new OverlayPanel();
 					op.setDismissable(false);
 					op.setShowCloseIcon(true);
@@ -486,8 +496,8 @@ public class DcemUtils {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	static UIComponent getHtmlInput(ExpressionFactory eFactory, String binding, ViewVariable viewVariable, Object object, DcemDialog dcemDialog)
-			throws IllegalArgumentException, IllegalAccessException {
+	static UIComponent getHtmlInput(ExpressionFactory eFactory, String binding, ViewVariable viewVariable,
+			Object object, DcemDialog dcemDialog) throws IllegalArgumentException, IllegalAccessException {
 
 		// FIXME: add validations of input parameter
 		DcemGui dcemGui = viewVariable.getDcemGui();
@@ -519,7 +529,8 @@ public class DcemUtils {
 			if (viewVariable.getStyleClass() != null) {
 				input.setStyleClass(viewVariable.getStyleClass());
 			}
-			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
+					|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 				input.setDisabled(true);
 			}
 			return input;
@@ -528,8 +539,10 @@ public class DcemUtils {
 			if (dcemGui != null && dcemGui.choose().length > 0) {
 				HtmlSelectOneMenu select = new HtmlSelectOneMenu();
 				select.setLabel(viewVariable.getDisplayName());
-				select.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, String.class));
-				select.setValueExpression("appendTo", eFactory.createValueExpression(fc.getELContext(), "@this", String.class));
+				select.setValueExpression("value",
+						eFactory.createValueExpression(fc.getELContext(), binding, String.class));
+				select.setValueExpression("appendTo",
+						eFactory.createValueExpression(fc.getELContext(), "@this", String.class));
 				// populate the drop down list
 				UISelectItems items = new UISelectItems();
 				ArrayList<SelectItem> arr = new ArrayList<SelectItem>(dcemGui.choose().length);
@@ -573,7 +586,8 @@ public class DcemUtils {
 				if (viewVariable.getStyleClass() != null) {
 					((Password) inputStr).setStyleClass(viewVariable.getStyleClass());
 				}
-				if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+				if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
+						|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 					((Password) inputStr).setDisabled(true);
 				}
 				((Password) inputStr).setRedisplay(true);
@@ -583,9 +597,11 @@ public class DcemUtils {
 					inputStr = new AutoComplete();
 					((HtmlInputText) inputStr).setLabel(viewVariable.getDisplayName());
 					((AutoComplete) inputStr).setMinQueryLength(1);
-					String expression = "#{" + getOriginalClassName(dcemDialog.getClass().getSimpleName()) + "." + viewVariable.getId() + "s}";
+					String expression = "#{" + getOriginalClassName(dcemDialog.getClass().getSimpleName()) + "."
+							+ viewVariable.getId() + "s}";
 
-					MethodExpression methodExpression = createMethodExpression(expression, List.class, new Class<?>[] { String.class });
+					MethodExpression methodExpression = createMethodExpression(expression, List.class,
+							new Class<?>[] { String.class });
 					((AutoComplete) inputStr).setCompleteMethod(methodExpression);
 
 				} else {
@@ -599,9 +615,11 @@ public class DcemUtils {
 				if (viewVariable.getStyleClass() != null) {
 					((HtmlInputText) inputStr).setStyleClass(viewVariable.getStyleClass());
 				}
-				if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+				if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
+						|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 					HtmlOutputText uiComponent = new HtmlOutputText();
-					uiComponent.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, String.class));
+					uiComponent.setValueExpression("value",
+							eFactory.createValueExpression(fc.getELContext(), binding, String.class));
 					uiComponent.setRendered(true);
 					if (viewVariable.getValue() == null) {
 						uiComponent.setValue("");
@@ -611,7 +629,8 @@ public class DcemUtils {
 					return uiComponent;
 				}
 			}
-			inputStr.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, String.class));
+			inputStr.setValueExpression("value",
+					eFactory.createValueExpression(fc.getELContext(), binding, String.class));
 			inputStr.setRendered(true);
 			if (viewVariable.getValue() == null) {
 				inputStr.setValue("");
@@ -622,10 +641,12 @@ public class DcemUtils {
 
 		case BOOLEAN:
 			SelectBooleanCheckbox selectBooleanCheckbox = new SelectBooleanCheckbox();
-			selectBooleanCheckbox.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, Boolean.class));
+			selectBooleanCheckbox.setValueExpression("value",
+					eFactory.createValueExpression(fc.getELContext(), binding, Boolean.class));
 			selectBooleanCheckbox.setValue(viewVariable.getValue());
 			selectBooleanCheckbox.setLabel(viewVariable.getDisplayName());
-			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
+					|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 				((HtmlSelectBooleanCheckbox) selectBooleanCheckbox).setDisabled(true);
 			}
 
@@ -635,18 +656,22 @@ public class DcemUtils {
 		case EPOCH_DATE:
 
 			org.primefaces.component.calendar.Calendar uiCalendar = new org.primefaces.component.calendar.Calendar();
-			uiCalendar.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, Date.class));
+			uiCalendar.setValueExpression("value",
+					eFactory.createValueExpression(fc.getELContext(), binding, Date.class));
 			uiCalendar.setValue(viewVariable.getValue());
 			uiCalendar.setStyle("width: 40px");
-			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
+					|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 				uiCalendar.setDisabled(true);
 			}
 			return uiCalendar;
 		case ENUM:
 			HtmlSelectOneMenu select = new SelectOneMenu();
 			select.setLabel(viewVariable.getDisplayName());
-			select.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, String.class));
-			select.setValueExpression("appendTo", eFactory.createValueExpression(fc.getELContext(), "@this", String.class));
+			select.setValueExpression("value",
+					eFactory.createValueExpression(fc.getELContext(), binding, String.class));
+			select.setValueExpression("appendTo",
+					eFactory.createValueExpression(fc.getELContext(), "@this", String.class));
 			// populate the drop down list
 
 			Object[] enumItems = viewVariable.getKlass().getEnumConstants();
@@ -736,10 +761,11 @@ public class DcemUtils {
 	 *                           parameter is ignored.
 	 * @return The parsed expression.
 	 */
-	static MethodExpression createMethodExpression(String methodExpression, Class<?> expectedReturnType, Class<?>[] expectedParamTypes) {
+	static MethodExpression createMethodExpression(String methodExpression, Class<?> expectedReturnType,
+			Class<?>[] expectedParamTypes) {
 		FacesContext context = FacesContext.getCurrentInstance();
-		return context.getApplication().getExpressionFactory().createMethodExpression(context.getELContext(), methodExpression, expectedReturnType,
-				expectedParamTypes);
+		return context.getApplication().getExpressionFactory().createMethodExpression(context.getELContext(),
+				methodExpression, expectedReturnType, expectedParamTypes);
 	}
 
 	/**
@@ -1228,8 +1254,8 @@ public class DcemUtils {
 	 * @return
 	 * @throws DcemException
 	 */
-	public static List<ViewVariable> getViewVariables(Class<?> clazz, ResourceBundle resourceBundle, String viewName, List<RoleRestriction> restrictions)
-			throws DcemException {
+	public static List<ViewVariable> getViewVariables(Class<?> clazz, ResourceBundle resourceBundle, String viewName,
+			List<RoleRestriction> restrictions) throws DcemException {
 
 		List<ViewVariable> viewVariables = new LinkedList<>();
 		LinkedList<Class<?>> list = DcemUtils.getHierarchyList(clazz);
@@ -1250,7 +1276,8 @@ public class DcemUtils {
 						if (viewVariable.getId().equals(roleRestriction.getVariableName())) {
 							viewVariable.setRestricted(true);
 							if (roleRestriction.getFilterItem() == null) {
-								throw new DcemException(DcemErrorCodes.ROLE_RESTRICTIOIN_EMPTY_FILTER, "Role Restriction: Filter is null");
+								throw new DcemException(DcemErrorCodes.ROLE_RESTRICTIOIN_EMPTY_FILTER,
+										"Role Restriction: Filter is null");
 							}
 							viewVariable.setFilterItem(roleRestriction.getFilterItem());
 							break;
@@ -1258,9 +1285,9 @@ public class DcemUtils {
 					}
 				}
 				viewVariables.add(viewVariable);
-				if (viewVariable.isRestricted() == false
-						&& (viewVariable.getDcemGui().displayMode() == DisplayModes.ALL || viewVariable.getDcemGui().displayMode() == DisplayModes.TABLE_ONLY
-								|| viewVariable.getDcemGui().displayMode() == DisplayModes.INPUT_DISABLED)) {
+				if (viewVariable.isRestricted() == false && (viewVariable.getDcemGui().displayMode() == DisplayModes.ALL
+						|| viewVariable.getDcemGui().displayMode() == DisplayModes.TABLE_ONLY
+						|| viewVariable.getDcemGui().displayMode() == DisplayModes.INPUT_DISABLED)) {
 					viewVariable.setVisible(true);
 				} else {
 					viewVariable.setVisible(false);
@@ -1270,8 +1297,8 @@ public class DcemUtils {
 		return viewVariables;
 	}
 
-	public static void setRestricedVariables(EntityInterface entity, OperatorSessionBean operatorSessionBean, DcemAction reveal, DcemAction manage)
-			throws Exception {
+	public static void setRestricedVariables(EntityInterface entity, OperatorSessionBean operatorSessionBean,
+			DcemAction reveal, DcemAction manage) throws Exception {
 		if (entity.isRestricted() == true) {
 			LinkedList<Class<?>> list = DcemUtils.getHierarchyList(entity.getClass());
 			Field[] fields;
@@ -1307,7 +1334,8 @@ public class DcemUtils {
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
 	 */
-	public static Method getGetterMethodForField(Field field, Class<?> clazz) throws NoSuchMethodException, SecurityException {
+	public static Method getGetterMethodForField(Field field, Class<?> clazz)
+			throws NoSuchMethodException, SecurityException {
 		String fieldName = field.getName();
 		String getterMethodName = "get" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
 		try {
@@ -1326,7 +1354,8 @@ public class DcemUtils {
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
 	 */
-	public static Method getGetterMethodFromString(String fieldName, Class<?> clazz) throws NoSuchMethodException, SecurityException {
+	public static Method getGetterMethodFromString(String fieldName, Class<?> clazz)
+			throws NoSuchMethodException, SecurityException {
 		String getterMethodName = "get" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
 		try {
 			return clazz.getMethod(getterMethodName);
@@ -1385,11 +1414,13 @@ public class DcemUtils {
 			String methodName = gettersAndSetters[i].getName();
 			try {
 				if (methodName.startsWith("get")) {
-					destObject.getClass().getMethod(methodName.replaceFirst("get", "set"), gettersAndSetters[i].getReturnType()).invoke(destObject,
-							gettersAndSetters[i].invoke(sourceObject));
+					destObject.getClass()
+							.getMethod(methodName.replaceFirst("get", "set"), gettersAndSetters[i].getReturnType())
+							.invoke(destObject, gettersAndSetters[i].invoke(sourceObject));
 				} else if (methodName.startsWith("is")) {
-					destObject.getClass().getMethod(methodName.replaceFirst("is", "set"), gettersAndSetters[i].getReturnType()).invoke(destObject,
-							gettersAndSetters[i].invoke(sourceObject));
+					destObject.getClass()
+							.getMethod(methodName.replaceFirst("is", "set"), gettersAndSetters[i].getReturnType())
+							.invoke(destObject, gettersAndSetters[i].invoke(sourceObject));
 				}
 
 			} catch (NoSuchMethodException exp) {
@@ -1434,8 +1465,8 @@ public class DcemUtils {
 		return SupportedLanguage.English; // English is the default language
 	}
 
-	public static void zipFile(final ZipOutputStream zipOutputStream, ByteArrayOutputStream baos, final File file, String entryName, long maxFileSize)
-			throws Exception {
+	public static void zipFile(final ZipOutputStream zipOutputStream, ByteArrayOutputStream baos, final File file,
+			String entryName, long maxFileSize) throws Exception {
 		ZipEntry zipEntry = new ZipEntry(entryName);
 		zipOutputStream.putNextEntry(zipEntry);
 		RandomAccessFile randomAccessFile = null;
@@ -1454,8 +1485,8 @@ public class DcemUtils {
 			while ((read = randomAccessFile.read(buffer)) != -1) {
 				zipOutputStream.write(buffer, 0, read);
 				if (baos.size() > maxFileSize) {
-					String msg = "\r\n*****\r\n***** File truncated. FileSize=" + file.length() + ", FileTruncTo=" + maxFileSize + ", FileName="
-							+ file.getAbsolutePath() + " ***** \r\n";
+					String msg = "\r\n*****\r\n***** File truncated. FileSize=" + file.length() + ", FileTruncTo="
+							+ maxFileSize + ", FileName=" + file.getAbsolutePath() + " ***** \r\n";
 					logger.warn(msg);
 					zipOutputStream.write(msg.getBytes("UTF-8"));
 					break;
@@ -1541,10 +1572,12 @@ public class DcemUtils {
 		}
 	}
 
-	public static byte[] createQRCode(String qrCodeData, int qrCodeheight, int qrCodewidth) throws WriterException, IOException {
+	public static byte[] createQRCode(String qrCodeData, int qrCodeheight, int qrCodewidth)
+			throws WriterException, IOException {
 		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
 		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-		BitMatrix matrix = new MultiFormatWriter().encode(qrCodeData, BarcodeFormat.QR_CODE, qrCodewidth, qrCodeheight, hintMap);
+		BitMatrix matrix = new MultiFormatWriter().encode(qrCodeData, BarcodeFormat.QR_CODE, qrCodewidth, qrCodeheight,
+				hintMap);
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		MatrixToImageWriter.writeToStream(matrix, "PNG", os);
 		return os.toByteArray();
@@ -1568,7 +1601,8 @@ public class DcemUtils {
 		Set<Member> members = DcemCluster.getDcemCluster().getMembers();
 		Exception exception = null;
 		for (Member member : members) {
-			Future<Exception> future = executorService.submitToMember(new ReloadTask(className, tenantName, info), member);
+			Future<Exception> future = executorService.submitToMember(new ReloadTask(className, tenantName, info),
+					member);
 			try {
 				exception = future.get();
 			} catch (Exception e) {
@@ -1576,25 +1610,29 @@ public class DcemUtils {
 				return e;
 			}
 			if (exception != null) {
-				logger.warn("Member: " + member.getAddress() + "  Reloading: " + className + ", " + exception.toString());
+				logger.warn(
+						"Member: " + member.getAddress() + "  Reloading: " + className + ", " + exception.toString());
 				return exception;
 			}
 		}
 
 		//
 		//
-		// Map<Member, Future<Exception>> results = executorService.submitToAllMembers(new ReloadTask(className, tenantName));
+		// Map<Member, Future<Exception>> results =
+		// executorService.submitToAllMembers(new ReloadTask(className, tenantName));
 		// Exception exception = null;
 		// for (Member member : results.keySet()) {
 		// Future<Exception> future = results.get(member);
 		// try {
 		// exception = future.get();
 		// if (exception != null) {
-		// logger.warn("Member: " + member.getAddress() + " Reloading: " + className + ", " + exception.toString());
+		// logger.warn("Member: " + member.getAddress() + " Reloading: " + className +
+		// ", " + exception.toString());
 		// return exception;
 		// }
 		// } catch (Exception e) {
-		// logger.warn("Member: " + member.getAddress() + " Reloading: " + className + ", " + e.toString());
+		// logger.warn("Member: " + member.getAddress() + " Reloading: " + className +
+		// ", " + e.toString());
 		// return e;
 		// }
 		// }
@@ -1647,7 +1685,8 @@ public class DcemUtils {
 		return date;
 	}
 
-	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLenght, boolean force) throws DcemException {
+	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLenght, boolean force)
+			throws DcemException {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(image.length);
 		BufferedImage inputImage;
@@ -1687,10 +1726,12 @@ public class DcemUtils {
 
 	public static byte[] resizeImage(byte[] image, int maxLength) throws Exception {
 		try {
-			return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, DcemConstants.PHOTO_MAX, false);
+			return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT,
+					DcemConstants.PHOTO_MAX, false);
 		} catch (DcemException exp) {
 			if (exp.getErrorCode() == DcemErrorCodes.IMAGE_TOO_BIG) {
-				return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH_MIN, DcemConstants.PHOTO_HEIGHT_MIN, DcemConstants.PHOTO_MAX, true);
+				return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH_MIN, DcemConstants.PHOTO_HEIGHT_MIN,
+						DcemConstants.PHOTO_MAX, true);
 			}
 			throw exp;
 		}
@@ -1744,5 +1785,49 @@ public class DcemUtils {
 	public static long convertToEpoch(LocalDateTime localDateTime) {
 		return localDateTime.toEpochSecond(ZoneOffset.UTC);
 	}
+	public static String getContinentFromTimezone(TimeZone timezone) {
+		return getContinentFromTimezone(timezone.getID());
+	}
 
+	public static String getContinentFromTimezone(String timezoneAsString) {
+		int ind = timezoneAsString.indexOf("/");
+		if (ind > 0) {
+			return timezoneAsString.substring(0, ind);
+		} else {
+			return DcemConstants.TIME_ZONE_OTHER;
+		}
+	}
+
+	public static List<SelectItem> getContinentTimezones() {
+		String[] timezones = TimeZone.getAvailableIDs();
+		List<SelectItem> list = new ArrayList<SelectItem>();
+		HashSet<String> continents = new HashSet<String>();
+		for (String id : timezones) {
+			String continent = getContinentFromTimezone(id);
+			if (continents.contains(continent) == false
+					&& continent.equals(DcemConstants.TIME_ZONE_OTHER) == false) {
+				continents.add(continent);
+				list.add(new SelectItem(continent, continent));
+			}
+		}
+		list.add(new SelectItem(DcemConstants.TIME_ZONE_OTHER, DcemConstants.TIME_ZONE_OTHER));
+		return list;
+	}
+
+	public static List<SelectItem> getCountryTimezones(String continentTimezone) {
+		List<SelectItem> list = new ArrayList<SelectItem>();
+		if (continentTimezone == null) {
+			return list;
+		}
+		String[] timezones = TimeZone.getAvailableIDs();
+		for (String id : timezones) {
+			String continent = getContinentFromTimezone(id);
+			if (continentTimezone.equals(DcemConstants.TIME_ZONE_OTHER) && continent.equals(continentTimezone)) {
+				list.add(new SelectItem(id, id.replace('_', ' ')));
+			} else if (continent.equals(continentTimezone)) {
+				list.add(new SelectItem(id, id.substring(continentTimezone.length() + 1).replace('_', ' ')));
+			}
+		}
+		return list;
+	}
 }

@@ -1,7 +1,6 @@
 package com.doubleclue.dcem.core.entities;
 
 import java.io.Serializable;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.persistence.Column;
@@ -13,13 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.primefaces.model.SortOrder;
 
 import com.doubleclue.dcem.core.gui.DcemGui;
 
@@ -30,7 +27,8 @@ import com.doubleclue.dcem.core.gui.DcemGui;
  */
 @Entity
 @Table(name = "core_userext")
-@NamedQueries({ @NamedQuery(name = DcemUserExtension.DELETE_USER_EXTENSION, query = "DELETE FROM DcemUserExtension ex where ex.id = ?1"), })
+@NamedQueries({
+		@NamedQuery(name = DcemUserExtension.DELETE_USER_EXTENSION, query = "DELETE FROM DcemUserExtension ex where ex.id = ?1"), })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DcemUserExtension extends EntityInterface implements Serializable {
 
@@ -44,24 +42,22 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 	@DcemGui(name = "Country")
 	@Column(length = 255, name = "dc_country", nullable = true, updatable = true, insertable = true)
 	String country;
-	
+
 	@DcemGui(name = "Job Title")
 	@Column(length = 128, name = "jobTitle", nullable = true, updatable = true, insertable = true)
 	String jobTitle;
 
-	// @DcemGui(name = "Country")
 	@Column(length = 255, name = "dc_timezone", nullable = true, updatable = true, insertable = true)
-	private String timezone;
+	private String timezoneString;
 
 	@DcemGui(name = "Photo")
-	@Column(length = 8096*2, nullable = true)
+	@Column(length = 8096 * 2, nullable = true)
 	private byte[] photo;
-	
-	@DcemGui (name = "Department", subClass = "name")
+
+	@DcemGui(name = "Department", subClass = "name")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_DEPARTMENT_USEREXT_ID"), name = "departmentid", nullable = true, insertable = true, updatable = true)
 	private DepartmentEntity department;
-
 
 	// @DcemGui(name = "Country")
 	@Transient
@@ -93,12 +89,19 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 		this.country = country;
 	}
 
-	public String getTimezone() {
-		return timezone;
+	public TimeZone getTimezone() {
+		if (timezoneString == null) {
+			return null;
+		}
+		return TimeZone.getTimeZone(timezoneString);
 	}
 
-	public void setTimezone(String timezone) {
-		this.timezone = timezone;
+	public void setTimezone(TimeZone timezone) {
+		if (timezone == null) {
+			this.timezoneString = null;
+		} else {
+			this.timezoneString = timezone.getID();
+		}
 	}
 
 	public DepartmentEntity getDepartment() {
@@ -111,7 +114,8 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", country=" + country + ", timezone=" + timezone + ", department=" + department + "]";
+		return "User [id=" + id + ", country=" + country + ", timezone=" + timezoneString + ", department=" + department
+				+ "]";
 	}
 
 	public String getJobTitle() {
@@ -120,6 +124,14 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 
 	public void setJobTitle(String jobTitle) {
 		this.jobTitle = jobTitle;
+	}
+
+	public String getTimezoneString() {
+		return timezoneString;
+	}
+
+	public void setTimezoneString(String timezoneString) {
+		this.timezoneString = timezoneString;
 	}
 
 //	public DcemUser getDcemUser() {
