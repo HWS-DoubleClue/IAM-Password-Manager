@@ -116,7 +116,7 @@ public class ImportLdapUsersView extends DcemView {
 	
 	@Override
 	public void reload() {
-		validTill = operatorSessionBean.getZonedTime(asModuleApi.getActivationCodeDefaultValidTill());
+		validTill = operatorSessionBean.getUserZonedTime(asModuleApi.getActivationCodeDefaultValidTill());
 		validTillGroup = validTill;
 		List<SelectItem> list = domainLogic.getDomainNames();
 		if (list.isEmpty() == false) {
@@ -398,7 +398,7 @@ public class ImportLdapUsersView extends DcemView {
 					continue;
 				}
 				try {
-					asModuleApi.createActivationCode(dcemUser, operatorSessionBean.getDefaultZoneTime(validTill), sendBy, "Domain Import");
+					asModuleApi.createActivationCode(dcemUser, operatorSessionBean.getDefaultZonedTime(validTill), sendBy, "Domain Import");
 					countActivations++;
 				} catch (DcemException e) {
 					if (e.getErrorCode() == DcemErrorCodes.EMAIL_SEND_MSG_LIMIT) {

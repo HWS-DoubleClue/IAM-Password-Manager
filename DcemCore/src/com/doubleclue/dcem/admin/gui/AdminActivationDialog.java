@@ -55,7 +55,7 @@ public class AdminActivationDialog extends DcemDialog {
 	private void init() {
 		asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
 		if (asModuleApi != null) {
-			validTill = operatorSessionBean.getZonedTime(asModuleApi.getActivationCodeDefaultValidTill());
+			validTill = operatorSessionBean.getUserZonedTime(asModuleApi.getActivationCodeDefaultValidTill());
 		}
 	}
 
@@ -65,7 +65,7 @@ public class AdminActivationDialog extends DcemDialog {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 			return false;
 		}  
-		LocalDateTime localDateTime = operatorSessionBean.getDefaultZoneTime(validTill);
+		LocalDateTime localDateTime = operatorSessionBean.getDefaultZonedTime(validTill);
 		if (localDateTime.isBefore(LocalDateTime.now())) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 			return false;

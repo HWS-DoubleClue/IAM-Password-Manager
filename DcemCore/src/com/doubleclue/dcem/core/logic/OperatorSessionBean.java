@@ -444,12 +444,12 @@ public class OperatorSessionBean implements Serializable {
 		this.userSettings = userSettings;
 	}
 
-	public LocalDateTime getZonedTime(LocalDateTime value) {
-		return userLogic.getZonedTime(value, dcemUser);
+	public LocalDateTime getUserZonedTime(LocalDateTime value) {
+		return userLogic.getUserZonedTime(value, dcemUser);
 	}
 	
-	public LocalDateTime getDefaultZoneTime(LocalDateTime value) {
-		return userLogic.getDefaultTime(value, dcemUser);
+	public LocalDateTime getDefaultZonedTime(LocalDateTime value) {
+		return userLogic.getDefaultZonedTime(value, dcemUser);
 	}
 	
 	

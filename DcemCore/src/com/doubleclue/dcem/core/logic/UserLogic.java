@@ -920,7 +920,7 @@ public class UserLogic {
 		return timeZone;
 	}
 	
-	public LocalDateTime getZonedTime (LocalDateTime localDateTime, DcemUser dcemUser) {
+	public LocalDateTime getUserZonedTime (LocalDateTime localDateTime, DcemUser dcemUser) {
 		TimeZone timeZone = getTimeZone(dcemUser);
 		if (TimeZone.getDefault().equals(timeZone)) {
 			return localDateTime;
@@ -929,7 +929,7 @@ public class UserLogic {
 		return zonedDateTime.withZoneSameInstant(timeZone.toZoneId()).toLocalDateTime();
 	}
 
-	public LocalDateTime getDefaultTime(LocalDateTime localDateTime, DcemUser dcemUser) {
+	public LocalDateTime getDefaultZonedTime(LocalDateTime localDateTime, DcemUser dcemUser) {
 		TimeZone timeZone = getTimeZone(dcemUser);
 		if (TimeZone.getDefault().equals(timeZone)) {
 			return localDateTime;

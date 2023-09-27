@@ -66,7 +66,7 @@ public class AsActivationDialogBean extends DcemDialog {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 				return false;
 			}
-			LocalDateTime localDateTime = operatorSessionBean.getDefaultZoneTime(validTill);
+			LocalDateTime localDateTime = operatorSessionBean.getDefaultZonedTime(validTill);
 			if (localDateTime.isBefore(LocalDateTime.now())) {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 				return false;
@@ -94,7 +94,7 @@ public class AsActivationDialogBean extends DcemDialog {
 	@Override
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		ActivationCodeEntity actionObject = (ActivationCodeEntity) this.getActionObject();;
-		validTill = operatorSessionBean.getZonedTime(actionObject.getValidTill());
+		validTill = operatorSessionBean.getUserZonedTime(actionObject.getValidTill());
 	}
 
 	public void changeDomain() {

@@ -246,7 +246,7 @@ public class AsActivationLogic {
 		map.put(AsConstants.EMAIL_ACTIVATION_TENANT_LOGIN_ID, dcemUser.getLoginId());
 		map.put(AsConstants.EMAIL_ACTIVATION_CODE_KEY, asActivationCode.getActivationCode());
 
-		map.put(AsConstants.EMAIL_ACTIVATION_VALID_TILL_KEY, userLogic.getZonedTime(asActivationCode.getValidTill(), dcemUser).format(dtf));
+		map.put(AsConstants.EMAIL_ACTIVATION_VALID_TILL_KEY, userLogic.getUserZonedTime(asActivationCode.getValidTill(), dcemUser).format(dtf));
 		map.put(AsConstants.EMAIL_ACTIVATION_USER_KEY, dcemUser.getDisplayNameOrLoginId());
 		map.put(AsConstants.EMAIL_ACTIVATION_USER_DOMAIN_KEY, activationParameters.getUsername());
 

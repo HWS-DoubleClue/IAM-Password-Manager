@@ -285,7 +285,7 @@ public class ViewVariable implements Serializable {
 			break;
 		case DATE_TIME:
 			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);
-			LocalDateTime ldt = getOperatorSessionBean().getZonedTime((LocalDateTime) value);
+			LocalDateTime ldt = getOperatorSessionBean().getUserZonedTime((LocalDateTime) value);
 			resultValue = ldt.format(dateTimeFormatter);
 			break;
 		default:
