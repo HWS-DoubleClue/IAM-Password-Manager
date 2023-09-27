@@ -36,13 +36,14 @@ public final class DcemConstants {
 	public static final String GROUP_DIALOG_PATH = "/modules/admin/groupDialog.xhtml";
 	public static final String DOMAIN_DIALOG_PATH = "/modules/admin/domainDialog.xhtml";
 	public static final String AZURE_MIGRATION_DIALOG_PATH = "/modules/admin/azureMigrationDialog.xhtml";
-	
+
 	public static final String SHOW_MEMBEROF_DIALOG = "/modules/admin/userMemberOfDialog.xhtml";
 	public static final String GROUP_MEMBERS_DIALOG_PATH = "/modules/admin/groupMembersDialog.xhtml";
 	public static final String DEPARTMENT_ORGAMIGRAM_DIALOG = "/modules/admin/departmentOrganigramDialog.xhtml";
 	public static final String DEPARTMENT_DIALOG = "/modules/admin/departmentDialog.xhtml";;
 
-	// public static final String SHOW_INITIAL_PASSWORD_DIALOG = "/modules/admin/showInitialPassword.xhtml";
+	// public static final String SHOW_INITIAL_PASSWORD_DIALOG =
+	// "/modules/admin/showInitialPassword.xhtml";
 
 	public final static String PREFERENCES_VIEW_PATH = "/preferences.xhtml";
 	public static final String TEXT_RESOURCE_VIEW_PATH = "/modules/admin/textResources.xhtml";
@@ -231,7 +232,7 @@ public final class DcemConstants {
 	public static final String EMAIL_ACTIVATION_NEW_TENANT_TEMPLATE = "as.EmailActivationNewTenant";
 	public static final String EMAIL_RESET_PASSWORD_BODY_TEMPLATE = "system.EmailForgotPasswordBody";
 	public static final String EMAIL_VERIFY_EMAIL_BODY_TEMPLATE = "system.EmailVerifyEmailBody";
-	
+
 	public static final String EMAIL_ACTIVATION_SELF_CREATE_TENANT_TEMPLATE = "licence.EmailActivationSelfCreateTenant";
 
 	public final static String RADIUS_LOGIN_TEMPLATE = "radius.Login";
@@ -484,15 +485,15 @@ public final class DcemConstants {
 	public static final String EMAIL_SHIFT_SUBJECT_ASSGINED = "Shift has been assigned";
 	public static final String EMAIL_SHIFT_SUBJECT_REMOVED = "Shift has been removed";
 
-	public static final String DEFAULT_APP_ICON =  "/appHub/DC_Logo_transp_01.2.png";
-	
+	public static final String DEFAULT_APP_ICON = "/appHub/DC_Logo_transp_01.2.png";
+
 	public static int PHOTO_WIDTH = 128;
 	public static int PHOTO_HEIGHT = 128;
 	public static int PHOTO_WIDTH_MIN = 64;
 	public static int PHOTO_HEIGHT_MIN = 64;
 	public static int PHOTO_MAX = 8096 * 2;
 	public static int IMAGE_MAX = 32000;
-	
+
 	public static final String COUNTRY_CODE_GERMAN = "DE";
 	public static final String COUNTRY_CODE_MALTA = "MT";
 	public static final String COUNTRY_CODE_INDIA = "IN";
@@ -502,7 +503,6 @@ public final class DcemConstants {
 	public static final String METHOD_IS_RESTRICTED = "isRestricted";
 	public static final String RESTRICTED_REPLACEMENT = "-----";
 
-
-
+	public static final String TIME_ZONE_OTHER = "Other...";
 
 }
