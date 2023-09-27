@@ -402,7 +402,10 @@ public class AsModule extends DcemModule {
 	@Override
 	public void preferencesValidation(ModulePreferences modulePreferences) throws DcemException {
 		AsPreferences preferences = (AsPreferences) modulePreferences;
-		String fidoAllowedOrigins = preferences.getFidoAllowedOrigins().replaceAll("\\s+", "");
+		String fidoAllowedOrigins= "";
+		if (preferences.getFidoAllowedOrigins() == null) {
+			fidoAllowedOrigins = preferences.getFidoAllowedOrigins().replaceAll("\\s+", "");
+		}
 		if (fidoAllowedOrigins != null && !fidoAllowedOrigins.isEmpty()) {
 			if (matchesRegex(fidoAllowedOrigins, "(.+)?[^\\/:][\\/?&](.+)?")) {
 				throw new DcemException(DcemErrorCodes.INVALID_FIDO_ALLOWED_ORIGINS, "Invalid FIDO Allowed Origins. Please do not include any paths.");
