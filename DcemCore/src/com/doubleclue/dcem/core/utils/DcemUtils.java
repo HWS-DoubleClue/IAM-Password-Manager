@@ -1785,19 +1785,17 @@ public class DcemUtils {
 	public static long convertToEpoch(LocalDateTime localDateTime) {
 		return localDateTime.toEpochSecond(ZoneOffset.UTC);
 	}
-	public static String[] getContinentAndIdFromTimezone(TimeZone timezone) {
-		return getContinentAndIdFromTimezone(timezone.getID());
+	public static String getContinentFromTimezone(TimeZone timezone) {
+		return getContinentFromTimezone(timezone.getID());
 	}
 
-	public static String[] getContinentAndIdFromTimezone(String timezoneAsString) {
-		String continentTimezone;
+	public static String getContinentFromTimezone(String timezoneAsString) {
 		int ind = timezoneAsString.indexOf("/");
 		if (ind > 0) {
-			continentTimezone = timezoneAsString.substring(0, ind);
+			return timezoneAsString.substring(0, ind);
 		} else {
-			continentTimezone = DcemConstants.TIME_ZONE_OTHER;
+			return DcemConstants.TIME_ZONE_OTHER;
 		}
-		return new String[] { continentTimezone, timezoneAsString };
 	}
 
 	public static List<SelectItem> getContinentTimezones() {
@@ -1805,11 +1803,11 @@ public class DcemUtils {
 		List<SelectItem> list = new ArrayList<SelectItem>();
 		HashSet<String> continents = new HashSet<String>();
 		for (String id : timezones) {
-			String[] continentAndId = getContinentAndIdFromTimezone(id);
-			if (continents.contains(continentAndId[0]) == false
-					&& continentAndId[0].equals(DcemConstants.TIME_ZONE_OTHER) == false) {
-				continents.add(continentAndId[0]);
-				list.add(new SelectItem(continentAndId[0], continentAndId[0]));
+			String continent = getContinentFromTimezone(id);
+			if (continents.contains(continent) == false
+					&& continent.equals(DcemConstants.TIME_ZONE_OTHER) == false) {
+				continents.add(continent);
+				list.add(new SelectItem(continent, continent));
 			}
 		}
 		list.add(new SelectItem(DcemConstants.TIME_ZONE_OTHER, DcemConstants.TIME_ZONE_OTHER));
@@ -1823,10 +1821,10 @@ public class DcemUtils {
 		}
 		String[] timezones = TimeZone.getAvailableIDs();
 		for (String id : timezones) {
-			String[] continentAndId = getContinentAndIdFromTimezone(id);
-			if (continentTimezone.equals(DcemConstants.TIME_ZONE_OTHER)) {
+			String continent = getContinentFromTimezone(id);
+			if (continentTimezone.equals(DcemConstants.TIME_ZONE_OTHER) && continent.equals(continentTimezone)) {
 				list.add(new SelectItem(id, id.replace('_', ' ')));
-			} else if (id.startsWith(continentTimezone)) {
+			} else if (continent.equals(continentTimezone)) {
 				list.add(new SelectItem(id, id.substring(continentTimezone.length() + 1).replace('_', ' ')));
 			}
 		}
