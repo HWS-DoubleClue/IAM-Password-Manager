@@ -32,7 +32,7 @@
 						<h:outputText value="#{cloudSafe.lengthString}" style="white-space: nowrap;" />
 					</p:column>
 					<p:column headerText="#{asMsg['asCloudSafeShowFilesDialog.lastModified']}">
-						<h:outputText value="#{cloudSafe.lastModified}" />
+						<h:outputText value="#{cloudSafe.lastModified}"  converter="dcem.LocalDateTimeConverter" />
 					</p:column>
 					<p:column headerText="#{asMsg['asCloudSafeShowFilesDialog.lastModifiedUser']}">
 						<h:outputText value="#{cloudSafe.lastModifiedUser}" />
