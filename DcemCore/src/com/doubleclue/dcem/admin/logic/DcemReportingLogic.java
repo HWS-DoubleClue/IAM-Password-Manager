@@ -192,7 +192,7 @@ public class DcemReportingLogic {
 		alertMessage.setInfo(message);
 		alertMessage.setSeverity(severity);
 		alertMessage.setErrorCode(errorCode.toString());
-		alertMessage.setLocalDateTime(LocalDateTime.now(adminModule.getTimezone().toZoneId()));
+		alertMessage.setLocalDateTime(LocalDateTime.now());
 
 		if ((checkExists && welcomeViewAlertExists(alertMessage)) == false) {
 			addWelcomeViewAlert(category, alertMessage);
