@@ -269,18 +269,14 @@
 								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.lengthKb}" style="float:left" class="columnToBeHidden" />
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.lastModified']}" sortBy="#{cloudSafeFile.cloudSafeEntity.lastModified}" class="columnToBeHidden">
-								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.lastModified}" class="columnToBeHidden">
-
-								</h:outputText>
+								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.lastModified}" class="columnToBeHidden" converter="dcem.LocalDateTimeConverter" />
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.lastModifiedUser']}" sortBy="#{cloudSafeFile.cloudSafeEntity.lastModifiedUser.displayName}"
 								class="columnToBeHidden">
 								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.lastModifiedUser.displayName}" class="columnToBeHidden" />
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.discardsAfter']}" sortBy="#{cloudSafeFile.cloudSafeEntity.discardAfter}" class="columnToBeHidden">
-								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.discardAfter}" class="columnToBeHidden">
-
-								</h:outputText>
+								<h:outputText value="#{cloudSafeFile.cloudSafeEntity.discardAfter}" class="columnToBeHidden" converter="dcem.LocalDateTimeConverter" />
 							</p:column>
 							<p:column headerText="#{DcupMsg['cloudSafe.restrictDownload']}" class="columnToBeHidden">
 								<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{cloudSafeFile.restrictDownload}" />

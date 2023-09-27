@@ -15,6 +15,7 @@ import javax.faces.convert.DateTimeConverter;
 import javax.faces.convert.FacesConverter;
 
 import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.utils.DcemUtils;
 
 @FacesConverter(LocalDateTimeConverter.ID)
 public class LocalDateTimeConverter extends DateTimeConverter {
@@ -42,6 +43,9 @@ public class LocalDateTimeConverter extends DateTimeConverter {
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) {
         if (value == null) {
             return super.getAsString(facesContext, uiComponent,value);
+        }
+        if (value instanceof Long) {
+        	value = DcemUtils.convertEpoch(((Long)value) * 1000);
         }
         if (value instanceof LocalDateTime) {
             LocalDateTime localDateTime = (LocalDateTime) value;
