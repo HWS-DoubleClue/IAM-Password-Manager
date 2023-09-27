@@ -150,7 +150,6 @@ public class KeePassView extends AbstractPortalView {
 
 	@PostConstruct
 	public void init() {
-		System.out.println("KeePassView.init()");
 	}
 
 	@Override
