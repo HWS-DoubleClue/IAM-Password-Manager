@@ -921,8 +921,9 @@ public class UserLogic {
 	
 	public TimeZone getTimeZone (DcemUser dcemUser) {
 		TimeZone timeZone;
-		if (dcemUser.getDcemUserExt() != null && dcemUser.getDcemUserExt().getTimezone() != null) {
-			timeZone = dcemUser.getDcemUserExt().getTimezone();
+		DcemUserExtension dcemUserExt = getDcemUserExtension(dcemUser);
+		if (dcemUserExt != null && dcemUserExt.getTimezone() != null) {
+			timeZone = dcemUserExt.getTimezone();
 		} else {
 			timeZone = adminModule.getTimezone();
 		}
