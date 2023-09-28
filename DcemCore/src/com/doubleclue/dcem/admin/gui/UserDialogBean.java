@@ -11,6 +11,9 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -47,6 +50,8 @@ import com.doubleclue.utils.StringUtils;
 @SessionScoped
 public class UserDialogBean extends DcemDialog {
 
+	private Logger logger = LogManager.getLogger(UserDialogBean.class);
+	
 	@Inject
 	UserLogic userLogic;
 
@@ -163,8 +168,12 @@ public class UserDialogBean extends DcemDialog {
 				if (semExp.getErrorCode() == DcemErrorCodes.CONSTRAIN_VIOLATION_DB) {
 					JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "db.constrain.at.delete", (Object[]) null);
 				} else {
+					logger.error("Delete user failed", semExp);
 					JsfUtils.addErrorMessage(semExp.toString());
 				}
+			} catch (Exception exp) {
+				JsfUtils.addErrorMessage(exp.toString());
+				logger.error("Delete user failed", exp);
 			}
 		}
 	}
