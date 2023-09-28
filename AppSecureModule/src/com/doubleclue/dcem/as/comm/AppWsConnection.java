@@ -50,6 +50,7 @@ import com.doubleclue.dcem.core.config.ConnectionServicesType;
 import com.doubleclue.dcem.core.entities.DcemReporting;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.core.weld.WeldContextUtils;
@@ -250,7 +251,7 @@ public class AppWsConnection {
 		// appSession.setRemoteAddress(inetSocketAddress.toString());
 		// }
 		if (logger.isDebugEnabled()) {
-			wsSession.setMaxIdleTimeout(600000); // 10 minute idle time
+			wsSession.setMaxIdleTimeout(60 * 10000); // 10 minute idle time
 			logger.debug("Connection from " + wsSession.getRemoteAddress() + ", SessionId=" + wsSession.getSessionId());
 		}
 	}
@@ -315,6 +316,7 @@ public class AppWsConnection {
 			appSession.protocolAtoS.getTransport().close();
 			appSession.serverToApp.getOutputProtocol().getTransport().close();
 			AsModule asModule = CdiUtils.getReference(AsModule.class);
+ 			TenantIdResolver.setCurrentTenant(appSession.tenantEntity);
 			AsTenantData tenantData = asModule.getTenantData();
 			if (appSession.state == ConnectionState.rpClientPassThrough || appSession.state == ConnectionState.rpClientDisconnected) {
 				try {

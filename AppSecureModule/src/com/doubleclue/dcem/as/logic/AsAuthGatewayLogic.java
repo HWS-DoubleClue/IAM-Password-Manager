@@ -101,12 +101,12 @@ public class AsAuthGatewayLogic {
 			return;
 		}
 		AuthAppSession authAppSession = tenantData.getAuthAppSessions().get(pendingMsg.getSessionId());
-		AppSession appSession = authAppSession.getAppSession();
-		if (authAppSession == null || appSession == null) {
+		if (authAppSession == null || authAppSession.getAppSession() == null) {
 			logger.info("MsgResponse received but AuthAppSession is not there");
 			messageHandler.onFinalMessage(pendingMsg, false);
 			return;
 		}
+		AppSession appSession = authAppSession.getAppSession();
 		AuthAppMessageResponse appMessageResponse = new AuthAppMessageResponse();
 		appMessageResponse.setMsgId(pendingMsg.getId());
 		if (pendingMsg.getMsgStatus() == AsApiMsgStatus.OK) {
