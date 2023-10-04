@@ -69,7 +69,7 @@ public class EmailTask extends CoreTask {
 				dcemTemplateEmail = templateLogic.getTemplateByNameLanguage(templateName, language);
 				StringWriter stringWriter = new StringWriter();
 				Template tempalte = applicationBean.getTemplateFromConfig(dcemTemplateEmail);
-				tempalte.process(dcemTemplateEmail, stringWriter);
+				tempalte.process(map, stringWriter);
 				SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), stringWriter.toString(), dbResourceBundle.getString(subjectResource), attachment);
 			} catch (Exception e) {
 				logger.error("E-Mail Task FAILED", e);
