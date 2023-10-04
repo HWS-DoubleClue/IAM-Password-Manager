@@ -41,10 +41,10 @@
 							<p:tooltip for="lock" value="#{DcupMsg['button.disable']}" position="bottom" />
 						</p:commandLink>
 						<p:spacer width="10em"></p:spacer>
-						<p:commandLink rendered="#{portalSessionBean.isActionEnable('NETWORK_DEVICE_DELETE_ACTION')}" action="#{devicesView.deleteSelectedDevices}" update="@form">
+						<p:commandLink rendered="#{portalSessionBean.isActionEnable('NETWORK_DEVICE_DELETE_ACTION')}" action="#{devicesView.deleteSelectedDevices}" update="@form" ajax="true" >
 							<p:outputLabel id="delete" class="fa fa-trash iconsButtons"></p:outputLabel>
 							<p:tooltip for="delete" value="#{DcupMsg['button.delete']}" position="bottom" />
-							<p:confirm header="#{DcupMsg['dialog.title.confirm']}" message="#{DcupMsg['dialog.message.deleteSelectedDevices']}" />
+							<p:confirm header="#{DcupMsg['dialog.title.confirm']}" message="#{DcupMsg['dialog.message.deleteSelectedDevices']}" /> 
 						</p:commandLink>
 					</h:panelGroup>
 				</h:panelGrid>
@@ -75,8 +75,8 @@
 					</p:column>
 				</p:dataTable>
 				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
-					<p:commandButton value="#{DcupMsg['button.yes']}" style="width: 6em" icon="fa fa-check" styleClass="ui-confirmdialog-yes" />
-					<p:commandButton value="#{DcupMsg['button.no']}" style="margin-left: 2em; width: 6em" icon="fa fa-close" styleClass="ui-confirmdialog-no" />
+					<p:commandButton type="button" value="#{DcupMsg['button.yes']}" style="width: 6em" icon="fa fa-check" styleClass="ui-confirmdialog-yes" />
+					<p:commandButton type="button" value="#{DcupMsg['button.no']}" style="margin-left: 2em; width: 6em" icon="fa fa-close" styleClass="ui-confirmdialog-no" />
 				</p:confirmDialog>
 			</h:panelGroup>
 
@@ -126,11 +126,6 @@
 						<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{hardwareToken.disabled}" />
 					</p:column>
 				</p:dataTable>
-
-				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
-					<p:commandButton value="#{DcupMsg['button.yes']}" style="width: 6em" icon="fa fa-check" styleClass="ui-confirmdialog-yes" />
-					<p:commandButton value="#{DcupMsg['button.no']}" style="margin-left: 2em; width: 6em" icon="fa fa-close" styleClass="ui-confirmdialog-no" />
-				</p:confirmDialog>
 			</h:panelGroup>
 
 			<h:panelGroup id="fidoPanel" onload="onFidoLoad();" rendered="#{portalSessionBean.isViewVisible('FIDO_VIEW')}">
@@ -166,10 +161,6 @@
 						<h:outputText value="#{fidoAuthenticator.lastUsed}"  converter="dcem.LocalDateTimeConverter" />
 					</p:column>
 				</p:dataTable>
-				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
-					<p:commandButton value="#{DcupMsg['button.yes']}" style="width: 6em" icon="fa fa-check" styleClass="ui-confirmdialog-yes" />
-					<p:commandButton value="#{DcupMsg['button.no']}" style="margin-left: 2em; width: 6em" icon="fa fa-close" styleClass="ui-confirmdialog-no" />
-				</p:confirmDialog>
 			</h:panelGroup>
 
 			<p:dialog widgetVar="addNewDeviceDialog" modal="true" class="addDeviceLayout" resizable="false" style="border: none;"
