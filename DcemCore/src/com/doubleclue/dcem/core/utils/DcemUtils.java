@@ -1782,9 +1782,7 @@ public class DcemUtils {
 		return instant.atZone(ZoneId.of("UTC")).toLocalDateTime();
 	}
 	
-	public static long convertToEpoch(LocalDateTime localDateTime) {
-		return localDateTime.toEpochSecond(ZoneOffset.UTC);
-	}
+		
 	public static String getContinentFromTimezone(TimeZone timezone) {
 		return getContinentFromTimezone(timezone.getID());
 	}

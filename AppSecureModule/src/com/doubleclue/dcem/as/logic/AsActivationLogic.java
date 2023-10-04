@@ -121,7 +121,7 @@ public class AsActivationLogic {
 		}
 		String userFullQualifiedId = asModule.getUserFullQualifiedId(asActivationCode.getUser());
 		ActivationParameters activationParameters = new ActivationParameters(userFullQualifiedId, asActivationCode.getActivationCode(),
-				asActivationCode.getValidTill().toEpochSecond(ZoneOffset.UTC));
+				asActivationCode.getValidTill().toEpochSecond(ZoneOffset.UTC) * 1000);
 		sendActivationCode(sendBy, asActivationCode, dcemTemplate, activationParameters);
 		return activationParameters;
 	}

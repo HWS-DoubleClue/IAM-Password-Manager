@@ -41,6 +41,7 @@ import com.hazelcast.nio.serialization.DataSerializable;
 		@NamedQuery(name = DcemReporting.CLOSE_DASHBOARD_REPORT, query = "UPDATE DcemReporting rp SET rp.showOnDashboard = false where rp.id = ?1"),
 		@NamedQuery(name = DcemReporting.GET_DASHBOARD_REPORT, query = "select rp FROM DcemReporting rp where rp.showOnDashboard = true AND rp.source = ?1 AND rp.severity = ?2 AND rp.errorCode = ?3 AND (?4 is null or rp.info = ?4)"),
 		@NamedQuery(name = DcemReporting.GET_ALL_AUTH_METHODS_COUNT, query = "SELECT NEW com.doubleclue.dcem.core.logic.AuthMethodsActivityDto(rp.action, COUNT(rp)) FROM DcemReporting rp where rp.localDateTime >= ?1 AND rp.localDateTime <= ?2 AND rp.action >= ?3 AND rp.action <= ?4 AND rp.errorCode IS NULL GROUP BY rp.action") })
+
 public class DcemReporting extends EntityInterface implements DataSerializable {
 
 	public final static String GET_AFTER = "DcemReporting.getAfter";

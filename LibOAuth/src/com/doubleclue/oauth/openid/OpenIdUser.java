@@ -386,7 +386,7 @@ public class OpenIdUser {
 
 	public void setAuthTime(LocalDateTime authTime) {
 		if (authTime != null) {
-			setClaim(OpenIdClaim.AUTH_TIME, authTime.toEpochSecond(ZoneOffset.UTC) / 1000);	
+			setClaim(OpenIdClaim.AUTH_TIME, authTime.toEpochSecond(ZoneOffset.UTC));	
 		}
 	}
 

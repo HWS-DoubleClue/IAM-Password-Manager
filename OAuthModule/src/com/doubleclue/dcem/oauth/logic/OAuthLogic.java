@@ -696,7 +696,7 @@ public class OAuthLogic {
 				OAuthTokenEntity tokenEntity = getTokenEntity(tokenId);
 				if (tokenEntity != null) {
 					LocalDateTime lastAuth = tokenEntity.getLastAuthenticated();
-					shouldAuthenticate = ((new Date().getTime() - lastAuth.toEpochSecond(ZoneOffset.UTC)) / 1000) > maxAge;
+					shouldAuthenticate = (((new Date().getTime() / 1000) - lastAuth.toEpochSecond(ZoneOffset.UTC))) > maxAge;
 				}
 			}
 

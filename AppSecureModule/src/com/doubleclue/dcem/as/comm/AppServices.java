@@ -502,7 +502,7 @@ public class AppServices {
 
 		LoginResponse loginResponse = new LoginResponse();
 		if (deviceVersionEntity.getExpiresOn() != null) {
-			loginResponse.setUpdateAvailableTill(deviceVersionEntity.getExpiresOn().toEpochSecond(ZoneOffset.UTC));
+			loginResponse.setUpdateAvailableTill(deviceVersionEntity.getExpiresOn().toEpochSecond(ZoneOffset.UTC) * 1000);
 		}
 		if (loginParam.getCommClientType() != null && loginParam.getCommClientType() == CommClientType.DCEM_AS_CLIENT) {
 			if (dispatcherModule == null) {
@@ -559,7 +559,7 @@ public class AppServices {
 				UserFingerprintEntity fingerprintEntity = new UserFingerprintEntity(fpId, sessionCookie, asModule.getModulePreferences().getAppReLoginWithin());
 				fingerprintLogic.updateFingerprint(fingerprintEntity);
 				loginResponse.setSessionCookie(sessionCookie);
-				loginResponse.setSessionCookieExpiresOn((int) (fingerprintEntity.getTimestamp().toEpochSecond(ZoneOffset.UTC) / 1000));
+				loginResponse.setSessionCookieExpiresOn((int) (fingerprintEntity.getTimestamp().toEpochSecond(ZoneOffset.UTC)));
 			} else {
 				loginResponse.setSessionCookie(null);
 				loginResponse.setSessionCookieExpiresOn(0);
@@ -910,7 +910,7 @@ public class AppServices {
 		}
 		byte[] content = cloudSafeLogic.getContentAsBytes(cloudSafeEntity, null, userLogic.getUser(userId));
 		return new SdkCloudSafe(uniqueKey, content != null ? ByteBuffer.wrap(content) : null, cloudSafeEntity.getOptions(),
-				cloudSafeEntity.getDiscardAfterAsLong(), cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) : 0, null,
+				cloudSafeEntity.getDiscardAfterAsLong(), cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
 				cloudSafeEntity.getLength(), null, cloudSafeEntity.isWriteAccess(), cloudSafeEntity.isRestrictDownload());
 	}
 

@@ -318,7 +318,7 @@ public class AuthenticationLogic {
 				if (userFingerprintEntity != null && authenticateResponse.isStayLoggedInAllowed() == true) {
 					fingerprintLogic.updateFingerprint(userFingerprintEntity);
 					authenticateResponse.setSessionCookie(userFingerprintEntity.getFingerprint());
-					authenticateResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().toEpochSecond(ZoneOffset.UTC) / 1000));
+					authenticateResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().toEpochSecond(ZoneOffset.UTC)));
 				}
 				if (dcemUser.getPassCounter() > 0) {
 					userLogic.resetPasswordCounter(dcemUser);
@@ -570,7 +570,7 @@ public class AuthenticationLogic {
 					if (userFingerprintEntity != null && dcemPolicy.isEnableSessionAuthentication() == true) {
 						fingerprintLogic.updateFingerprint(userFingerprintEntity);
 						apiMessageResponse.setSessionCookie(userFingerprintEntity.getFingerprint());
-						apiMessageResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().toEpochSecond(ZoneOffset.UTC) / 1000));
+						apiMessageResponse.setSessionCookieExpiresOn((int) (userFingerprintEntity.getTimestamp().toEpochSecond(ZoneOffset.UTC)));
 						apiMessageResponse.setStayLoggedInAllowed(dcemPolicy.isEnableSessionAuthentication());
 					}
 				}

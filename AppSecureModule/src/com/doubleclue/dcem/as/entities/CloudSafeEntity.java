@@ -311,7 +311,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		if (discardAfter == null) {
 			return 0;
 		}
-		return discardAfter.toEpochSecond(ZoneOffset.UTC);
+		return discardAfter.toEpochSecond(ZoneOffset.UTC) * 1000;
 	}
 
 	public LocalDateTime getDiscardAfter() {

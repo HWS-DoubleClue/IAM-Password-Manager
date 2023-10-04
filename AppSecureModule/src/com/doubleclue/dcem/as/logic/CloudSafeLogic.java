@@ -942,7 +942,7 @@ public class CloudSafeLogic {
 				cloudSafeKey.setOwner(CloudSafeOwner.GROUP);
 			}
 			list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
-					cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) : 0, null, cloudSafeEntity.getLength(), null, true,
+					cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null, cloudSafeEntity.getLength(), null, true,
 					false));
 		}
 		if (withShareFiles) {
@@ -976,7 +976,7 @@ public class CloudSafeLogic {
 					cloudSafeKey.setDbId(cloudSafeEntity.getId());
 					// cloudSafeKey.setOwner(cloudSafeEntity.getOwner());
 					list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
-							cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) : 0, null, cloudSafeEntity.getLength(),
+							cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null, cloudSafeEntity.getLength(),
 							cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null, cloudSafeShareEntity.isWriteAccess(),
 							cloudSafeShareEntity.isRestrictDownload()));
 				}
@@ -1027,7 +1027,7 @@ public class CloudSafeLogic {
 				cloudSafeKey.setDbId(cloudSafeEntity.getId());
 				// cloudSafeKey.setOwner(cloudSafeEntity.getOwner());
 				result.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
-						cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) : 0, null, cloudSafeEntity.getLength(),
+						cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null, cloudSafeEntity.getLength(),
 						cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null, cloudSafeShareEntity.isWriteAccess(),
 						cloudSafeShareEntity.isRestrictDownload()));
 			}

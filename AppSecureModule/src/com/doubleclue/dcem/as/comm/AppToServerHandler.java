@@ -385,7 +385,7 @@ public class AppToServerHandler implements AppToServer.Iface {
 
 		try {
 			LocalDateTime lastModified = appServices.setCloudSafe(cloudData, appSession.device, appSession.getUserId());
-			return lastModified.toEpochSecond(ZoneOffset.UTC);
+			return (lastModified.toEpochSecond(ZoneOffset.UTC) * 1000);
 		} catch (ExceptionReporting exp) {
 			logger.info(" setData Error: " + exp.getReporting().toString());
 			DcemReporting reporting = exp.getReporting();

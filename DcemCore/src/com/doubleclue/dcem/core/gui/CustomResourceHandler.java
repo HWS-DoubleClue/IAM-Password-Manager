@@ -189,7 +189,7 @@ public class CustomResourceHandler extends ResourceHandlerWrapper {
 	    			ByteArrayInputStream byteArrayInputStream;
 	    			DcemTemplate dcemTemplate = templateLogic.getTemplateByNameLanguage(templateName, language);
 	    			if (dcemTemplate != null) {
-	    				lastModified = dcemTemplate.getLastModified().toEpochSecond(ZoneOffset.UTC);
+	    				lastModified = dcemTemplate.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000;
 	    				byteArrayInputStream = new ByteArrayInputStream(dcemTemplate.getContent().getBytes());
 	    				return byteArrayInputStream;
 	    			}

@@ -1830,7 +1830,7 @@ public class DcWebDavServlet extends DcDefaultServlet {
 
 		String rewrittenUrl = rewriteUrl(href);
 		generatePropFindResponse(generatedXML, rewrittenUrl, path, type, propertiesVector, cloudSafePath.isFolder() == false, false,
-				cloudSafePath.getLastModified().toEpochSecond(ZoneOffset.UTC), cloudSafePath.getLastModified().toEpochSecond(ZoneOffset.UTC), cloudSafePath.getLength(),
+				cloudSafePath.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000, cloudSafePath.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000, cloudSafePath.getLength(),
 				getServletContext().getMimeType(cloudSafePath.getName()), cloudSafePath.getId().toString() /* getETg*/);
 	}
 
