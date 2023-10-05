@@ -287,7 +287,7 @@ public class JpaSelectProducer<T> implements Serializable {
 					if (((String) filterProperty.getValue()).contains("%")) {
 						predicates.add(cb.like(expression, (String) filterProperty.getValue(), DcemConstants.JPA_ESCAPE_CHAR));
 					} else {
-						predicates.add(cb.like(expression, "%" + (String) filterProperty.getValue() + "%", DcemConstants.JPA_ESCAPE_CHAR));
+						predicates.add(cb.like(cb.lower(expression), "%" +  ((String) filterProperty.getValue()).toLowerCase() + "%", DcemConstants.JPA_ESCAPE_CHAR));
 					}
 					break;
 				case EQUALS:
@@ -423,24 +423,18 @@ public class JpaSelectProducer<T> implements Serializable {
 				}
 			}
 				break;
-
 			case DATE_TIME: {
-				Expression<Date> expressionDate = preFrom.<Date> get((SingularAttribute<Object, Date>) attribute);
-				Date date = (Date) filterProperty.getValue();
-				switch (filterProperty.getFilterOperator()) {
-
-				default:
-				case EQUALS:
-					predicates.add(cb.equal(expressionDate, date));
-					break;
-				case LESSER:
-					predicates.add(cb.lessThan(expressionDate, date));
-					break;
-				case GREATER:
-					predicates.add(cb.greaterThan(expressionDate, date));
-					break;
-
+				LocalDateTime localDateTimeFrom = null;
+				LocalDateTime localDateTimeTo = null;
+				if (filterProperty.getValue() instanceof LocalDate) {
+					localDateTimeFrom = ((LocalDate) filterProperty.getValue()).atStartOfDay();
+					localDateTimeTo = ((LocalDate) filterProperty.getToValue()).atTime(23, 59, 59);
+				} else {
+					localDateTimeFrom = ((LocalDateTime) filterProperty.getValue());
+					localDateTimeTo = ((LocalDateTime) filterProperty.getToValue());
 				}
+				Expression<LocalDateTime> expressionLocalDate = preFrom.<LocalDateTime> get((SingularAttribute<Object, LocalDateTime>) attribute);
+				predicates.add(cb.between(expressionLocalDate, localDateTimeFrom, localDateTimeTo));
 				break;
 			}
 

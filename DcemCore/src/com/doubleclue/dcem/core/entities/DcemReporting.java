@@ -117,7 +117,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 	private Long id;
 
 	@Column(name = "dc_time", nullable = false)
-	@DcemGui(sortOrder = SortOrder.DESCENDING)
+	@DcemGui(name="Time", sortOrder = SortOrder.DESCENDING)
 	private LocalDateTime localDateTime;
 
 	@Enumerated(EnumType.ORDINAL)

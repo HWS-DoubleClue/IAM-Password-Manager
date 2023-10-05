@@ -83,7 +83,7 @@
 						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'BOOLEAN'}" onchange="PF('viewTable').filter()">
 							<f:selectItems value="#{dcemApplication.booleanOperators}" />
 						</p:selectOneMenu>
-						<p:datePicker rendered="#{item.variableType eq 'DATE' or item.variableType eq 'EPOCH_DATE'}" showButtonBar="true" locale="#{operatorSession.locale}"
+						<p:datePicker rendered="#{item.variableType eq 'DATE' or item.variableType eq 'DATE_TIME'}" showButtonBar="true" locale="#{operatorSession.locale}"
 							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()">
 						</p:datePicker>
 						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />

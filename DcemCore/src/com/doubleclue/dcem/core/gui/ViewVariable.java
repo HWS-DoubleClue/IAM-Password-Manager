@@ -270,8 +270,6 @@ public class ViewVariable implements Serializable {
 			return "";
 		}
 		Locale locale;
-		DateFormat dateformat;
-
 		if (context != null) {
 			locale = context.getViewRoot().getLocale();
 		} else {
