@@ -1402,7 +1402,7 @@ public class CloudSafeView extends AbstractPortalView {
 				}
 				String pdfFileURL = url.getProtocol() + "://" + url.getHost() + port + DcupConstants.DCEM_WEB_NAME + DcemConstants.USERPORTAL_SERVLET_PATH
 						+ DcupConstants.TYPE + UrlTokenType.ShowFile;
-				PrimeFaces.current().executeScript("var url ='" + pdfFileURL + "' ;window.open(url, '_blank');");
+				PrimeFaces.current().executeScript("openTab ('" + pdfFileURL + "');");
 			} else { // when it is a folder.
 				if (cloudSafeEntity.getOptions() != null && cloudSafeEntity.isOption(CloudSafeOptions.ENC) == false) { // check only if folder is encrypted
 					InputStream inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, password, loggedInUser);

@@ -597,6 +597,12 @@
 /****** ApplicationHubStyle *****/
 .appPanelStyle:hover .ui-panel-actions {
 	visibility: visible;
+	height: 0px !important
+}
+
+.appPanelStyle .ui-panel-title {
+	margin: 0px;
+	height: 0px;
 }
 
 .ui-panel:hover .ui-panel-titlebar-icon {
@@ -639,15 +645,8 @@
 .ui-panel-actions {
 	visibility: hidden;
 	width: 90%;
-	height: 1.5em;
-	min-height: 1.5em;
-}
-
-.ui-panel-actions {
-	visibility: hidden;
-	width: 90%;
-	height: 1.5em;
-	min-height: 1.5em;
+	height: 1.0em;
+	min-height: 1.0em;
 }
 
 .ui-dataview.myApplicationGrid .ui-dataview-row {

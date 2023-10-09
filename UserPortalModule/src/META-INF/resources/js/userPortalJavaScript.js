@@ -31,6 +31,10 @@ window.onload = function getLocalStorgeSideMenuStatus() {
 }
 // End Welcome Page
 
+function openTab (url) {
+	setTimeout(() => {window.open(url, '_blank');})
+}
+
 // Start myApplication
 
 function triggerAppHubLogin(action) {

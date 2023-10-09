@@ -284,7 +284,7 @@ public class PasswordSafeView extends AbstractPortalView {
 			}
 			uploadedImage = upAppHubLogic.appUrlValueValidate(appUrlValue, true);
 		} catch (Exception e) {
-			JsfUtils.addErrorMessage(JsfUtils.getStringSafely(UserPortalModule.RESOURCE_NAME, "appHubAdmin.error.invalidUrl"));
+			JsfUtils.addErrorMessage(e.getMessage());
 			return;
 		}
 		PrimeFaces.current().ajax().update("addAppsForm:tabView:addAppUrlField");
@@ -537,10 +537,20 @@ public class PasswordSafeView extends AbstractPortalView {
 		if (keePassFile == null) {
 			return null;
 		}
-		List<Group> groups = keePassFile.getGroups();
 		Group recycleBin = getRycleBinGroup();
+		
+		List<Group> keePassGroups = keePassFile.getGroups();
+//		if (searchValue == null || searchValue.isEmpty()) {
+//			return group.getEntries();
+//		}
+		List<Group> groups = new ArrayList<Group>(keePassFile.getGroups().size());
+		for (Group group : keePassGroups) {
+			if (getGroupEntries(group).size() > 0 && group.getUuid().equals(recycleBin.getUuid()) == false) {
+				groups.add(group);
+			}
+		}
 		if (recycleBin != null) {
-			Collections.rotate(groups.subList(groups.indexOf(recycleBin), groups.size()), -1);
+			groups.add(recycleBin);
 		}
 		return groups;
 	}
@@ -703,7 +713,7 @@ public class PasswordSafeView extends AbstractPortalView {
 				return;
 			}
 			if (appHubApplication == null || appHubApplication.getActions() == null || appHubApplication.getActions().isEmpty() == true) {
-				PrimeFaces.current().executeScript("var url ='" + entry.getUrl() + "' ;window.open(url, '_blank');");
+				PrimeFaces.current().executeScript("openTab ('" + entry.getUrl() + "');");
 				return;
 			}	
 			
@@ -2027,6 +2037,10 @@ public class PasswordSafeView extends AbstractPortalView {
 
 	public boolean isRememberPassword() {
 		return rememberPassword;
+	}
+	
+	public boolean isRecycleBin(Group group) {
+		return getRecycleBinGroup().getUuid().equals(group.getUuid());
 	}
 
 	public void setRememberPassword(boolean rememberPassword) {
