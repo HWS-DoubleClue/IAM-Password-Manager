@@ -79,6 +79,7 @@ import javax.validation.ConstraintViolation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.component.autocomplete.AutoComplete;
 import org.primefaces.component.inputtext.InputText;
@@ -815,11 +816,13 @@ public class DcemUtils {
 						continue;
 					}
 				}
+							
 				newField = newObjectClass.getDeclaredField(oldField.getName());
 				newField.setAccessible(true);
 				oldField.setAccessible(true);
-				Class<?> cls = oldField.getType();
-
+				if (Hibernate.isInitialized(oldField.get(oldObject)) == false) {
+					continue;
+				}
 				if (oldField.isAnnotationPresent(DcemGui.class)) {
 					if (oldField.getAnnotation(DcemGui.class).variableType() == VariableType.IMAGE) {
 						Method oldMethod = getGetterMethodForField(oldField, oldObjectClass);
@@ -840,7 +843,8 @@ public class DcemUtils {
 						continue;
 					}
 				}
-
+				
+				Class<?> cls = oldField.getType();
 				if (cls.equals(String.class)) {
 					String oldString = (((String) oldField.get(oldObject)) != null) ? (String) oldField.get(oldObject) : nullString;
 					String newString = (((String) newField.get(newObject)) != null) ? (String) newField.get(newObject) : nullString;
