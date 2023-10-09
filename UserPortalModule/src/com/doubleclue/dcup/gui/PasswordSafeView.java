@@ -549,7 +549,7 @@ public class PasswordSafeView extends AbstractPortalView {
 				groups.add(group);
 			}
 		}
-		if (recycleBin != null) {
+		if (recycleBin != null && getGroupEntries(recycleBin).size() > 0) {
 			groups.add(recycleBin);
 		}
 		return groups;
