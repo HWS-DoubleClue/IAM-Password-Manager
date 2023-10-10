@@ -416,13 +416,12 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	public void cleanMonitoringRecords(int maxMonitoringRecords) {
 
 		// Get the timestamp of the first record beyond the limit
-		TypedQuery<Date> timestampQuery = em.createNamedQuery(DcemStatistic.GET_TIMESTAMPS, Date.class);
+		TypedQuery<LocalDateTime> timestampQuery = em.createNamedQuery(DcemStatistic.GET_TIMESTAMPS, LocalDateTime.class);
 		timestampQuery.setFirstResult(maxMonitoringRecords);
 		timestampQuery.setMaxResults(1);
-		List<Date> timestamps = timestampQuery.getResultList();
+		List<LocalDateTime> timestamps = timestampQuery.getResultList();
 
-		if (timestamps.size() == 1) { // if the record is found (i.e. limit
-										// breached)
+		if (timestamps.size() == 1) { // if the record is found (i.e. limit										// breached)
 			Query deleteQuery = em.createQuery("DELETE FROM DcemStatistic ds WHERE ds.timestamp <= ?1");
 			deleteQuery.setParameter(1, timestamps.get(0));
 			deleteQuery.executeUpdate();
