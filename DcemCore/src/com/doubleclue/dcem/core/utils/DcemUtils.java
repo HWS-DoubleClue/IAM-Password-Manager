@@ -824,7 +824,6 @@ public class DcemUtils {
 				oldField.setAccessible(true);
 				
 				if (isEntity && Persistence.getPersistenceUtil().isLoaded(newObject, oldField.getName()) == false) {
-					System.out.println(oldField.getName());
 					continue;
 				}
 
