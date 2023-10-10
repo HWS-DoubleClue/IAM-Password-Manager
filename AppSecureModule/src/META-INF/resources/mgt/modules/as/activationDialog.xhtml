@@ -56,7 +56,7 @@
 
 					<p:outputLabel value="#{asMsg['activationDialog.validTill']}: " />
 					<p:datePicker id="validTill" value="#{asActivationDialog.validTill}" locale="#{operatorSession.locale}"
-					pattern="#{operatorSession.dateTimePattern}" showTime="true"  />
+					pattern="#{operatorSession.dateTimePattern}" showTime="true" yearNavigator="true"  />
 
 					<p:outputLabel for="info" value="Info: " />
 					<p:inputTextarea rows="1" cols="50" id="info" value="#{asActivationDialog.actionObject.info}" />

@@ -54,7 +54,7 @@
 
 					<p:outputLabel for="expiresOn" value="#{asMsg['AsVersion.expiresOn']}: " />
 					<p:datePicker id="expiresOn" locale="#{operatorSession.locale}" value="#{versionDialog.actionObject.expiresOn}" 
-						pattern="#{operatorSession.dateTimePattern}"  />
+						pattern="#{operatorSession.dateTimePattern}" yearNavigator="true" />
 
 
 					<p:outputLabel for="info" value="#{asMsg['AsVersion.informationUrl']}: " />

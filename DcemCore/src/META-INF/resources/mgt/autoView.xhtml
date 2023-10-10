@@ -84,7 +84,7 @@
 							<f:selectItems value="#{dcemApplication.booleanOperators}" />
 						</p:selectOneMenu>
 						<p:datePicker rendered="#{item.variableType eq 'DATE' or item.variableType eq 'DATE_TIME'}" showButtonBar="true" locale="#{operatorSession.locale}"
-							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()">
+							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()" yearNavigator="true">
 						</p:datePicker>
 						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
 					</f:facet>
