@@ -538,19 +538,29 @@ public class PasswordSafeView extends AbstractPortalView {
 			return null;
 		}
 		Group recycleBin = getRycleBinGroup();
-		
+
 		List<Group> keePassGroups = keePassFile.getGroups();
-//		if (searchValue == null || searchValue.isEmpty()) {
-//			return group.getEntries();
-//		}
 		List<Group> groups = new ArrayList<Group>(keePassFile.getGroups().size());
+		List<Group> emptyGroups = new ArrayList<Group>(keePassFile.getGroups().size());
 		for (Group group : keePassGroups) {
-			if (getGroupEntries(group).size() > 0 && group.getUuid().equals(recycleBin.getUuid()) == false) {
+			if (group.getUuid().equals(recycleBin.getUuid()) == true) {
+				continue;
+			}
+			if (getGroupEntries(group).size() > 0) {
 				groups.add(group);
+			} else {
+				emptyGroups.add(group);
 			}
 		}
-		if (recycleBin != null && getGroupEntries(recycleBin).size() > 0) {
-			groups.add(recycleBin);
+		if (searchValue == null || searchValue.isEmpty()) {
+			groups.addAll(emptyGroups);
+			if (recycleBin != null) {
+				groups.add(recycleBin);
+			}
+		} else {
+			if (recycleBin != null && getGroupEntries(recycleBin).size() > 0) {
+				groups.add(recycleBin);
+			}
 		}
 		return groups;
 	}
@@ -706,7 +716,7 @@ public class PasswordSafeView extends AbstractPortalView {
 		} else {
 			appHubApplication = currentKeepassEntryEntity.getApplicationEntity().getApplication();
 		}
-		
+
 		try {
 			if ((entry.getUrl() == null || entry.getUrl().isEmpty() == true)) {
 				JsfUtils.addWarningMessage(UserPortalModule.RESOURCE_NAME, "appHub.error.missingUrl");
@@ -715,8 +725,8 @@ public class PasswordSafeView extends AbstractPortalView {
 			if (appHubApplication == null || appHubApplication.getActions() == null || appHubApplication.getActions().isEmpty() == true) {
 				PrimeFaces.current().executeScript("openTab ('" + entry.getUrl() + "');");
 				return;
-			}	
-			
+			}
+
 			appHubApplication.setName(entry.getTitle());
 			appHubApplication.setUrl(entry.getUrl());
 			processValuesBySource(appHubApplication);
@@ -837,7 +847,7 @@ public class PasswordSafeView extends AbstractPortalView {
 				JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.PLUGIN_NO_RESPONSE");
 			} else {
 				ObjectMapper objectMapper = new ObjectMapper();
-				objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES , false);
+				objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 				List<AppHubAction> importedActions = objectMapper.readValue(pluginResponse, new TypeReference<List<AppHubAction>>() {
 				});
 				for (AppHubAction appHubAction : importedActions) {
@@ -1301,7 +1311,7 @@ public class PasswordSafeView extends AbstractPortalView {
 			currentEntry.setNotes(appNotesValue);
 			Entry addingEntry;
 			if (uploadedImage != null) {
-			//	uploadedImage.length;
+				// uploadedImage.length;
 				uploadedImage = DcemUtils.resizeImage(uploadedImage, DcemConstants.IMAGE_MAX);
 				UUID iconUuid = addCustomIconToKeepassFile(uploadedImage);
 				addingEntry = new EntryBuilder(currentEntry.getEntry()).customIconUuid(iconUuid).build();
@@ -1498,7 +1508,7 @@ public class PasswordSafeView extends AbstractPortalView {
 
 	public void uploadFileLogoListener(FileUploadEvent event) {
 		try {
-			uploadedImage =  DcemUtils.resizeImage(event.getFile().getContent(), DcemConstants.IMAGE_MAX);
+			uploadedImage = DcemUtils.resizeImage(event.getFile().getContent(), DcemConstants.IMAGE_MAX);
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage(e.toString());
 		}
@@ -1679,7 +1689,7 @@ public class PasswordSafeView extends AbstractPortalView {
 		editedAction.setType(selectedActionType.name());
 		if (editingAction == false) {
 			currentKeepassEntryEntity.getApplication().getActions().add(editedAction);
-		} 
+		}
 		PrimeFaces.current().ajax().update("addAppsForm:tabView:actionsTable");
 		hideDialog("actionDialog");
 	}
@@ -1833,7 +1843,7 @@ public class PasswordSafeView extends AbstractPortalView {
 		return result;
 	}
 
-	public List<SdkCloudSafe> getAvailableOwnedPasswordSafeFiles()  {
+	public List<SdkCloudSafe> getAvailableOwnedPasswordSafeFiles() {
 		if (cloudSafeList != null) {
 			return cloudSafeList;
 		}
@@ -2038,7 +2048,7 @@ public class PasswordSafeView extends AbstractPortalView {
 	public boolean isRememberPassword() {
 		return rememberPassword;
 	}
-	
+
 	public boolean isRecycleBin(Group group) {
 		return getRecycleBinGroup().getUuid().equals(group.getUuid());
 	}
