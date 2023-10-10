@@ -455,12 +455,14 @@ public class JsfUtils {
 		FacesMessage facesMessage = new FacesMessage(message, message);
 		facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
 		getFacesContext().addMessage(clientId, facesMessage);
+		PrimeFaces.current().ajax().update(clientId);
 	}
 
 	public static void addWarnMessageToComponentId(String message, String clientId) {
 		FacesMessage facesMessage = new FacesMessage(message, message);
 		facesMessage.setSeverity(FacesMessage.SEVERITY_WARN);
 		getFacesContext().addMessage(clientId, facesMessage);
+		PrimeFaces.current().ajax().update(clientId);
 	}
 
 	/**

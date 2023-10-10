@@ -182,15 +182,12 @@ public class DomainLogic implements ReloadClassInterface {
 			em.persist(ldapEntity);
 		} else {
 			DomainEntity oldEntity = getDomainEntityById(ldapEntity.getId());
-//			try {
-				/**
-				 *  TODO  this is causing an Exception
-				 */
-//				changeInfo = DcemUtils.compareObjects(oldEntity, ldapEntity);
-//			} catch (Exception exp) {
-//				logger.warn("Couldn't compare operator", exp);
-//				changeInfo = "ERROR: " + exp.getMessage();
-//			}
+			try {
+				changeInfo = DcemUtils.compareObjects(oldEntity, ldapEntity);
+			} catch (Exception exp) {
+				logger.warn("Couldn't compare operator", exp);
+				changeInfo = "ERROR: " + exp.getMessage();
+			}
 			String newName = ldapEntity.getName();
 			if (!newName.equals(oldEntity.getName())) {
 				updateDomainName(oldEntity, newName);
