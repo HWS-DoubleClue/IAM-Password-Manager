@@ -72,6 +72,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMultipart;
 import javax.persistence.Convert;
+import javax.persistence.Persistence;
 import javax.persistence.metamodel.Attribute;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -801,6 +802,7 @@ public class DcemUtils {
 			StringBuilder stringBuilder = new StringBuilder();
 			Class<?> oldObjectClass = oldObject.getClass();
 			Class<?> newObjectClass = newObject.getClass();
+			boolean isEntity = newObjectClass.getSuperclass().equals(EntityInterface.class);
 			Field newField;
 			int modifiers;
 			for (Field oldField : oldObjectClass.getDeclaredFields()) {
@@ -820,9 +822,12 @@ public class DcemUtils {
 				newField = newObjectClass.getDeclaredField(oldField.getName());
 				newField.setAccessible(true);
 				oldField.setAccessible(true);
-				if (Hibernate.isInitialized(oldField.get(oldObject)) == false) {
+				
+				if (isEntity && Persistence.getPersistenceUtil().isLoaded(newObject, oldField.getName()) == false) {
+					System.out.println(oldField.getName());
 					continue;
 				}
+
 				if (oldField.isAnnotationPresent(DcemGui.class)) {
 					if (oldField.getAnnotation(DcemGui.class).variableType() == VariableType.IMAGE) {
 						Method oldMethod = getGetterMethodForField(oldField, oldObjectClass);
