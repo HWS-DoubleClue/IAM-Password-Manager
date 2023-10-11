@@ -1,8 +1,6 @@
 package com.doubleclue.dcem.admin.gui;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -129,14 +127,8 @@ public class TenantBrandingView extends DcemView {
 	}
 	
 	private void updateTimeZone() {
-		String id = branding.getTimezone();
-		int ind = id.indexOf("/");
-		if (ind > 0) {
-			continentTimezone = id.substring(0, ind);
-		} else {
-			continentTimezone = OTHER_CONTINENT;
-		}
-		countryTimezone = id;
+		countryTimezone = branding.getTimezone();
+		continentTimezone = DcemUtils.getContinentFromTimezone(countryTimezone);
 	}
 
 	public void fileLogoListener(FileUploadEvent event) {
@@ -186,47 +178,17 @@ public class TenantBrandingView extends DcemView {
 	}
 
 	public List<SelectItem> getContinentTimezones() {
-		String[] timezones = TimeZone.getAvailableIDs();
-		List<SelectItem> list = new ArrayList<SelectItem>();
-		HashSet<String> continents = new HashSet<String>();
-		String continent;
-		for (String id : timezones) {
-			int ind = id.indexOf("/");
-			if (ind > 0) {
-				continent = id.substring(0, ind);
-				if (continents.contains(continent) == false) {
-					continents.add(continent);
-					list.add(new SelectItem(continent, continent));
-				}
-			}
-		}
-		list.add(new SelectItem(OTHER_CONTINENT, OTHER_CONTINENT));
-		return list;
+		return DcemUtils.getContinentTimezones();
 	}
 
 	public List<SelectItem> getCountryTimezones() {
-		String[] timezones = TimeZone.getAvailableIDs();
-		List<SelectItem> list = new ArrayList<SelectItem>();
-		if (continentTimezone == null) {
-			return list;
-		}
-		for (String id : timezones) {
-			if (continentTimezone.equals(OTHER_CONTINENT)) {
-				if (id.indexOf("/") == -1) {
-					list.add(new SelectItem(id, id.replace('_', ' ')));
-				}
-			} else if (id.startsWith(continentTimezone)) {
-				list.add(new SelectItem(id, id.substring(continentTimezone.length() + 1).replace('_', ' ')));
-			}
-		}
-		return list;
+		return DcemUtils.getCountryTimezones(continentTimezone);
 	}
 	
 	public void setDefault() {
 		branding = new TenantBrandingEntity();
 		logoFileName = null;
 		backgroundFileName = null;
-		
 		updateTimeZone();
 	}
 

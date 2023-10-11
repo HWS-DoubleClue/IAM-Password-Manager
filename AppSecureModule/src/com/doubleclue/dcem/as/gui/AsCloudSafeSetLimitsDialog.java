@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.as.gui;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +40,7 @@ public class AsCloudSafeSetLimitsDialog extends DcemDialog {
 	private DataUnit selectedDataUnit;
 	private String domainName;
 	private String loginId;
-	private Date expiryDate;
+	private LocalDateTime expiryDate;
 	private boolean psEnabled;
 
 	@Override
@@ -60,7 +61,7 @@ public class AsCloudSafeSetLimitsDialog extends DcemDialog {
 			loginId = firstEntity.getUser().getLoginId();
 			psEnabled = firstEntity.isPasswordSafeEnabled();
 			long largestLimit = firstEntity.getLimit();
-			Date latestExpiryDate = firstEntity.getExpiryDate();
+			LocalDateTime latestExpiryDate = firstEntity.getExpiryDate();
 			if (selection.size() > 1) {
 				for (Object object : selection.subList(1, selection.size())) {
 					CloudSafeLimitEntity entity = (CloudSafeLimitEntity) object;
@@ -70,7 +71,7 @@ public class AsCloudSafeSetLimitsDialog extends DcemDialog {
 					if (latestExpiryDate != null) {
 						if (entity.getExpiryDate() == null) {
 							latestExpiryDate = null;
-						} else if (entity.getExpiryDate().after(latestExpiryDate)) {
+						} else if (entity.getExpiryDate().isAfter(latestExpiryDate)) {
 							latestExpiryDate = entity.getExpiryDate();
 						}
 					}
@@ -166,11 +167,11 @@ public class AsCloudSafeSetLimitsDialog extends DcemDialog {
 		this.loginId = loginId;
 	}
 
-	public Date getExpiryDate() {
+	public LocalDateTime getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDateTime expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 

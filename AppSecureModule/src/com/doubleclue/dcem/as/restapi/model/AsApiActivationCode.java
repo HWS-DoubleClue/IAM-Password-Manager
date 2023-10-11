@@ -1,7 +1,7 @@
 package com.doubleclue.dcem.as.restapi.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.doubleclue.dcem.admin.logic.SendByEnum;
@@ -21,9 +21,9 @@ public class AsApiActivationCode implements Serializable {
 
 	private SendByEnum sendBy;
 
-	private Date validTill = null;
+	private LocalDateTime validTill = null;
 	
-	private Date createdOn = null;
+	private LocalDateTime createdOn = null;
 
 	private String info = null;
 
@@ -61,11 +61,11 @@ public class AsApiActivationCode implements Serializable {
 	* @return createdOn
 	**/
 
-	public Date getCreatedOn() {
+	public LocalDateTime getCreatedOn() {
 		return createdOn;
 	}
 
-	public void setCreatedOn(Date createdOn) {
+	public void setCreatedOn(LocalDateTime createdOn) {
 		this.createdOn = createdOn;
 	}
 
@@ -74,11 +74,11 @@ public class AsApiActivationCode implements Serializable {
 	* This is a date.
 	* @return validTill
 	**/
-	public Date getValidTill() {
+	public LocalDateTime getValidTill() {
 		return validTill;
 	}
 
-	public void setValidTill(Date validTill) {
+	public void setValidTill(LocalDateTime validTill) {
 		this.validTill = validTill;
 	}
 

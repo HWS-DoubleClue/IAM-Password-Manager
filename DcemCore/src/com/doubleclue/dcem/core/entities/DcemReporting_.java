@@ -7,7 +7,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2023-03-03T12:09:53.661+0100")
+@Generated(value="Dali", date="2023-10-11T10:54:25.080+0200")
 @StaticMetamodel(DcemReporting.class)
 public class DcemReporting_ {
 	public static volatile SingularAttribute<DcemReporting, Long> id;

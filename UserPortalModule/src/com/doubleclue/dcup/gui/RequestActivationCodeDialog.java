@@ -99,12 +99,10 @@ public class RequestActivationCodeDialog implements Serializable {
 			asActivationCode.setUser(portalSessionBean.getDcemUser());
 			if (asActivationCode.getValidTill() == null) {
 				int hours = asModule.getPreferences().getActivationCodeDefaultValidTill();
-				Calendar calendar = Calendar.getInstance();
-				calendar.add(Calendar.HOUR_OF_DAY, hours);
-				asActivationCode.setValidTill(calendar.getTime());
+				asActivationCode.setValidTill(LocalDateTime.now().plusHours(hours));
 			}
 			activationParameters = activationLogic.addUpdateActivationCode(asActivationCode, new DcemAction(activationSubject, DcemConstants.ACTION_ADD), sendBy, true);
-			LocalDateTime nowDate = Instant.ofEpochMilli(asActivationCode.getValidTill().getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+			LocalDateTime nowDate = asActivationCode.getValidTill();
 			DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(portalSessionBean.getLocale());
 			dateTxt = nowDate.format(formatter);
 			ObjectMapper objectMapper = new ObjectMapper();

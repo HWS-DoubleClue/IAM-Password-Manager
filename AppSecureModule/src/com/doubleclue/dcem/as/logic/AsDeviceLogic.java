@@ -1,6 +1,7 @@
 package com.doubleclue.dcem.as.logic;
 
 import java.security.PublicKey;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -98,7 +99,7 @@ public class AsDeviceLogic {
 		if (publicKey != null) {
 			device.setPublicKey(publicKey.getEncoded());
 		}
-		device.setLastLoginTime(new Date());
+		device.setLastLoginTime(LocalDateTime.now());
 		em.persist(device);
 		return device;
 	}
@@ -111,7 +112,7 @@ public class AsDeviceLogic {
 		device.setName(DcemConstants.DEVICE_ROOT);
 		device.setState(DeviceState.Disabled);
 		device.setStatus(DeviceStatus.Offline);
-		device.setLastLoginTime(new Date());
+		device.setLastLoginTime(LocalDateTime.now());
 		em.persist(device);
 		return device;
 	}
@@ -180,7 +181,7 @@ public class AsDeviceLogic {
 		Root<DeviceEntity> root = updateCriteria.from(DeviceEntity.class);
 		// update dateOfBirth property
 		updateCriteria.set(root.get(DeviceEntity_.status.getName()), deviceDetached.getStatus());
-		updateCriteria.set(root.get(DeviceEntity_.lastLoginTime.getName()), new Date());
+		updateCriteria.set(root.get(DeviceEntity_.lastLoginTime.getName()), LocalDateTime.now());
 		updateCriteria.set(root.get(DeviceEntity_.nodeId.getName()), DcemCluster.getInstance().getDcemNode().getId());
 		updateCriteria.set(root.get(DeviceEntity_.retryCounter), deviceDetached.getRetryCounter());
 		// set where clause

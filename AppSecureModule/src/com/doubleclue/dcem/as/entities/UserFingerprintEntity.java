@@ -1,9 +1,7 @@
 package com.doubleclue.dcem.as.entities;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -11,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the KERNEL_AUDITING database table.
@@ -38,8 +34,7 @@ public class UserFingerprintEntity implements Serializable {
 	private FingerprintId id;
 
 	@Column(name = "timeStamp")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date timestamp;
+	private LocalDateTime timestamp;
 
 	
 	String fingerprint;
@@ -48,7 +43,7 @@ public class UserFingerprintEntity implements Serializable {
 		super();
 	}
 
-	public UserFingerprintEntity(FingerprintId id, String fingerprint, Date timestamp) {
+	public UserFingerprintEntity(FingerprintId id, String fingerprint, LocalDateTime timestamp) {
 		super();
 		this.id = id;
 		this.fingerprint = fingerprint;
@@ -59,16 +54,14 @@ public class UserFingerprintEntity implements Serializable {
 		super();
 		this.id = id;
 		this.fingerprint = fingerprint;
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		calendar.add(Calendar.MINUTE, validForMinutes);	
-		this.timestamp = calendar.getTime();
+		this.timestamp = LocalDateTime.now().plusMinutes(validForMinutes);
 	}
 
-	public Date getTimestamp() {
+	public LocalDateTime getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 

@@ -60,7 +60,7 @@
 				value="#{autoView.lazyModel}" var="record" rowKey="#{record.id}" update="tableCount" resizableColumns="false"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" selectionMode="multiple"
 				selection="#{autoView.selectedItems}" lazy="true" sortMode="single" styleClass="borderless" emptyMessage="#{CoreMsg['emptyTable']}"
-				rowStyleClass="#{record.rowStyle}" sortBy="#{autoView.sortBy}" filterBy="#{autoView.filterBy}">
+				rowStyleClass="#{record.rowStyle}" sortBy="#{autoView.sortBy}" filterBy="#{autoView.filterBy}" filterDelay="1000"  >
 
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
 
@@ -83,8 +83,8 @@
 						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'BOOLEAN'}" onchange="PF('viewTable').filter()">
 							<f:selectItems value="#{dcemApplication.booleanOperators}" />
 						</p:selectOneMenu>
-						<p:datePicker rendered="#{item.variableType eq 'DATE' or item.variableType eq 'EPOCH_DATE'}" showButtonBar="true" locale="#{operatorSession.locale}"
-							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()">
+						<p:datePicker rendered="#{item.variableType eq 'DATE' or item.variableType eq 'DATE_TIME'}" showButtonBar="true" locale="#{operatorSession.locale}"
+							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()" yearNavigator="true">
 						</p:datePicker>
 						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
 					</f:facet>

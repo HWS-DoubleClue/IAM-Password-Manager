@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.as.policy;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -32,7 +32,7 @@ public class FingerprintLogic {
 			if (userFingerprintEntity.getFingerprint() == null) {
 				return false;
 			}
-			if (new Date().before(userFingerprintEntity.getTimestamp()) && userFingerprintEntity.getFingerprint().equals(fingerprint)) {
+			if (LocalDateTime.now().isBefore(userFingerprintEntity.getTimestamp()) && userFingerprintEntity.getFingerprint().equals(fingerprint)) {
 				return true;
 			}
 		}
@@ -74,7 +74,7 @@ public class FingerprintLogic {
 	@DcemTransactional
 	public void deleteExpiredFingerprints() {
 		Query query = em.createNamedQuery(UserFingerprintEntity.DELETE_EXPIRED_FP);
-		query.setParameter(1, new Date());
+		query.setParameter(1, LocalDateTime.now());
 		query.executeUpdate();
 	}
 

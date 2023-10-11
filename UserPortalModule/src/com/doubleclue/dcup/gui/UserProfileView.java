@@ -3,7 +3,7 @@ package com.doubleclue.dcup.gui;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,7 +57,7 @@ public class UserProfileView extends AbstractPortalView {
 
 	@Inject
 	UserLogic userLogic;
-	
+
 	@Inject
 	DcemApplicationBean applicationBean;
 
@@ -73,6 +73,12 @@ public class UserProfileView extends AbstractPortalView {
 	private byte[] photoProfile;
 
 	private String country;
+
+	private String continentTimezone;
+
+	private String countryTimezone;
+
+	private boolean defaultTimezone;
 
 	private UploadedFile uploadPhotoProfile;
 
@@ -129,6 +135,7 @@ public class UserProfileView extends AbstractPortalView {
 		try {
 			clonedDcemUser = (DcemUser) portalSessionBean.getDcemUser().clone();
 			DcemUserExtension dcemUserExtension = userLogic.getDcemUserExtension(clonedDcemUser);
+			updateTimeZone(dcemUserExtension);
 			if (dcemUserExtension != null) {
 				country = dcemUserExtension.getCountry();
 			}
@@ -143,7 +150,8 @@ public class UserProfileView extends AbstractPortalView {
 		} catch (CloneNotSupportedException e) {
 
 		}
-		// System.out.println("UserProfileView.onView() " + clonedDcemUser.getJpaVersion());
+		// System.out.println("UserProfileView.onView() " +
+		// clonedDcemUser.getJpaVersion());
 	}
 
 	public void onExit() {
@@ -157,6 +165,11 @@ public class UserProfileView extends AbstractPortalView {
 				DcemUserExtension dcemUserExtension = new DcemUserExtension();
 				dcemUserExtension.setPhoto(photoProfile);
 				dcemUserExtension.setCountry(country);
+				if (defaultTimezone) {
+					dcemUserExtension.setTimezoneString(null);
+				} else {
+					dcemUserExtension.setTimezoneString(countryTimezone);
+				}
 				profileLogic.updateUserProfile(clonedDcemUser, dcemUserExtension);
 				DcemUser dcemUser = portalSessionBean.updateUser();
 				if (dcemUser.isDomainUser() == true && photoProfile != null) {
@@ -165,11 +178,13 @@ public class UserProfileView extends AbstractPortalView {
 				photoProfile = null;
 				portalSessionBean.changeLanguage(SupportedLanguage.toLanguageKey(lang));
 				onView();
-				JsfUtils.addInfoMessage(portalSessionBean.getResourceBundle().getString("userProfile.saveSuccessfully"));
+				JsfUtils.addInfoMessage(
+						portalSessionBean.getResourceBundle().getString("userProfile.saveSuccessfully"));
 			} catch (DcemException exp) {
 				logger.warn("Error at profile save", exp);
 				if (exp.getErrorCode() == DcemErrorCodes.CONSTRAIN_VIOLATION_DB) {
-					JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error.REGISTRATION_USER_ALREADY_EXISTS"));
+					JsfUtils.addErrorMessage(
+							portalSessionBean.getResourceBundle().getString("error.REGISTRATION_USER_ALREADY_EXISTS"));
 				} else {
 					JsfUtils.addErrorMessage(portalSessionBean.getErrorMessage(exp));
 					logger.error(exp.getLocalizedMessage());
@@ -209,21 +224,25 @@ public class UserProfileView extends AbstractPortalView {
 			}
 			if (clonedDcemUser.getMobileNumber() != null && clonedDcemUser.getMobileNumber().isEmpty() == false) {
 				if (matcher.matches() == false) {
-					JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error.INVALID_MOBILE_NUMBER"));
+					JsfUtils.addErrorMessage(
+							portalSessionBean.getResourceBundle().getString("error.INVALID_MOBILE_NUMBER"));
 					return false;
 				}
 			}
 			if (clonedDcemUser.getTelephoneNumber() != null && clonedDcemUser.getTelephoneNumber().isEmpty() == false) {
 				if (matcherPhone.matches() == false) {
-					JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error.INVALID_PHONE_NUMBER"));
+					JsfUtils.addErrorMessage(
+							portalSessionBean.getResourceBundle().getString("error.INVALID_PHONE_NUMBER"));
 					return false;
 				}
 			}
 		}
-		if (clonedDcemUser.getPrivateMobileNumber() != null && clonedDcemUser.getPrivateMobileNumber().isEmpty() == false) {
+		if (clonedDcemUser.getPrivateMobileNumber() != null
+				&& clonedDcemUser.getPrivateMobileNumber().isEmpty() == false) {
 			Matcher matcherPrv = pattern.matcher(clonedDcemUser.getPrivateMobileNumber());
 			if (matcherPrv.matches() == false) {
-				JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error.INVALID_PRIVATE_MOBILE_NUMBER"));
+				JsfUtils.addErrorMessage(
+						portalSessionBean.getResourceBundle().getString("error.INVALID_PRIVATE_MOBILE_NUMBER"));
 				return false;
 			}
 		}
@@ -239,7 +258,7 @@ public class UserProfileView extends AbstractPortalView {
 		}
 		return true;
 	}
-	
+
 	public List<SelectItem> getAvailableCountries() {
 		return applicationBean.getAvailableCountries(portalSessionBean.getLocale());
 	}
@@ -273,12 +292,64 @@ public class UserProfileView extends AbstractPortalView {
 		return;
 	}
 
+	private void updateTimeZone(DcemUserExtension dcemUserExtension) {
+		TimeZone timeZone;
+		if (dcemUserExtension == null || dcemUserExtension.getTimezone() == null) {
+			defaultTimezone = true;
+			timeZone = adminModule.getTimezone();
+		} else {
+			defaultTimezone = false;
+			timeZone = dcemUserExtension.getTimezone();
+		}
+		setContinentAndCountryTimezone(timeZone);
+	}
+
+	private void setContinentAndCountryTimezone(TimeZone timeZone) {
+		countryTimezone = timeZone.getID();
+		continentTimezone = DcemUtils.getContinentFromTimezone(countryTimezone);
+	}
+
+	public List<SelectItem> getContinentTimezones() {
+		if (defaultTimezone) {
+			setContinentAndCountryTimezone(adminModule.getTimezone());
+		}
+		return DcemUtils.getContinentTimezones();
+	}
+
+	public List<SelectItem> getCountryTimezones() {
+		return DcemUtils.getCountryTimezones(continentTimezone);
+	}
+
 	public String getCountry() {
 		return country;
 	}
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public String getContinentTimezone() {
+		return continentTimezone;
+	}
+
+	public void setContinentTimezone(String continentTimezone) {
+		this.continentTimezone = continentTimezone;
+	}
+
+	public String getCountryTimezone() {
+		return countryTimezone;
+	}
+
+	public void setCountryTimezone(String countryTimezone) {
+		this.countryTimezone = countryTimezone;
+	}
+
+	public boolean isDefaultTimezone() {
+		return defaultTimezone;
+	}
+
+	public void setDefaultTimezone(boolean defaultTimezone) {
+		this.defaultTimezone = defaultTimezone;
 	}
 
 }

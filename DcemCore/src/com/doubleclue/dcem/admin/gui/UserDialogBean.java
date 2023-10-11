@@ -4,11 +4,15 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
@@ -38,6 +42,7 @@ import com.doubleclue.dcem.core.logic.JpaLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.RoleLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
+import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.utils.StringUtils;
 
 @SuppressWarnings("serial")
@@ -45,6 +50,8 @@ import com.doubleclue.utils.StringUtils;
 @SessionScoped
 public class UserDialogBean extends DcemDialog {
 
+	private Logger logger = LogManager.getLogger(UserDialogBean.class);
+	
 	@Inject
 	UserLogic userLogic;
 
@@ -74,7 +81,7 @@ public class UserDialogBean extends DcemDialog {
 
 	@Inject
 	DcemApplicationBean applicationBean;
-	
+
 	@Inject
 	DepartmentLogic departmentLogic;
 
@@ -87,6 +94,9 @@ public class UserDialogBean extends DcemDialog {
 	private String userType = DcemConstants.TYPE_LOCAL;
 	private LinkedList<SelectItem> availableRoles;
 	String country;
+	private String continentTimezone;
+	private String countryTimezone;
+	private boolean defaultTimezone;
 	String department;
 	String jobTitle;
 
@@ -115,17 +125,23 @@ public class UserDialogBean extends DcemDialog {
 			}
 			DepartmentEntity departmentEntity = null;
 			if (department != null && department.isEmpty() == false) {
-				departmentEntity = departmentLogic.getDepartmentByName (department);
+				departmentEntity = departmentLogic.getDepartmentByName(department);
 				if (departmentEntity == null) {
 					JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "userDialog.error.invalidDepartment");
 					return false;
 				}
 			}
-			userLogic.addOrUpdateUser(user, getAutoViewAction().getDcemAction(), true, adminModule.getPreferences().isNumericPassword(),
+			userLogic.addOrUpdateUser(user, getAutoViewAction().getDcemAction(), true,
+					adminModule.getPreferences().isNumericPassword(),
 					adminModule.getPreferences().getUserPasswordLength(), false);
 			DcemUserExtension dcemUserExtension = new DcemUserExtension();
 			dcemUserExtension.setCountry(country);
 			dcemUserExtension.setJobTitle(jobTitle);
+			if (defaultTimezone) {
+				dcemUserExtension.setTimezoneString(null);
+			} else {
+				dcemUserExtension.setTimezoneString(countryTimezone);
+			}
 			dcemUserExtension.setDepartment(departmentEntity);
 			userLogic.updateDcemUserExtension(user, dcemUserExtension);
 			StringUtils.wipeString(user.getInitialPassword());
@@ -152,8 +168,12 @@ public class UserDialogBean extends DcemDialog {
 				if (semExp.getErrorCode() == DcemErrorCodes.CONSTRAIN_VIOLATION_DB) {
 					JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "db.constrain.at.delete", (Object[]) null);
 				} else {
+					logger.error("Delete user failed", semExp);
 					JsfUtils.addErrorMessage(semExp.toString());
 				}
+			} catch (Exception exp) {
+				JsfUtils.addErrorMessage(exp.toString());
+				logger.error("Delete user failed", exp);
 			}
 		}
 	}
@@ -168,7 +188,8 @@ public class UserDialogBean extends DcemDialog {
 			} else {
 				try {
 					user.setInitialPassword(newPassword);
-					userLogic.addOrUpdateUser(user, getAutoViewAction().getDcemAction(), true, adminModule.getPreferences().isNumericPassword(),
+					userLogic.addOrUpdateUser(user, getAutoViewAction().getDcemAction(), true,
+							adminModule.getPreferences().isNumericPassword(),
 							adminModule.getPreferences().getUserPasswordLength(), false);
 					super.dialogReturn(null);
 				} catch (DcemException e) {
@@ -270,7 +291,7 @@ public class UserDialogBean extends DcemDialog {
 			return null;
 		}
 	}
-	
+
 	public List<String> completeDepartment(String name) {
 		return departmentLogic.getCompleteDepartmentList(name, 50);
 	}
@@ -285,7 +306,8 @@ public class UserDialogBean extends DcemDialog {
 
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		DcemUser user = (DcemUser) this.getActionObject();
-		if (user.isDomainUser() && autoViewAction.getRawAction().getName().equals(DcemConstants.ACTION_RESET_PASSWORD)) {
+		if (user.isDomainUser()
+				&& autoViewAction.getRawAction().getName().equals(DcemConstants.ACTION_RESET_PASSWORD)) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "userDialog.resetPassword.notAllowed");
 		}
 
@@ -313,6 +335,7 @@ public class UserDialogBean extends DcemDialog {
 				department = user.getDcemUserExt().getDepartment().getName();
 			}
 		}
+		updateTimeZone(user.getDcemUserExt());
 		if (country == null) {
 			if (adminModule.getPreferences().getUserDefaultLanguage() == SupportedLanguage.German) {
 				country = DcemConstants.COUNTRY_CODE_GERMAN;
@@ -332,6 +355,9 @@ public class UserDialogBean extends DcemDialog {
 		groups = null;
 		availableRoles = null;
 		leaving = true;
+		continentTimezone = null;
+		countryTimezone = null;
+
 	}
 
 	public String getUserType() {
@@ -378,7 +404,8 @@ public class UserDialogBean extends DcemDialog {
 
 	public String getSelectedRole() {
 		DcemUser user = (DcemUser) this.getActionObject();
-		return (user.getDcemRole() != null) ? user.getDcemRole().getName() : ((DcemRole) getAvailableRoles().getLast().getValue()).getName();
+		return (user.getDcemRole() != null) ? user.getDcemRole().getName()
+				: ((DcemRole) getAvailableRoles().getLast().getValue()).getName();
 	}
 
 	public void setSelectedRole(String selectedRole) {
@@ -405,14 +432,43 @@ public class UserDialogBean extends DcemDialog {
 			return JsfUtils.getDefaultUserImage();
 		}
 	}
-	
-	public String getReportsTo () {
+
+	public String getReportsTo() {
 		DcemUser user = (DcemUser) this.getActionObject();
 		DcemUserExtension dcemUserExtension = user.getDcemUserExt();
-		if (dcemUserExtension != null && dcemUserExtension.getDepartment() != null && dcemUserExtension.getDepartment().getHeadOf() != null) {
+		if (dcemUserExtension != null && dcemUserExtension.getDepartment() != null
+				&& dcemUserExtension.getDepartment().getHeadOf() != null) {
 			return dcemUserExtension.getDepartment().getHeadOf().getDisplayName();
 		}
 		return null;
+	}
+
+	private void updateTimeZone(DcemUserExtension dcemUserExtension) {
+		TimeZone timeZone;
+		if (dcemUserExtension == null || dcemUserExtension.getTimezone() == null) {
+			defaultTimezone = true;
+			timeZone = adminModule.getTimezone();
+		} else {
+			defaultTimezone = false;
+			timeZone = dcemUserExtension.getTimezone();
+		}
+		setContinentAndCountryTimezone(timeZone);
+	}
+
+	private void setContinentAndCountryTimezone(TimeZone timeZone) {
+		countryTimezone = timeZone.getID();
+		continentTimezone = DcemUtils.getContinentFromTimezone(countryTimezone);
+	}
+
+	public List<SelectItem> getContinentTimezones() {
+		if (defaultTimezone) {
+			setContinentAndCountryTimezone(adminModule.getTimezone());
+		}
+		return DcemUtils.getContinentTimezones();
+	}
+
+	public List<SelectItem> getCountryTimezones() {
+		return DcemUtils.getCountryTimezones(continentTimezone);
 	}
 
 	public String getNewPassword() {
@@ -453,5 +509,29 @@ public class UserDialogBean extends DcemDialog {
 
 	public void setJobTitle(String jobTitle) {
 		this.jobTitle = jobTitle;
+	}
+
+	public String getContinentTimezone() {
+		return continentTimezone;
+	}
+
+	public void setContinentTimezone(String continentTimezone) {
+		this.continentTimezone = continentTimezone;
+	}
+
+	public String getCountryTimezone() {
+		return countryTimezone;
+	}
+
+	public void setCountryTimezone(String countryTimezone) {
+		this.countryTimezone = countryTimezone;
+	}
+
+	public boolean isDefaultTimezone() {
+		return defaultTimezone;
+	}
+
+	public void setDefaultTimezone(boolean defaultTimezone) {
+		this.defaultTimezone = defaultTimezone;
 	}
 }

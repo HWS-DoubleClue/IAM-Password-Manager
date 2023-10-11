@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -88,6 +89,7 @@ public class DomainAzure implements DomainApi {
 	private static final int AZURE_PAGE_SIZE_999 = 999; // AZURE have a mximum of 999
 
 	private GraphServiceClient<Request> graphServiceClient = null;
+	private Date accessTokenExpires;
 	private ConfidentialClientApplication confidentialClientApplication;
 	PublicClientApplication publicClientApplication;
 	ClientCredentialParameters clientCredentialParam;
@@ -258,7 +260,18 @@ public class DomainAzure implements DomainApi {
 	public DcemUser getUser(String loginId) throws DcemException {
 		try {
 			String userId = URLEncoder.encode(loginId, "UTF-8");
-			User user = getSearchGraphClient().users().byId(userId).buildRequest().expand("manager").select(SELECT_USER_ATTRIBUTES_EXT).get();
+			User user;
+			try {
+				user = getSearchGraphClient().users().byId(userId).buildRequest().expand("manager").select(SELECT_USER_ATTRIBUTES_EXT).get();
+			} catch (GraphServiceException e) {
+				if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
+					logger.debug("Azure InvalidAuthenticationToken");
+					graphServiceClient = null;
+					user = getSearchGraphClient().users().byId(userId).buildRequest().expand("manager").select(SELECT_USER_ATTRIBUTES_EXT).get();
+				} else {
+					throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString(), e);
+				}
+			}
 			if (user.id == null) {
 				throw new DcemException(DcemErrorCodes.INVALID_USERID, loginId);
 			}
@@ -267,7 +280,6 @@ public class DomainAzure implements DomainApi {
 			throw new DcemException(DcemErrorCodes.INVALID_USERID, loginId, e);
 		}
 	}
-	
 
 	@Override
 	public DomainUsers getGroupMembers(DcemGroup dcemGroup, String filter) throws DcemException {
@@ -276,6 +288,7 @@ public class DomainAzure implements DomainApi {
 			userCollectionPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).membersAsUser().buildRequest().top(AZURE_PAGE_SIZE_999).get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
+				logger.debug("Azure InvalidAuthenticationToken");
 				graphServiceClient = null;
 				userCollectionPage = getSearchGraphClient().groups(dcemGroup.getGroupDn()).membersAsUser().buildRequest().top(AZURE_PAGE_SIZE_999).get();
 			} else {
@@ -339,14 +352,16 @@ public class DomainAzure implements DomainApi {
 			userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).expand("manager").select(SELECT_USER_ATTRIBUTES_EXT).get();
 		} catch (GraphServiceException e) {
 			if (e.getServiceError().code.equals("InvalidAuthenticationToken")) {
+				logger.debug("Azure InvalidAuthenticationToken");
 				graphServiceClient = null;
-				userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).expand("manager").select(SELECT_USER_ATTRIBUTES_EXT).get();
+				userCollectionPage = getSearchGraphClient().users().buildRequest(options).top(pageSize).expand("manager").select(SELECT_USER_ATTRIBUTES_EXT)
+						.get();
 			} else {
 				throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, e.toString());
 			}
 		}
-	//	System.out.println("DomainAzure.getUsers() NextPage: " + userCollectionPage.getNextPage());
-	//	System.out.println("DomainAzure.getUsers() " + userCollectionPage.additionalDataManager());
+		// System.out.println("DomainAzure.getUsers() NextPage: " + userCollectionPage.getNextPage());
+		// System.out.println("DomainAzure.getUsers() " + userCollectionPage.additionalDataManager());
 		Iterator<User> iterator = userCollectionPage.getCurrentPage().iterator();
 		List<DcemUser> userList = new LinkedList<>();
 
@@ -357,7 +372,7 @@ public class DomainAzure implements DomainApi {
 			DcemUser dcemUser = createDcemUser(user);
 			userList.add(dcemUser);
 		}
-		
+
 		return new DomainUsers(AZURE_PAGE_SIZE_999, userCollectionPage.getNextPage() == null ? false : true, userList);
 	}
 
@@ -370,7 +385,7 @@ public class DomainAzure implements DomainApi {
 			ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
 			KaraUtils.copyStream(inputStream, arrayOutputStream);
 			byte[] photo = arrayOutputStream.toByteArray();
-			photo = DcemUtils.resizeImage(photo,  DcemConstants.PHOTO_MAX);
+			photo = DcemUtils.resizeImage(photo, DcemConstants.PHOTO_MAX);
 			return photo;
 		} catch (GraphServiceException gse) {
 			// if (gse.getServiceError().code.equals("ImageNotFound")) {
@@ -431,7 +446,7 @@ public class DomainAzure implements DomainApi {
 		if (manager != null) {
 			dcemLdapAttributes.setManagerId(manager.id);
 		}
-//		System.out.println("DomainAzure.createDcemUser() " + dcemLdapAttributes.toString() + " Manager " + manager);
+		// System.out.println("DomainAzure.createDcemUser() " + dcemLdapAttributes.toString() + " Manager " + manager);
 		dcemUser.setDcemLdapAttributes(dcemLdapAttributes);
 		return dcemUser;
 	}
@@ -442,11 +457,13 @@ public class DomainAzure implements DomainApi {
 	}
 
 	private GraphServiceClient<Request> getSearchGraphClient() throws DcemException {
-		if (graphServiceClient == null) {
+		if (graphServiceClient == null || (accessTokenExpires != null && accessTokenExpires.before(new Date()))) {
 			try {
 				CompletableFuture<IAuthenticationResult> future = confidentialClientApplication.acquireToken(clientCredentialParam);
 				IAuthenticationResult auth = future.get();
 				String accessToken = auth.accessToken();
+				accessTokenExpires = auth.expiresOnDate();
+				logger.info ("Azure AccessToken expires on " + accessTokenExpires);
 				graphServiceClient = getGraphServiceClient(accessToken);
 			} catch (Exception e) {
 				throw new DcemException(DcemErrorCodes.AZURE_DOMAIN_NOT_AUTHORISED, "Could not create a graph client: " + e.getLocalizedMessage());

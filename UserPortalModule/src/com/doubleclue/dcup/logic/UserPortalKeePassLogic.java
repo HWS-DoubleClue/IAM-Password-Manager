@@ -1,6 +1,7 @@
 package com.doubleclue.dcup.logic;
 
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
@@ -58,9 +59,7 @@ public class UserPortalKeePassLogic {
 		KeePassDatabase.write(_keePassFile, _password, byteArrayOutputStream);
 
 		cloudSafeLogic.setCloudSafeByteArray(cloudSafeEntity, null, byteArrayOutputStream.toByteArray(), portalSessionBean.getDcemUser(), null);
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, 1);
-		cloudSafeEntity.setLastModified(calendar.getTime());
+		cloudSafeEntity.setLastModified(LocalDateTime.now().plusSeconds(1));
 		return byteArrayOutputStream.toByteArray();
 	}
 

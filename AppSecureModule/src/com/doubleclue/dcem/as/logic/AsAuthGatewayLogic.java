@@ -101,12 +101,12 @@ public class AsAuthGatewayLogic {
 			return;
 		}
 		AuthAppSession authAppSession = tenantData.getAuthAppSessions().get(pendingMsg.getSessionId());
-		AppSession appSession = authAppSession.getAppSession();
-		if (authAppSession == null || appSession == null) {
+		if (authAppSession == null || authAppSession.getAppSession() == null) {
 			logger.info("MsgResponse received but AuthAppSession is not there");
 			messageHandler.onFinalMessage(pendingMsg, false);
 			return;
 		}
+		AppSession appSession = authAppSession.getAppSession();
 		AuthAppMessageResponse appMessageResponse = new AuthAppMessageResponse();
 		appMessageResponse.setMsgId(pendingMsg.getId());
 		if (pendingMsg.getMsgStatus() == AsApiMsgStatus.OK) {
@@ -138,21 +138,6 @@ public class AsAuthGatewayLogic {
 		taskExecutor.schedule(new SendAuthMessageResponseTask(authAppSession, appMessageResponse, pendingMsg), 50, TimeUnit.MICROSECONDS);
 	}
 	
-//	@DcemTransactional
-//	public void addAuthGatewayReport (AuthAppReportingEntity appReportingEntity, PendingMsg pendingMsg) {
-//		appReportingEntity.setTimestamp(new Date (pendingMsg.getTimeStamp()));
-//		if (pendingMsg.getMsgStatus() == AsApiMsgStatus.OK && pendingMsg.getActionId().equals("ok")) {
-//			appReportingEntity.setResult(true);
-//		}
-//		em.persist(appReportingEntity);
-//	}
-
-	@DcemTransactional
-//	public void addAuthGatewayReport(AuthAppReportingEntity appReportingEntity) {
-//		appReportingEntity.setTimestamp(new Date());
-//		em.persist(appReportingEntity);
-//	}
-
 	public AuthGatewayEntity getAuthAppEntitiy(String authAppId) {
 		TypedQuery<AuthGatewayEntity> query = em.createNamedQuery(AuthGatewayEntity.GET_GATEWAY, AuthGatewayEntity.class);
 		query.setParameter(1, authAppId);

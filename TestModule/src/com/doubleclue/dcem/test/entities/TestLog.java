@@ -39,10 +39,9 @@ public class TestLog extends EntityInterface {
 //	@DcemGui (columnWidth="45px", displayMode=DisplayModes.INPUT_DISABLED)
     private Integer id;
 	
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "dc_time", nullable=false)
     @DcemGui (sortOrder=SortOrder.DESCENDING )
-	private Date time;	
+	private LocalDateTime time;	
  
     @DcemGui
     @Column(length = 128, nullable = false)

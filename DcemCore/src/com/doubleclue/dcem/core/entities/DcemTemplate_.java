@@ -1,13 +1,13 @@
 package com.doubleclue.dcem.core.entities;
 
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2020-09-02T13:24:20.284+0200")
+@Generated(value="Dali", date="2023-10-11T10:54:25.089+0200")
 @StaticMetamodel(DcemTemplate.class)
 public class DcemTemplate_ {
 	public static volatile SingularAttribute<DcemTemplate, Integer> id;
@@ -19,7 +19,7 @@ public class DcemTemplate_ {
 	public static volatile SingularAttribute<DcemTemplate, byte[]> macDigest;
 	public static volatile SingularAttribute<DcemTemplate, String> content;
 	public static volatile SingularAttribute<DcemTemplate, LinkedList> tokens;
-	public static volatile SingularAttribute<DcemTemplate, Date> lastModified;
+	public static volatile SingularAttribute<DcemTemplate, LocalDateTime> lastModified;
 	public static volatile SingularAttribute<DcemTemplate, Boolean> active;
 	public static volatile SingularAttribute<DcemTemplate, Integer> jpaVersion;
 }

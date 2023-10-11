@@ -1,14 +1,14 @@
 package com.doubleclue.dcem.core.logic;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class CertificateInfo {
 
 	String issuer;
 	String subject;
-	Date expires;
+	LocalDateTime expires;
 
-	public CertificateInfo(String issuer, String subject, Date expires) {
+	public CertificateInfo(String issuer, String subject, LocalDateTime expires) {
 		super();
 		this.issuer = issuer;
 		this.subject = subject;
@@ -31,11 +31,11 @@ public class CertificateInfo {
 		this.subject = subject;
 	}
 
-	public Date getExpires() {
+	public LocalDateTime getExpires() {
 		return expires;
 	}
 
-	public void setExpires(Date expires) {
+	public void setExpires(LocalDateTime expires) {
 		this.expires = expires;
 	}
 

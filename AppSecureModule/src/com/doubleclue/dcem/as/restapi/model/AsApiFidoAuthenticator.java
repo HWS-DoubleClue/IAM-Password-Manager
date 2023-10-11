@@ -13,7 +13,7 @@
 package com.doubleclue.dcem.as.restapi.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,10 +35,10 @@ public class AsApiFidoAuthenticator implements Serializable {
 	private String userLoginId = null;
 
 	@JsonProperty("registeredOn")
-	private Date registeredOn = null;
+	private LocalDateTime registeredOn = null;
 
 	@JsonProperty("lastUsed")
-	private Date lastUsed = null;
+	private LocalDateTime lastUsed = null;
 
 	@JsonProperty("displayName")
 	private String displayName = null;
@@ -79,7 +79,7 @@ public class AsApiFidoAuthenticator implements Serializable {
 		this.userLoginId = userLoginId;
 	}
 
-	public AsApiFidoAuthenticator registeredOn(Date registeredOn) {
+	public AsApiFidoAuthenticator registeredOn(LocalDateTime registeredOn) {
 		this.registeredOn = registeredOn;
 		return this;
 	}
@@ -89,15 +89,15 @@ public class AsApiFidoAuthenticator implements Serializable {
 	 * @return registeredOn
 	 **/
 	@JsonProperty("registeredOn")
-	public Date getRegisteredOn() {
+	public LocalDateTime getRegisteredOn() {
 		return registeredOn;
 	}
 
-	public void setRegisteredOn(Date registeredOn) {
+	public void setRegisteredOn(LocalDateTime registeredOn) {
 		this.registeredOn = registeredOn;
 	}
 
-	public AsApiFidoAuthenticator lastUsed(Date lastUsed) {
+	public AsApiFidoAuthenticator lastUsed(LocalDateTime lastUsed) {
 		this.lastUsed = lastUsed;
 		return this;
 	}
@@ -107,11 +107,11 @@ public class AsApiFidoAuthenticator implements Serializable {
 	 * @return lastUsed
 	 **/
 	@JsonProperty("lastUsed")
-	public Date getLastUsed() {
+	public LocalDateTime getLastUsed() {
 		return lastUsed;
 	}
 
-	public void setLastUsed(Date lastUsed) {
+	public void setLastUsed(LocalDateTime lastUsed) {
 		this.lastUsed = lastUsed;
 	}
 

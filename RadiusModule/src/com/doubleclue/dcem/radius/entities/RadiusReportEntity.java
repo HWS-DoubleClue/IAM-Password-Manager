@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.radius.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +13,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.primefaces.model.SortOrder;
 
@@ -51,7 +49,7 @@ public class RadiusReportEntity extends EntityInterface {
 		this.nasClientName = nasClientName;
 		this.action = action;
 		this.details = details;
-		time = new Date();
+		time = LocalDateTime.now();
 //		error = true;
 	}
 
@@ -61,10 +59,9 @@ public class RadiusReportEntity extends EntityInterface {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreRadiusRep")
 	private Integer id;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dc_time", nullable = false)
 	@DcemGui(sortOrder = SortOrder.DESCENDING)
-	private Date time;
+	private LocalDateTime time;
 
 	@DcemGui
 	@Column(length = 128, nullable = true)
@@ -91,11 +88,11 @@ public class RadiusReportEntity extends EntityInterface {
 		this.id = (Integer) id;
 	}
 
-	public Date getTime() {
+	public LocalDateTime getTime() {
 		return time;
 	}
 
-	public void setTime(Date time) {
+	public void setTime(LocalDateTime time) {
 		this.time = time;
 	}
 

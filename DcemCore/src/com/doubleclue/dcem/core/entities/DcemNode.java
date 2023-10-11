@@ -1,7 +1,7 @@
 package com.doubleclue.dcem.core.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -16,8 +16,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
@@ -74,13 +72,11 @@ public class DcemNode extends EntityInterface implements Serializable {
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY)
 	String address;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY)
-	Date startedOn;
+	LocalDateTime startedOn;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY)
-	Date wentDownOn;
+	LocalDateTime wentDownOn;
 
 	public String getAddress() {
 		Set<Member> members = DcemCluster.getDcemCluster().getMembers();
@@ -127,19 +123,19 @@ public class DcemNode extends EntityInterface implements Serializable {
 		this.name = name;
 	}
 
-	public Date getStartedOn() {
+	public LocalDateTime getStartedOn() {
 		return startedOn;
 	}
 
-	public void setStartedOn(Date startedOn) {
+	public void setStartedOn(LocalDateTime startedOn) {
 		this.startedOn = startedOn;
 	}
 
-	public Date getWentDownOn() {
+	public LocalDateTime getWentDownOn() {
 		return wentDownOn;
 	}
 
-	public void setWentDownOn(Date wentDownOn) {
+	public void setWentDownOn(LocalDateTime wentDownOn) {
 		this.wentDownOn = wentDownOn;
 	}
 

@@ -1,6 +1,7 @@
 package com.doubleclue.dcem.core.tasks;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,9 +18,9 @@ public class MonitorClusterTask implements Runnable, Serializable {
 
 	private static final Logger logger = LogManager.getLogger(MonitoringTask.class);
 
-	Date date;
+	LocalDateTime date;
 
-	public MonitorClusterTask(Date date) {
+	public MonitorClusterTask(LocalDateTime date) {
 		super();
 		this.date = date;
 	}

@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.system.logic;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,7 +22,7 @@ public class NodeLogic {
 	
 	@DcemTransactional
 	public void addAutoDcemNode(DcemNode dcemNode) {
-		dcemNode.setStartedOn(new Date());
+		dcemNode.setStartedOn(LocalDateTime.now());
 		dcemNode.setState(NodeState.Active);
 		em.persist(dcemNode);
 	}
@@ -35,7 +35,7 @@ public class NodeLogic {
 	
 	@DcemTransactional
 	public void started(DcemNode dcemNode) {
-		dcemNode.setStartedOn(new Date());
+		dcemNode.setStartedOn(LocalDateTime.now());
 		dcemNode.setState(NodeState.Active);
 	}
 	
@@ -72,10 +72,10 @@ public class NodeLogic {
 		DcemNode node = getNodeByName(name);
 		node.setState(state);
 		if (state == NodeState.Off) {
-			node.setWentDownOn(new Date());
+			node.setWentDownOn(LocalDateTime.now());
 		}
 		if (state == NodeState.Active) {
-			node.setStartedOn(new Date());
+			node.setStartedOn(LocalDateTime.now());
 		}
 	}
 }

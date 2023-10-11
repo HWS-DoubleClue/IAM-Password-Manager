@@ -66,17 +66,15 @@
 					</div>
 
 					<ui:include src="/mgt#{viewNavigator.getViewPath()}" />
-					<script defer="defer" type="text/javascript">
+		<!-- 			<script defer="defer" type="text/javascript">
 						startTimer(#{dcemApplication.getInactivityTime()} * 60);
-					</script>
+					</script> -->
 					<p:growl id="mainMessages" layout="table" globalOnly="false" sticky="true" showSummary="true">
 						<p:autoUpdate />
 					</p:growl>
 				</h:panelGroup>
 			</div>
 		</div>
-
-
 
 		<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="true" resizable="false" showHeader="false"
 			style="border: 4; border-style: solid; border-color: #980808;">

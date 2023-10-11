@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.system.gui;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
@@ -61,9 +62,7 @@ public class KeyStoreView extends DcemView {
 	@Override
 	public KeyStoreEntity createActionObject() {
 		KeyStoreEntity keyStoreEntity = new KeyStoreEntity();
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.YEAR, 50);
-		keyStoreEntity.setExpiresOn(calendar.getTime());
+		keyStoreEntity.setExpiresOn(LocalDateTime.now().plusYears(50));
 		return keyStoreEntity;		
 	}
 

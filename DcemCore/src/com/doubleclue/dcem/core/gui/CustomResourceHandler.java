@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.time.ZoneOffset;
 import java.util.Locale;
 
 import javax.faces.FacesException;
@@ -155,8 +156,7 @@ public class CustomResourceHandler extends ResourceHandlerWrapper {
 
 		private static class UserURLConnection extends URLConnection {
 
-			private URL url;
-			
+			private URL url;			
 			long lastModified;
 
 			public UserURLConnection(URL url) {
@@ -189,7 +189,7 @@ public class CustomResourceHandler extends ResourceHandlerWrapper {
 	    			ByteArrayInputStream byteArrayInputStream;
 	    			DcemTemplate dcemTemplate = templateLogic.getTemplateByNameLanguage(templateName, language);
 	    			if (dcemTemplate != null) {
-	    				lastModified = dcemTemplate.getLastModified().getTime();
+	    				lastModified = dcemTemplate.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000;
 	    				byteArrayInputStream = new ByteArrayInputStream(dcemTemplate.getContent().getBytes());
 	    				return byteArrayInputStream;
 	    			}

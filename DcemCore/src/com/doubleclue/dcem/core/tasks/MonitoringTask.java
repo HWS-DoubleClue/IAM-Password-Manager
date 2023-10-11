@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.core.tasks;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -18,7 +19,7 @@ public class MonitoringTask extends CoreTask {
 			return;
 		}
 		IExecutorService executorService = DcemCluster.getDcemCluster().getExecutorService();
-		executorService.execute(new MonitorClusterTask(new Date()));
+		executorService.execute(new MonitorClusterTask(LocalDateTime.now()));
 	}
 
 }

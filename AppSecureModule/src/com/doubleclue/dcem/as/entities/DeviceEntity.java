@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.as.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -19,13 +19,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.doubleclue.dcem.as.logic.DeviceState;
 import com.doubleclue.dcem.as.logic.DeviceStatus;
@@ -110,10 +105,9 @@ public class DeviceEntity extends EntityInterface {
 	@DcemGui(name = "version", subClass = "versionStr")
 	private AsVersionEntity asVersion;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "lastLogin", nullable = true)
 	@DcemGui
-	private Date lastLoginTime;
+	private LocalDateTime lastLoginTime;
 
 	@Column(length = 255)
 	@DcemGui
@@ -161,11 +155,11 @@ public class DeviceEntity extends EntityInterface {
 	public DeviceEntity() {
 	}
 
-	public Date getLastLoginTime() {
+	public LocalDateTime getLastLoginTime() {
 		return this.lastLoginTime;
 	}
 
-	public void setLastLoginTime(Date lastLoginTime) {
+	public void setLastLoginTime(LocalDateTime lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
 	}
 

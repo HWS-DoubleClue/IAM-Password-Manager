@@ -5,12 +5,16 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -440,4 +444,13 @@ public class OperatorSessionBean implements Serializable {
 		this.userSettings = userSettings;
 	}
 
+	public LocalDateTime getUserZonedTime(LocalDateTime value) {
+		return userLogic.getUserZonedTime(value, dcemUser);
+	}
+	
+	public LocalDateTime getDefaultZonedTime(LocalDateTime value) {
+		return userLogic.getDefaultZonedTime(value, dcemUser);
+	}
+	
+	
 }

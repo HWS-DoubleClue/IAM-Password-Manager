@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -896,7 +897,7 @@ public class DcDefaultServlet extends HttpServlet {
 		String lastModifiedHttp = null;
 		if (cloudSafeEntity.isFile() && !isError) {
 			eTag = generateETag(cloudSafeEntity);
-			lastModifiedHttp = FastHttpDateFormat.formatDate(cloudSafeEntity.getLastModified().getTime());
+			lastModifiedHttp = FastHttpDateFormat.formatDate(cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000);
 		}
 		// Serve a precompressed version of the file if present
 		boolean usingPrecompressedVersion = false;
@@ -1449,7 +1450,7 @@ public class DcDefaultServlet extends HttpServlet {
 			}
 
 			String eTag = generateETag(cloudSafeEntity);
-			long lastModified = cloudSafeEntity.getLastModified().getTime();
+			long lastModified = cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000;
 
 			if (headerValueTime == (-1L)) {
 				// If the ETag the client gave does not match the entity
@@ -2122,7 +2123,7 @@ public class DcDefaultServlet extends HttpServlet {
 	protected boolean checkIfModifiedSince(HttpServletRequest request, HttpServletResponse response, CloudSafeEntity cloudSafeEntity) {
 		try {
 			long headerValue = request.getDateHeader("If-Modified-Since");
-			long lastModified = cloudSafeEntity.getLastModified().getTime();
+			long lastModified = cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000;
 			if (headerValue != -1) {
 
 				// If an If-None-Match header has been specified, if modified since
@@ -2210,7 +2211,7 @@ public class DcDefaultServlet extends HttpServlet {
 	 */
 	protected boolean checkIfUnmodifiedSince(HttpServletRequest request, HttpServletResponse response, CloudSafeEntity cloudSafeEntity) throws IOException {
 		try {
-			long lastModified = cloudSafeEntity.getLastModified().getTime();
+			long lastModified = cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000;
 			long headerValue = request.getDateHeader("If-Unmodified-Since");
 			if (headerValue != -1) {
 				if (lastModified >= (headerValue + 1000)) {
@@ -2240,7 +2241,7 @@ public class DcDefaultServlet extends HttpServlet {
 		String weakETag = "";
 		synchronized (this) {
 			long contentLength = cloudSafeEntity.getLength();
-			long lastModified = cloudSafeEntity.getLastModified().getTime();
+			long lastModified = cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000;
 			if ((contentLength >= 0) || (lastModified >= 0)) {
 				weakETag = "W/\"" + contentLength + "-" + lastModified + "\"";
 			}

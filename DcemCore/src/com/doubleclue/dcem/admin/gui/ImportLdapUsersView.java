@@ -1,8 +1,8 @@
 package com.doubleclue.dcem.admin.gui;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -83,12 +83,12 @@ public class ImportLdapUsersView extends DcemView {
 	List<DcemGroup> groupSearchMap;
 
 	SendByEnum sendBy;
-	Date validTill;
+	LocalDateTime validTill;
 	boolean createActivationCode;
 	boolean createActivationCodeExisting;
 
 	SendByEnum sendByGroup;
-	Date validTillGroup;
+	LocalDateTime validTillGroup;
 	boolean createActivationCodeGroup;
 	boolean createActivationCodeExistingGroup;
 
@@ -103,17 +103,21 @@ public class ImportLdapUsersView extends DcemView {
 	int countUsers = 0;
 	int countExistingUsers = 0;
 	int countActivations = 0;
+	AsModuleApi asModuleApi = null;
 
 	@PostConstruct
 	protected void init() {
 		resourceBundle = JsfUtils.getBundle(DcemConstants.CORE_RESOURCE);
 		domainDialogBean.setParentView(this);
 		subject = importLdapUsersSubject;
-		AsModuleApi asModuleApi = null;
 		asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
-		if (asModuleApi != null) {
-			validTill = asModuleApi.getActivationCodeDefaultValidTill();
-		}
+		reload();
+	}
+	
+	@Override
+	public void reload() {
+		validTill = operatorSessionBean.getUserZonedTime(asModuleApi.getActivationCodeDefaultValidTill());
+		validTillGroup = validTill;
 		List<SelectItem> list = domainLogic.getDomainNames();
 		if (list.isEmpty() == false) {
 			domainName = list.get(0).getValue().toString();
@@ -188,10 +192,10 @@ public class ImportLdapUsersView extends DcemView {
 		int countNewUsers = 0;
 
 		sendBy = sendByGroup;
-		validTillGroup = validTill;
 		createActivationCodeGroup = createActivationCode;
 		createActivationCodeExistingGroup = createActivationCodeExisting;
 		DcemGroup selectedGroup = null;
+		validTill = validTillGroup;
 		for (String groupName : selectedGroups) {
 			selectedGroup = null;
 			try {
@@ -225,8 +229,7 @@ public class ImportLdapUsersView extends DcemView {
 					countNewUsers += countUsers;
 					countGroupActivations += countActivations;
 				} catch (DcemException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.warn(e);
 				}
 			}
 		}
@@ -242,11 +245,11 @@ public class ImportLdapUsersView extends DcemView {
 		this.sendByGroup = sendByGroup;
 	}
 
-	public Date getValidTillGroup() {
+	public LocalDateTime getValidTillGroup() {
 		return validTillGroup;
 	}
 
-	public void setValidTillGroup(Date validTillGroup) {
+	public void setValidTillGroup(LocalDateTime validTillGroup) {
 		this.validTillGroup = validTillGroup;
 	}
 
@@ -395,7 +398,7 @@ public class ImportLdapUsersView extends DcemView {
 					continue;
 				}
 				try {
-					asModuleApi.createActivationCode(dcemUser, validTill, sendBy, "Domain Import");
+					asModuleApi.createActivationCode(dcemUser, operatorSessionBean.getDefaultZonedTime(validTill), sendBy, "Domain Import");
 					countActivations++;
 				} catch (DcemException e) {
 					if (e.getErrorCode() == DcemErrorCodes.EMAIL_SEND_MSG_LIMIT) {
@@ -479,11 +482,11 @@ public class ImportLdapUsersView extends DcemView {
 		this.sendBy = sendBy;
 	}
 
-	public Date getValidTill() {
+	public LocalDateTime getValidTill() {
 		return validTill;
 	}
 
-	public void setValidTill(Date validTill) {
+	public void setValidTill(LocalDateTime validTill) {
 		this.validTill = validTill;
 	}
 

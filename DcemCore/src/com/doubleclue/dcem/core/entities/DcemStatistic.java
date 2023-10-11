@@ -1,7 +1,7 @@
 package com.doubleclue.dcem.core.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,8 +18,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "core_statistic", indexes = {@Index (name = "statisticTimestamp", columnList = "dc_timestamp") })
@@ -58,9 +56,8 @@ public class DcemStatistic extends EntityInterface implements Serializable {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreDcemStatistic")
 	private Integer id;
 	
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="dc_timestamp", nullable=false )
-	private Date timestamp;
+	private LocalDateTime timestamp;
 	
 	@ManyToOne (fetch = FetchType.LAZY)
 	@JoinColumn(name="nodeId", nullable = true, foreignKey = @ForeignKey(name = "FK_APP_STATISTIC_NODE"), insertable = true, updatable = false)
@@ -76,10 +73,10 @@ public class DcemStatistic extends EntityInterface implements Serializable {
 	public void setId(Number id) {
 		this.id = (Integer) id;
 	}
-	public Date getTimestamp() {
+	public LocalDateTime getTimestamp() {
 		return timestamp;
 	}
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 	public String getData() {

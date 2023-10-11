@@ -174,13 +174,12 @@ public class DomainLogic implements ReloadClassInterface {
 
 	@DcemTransactional
 	public void addOrUpdateDcemLdap(DomainEntity ldapEntity, DcemAction dcemAction) {
-		String changeInfo = null;
+		String changeInfo = ldapEntity.getName();
 		ldapEntity.setName(ldapEntity.getName().toLowerCase());
 		if (dcemAction.getAction().equals(DcemConstants.ACTION_ADD) || dcemAction.getAction().equals(DcemConstants.ACTION_COPY)) {
 			ldapEntity.setId(null);
 			ldapEntity.serializeDomainConfig();
 			em.persist(ldapEntity);
-			changeInfo = ldapEntity.getName();
 		} else {
 			DomainEntity oldEntity = getDomainEntityById(ldapEntity.getId());
 			try {

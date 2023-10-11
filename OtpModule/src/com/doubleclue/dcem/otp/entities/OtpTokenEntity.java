@@ -89,11 +89,6 @@ public class OtpTokenEntity extends EntityInterface {
 	@JoinColumn(nullable = true, name="userId", foreignKey = @ForeignKey(name = "FK_OTP_TOKEN_USER"), insertable = true, updatable = true)
 	private DcemUser user;
 	
-//	@Temporal(TemporalType.TIMESTAMP)
-//	@Column(name = "lastUsed", nullable = true)
-//	@DcemGui
-//	private Date lastUsed;
-	
 	@DcemGui
 	@Column(name = "dc_disabled")
 	boolean disabled;

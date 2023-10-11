@@ -2,6 +2,7 @@ package com.doubleclue.dcup.gui;
 
 import java.io.Serializable;
 import java.net.ConnectException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -96,7 +97,7 @@ public class RegisterView implements Serializable {
 	private String phone = "";
 	private String privateMobileNumber;
 	private AsModuleApi asModuleApi;
-	private Date activationValidTill;
+	private LocalDateTime activationValidTill;
 	// private String sendBy = "email";
 	private NotificationType notificationType;
 	private String domainName;
@@ -302,11 +303,11 @@ public class RegisterView implements Serializable {
 		this.privateMobileNumber = privateMobileNumber;
 	}
 
-	public Date getActivationValidTill() {
+	public LocalDateTime getActivationValidTill() {
 		return activationValidTill;
 	}
 
-	public void setActivationValidTill(Date activationValidTill) {
+	public void setActivationValidTill(LocalDateTime activationValidTill) {
 		this.activationValidTill = activationValidTill;
 	}
 

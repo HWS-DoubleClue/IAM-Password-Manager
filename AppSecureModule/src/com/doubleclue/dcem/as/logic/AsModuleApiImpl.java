@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.as.logic;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -135,16 +136,14 @@ public class AsModuleApiImpl implements AsModuleApi {
 	}
 
 	@Override
-	public String createActivationCode(DcemUser dcemUser, Date validTill, SendByEnum sendBy, String info) throws DcemException {
+	public String createActivationCode(DcemUser dcemUser, LocalDateTime validTill, SendByEnum sendBy, String info) throws DcemException {
 		ActivationCodeEntity ActivationCodeEntity = activationLogic.createActivationCode(dcemUser, validTill, sendBy, info);
 		return ActivationCodeEntity.getActivationCode();
 	}
 
 	@Override
-	public Date getActivationCodeDefaultValidTill() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.HOUR_OF_DAY, asModule.getPreferences().getActivationCodeDefaultValidTill());
-		return calendar.getTime();
+	public LocalDateTime getActivationCodeDefaultValidTill() {
+		return LocalDateTime.now().plusHours(asModule.getPreferences().getActivationCodeDefaultValidTill());
 	}
 
 	@Override
@@ -241,7 +240,7 @@ public class AsModuleApiImpl implements AsModuleApi {
 	}
 
 	@Override
-	public void setUserCloudSafe(String name, String options, Date discardAfter, DcemUser dcemUser, boolean withAuditing, char[] password, byte[] content)
+	public void setUserCloudSafe(String name, String options, LocalDateTime discardAfter, DcemUser dcemUser, boolean withAuditing, char[] password, byte[] content)
 			throws DcemException {
 		CloudSafeEntity cloudSafeEntity = new CloudSafeEntity(CloudSafeOwner.USER, dcemUser, null, name, discardAfter, options, false, null, dcemUser);
 		cloudSafeLogic.setCloudSafeByteArray(cloudSafeEntity, password, content, dcemUser, null);

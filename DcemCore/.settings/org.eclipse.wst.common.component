@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                
+                        
+    
+    
     
     
     <wb-module deploy-name="DcemCore">
-                                
+                                                
+        
+        
         
         
         <wb-resource deploy-path="/" source-path="/src"/>
-                                
+                                                
+        
+        
         
         
         <wb-resource deploy-path="/" source-path="/resources"/>
         <wb-resource deploy-path="/" source-path="/target/generated-sources/annotations"/>
-                            
+                                            
+    
+    
     
     
     </wb-module>
-            
+                    
+
+
 
 
 </project-modules>

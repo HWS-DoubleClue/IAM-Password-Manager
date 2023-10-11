@@ -50,6 +50,7 @@ public class AuditingLogic {
 			}
 		} else {
 			try {
+				
 				EntityInterface oldEntity = em.find(newEntity.getClass(), newEntity.getId());
 				changeInfo = DcemUtils.compareObjects(oldEntity, newEntity);
 			} catch (Exception exp) {

@@ -55,7 +55,7 @@
 									<h:outputText value="#{CoreMsg['importDomain.createacexisting']}" />
 									<p:selectBooleanCheckbox value="#{importLdapUsersView.createActivationCodeExisting}" />
 									<p:outputLabel value="#{CoreMsg['importDomain.acvalidtill']}" />
-									<p:datePicker id="validTill" value="#{importLdapUsersView.validTill}" timeZone="#{adminModule.timezone}" locale="#{operatorSession.locale}"
+									<p:datePicker id="validTill" value="#{importLdapUsersView.validTill}"  locale="#{operatorSession.locale}"
 										pattern="#{operatorSession.dateTimePattern}" showTime="true" />
 
 									<p:outputLabel value="#{CoreMsg['importDomain.acsendvia']}" for="sendBy" />

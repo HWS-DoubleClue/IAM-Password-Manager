@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -65,6 +68,8 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	private DateFormat dateFormat = new SimpleDateFormat("HH:mm dd/MM/yyyy");
 
 	private DateFormat dateFormatFile = new SimpleDateFormat("HH_mm_dd_MM_yyyy");
+	
+	private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
 	@Inject
 	EntityManager em;
@@ -113,7 +118,7 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	}
 
 	@DcemTransactional
-	public void saveNodeStatistics(Date date) throws JsonProcessingException {
+	public void saveNodeStatistics(LocalDateTime date) throws JsonProcessingException {
 		DcemStatistic semStatistic = new DcemStatistic();
 		semStatistic.setTimestamp(removeSeconds(date));
 		semStatistic.setDcemNode(DcemCluster.getDcemCluster().getDcemNode());
@@ -154,13 +159,13 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	}
 
 	public List<SelectItem> getDiagnosticTimes() {
-		TypedQuery<Date> query = em.createNamedQuery(DcemStatistic.GET_TIMESTAMPS, Date.class);
+		TypedQuery<LocalDateTime> query = em.createNamedQuery(DcemStatistic.GET_TIMESTAMPS, LocalDateTime.class);
 		query.setMaxResults(4000);
-		List<Date> timestamps = query.getResultList();
+		List<LocalDateTime> timestamps = query.getResultList();
 		ArrayList<SelectItem> selectItems = new ArrayList<>(timestamps.size() + 1);
 		selectItems.add(new SelectItem(CURRENT_TIME, CURRENT_TIME));
-		for (Date date : timestamps) {
-			selectItems.add(new SelectItem(getDateFormat().format(date), getDateFormat().format(date)));
+		for (LocalDateTime date : timestamps) {
+			selectItems.add(new SelectItem(dateTimeFormatter.format(date), dateTimeFormatter.format(date)));
 		}
 		return selectItems;
 	}
@@ -174,10 +179,10 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		ObjectMapper objectMapper = new ObjectMapper();
 		TypeReference<LinkedList<ModuleStatistic>> typeRef = new TypeReference<LinkedList<ModuleStatistic>>() {
 		};
-		Date date = getDateFormat().parse(timeString);
+		LocalDateTime localDateTime = LocalDateTime.parse(timeString, dateTimeFormatter);
 		Map<String, List<ModuleStatistic>> map = new HashMap<>();
 		TypedQuery<DcemStatistic> query = em.createNamedQuery(DcemStatistic.GET_STATISTICS_TIME, DcemStatistic.class);
-		query.setParameter(1, date);
+		query.setParameter(1, localDateTime);
 
 		List<DcemStatistic> statistics = query.getResultList();
 		List<ModuleStatistic> moduleStatistics;
@@ -192,7 +197,7 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		return map;
 	}
 	
-	public List<DcemStatistic> getStatisticsFromTo (Date dateFrom, Date dateTo) {
+	public List<DcemStatistic> getStatisticsFromTo (LocalDateTime dateFrom, LocalDateTime dateTo) {
 		TypedQuery<DcemStatistic> query = em.createNamedQuery(DcemStatistic.GET_STATISTICS_FROM_TO, DcemStatistic.class);
 		query.setParameter(1, dateFrom);
 		query.setParameter(2, dateTo);
@@ -214,8 +219,13 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		if (dateFromStr == null) {
 			return result;
 		}
-		Date dateFrom = getDateFormat().parse(dateFromStr);
-		Date dateTo = getDateFormat().parse(dateToStr);
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+		LocalDateTime dateFrom = LocalDateTime.parse(dateFromStr, format);
+		LocalDateTime dateTo = LocalDateTime.parse(dateToStr, format);
+//		Date dateFrom = getDateFormat().parse(dateFromStr);
+//		Date dateTo = getDateFormat().parse(dateToStr);
+		
+		
 		List<DcemStatistic> statistics = getStatisticsFromTo(dateFrom, dateTo);
 		List<ModuleStatistic> moduleStatistics;
 		Map<String, String> valueMap;
@@ -249,12 +259,11 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 					}
 					ChartData chartData = mapNodeCounter.get(counterFilter);
 					if (chartData == null) {
-						chartData = new ChartData(dcemStatistic.getTimestamp(), dcemStatistic.getDcemNode().getName(),
-								numValue);
+						chartData = new ChartData(dcemStatistic.getTimestamp(), dcemStatistic.getDcemNode().getName(), numValue);
 						mapNodeCounter.put(counterFilter, chartData);
 						listChartData.add(chartData);
 					} else {
-						if (chartData.getDate().getTime() != (dcemStatistic.getTimestamp().getTime())) {
+						if (chartData.getDate().equals(dcemStatistic.getTimestamp()) == false) {
 							chartData = new ChartData(dcemStatistic.getTimestamp(),
 									dcemStatistic.getDcemNode().getName(), numValue);
 						} else {
@@ -279,8 +288,11 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		if (dateFromStr == null) {
 			return result;
 		}
-		Date dateFrom = getDateFormat().parse(dateFromStr);
-		Date dateTo = getDateFormat().parse(dateToStr);
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+		LocalDateTime dateFrom = LocalDateTime.parse(dateFromStr, format);
+		LocalDateTime dateTo = LocalDateTime.parse(dateToStr, format);
+//		Date dateFrom = getDateFormat().parse(dateFromStr);
+//		Date dateTo = getDateFormat().parse(dateToStr);
 				
 		List<DcemStatistic> statistics = getStatisticsFromTo(dateFrom, dateTo);
 		
@@ -311,12 +323,8 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		return result;
 	}
 
-	private Date removeSeconds(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar.getTime();
+	private LocalDateTime removeSeconds(LocalDateTime date) {
+		return date.truncatedTo(ChronoUnit.SECONDS);
 	}
 
 	public DateFormat getDateFormat() {
@@ -408,13 +416,12 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	public void cleanMonitoringRecords(int maxMonitoringRecords) {
 
 		// Get the timestamp of the first record beyond the limit
-		TypedQuery<Date> timestampQuery = em.createNamedQuery(DcemStatistic.GET_TIMESTAMPS, Date.class);
+		TypedQuery<LocalDateTime> timestampQuery = em.createNamedQuery(DcemStatistic.GET_TIMESTAMPS, LocalDateTime.class);
 		timestampQuery.setFirstResult(maxMonitoringRecords);
 		timestampQuery.setMaxResults(1);
-		List<Date> timestamps = timestampQuery.getResultList();
+		List<LocalDateTime> timestamps = timestampQuery.getResultList();
 
-		if (timestamps.size() == 1) { // if the record is found (i.e. limit
-										// breached)
+		if (timestamps.size() == 1) { // if the record is found (i.e. limit										// breached)
 			Query deleteQuery = em.createQuery("DELETE FROM DcemStatistic ds WHERE ds.timestamp <= ?1");
 			deleteQuery.setParameter(1, timestamps.get(0));
 			deleteQuery.executeUpdate();

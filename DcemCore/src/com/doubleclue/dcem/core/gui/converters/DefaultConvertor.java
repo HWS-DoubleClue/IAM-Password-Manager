@@ -4,7 +4,9 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Locale;
@@ -17,7 +19,7 @@ import javax.faces.convert.FacesConverter;
 
 import com.doubleclue.dcem.core.DcemConstants;
 
-@FacesConverter("com.doubleclue.defaultConverter")
+// FacesConverter("com.doubleclue.defaultConverter")
 public class DefaultConvertor implements Converter {
 
 	@Override
@@ -31,44 +33,43 @@ public class DefaultConvertor implements Converter {
 		if (value == null) {
 			return "";
 		}
+		Locale locale;
+		DateFormat dateformat;
+		
+		TimeZone timeZone = TimeZone.getDefault();
+		if (context != null) {
+			locale = context.getViewRoot().getLocale();
+		} else {
+			locale = Locale.getDefault();
+		}
+		dateformat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, locale);
+		try {
+			timeZone = (TimeZone) context.getExternalContext().getSessionMap().get(DcemConstants.SESSION_TIMEZONE);
+			if (timeZone != null) {
+				dateformat.setTimeZone(timeZone);
+			}
+		} catch (Exception e) {
+			
+		}
 		if (value.getClass() == Timestamp.class) {
-			Locale locale = Locale.getDefault();
-			if (context != null) {
-				locale = context.getViewRoot().getLocale();
-			}
-			DateFormat dateformat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
-			try {
-				TimeZone timezone = (TimeZone) context.getExternalContext().getSessionMap().get(DcemConstants.SESSION_TIMEZONE);
-				dateformat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, locale);
-				if (timezone != null) {
-					dateformat.setTimeZone(timezone);
-				}
-			} catch (Exception e) {
-				
-			}
 			return dateformat.format(((Timestamp) value));
 		}
 		if (value.getClass() == java.sql.Date.class) {
-			Locale locale = Locale.getDefault();
-			if (context != null) {
-				locale = context.getViewRoot().getLocale();
-			}
-			DateFormat dateformat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-			return dateformat.format(((Date) value));
+			DateFormat dayDateformat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+			dayDateformat.setTimeZone(timeZone);
+			return dayDateformat.format(((java.sql.Date) value));
 		}
 		if (value instanceof LocalDateTime) {
-			Locale locale = Locale.getDefault();
-			if (context != null) {
-				locale = context.getViewRoot().getLocale();
-			}
-			return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale).format((LocalDateTime)value);
+			ZonedDateTime zonedDateTime = ZonedDateTime.of((LocalDateTime) value, timeZone.toZoneId());
+			return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale).withZone(timeZone.toZoneId()).format(zonedDateTime);
+		}
+		if (value instanceof ZonedDateTime) {
+			return dateformat.format((ZonedDateTime)value);
 		}
 		if (value instanceof LocalDate) {
-			Locale locale = Locale.getDefault();
-			if (context != null) {
-				locale = context.getViewRoot().getLocale();
-			}
-			return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale).format(((LocalDate)value));
+			DateFormat dayDateformat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+			dayDateformat.setTimeZone(timeZone);
+			return dayDateformat.format(((LocalDate) value));
 		}
 		return value.toString();
 	}

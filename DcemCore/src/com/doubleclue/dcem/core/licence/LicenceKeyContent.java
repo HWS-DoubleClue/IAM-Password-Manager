@@ -1,8 +1,11 @@
 package com.doubleclue.dcem.core.licence;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.TimeZone;
 
 import com.doubleclue.dcem.core.DcemConstants;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LicenceKeyContent {
@@ -70,6 +73,11 @@ public class LicenceKeyContent {
 
 	public Date getExpiresOn() {
 		return expiresOn;
+	}
+	
+	@JsonIgnore
+	public LocalDateTime getLdtExpiresOn() {
+		return expiresOn.toInstant().atZone(TimeZone.getDefault().toZoneId()).toLocalDateTime();
 	}
 
 	public void setExpiresOn(Date expiresOn) {

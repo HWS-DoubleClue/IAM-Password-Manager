@@ -21,7 +21,8 @@ package com.doubleclue.dcem.as.comm;
 
 import java.nio.ByteBuffer;
 import java.security.PublicKey;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -383,8 +384,8 @@ public class AppToServerHandler implements AppToServer.Iface {
 		}
 
 		try {
-			Date lastModified = appServices.setCloudSafe(cloudData, appSession.device, appSession.getUserId());
-			return lastModified.getTime();
+			LocalDateTime lastModified = appServices.setCloudSafe(cloudData, appSession.device, appSession.getUserId());
+			return (lastModified.toEpochSecond(ZoneOffset.UTC) * 1000);
 		} catch (ExceptionReporting exp) {
 			logger.info(" setData Error: " + exp.getReporting().toString());
 			DcemReporting reporting = exp.getReporting();

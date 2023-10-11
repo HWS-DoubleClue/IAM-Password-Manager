@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.as.restapi.impl;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -238,10 +239,7 @@ public class UserApiServiceImpl {
 			DcemUtils.copyObject(activationCode, asActivationCode);
 			asActivationCode.setUser(dcemUser);
 			if (asActivationCode.getValidTill() == null) {
-				int hours = asModule.getPreferences().getActivationCodeDefaultValidTill();
-				Calendar calendar = Calendar.getInstance();
-				calendar.add(Calendar.HOUR_OF_DAY, hours);
-				asActivationCode.setValidTill(calendar.getTime());
+				asActivationCode.setValidTill(LocalDateTime.now().plusHours(asModule.getPreferences().getActivationCodeDefaultValidTill()));
 			}
 			activationLogic.addUpdateActivationCode(asActivationCode, new DcemAction(activationSubject, DcemConstants.ACTION_ADD), activationCode.getSendBy(),
 					true);
@@ -324,7 +322,7 @@ public class UserApiServiceImpl {
 
 	public Response verifyUrlToken(AsApiUrlToken urlToken, SecurityContext securityContext) {
 		try {
-			UrlTokenEntity urlTokenEntity  = urlTokenLogic.verifyUrlToken(urlToken.getToken(), urlToken.getUrlTokenUsage().toString());
+			UrlTokenEntity urlTokenEntity = urlTokenLogic.verifyUrlToken(urlToken.getToken(), urlToken.getUrlTokenUsage().toString());
 			DcemUser dcemUser = userLogic.getUser(Integer.parseInt(urlTokenEntity.getObjectIdentifier()));
 			AsApiUser asApiUser = new AsApiUser();
 			DcemUtils.copyObject(dcemUser, asApiUser);

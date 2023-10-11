@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.core.jpa;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,12 +30,12 @@ public class ExportRecords {
 	 */
 	@DcemTransactional
 	public String[] archive(int days, Class<?> klass, String searchQuery, String deleteQuery) throws DcemException {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DAY_OF_YEAR, -days);
-		Date date = calendar.getTime();
+		LocalDateTime localDateTime = LocalDateTime.now();
+		localDateTime.minusDays(days);
+		
 		ExportTsv exportTsv;
 		int position = 0;
-		List<EntityInterface> list = getRecordsAfter(date, position, searchQuery);
+		List<EntityInterface> list = getRecordsAfter(localDateTime, position, searchQuery);
 		String[] result = null;
 		try {
 			if (list.size() > 0) {
@@ -44,12 +45,12 @@ public class ExportRecords {
 				while (list.size() > 0) {
 					exportTsv.addList(list);
 					position += list.size();
-					list = getRecordsAfter(date, position, searchQuery);
+					list = getRecordsAfter(localDateTime, position, searchQuery);
 				}
 				exportTsv.close();
 				// now delete the records
 				Query query = em.createNamedQuery(deleteQuery);
-				query.setParameter(1, date);
+				query.setParameter(1, localDateTime);
 				query.executeUpdate();
 				result[1] = Integer.toString(list.size() + position);
 			}
@@ -59,10 +60,10 @@ public class ExportRecords {
 		}
 	}
 
-	private List<EntityInterface> getRecordsAfter(Date date, int position, String searchQuery) {
+	private List<EntityInterface> getRecordsAfter(LocalDateTime localDateTime, int position, String searchQuery) {
 		TypedQuery<EntityInterface> query = em.createNamedQuery(searchQuery, EntityInterface.class);
 		query.setFirstResult(position);
-		query.setParameter(1, date);
+		query.setParameter(1, localDateTime);
 		query.setMaxResults(DcemConstants.MAX_ARCHIVE_RECORDS);
 		return query.getResultList();
 	}

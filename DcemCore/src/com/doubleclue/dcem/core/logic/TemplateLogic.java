@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.core.logic;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +33,6 @@ import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.utils.FileContent;
 import com.doubleclue.utils.ResourceFinder;
 import com.doubleclue.utils.StringUtils;
-import com.fasterxml.jackson.databind.Module;
 
 @ApplicationScoped
 @Named("templateLogic")
@@ -62,7 +61,7 @@ public class TemplateLogic implements ReloadClassInterface {
 			}
 			template.setActive(true);
 			template.setTokens(getTokens(template.getContent()));
-			template.setLastModified(new Date());
+			template.setLastModified(LocalDateTime.now());
 			em.persist(template);
 		} else {
 			if (template.isActive() == false) {
@@ -84,11 +83,11 @@ public class TemplateLogic implements ReloadClassInterface {
 				if (template.getName().equals(newTemplate.getName()) == false) {
 					throw new DcemException(DcemErrorCodes.CANNOT_CHANGE_TEMPLATE_IN_USE, "Can't change tempalte name");
 				}
-				newTemplate.setLastModified(new Date());
+				newTemplate.setLastModified(LocalDateTime.now());
 				em.persist(newTemplate);
 			} else {
 				template = em.merge(template);
-				template.setLastModified(new Date());
+				template.setLastModified(LocalDateTime.now());
 				template.setTokens(getTokens(template.getContent()));
 				Exception exception = DcemUtils.reloadTaskNodes(TemplateLogic.class, TenantIdResolver.getCurrentTenantName(), template.getFullName());
 				if (exception != null) {

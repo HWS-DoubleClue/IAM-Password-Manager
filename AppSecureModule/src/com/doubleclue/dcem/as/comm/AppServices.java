@@ -7,6 +7,8 @@ import java.nio.ByteBuffer;
 import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -117,6 +119,7 @@ import com.doubleclue.dcem.core.logic.module.AsApiOtpToken;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.logic.module.OtpModuleApi;
 import com.doubleclue.dcem.core.tasks.TaskExecutor;
+import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.utils.KaraUtils;
@@ -438,7 +441,7 @@ public class AppServices {
 			verifyUserPassword(dcemUser, appSession, loginParam.getEncPassword(), ReportAction.Login);
 		}
 
-		deviceDetached.setLastLoginTime(new Date());
+		deviceDetached.setLastLoginTime(LocalDateTime.now());
 		if (loginParam.locale != null) {
 			deviceDetached.setLocale(loginParam.locale.substring(0, 2));
 		}
@@ -489,7 +492,7 @@ public class AppServices {
 			throw new ExceptionReporting(new DcemReporting(reportAction, deviceDetached.getUser(), AppErrorCodes.VERSION_DISABLED, location,
 					"device: " + deviceDetached.getName() + ", " + appVersion.getName() + "-" + KaraUtils.versionToString(appVersion)), null, null);
 		}
-		if ((deviceVersionEntity.getExpiresOn() != null && deviceVersionEntity.getExpiresOn().before(new Date()))) {
+		if ((deviceVersionEntity.getExpiresOn() != null && deviceVersionEntity.getExpiresOn().isBefore(LocalDateTime.now()))) {
 			throw new ExceptionReporting(new DcemReporting(reportAction, deviceDetached.getUser(), AppErrorCodes.VERSION_UPDATED_REQUIRED, location,
 					"device: " + deviceDetached.getName() + ", " + appVersion.getName() + "-" + deviceVersionEntity.getVersionStr()), null, null);
 		}
@@ -499,7 +502,7 @@ public class AppServices {
 
 		LoginResponse loginResponse = new LoginResponse();
 		if (deviceVersionEntity.getExpiresOn() != null) {
-			loginResponse.setUpdateAvailableTill(deviceVersionEntity.getExpiresOn().getTime());
+			loginResponse.setUpdateAvailableTill(deviceVersionEntity.getExpiresOn().toEpochSecond(ZoneOffset.UTC) * 1000);
 		}
 		if (loginParam.getCommClientType() != null && loginParam.getCommClientType() == CommClientType.DCEM_AS_CLIENT) {
 			if (dispatcherModule == null) {
@@ -556,7 +559,7 @@ public class AppServices {
 				UserFingerprintEntity fingerprintEntity = new UserFingerprintEntity(fpId, sessionCookie, asModule.getModulePreferences().getAppReLoginWithin());
 				fingerprintLogic.updateFingerprint(fingerprintEntity);
 				loginResponse.setSessionCookie(sessionCookie);
-				loginResponse.setSessionCookieExpiresOn((int) (fingerprintEntity.getTimestamp().getTime() / 1000));
+				loginResponse.setSessionCookieExpiresOn((int) (fingerprintEntity.getTimestamp().toEpochSecond(ZoneOffset.UTC)));
 			} else {
 				loginResponse.setSessionCookie(null);
 				loginResponse.setSessionCookieExpiresOn(0);
@@ -894,19 +897,20 @@ public class AppServices {
 	 * @throws ExceptionReportingflogin
 	 * 
 	 */
-	public SdkCloudSafe getCloudSafe(SdkCloudSafeKey uniqueKey, DeviceEntity detachedDevice, int userId, int libVersion) throws DcemException, ExceptionReporting {
+	public SdkCloudSafe getCloudSafe(SdkCloudSafeKey uniqueKey, DeviceEntity detachedDevice, int userId, int libVersion)
+			throws DcemException, ExceptionReporting {
 		CloudSafeEntity cloudSafeEntity = getCloudSafeEntityFromKey(uniqueKey, userId);
 		uniqueKey.setName(cloudSafeEntity.getName());
 		uniqueKey.setDbId(cloudSafeEntity.getId());
-		if (libVersion < AsConstants.LIB_VERION_2) {     // For backward compatible with old appVersion 2.5
-			uniqueKey.setOwner(CloudSafeOwner.USER);  // For backward compatible with old appVersion 2.5
-		} 
+		if (libVersion < AsConstants.LIB_VERION_2) { // For backward compatible with old appVersion 2.5
+			uniqueKey.setOwner(CloudSafeOwner.USER); // For backward compatible with old appVersion 2.5
+		}
 		if (cloudSafeEntity.getOwner() == CloudSafeOwner.GROUP) {
 			uniqueKey.setGroupName(cloudSafeEntity.getGroup().getName());
 		}
 		byte[] content = cloudSafeLogic.getContentAsBytes(cloudSafeEntity, null, userLogic.getUser(userId));
 		return new SdkCloudSafe(uniqueKey, content != null ? ByteBuffer.wrap(content) : null, cloudSafeEntity.getOptions(),
-				cloudSafeEntity.getDiscardAfterAsLong(), cloudSafeEntity.getLastModified() != null ? cloudSafeEntity.getLastModified().getTime() : 0, null,
+				cloudSafeEntity.getDiscardAfterAsLong(), cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
 				cloudSafeEntity.getLength(), null, cloudSafeEntity.isWriteAccess(), cloudSafeEntity.isRestrictDownload());
 	}
 
@@ -915,7 +919,7 @@ public class AppServices {
 	 * @param detachedDevice
 	 * @throws DcemException
 	 */
-	public Date setCloudSafe(SdkCloudSafe sdkCloudSafe, DeviceEntity detachedDevice, int userId) throws ExceptionReporting {
+	public LocalDateTime setCloudSafe(SdkCloudSafe sdkCloudSafe, DeviceEntity detachedDevice, int userId) throws ExceptionReporting {
 		// Check user
 		DcemUser user = (detachedDevice != null) ? detachedDevice.getUser() : userLogic.getUser(userId);
 		if (user == null) {
@@ -981,16 +985,16 @@ public class AppServices {
 		default:
 			break;
 		}
-
-		Date discardAfter = (sdkCloudSafe.getDiscardAfter() > 0) ? new Date(sdkCloudSafe.getDiscardAfter()) : null;
-		Date lastModified = (sdkCloudSafe.getLastModified() > 0) ? new Date(sdkCloudSafe.getLastModified()) : null;
+		LocalDateTime discardAfter = (sdkCloudSafe.getDiscardAfter() > 0) ? DcemUtils.convertEpoch(sdkCloudSafe.getDiscardAfter()) : null;
+		LocalDateTime lastModified = (sdkCloudSafe.getLastModified() > 0) ? DcemUtils.convertEpoch(sdkCloudSafe.getLastModified()) : null;
 
 		CloudSafeEntity cloudSafeEntity = new CloudSafeEntity(owner, fileOwner, owner == CloudSafeOwner.USER ? null : detachedDevice, fileName, discardAfter,
 				sdkCloudSafe.getOptions(), false, parent, fileOwner);
 		cloudSafeEntity.setLastModified(lastModified);
 		try {
 			// String x = new String(sdkCloudSafe.getContent(), StandardCharsets.UTF_8);
-			CloudSafeEntity newEntity = cloudSafeLogic.setCloudSafeByteArray(cloudSafeEntity, null, sdkCloudSafe.getContent(), userLogic.getUser(userId), cloudSafeFromDb);
+			CloudSafeEntity newEntity = cloudSafeLogic.setCloudSafeByteArray(cloudSafeEntity, null, sdkCloudSafe.getContent(), userLogic.getUser(userId),
+					cloudSafeFromDb);
 			return newEntity.getLastModified();
 		} catch (DcemException exp) {
 			AppErrorCodes appErrorCode = null;
@@ -1320,8 +1324,9 @@ public class AppServices {
 		// if no exception was fired, the password has been validated
 	}
 
-	public List<SdkCloudSafe> getCloudSafeList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, int libVersion) throws DcemException {
-		return cloudSafeLogic.getCloudSafeFileList(userId, nameFilter, modifiedFromEpoch, owner, true, libVersion );
+	public List<SdkCloudSafe> getCloudSafeList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, int libVersion)
+			throws DcemException {
+		return cloudSafeLogic.getCloudSafeFileList(userId, nameFilter, modifiedFromEpoch, owner, true, libVersion);
 	}
 
 	public void renameCloudSafe(SdkCloudSafeKey uniqueKey, String newName, int userId) throws DcemException {
@@ -1357,26 +1362,26 @@ public class AppServices {
 		if (cloudSafeEntity == null) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, uniqueKey.getName());
 		}
-//		switch (cloudSafeEntity.getOwner()) {
-//		case GROUP:
-//			HashSet<String> groupSet = userLogic.getUserGroupNames(dcemUser, null);
-//			if (groupSet.contains(cloudSafeEntity.getGroup().getName()) == false) {
-//				throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "User is not member of group." + cloudSafeEntity.getGroup().getName());
-//			}
-//			break;
-//		case USER:
-//			if (cloudSafeEntity.getUser().getId() != userId) {
-//				List<CloudSafeShareEntity> sharedCloudSafeFiles = cloudSafeLogic.getCloudSafeShareEntities(dcemUser, cloudSafeEntity);
-//				if (sharedCloudSafeFiles.size() == 0) {
-//					throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "User is not valid.");
-//				}
-//				cloudSafeEntity.setWriteAccess(sharedCloudSafeFiles.get(0).isWriteAccess());
-//				cloudSafeEntity.setRestrictDownload(sharedCloudSafeFiles.get(0).isRestrictDownload());
-//			}
-//			break;
-//		default:
-//			throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "Wrong Owner.");
-//		}
+		// switch (cloudSafeEntity.getOwner()) {
+		// case GROUP:
+		// HashSet<String> groupSet = userLogic.getUserGroupNames(dcemUser, null);
+		// if (groupSet.contains(cloudSafeEntity.getGroup().getName()) == false) {
+		// throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "User is not member of group." + cloudSafeEntity.getGroup().getName());
+		// }
+		// break;
+		// case USER:
+		// if (cloudSafeEntity.getUser().getId() != userId) {
+		// List<CloudSafeShareEntity> sharedCloudSafeFiles = cloudSafeLogic.getCloudSafeShareEntities(dcemUser, cloudSafeEntity);
+		// if (sharedCloudSafeFiles.size() == 0) {
+		// throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "User is not valid.");
+		// }
+		// cloudSafeEntity.setWriteAccess(sharedCloudSafeFiles.get(0).isWriteAccess());
+		// cloudSafeEntity.setRestrictDownload(sharedCloudSafeFiles.get(0).isRestrictDownload());
+		// }
+		// break;
+		// default:
+		// throw new DcemException(DcemErrorCodes.INVALID_CLOUD_SAFE_USER, "Wrong Owner.");
+		// }
 		return cloudSafeEntity;
 	}
 

@@ -24,6 +24,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,7 +59,7 @@ import de.slackspace.openkeepass.domain.MetaBuilder;
 
 @ApplicationScoped
 @Named("upAppHubLogic")
-public class UpAppHubLogic  {
+public class UpAppHubLogic {
 
 	@Inject
 	EntityManager em;
@@ -67,10 +75,8 @@ public class UpAppHubLogic  {
 
 	private Logger logger = LogManager.getLogger(UpAppHubLogic.class);
 
-	
 	public List<ApplicationHubEntity> getAllApplicationsByName(String name) {
-		TypedQuery<ApplicationHubEntity> query = em.createNamedQuery(ApplicationHubEntity.GET_APPLICATIONS_WITH_NAME,
-				ApplicationHubEntity.class);
+		TypedQuery<ApplicationHubEntity> query = em.createNamedQuery(ApplicationHubEntity.GET_APPLICATIONS_WITH_NAME, ApplicationHubEntity.class);
 		if (name == null || name.isEmpty()) {
 			name = "%";
 		} else {
@@ -81,8 +87,7 @@ public class UpAppHubLogic  {
 	}
 
 	public ApplicationHubEntity getApplicationByName(String name) {
-		TypedQuery<ApplicationHubEntity> query = em.createNamedQuery(ApplicationHubEntity.GET_APPLICATION_BY_NAME,
-				ApplicationHubEntity.class);
+		TypedQuery<ApplicationHubEntity> query = em.createNamedQuery(ApplicationHubEntity.GET_APPLICATION_BY_NAME, ApplicationHubEntity.class);
 		query.setParameter(1, name.toLowerCase());
 		try {
 			return query.getSingleResult();
@@ -98,8 +103,7 @@ public class UpAppHubLogic  {
 	public List<AppHubAction> getInputActions(ApplicationHubEntity applicationEntity) {
 		List<AppHubAction> inputActions = new ArrayList<AppHubAction>();
 		for (AppHubAction action : applicationEntity.getApplication().getActions()) {
-			if (("input").equals(action.getType()) || ("password").equals(action.getType())
-					|| ("email").equals(action.getType())) {
+			if (("input").equals(action.getType()) || ("password").equals(action.getType()) || ("email").equals(action.getType())) {
 				inputActions.add(action);
 			}
 		}
@@ -126,8 +130,7 @@ public class UpAppHubLogic  {
 			if (keePassFile.getMeta().getBinaries() == null) {
 				List<Binary> binaryList = new ArrayList<>();
 				Binaries binaries = new BinariesBuilder().binaries(binaryList).build();
-				Meta meta = new MetaBuilder(keePassFile.getMeta()).binaries(binaries).historyMaxSize(0)
-						.historyMaxItems(0).build();
+				Meta meta = new MetaBuilder(keePassFile.getMeta()).binaries(binaries).historyMaxSize(0).historyMaxItems(0).build();
 				keePassFile = new KeePassFileBuilder(keePassFile).withMeta(meta).build();
 			}
 			List<Attachment> attachments = currentEntry.getEntry().getAttachments();
@@ -135,8 +138,7 @@ public class UpAppHubLogic  {
 			for (int i = 0; i < attachments.size(); i++) {
 				if (attachments.get(i).getRef() == -1) {
 					attachments.set(i, new Attachment(attachments.get(i).getKey(), id, attachments.get(i).getData()));
-					Binary binary = new BinaryBuilder().data(attachments.get(i).getData()).id(id).isCompressed(false)
-							.build();
+					Binary binary = new BinaryBuilder().data(attachments.get(i).getData()).id(id).isCompressed(false).build();
 					List<Binary> allBinary = keePassFile.getMeta().getBinaries().getBinaries();
 					allBinary.add(binary);
 					id++;
@@ -151,8 +153,7 @@ public class UpAppHubLogic  {
 		if (keePassFile.getMeta().getBinaries() == null) {
 			List<Binary> binaryList = new ArrayList<>();
 			Binaries binaries = new BinariesBuilder().binaries(binaryList).build();
-			Meta meta = new MetaBuilder(keePassFile.getMeta()).binaries(binaries).historyMaxSize(0).historyMaxItems(0)
-					.build();
+			Meta meta = new MetaBuilder(keePassFile.getMeta()).binaries(binaries).historyMaxSize(0).historyMaxItems(0).build();
 			keePassFile = new KeePassFileBuilder(keePassFile).withMeta(meta).build();
 			return nextBinaryId;
 		} else {
@@ -169,8 +170,7 @@ public class UpAppHubLogic  {
 
 	public byte[] appUrlValueValidate(String appUrlValue, boolean withLogo) throws Exception {
 		if (appUrlValue == null || appUrlValue.isEmpty() == true) {
-			throw new Exception(
-					JsfUtils.getStringSafely(UserPortalModule.RESOURCE_NAME, "appHubAdmin.error.urlNotReachable"));
+			throw new Exception(JsfUtils.getStringSafely(UserPortalModule.RESOURCE_NAME, "appHubAdmin.error.urlNotReachable"));
 		}
 		appUrlValue = appUrlValue.trim();
 		URL url = null;
@@ -191,32 +191,52 @@ public class UpAppHubLogic  {
 			urlString = urlString.substring(0, urlString.length() - 1);
 		}
 		if (url.getProtocol().equalsIgnoreCase("https") == false) {
-			throw new Exception(
-					JsfUtils.getStringSafely(UserPortalModule.RESOURCE_NAME, "appHubAdmin.error.httpNotSupported"));
+			throw new Exception(JsfUtils.getStringSafely(UserPortalModule.RESOURCE_NAME, "appHubAdmin.error.httpNotSupported"));
 		}
 
-		try {
-			// Validating connection
-			SSLContext ctx = SSLContext.getInstance("TLS");
-			ctx.init(null, new TrustManager[] { new DcemTrustManager(true) }, null);
-			socketFactory = ctx.getSocketFactory();
-			conn = (HttpsURLConnection) url.openConnection();
-			conn.setSSLSocketFactory(socketFactory);
-			conn.setHostnameVerifier(hostnameVerifier);
-			conn.setRequestProperty(UserPortalConstants.USER_AGENT, UserPortalConstants.CHROME_AGENT);
-			conn.setConnectTimeout(10000);
-			conn.setReadTimeout(10000);
-			conn.connect();
-			inputStream = conn.getInputStream();
-		} catch (Exception e) {
-			logger.debug("Unreachagbe url " + appUrlValue + " Cause: " + e.toString());
-			throw new Exception(
-					JsfUtils.getStringSafely(UserPortalModule.RESOURCE_NAME, "appHubAdmin.error.urlNotReachable")
-							+ " Cause: " + e.getMessage());
+		SSLContext ctx = SSLContext.getInstance("TLS");
+		ctx.init(null, new TrustManager[] { new DcemTrustManager(true) }, null);
+		socketFactory = ctx.getSocketFactory();
+		// Just in case we swithc to apach HttpClient
+		// try {
+		// CloseableHttpClient httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
+		// // CloseableHttpClient httpclient = HttpClients.createDefault().
+		// HttpGet httpget = new HttpGet(url.toString());
+		//
+		// httpget.setHeader(UserPortalConstants.USER_AGENT, UserPortalConstants.CHROME_AGENT);
+		// CloseableHttpResponse response = httpClient.execute(httpget);
+		// HttpEntity entity = response.getEntity();
+		// // inputStream = entity.getContent();
+		//
+		//
+		// } catch (Exception e) {
+		// logger.debug("Unreachagbe url " + appUrlValue + " Cause: " + e.toString());
+		// throw new Exception(JsfUtils.getStringSafely(UserPortalModule.RESOURCE_NAME, "appHubAdmin.error.urlNotReachable") + " Cause: " + e.getMessage());
+		// }
+
+		if (inputStream == null) {
+			try {
+				// Validating connection
+
+				conn = (HttpsURLConnection) url.openConnection();
+				conn.setSSLSocketFactory(socketFactory);
+				conn.setHostnameVerifier(hostnameVerifier);
+				conn.setRequestProperty(UserPortalConstants.USER_AGENT, UserPortalConstants.CHROME_AGENT);
+				conn.setConnectTimeout(10000);
+				conn.setReadTimeout(10000);
+				conn.setInstanceFollowRedirects(false);
+				conn.connect();
+				inputStream = conn.getInputStream();
+			} catch (Exception e) {
+				logger.debug("Unreachagbe url " + appUrlValue + " Cause: " + e.toString());
+				throw new Exception(
+						JsfUtils.getStringSafely(UserPortalModule.RESOURCE_NAME, "appHubAdmin.error.urlNotReachable") + " Cause: " + e.getMessage());
+			}
 		}
 		if (withLogo == false) {
 			return null;
 		}
+
 		try {
 			byte[] logoImage = null;
 			StringWriter stringWriter = new StringWriter();
@@ -290,8 +310,7 @@ public class UpAppHubLogic  {
 		}
 	}
 
-	private byte[] getDefaultLogoFromUrl(URL faviconUrl, HostnameVerifier hostnameVerifier,
-			SSLSocketFactory socketFactory) throws Exception {
+	private byte[] getDefaultLogoFromUrl(URL faviconUrl, HostnameVerifier hostnameVerifier, SSLSocketFactory socketFactory) throws Exception {
 		byte[] image = getLogoFromUrl(faviconUrl, hostnameVerifier, socketFactory);
 		if (image == null) {
 			String rootURL = faviconUrl.getProtocol() + "://" + faviconUrl.getHost();
@@ -305,8 +324,7 @@ public class UpAppHubLogic  {
 		}
 	}
 
-	private byte[] getLogoFromUrl(URL faviconUrl, HostnameVerifier hostnameVerifier, SSLSocketFactory socketFactory)
-			throws Exception {
+	private byte[] getLogoFromUrl(URL faviconUrl, HostnameVerifier hostnameVerifier, SSLSocketFactory socketFactory) throws Exception {
 		logger.debug("Get Icon from: " + faviconUrl);
 		HttpsURLConnection conn = (HttpsURLConnection) faviconUrl.openConnection();
 		conn.setSSLSocketFactory(socketFactory);

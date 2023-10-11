@@ -3,6 +3,7 @@ package com.doubleclue.dcem.system.logic;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -14,9 +15,8 @@ import javax.persistence.TypedQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.config.KeyStorePurpose;
-import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemNode;
 import com.doubleclue.dcem.core.entities.KeyStoreEntity;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
@@ -31,6 +31,9 @@ public class KeyStoreLogic {
 
 	@Inject
 	EntityManager em;
+	
+	@Inject
+	AdminModule adminModule;
 
 	@Inject
 	NodeLogic nodeLogic;
@@ -69,12 +72,12 @@ public class KeyStoreLogic {
 
 		if (preKeyStoreEntity == null) {
 			preKeyStoreEntity = new KeyStoreEntity(purpose, SecureServerUtils.serializeKeyStore(keyStore, password), certificate.getSubjectDN().getName(),
-					certificate.getNotAfter(), password, dcemNode);
+					certificate.getNotAfter().toInstant().atZone(TimeZone.getDefault().toZoneId()).toLocalDateTime(), password, dcemNode);
 			preKeyStoreEntity.setIpAddress(ipAddress);
 			em.persist(preKeyStoreEntity);
 		} else {
 			preKeyStoreEntity.setCn(certificate.getSubjectDN().getName());
-			preKeyStoreEntity.setExpiresOn(certificate.getNotAfter());
+			preKeyStoreEntity.setExpiresOn(certificate.getNotAfter().toInstant().atZone(TimeZone.getDefault().toZoneId()).toLocalDateTime());
 			preKeyStoreEntity.setPassword(password);
 			preKeyStoreEntity.setKeyStore(SecureServerUtils.serializeKeyStore(keyStore, password));
 			preKeyStoreEntity.setIpAddress(ipAddress);

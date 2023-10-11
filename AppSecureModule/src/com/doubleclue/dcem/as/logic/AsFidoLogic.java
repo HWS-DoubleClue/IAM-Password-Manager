@@ -3,8 +3,8 @@ package com.doubleclue.dcem.as.logic;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -177,7 +177,7 @@ public class AsFidoLogic {
 		entity.setUser(user);
 		entity.setCredentialId(credentialID.getBase64());
 		entity.setPublicKey(publicKey.getBytes());
-		entity.setRegisteredOn(new Date());
+		entity.setRegisteredOn(LocalDateTime.now());
 		entity.setDisplayName(displayName);
 		em.persist(entity);
 	}
@@ -185,7 +185,7 @@ public class AsFidoLogic {
 	@DcemTransactional
 	public void updateFidoAuthenticator(DcemUser user, ByteArray credentialID) {
 		FidoAuthenticatorEntity entity = getFidoAuthenticator(user, credentialID);
-		entity.setLastUsed(new Date());
+		entity.setLastUsed(LocalDateTime.now());
 		em.merge(entity);
 	}
 

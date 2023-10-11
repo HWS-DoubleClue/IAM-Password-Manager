@@ -1,12 +1,12 @@
 package com.doubleclue.dcem.core.logic;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ChartData {
 
-	Date date;
+	LocalDateTime date;
 	Map<String, Number> map;
 
 //	public ChartData(Date date, Map<String, Number> map) {
@@ -15,7 +15,7 @@ public class ChartData {
 //		this.map = map;
 //	}
 
-	public ChartData(Date date, String node, Number number) {
+	public ChartData(LocalDateTime date, String node, Number number) {
 		super();
 		this.date = date;
 		this.map = new HashMap<>();
@@ -34,11 +34,11 @@ public class ChartData {
 		this.map = map;
 	}
 
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

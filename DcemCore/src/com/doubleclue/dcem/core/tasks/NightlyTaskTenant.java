@@ -28,6 +28,9 @@ public class NightlyTaskTenant extends CoreTask {
 		try {
 			logger.info("Nightly-Task for " + TenantIdResolver.getCurrentTenantName());
 			for (DcemModule module : sortedModules) {
+				if (module.isMasterOnly() && TenantIdResolver.isCurrentTenantMaster() == false) {
+					continue;
+				}
 				module.runNightlyTask();
 			}
 		} catch (Exception e) {

@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.as.entities;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,8 +16,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
@@ -57,18 +56,16 @@ public class ActivationCodeEntity extends EntityInterface {
 	private DcemUser user;
 
 	@Column(nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY)
-	private Date createdOn;
+	private LocalDateTime createdOn;
 
 	@Column(nullable = false, length = 255)
 	@Convert(converter = DbEncryptConverter.class)
 	private String activationCode;
 
 	@Column(nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
 	@DcemGui
-	private Date validTill;
+	private LocalDateTime validTill;
 
 	@Column(nullable = true, length = 255)
 	@DcemGui
@@ -93,11 +90,11 @@ public class ActivationCodeEntity extends EntityInterface {
 		this.id = (Integer) id;
 	}
 
-	public Date getCreatedOn() {
+	public LocalDateTime getCreatedOn() {
 		return createdOn;
 	}
 
-	public void setCreatedOn(Date createdOn) {
+	public void setCreatedOn(LocalDateTime createdOn) {
 		this.createdOn = createdOn;
 	}
 
@@ -113,11 +110,11 @@ public class ActivationCodeEntity extends EntityInterface {
 		return user.getLoginId() + " created: " + createdOn.toString();
 	}
 
-	public Date getValidTill() {
+	public LocalDateTime getValidTill() {
 		return validTill;
 	}
 
-	public void setValidTill(Date validTill) {
+	public void setValidTill(LocalDateTime validTill) {
 		this.validTill = validTill;
 	}
 

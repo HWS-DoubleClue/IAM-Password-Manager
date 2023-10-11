@@ -474,7 +474,7 @@ public class SystemModule extends DcemModule {
 			// Clean up monitoring records.
 			diagnosticLogic.cleanMonitoringRecords(getPreferences().maxMonitoringRecords);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Error updating licence and records Module:" + MODULE_ID, e);
 		}
 		DbFactoryProducer.getInstance();
 		if ((DbFactoryProducer.getDbType() == DatabaseTypes.DERBY) && (getPreferences().isRunEmbeddedDatabaseBackup() == true)

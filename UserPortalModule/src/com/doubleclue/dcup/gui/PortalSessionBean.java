@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -33,6 +34,7 @@ import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.RoleLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.weld.CdiUtils;
@@ -66,6 +68,9 @@ public class PortalSessionBean implements Serializable {
 
 	@Inject
 	RoleLogic roleLogic;
+	
+	@Inject
+	OperatorSessionBean operatorSessionBean;
 
 	private AbstractPortalView activePortalView;
 	private int viewIndex;
@@ -349,6 +354,7 @@ public class PortalSessionBean implements Serializable {
 
 	public void setDcemUser(DcemUser dcemUser) {
 		this.dcemUser = dcemUser;
+		operatorSessionBean.setDcemUser(dcemUser);
 		initResources();
 	}
 
@@ -441,4 +447,13 @@ public class PortalSessionBean implements Serializable {
 	public void setLatestView(String latestView) {
 		this.latestView = latestView;
 	}
+	
+	public LocalDateTime getUserZonedTime(LocalDateTime value) {
+		return userLogic.getUserZonedTime(value, dcemUser);
+	}
+	
+	public LocalDateTime getDefaultZonedTime(LocalDateTime value) {
+		return userLogic.getDefaultZonedTime(value, dcemUser);
+	}
+	
 }

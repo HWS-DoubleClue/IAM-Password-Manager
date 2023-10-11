@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.admin.gui;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -20,6 +20,7 @@ import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.logic.GroupLogic;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 
 @Named("adminActivationDialog")
@@ -31,11 +32,15 @@ public class AdminActivationDialog extends DcemDialog {
 
 	@Inject
 	DcemApplicationBean applicationBean;
+	
+	@Inject
+	OperatorSessionBean operatorSessionBean;
+
 
 	@Inject
 	GroupLogic groupLogic;
 
-	Date validTill;
+	LocalDateTime validTill;
 
 	SendByEnum sendBy;
 
@@ -50,7 +55,7 @@ public class AdminActivationDialog extends DcemDialog {
 	private void init() {
 		asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
 		if (asModuleApi != null) {
-			validTill = asModuleApi.getActivationCodeDefaultValidTill();
+			validTill = operatorSessionBean.getUserZonedTime(asModuleApi.getActivationCodeDefaultValidTill());
 		}
 	}
 
@@ -59,8 +64,9 @@ public class AdminActivationDialog extends DcemDialog {
 		if (validTill == null) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 			return false;
-		}
-		if (validTill.before(new Date())) {
+		}  
+		LocalDateTime localDateTime = operatorSessionBean.getDefaultZonedTime(validTill);
+		if (localDateTime.isBefore(LocalDateTime.now())) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "activationDialog.invalidUseTillUser");
 			return false;
 		}
@@ -68,7 +74,7 @@ public class AdminActivationDialog extends DcemDialog {
 		if (objects.get(0) instanceof DcemUser) {
 			for (Object object : objects) {
 				try {
-					asModuleApi.createActivationCode((DcemUser) object, validTill, sendBy, "");
+					asModuleApi.createActivationCode((DcemUser) object, localDateTime, sendBy, "");
 				} catch (DcemException e) {
 					JsfUtils.addErrorMessage(e.getLocalizedMessage());
 					return false;
@@ -91,7 +97,7 @@ public class AdminActivationDialog extends DcemDialog {
 
 				for (DcemUser user : users) {
 					try {
-						asModuleApi.createActivationCode(user, validTill, sendBy, "");
+						asModuleApi.createActivationCode(user, localDateTime, sendBy, "");
 					} catch (DcemException e) {
 						JsfUtils.addErrorMessage(e.toString());
 					}
@@ -106,11 +112,11 @@ public class AdminActivationDialog extends DcemDialog {
 
 	}
 
-	public Date getValidTill() {
+	public LocalDateTime getValidTill() {
 		return validTill;
 	}
 
-	public void setValidTill(Date validTill) {
+	public void setValidTill(LocalDateTime validTill) {
 		this.validTill = validTill;
 	}
 
