@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.faces.component.UIComponent;
@@ -50,11 +51,12 @@ public class LocalDateTimeConverter extends DateTimeConverter {
         if (value instanceof LocalDateTime) {
             LocalDateTime localDateTime = (LocalDateTime) value;
             TimeZone timeZone = (TimeZone) facesContext.getExternalContext().getSessionMap().get(DcemConstants.SESSION_TIMEZONE);
+            Locale locale = (Locale) facesContext.getExternalContext().getSessionMap().get(DcemConstants.SESSION_LOCALE);
             if (TimeZone.getDefault().equals(timeZone) == false) {
-            	ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, timeZone.toZoneId());
-        		localDateTime = zonedDateTime.withZoneSameInstant(TimeZone.getDefault().toZoneId()).toLocalDateTime();
-    		}            
-            return localDateTime.format(dtf);
+            	ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, TimeZone.getDefault().toZoneId());
+        		localDateTime = zonedDateTime.withZoneSameInstant(timeZone.toZoneId()).toLocalDateTime();
+    		}    
+            return localDateTime.format(dtf.withLocale(locale));
         } else {
             throw new IllegalArgumentException(String.format("value=%s is not a instanceof LocalDateTime", value));
         }

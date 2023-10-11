@@ -617,6 +617,7 @@ public abstract class LoginViewAbstract implements Serializable {
 		ExternalContext ec = JsfUtils.getExternalContext();
 		HttpServletRequest httpServletRequest = (HttpServletRequest) ec.getRequest();
 		httpServletRequest.getSession().setAttribute((String) DcemConstants.SESSION_TIMEZONE, timeZone);
+		httpServletRequest.getSession().setAttribute((String) DcemConstants.SESSION_LOCALE, dcemUser.getLanguage().getLocale());
 		if (listUserAccounts == null) {
 			listUserAccounts = new ListUserAccounts();
 		}
