@@ -13,14 +13,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.entities.DcemUser;
-import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.logic.DbResourceBundle;
 import com.doubleclue.dcem.core.logic.TemplateLogic;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.system.send.SendEmail;
-import com.doubleclue.utils.StringUtils;
 
 import freemarker.template.Template;
 
