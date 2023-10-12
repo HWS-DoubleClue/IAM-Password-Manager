@@ -1090,6 +1090,7 @@ public class PasswordSafeView extends AbstractPortalView {
 		if (masterPassword.isEmpty() == false) {
 			try {
 				cloudSafeEntity = cloudSafeLogic.getCloudSafe((int) selectedPasswordSafeFile);
+				currentOpenPasswordSafe = cloudSafeEntity;
 				cloudSafeEntity.setWriteAccess(selectedFile.isWriteAccess());
 				InputStream inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, null, null);
 				loadKeepassFile(inputStream, masterPassword);
