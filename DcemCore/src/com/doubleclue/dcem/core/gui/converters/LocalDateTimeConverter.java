@@ -51,12 +51,11 @@ public class LocalDateTimeConverter extends DateTimeConverter {
         if (value instanceof LocalDateTime) {
             LocalDateTime localDateTime = (LocalDateTime) value;
             TimeZone timeZone = (TimeZone) facesContext.getExternalContext().getSessionMap().get(DcemConstants.SESSION_TIMEZONE);
-            Locale locale = (Locale) facesContext.getExternalContext().getSessionMap().get(DcemConstants.SESSION_LOCALE);
             if (TimeZone.getDefault().equals(timeZone) == false) {
             	ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, TimeZone.getDefault().toZoneId());
         		localDateTime = zonedDateTime.withZoneSameInstant(timeZone.toZoneId()).toLocalDateTime();
     		}    
-            return localDateTime.format(dtf.withLocale(locale));
+            return localDateTime.format(dtf.withLocale(facesContext.getViewRoot().getLocale()));
         } else {
             throw new IllegalArgumentException(String.format("value=%s is not a instanceof LocalDateTime", value));
         }
