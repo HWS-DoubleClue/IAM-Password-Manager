@@ -822,7 +822,7 @@ public class DcemUtils {
 				newField = newObjectClass.getDeclaredField(oldField.getName());
 				newField.setAccessible(true);
 				oldField.setAccessible(true);
-				
+			//	System.out.println("DcemUtils.compareObjects() " + oldField.getName());
 				if (isEntity && Persistence.getPersistenceUtil().isLoaded(newObject, oldField.getName()) == false) {
 					continue;
 				}
@@ -1053,7 +1053,7 @@ public class DcemUtils {
 			}
 			return stringBuilder.toString();
 		} catch (Exception exp) {
-			exp.printStackTrace();
+			logger.info("Compare-Objects", exp);
 			throw new DcemException(DcemErrorCodes.COMPARE_OBJECTS, oldObject.getClass().getName(), exp);
 		}
 	}

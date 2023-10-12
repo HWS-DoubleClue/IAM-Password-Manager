@@ -222,7 +222,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	@Convert(converter = DbEncryptConverter.class)
 	private String saveit;
 
-	@DcemGui(displayMode = DisplayModes.TABLE_ONLY, styleClass = "mediumInput", visible = false)
+	@DcemGui(displayMode = DisplayModes.TABLE_ONLY, styleClass = "mediumInput", visible = false, ignoreCompare = true)
 	LocalDateTime lastLogin;
 
 	@Size(max = 32)
@@ -230,15 +230,18 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	private String privateMobileNumber;
 
 	@Column(length = 32, nullable = false)
+	@DcemGui(displayMode = DisplayModes.NONE, ignoreCompare = true)
 	byte[] hmac;
 
 	@Column(length = 32, nullable = true, name = "dc_salt")
+	@DcemGui(displayMode = DisplayModes.NONE, ignoreCompare = true)
 	byte[] salt;
 
 	@DcemGui(visible = false)
 	private int passCounter = 0;
 
 	@Column(length = 255, nullable = true)
+	@DcemGui(displayMode = DisplayModes.NONE, ignoreCompare = true)
 	byte[] objectGuid;
 
 	@Transient

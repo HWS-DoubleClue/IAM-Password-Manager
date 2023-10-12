@@ -50,7 +50,7 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 	@Column(length = 255, name = "dc_timezone", nullable = true, updatable = true, insertable = true)
 	private String timezoneString;
 
-	@DcemGui(name = "Photo")
+	@DcemGui(name = "Photo", ignoreCompare = true)
 	@Column(length = 8096 * 2, nullable = true)
 	private byte[] photo;
 
@@ -114,8 +114,7 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", country=" + country + ", timezone=" + timezoneString + ", department=" + department
-				+ "]";
+		return "User-Id=" + id + ", country=" + country + ", timezone=" + timezoneString;
 	}
 
 	public String getJobTitle() {

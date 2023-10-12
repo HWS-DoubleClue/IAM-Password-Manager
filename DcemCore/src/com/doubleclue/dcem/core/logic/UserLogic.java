@@ -104,7 +104,7 @@ public class UserLogic {
 	}
 
 	@DcemTransactional
-	public void addOrUpdateUser(DcemUser user, DcemAction dcemAction, boolean withAudit, boolean numericPassword,
+	public DcemUser addOrUpdateUser(DcemUser user, DcemAction dcemAction, boolean withAudit, boolean numericPassword,
 			int passwordLength, boolean savePassword) throws DcemException {
 		if (StringUtils.isValidNameId(user.getLoginId()) == false) {
 			throw new DcemException(DcemErrorCodes.ID_WITH_SPECIAL_CHARACTERS, user.getLoginId());
@@ -182,11 +182,12 @@ public class UserLogic {
 					user.setSaveit(null);
 				}
 			}
-			em.merge(user);
+			user = em.merge(user);
 		}
 		if (withAudit) {
 			auditingLogic.addAudit(dcemAction, user.toString());
 		}
+		return user;
 	}
 
 	String[] getDomainUser(String loginId) {
