@@ -440,7 +440,7 @@ public class DcemUtils {
 		ExpressionFactory eFactory = FacesContext.getCurrentInstance().getApplication().getExpressionFactory();
 		for (int i = 0; i < viewVariables.size(); i++) {
 			viewVariable = viewVariables.get(i);
-			if (viewVariable.getDcemGui().displayMode() == DisplayModes.TABLE_ONLY) {
+			if (viewVariable.getDcemGui().displayMode() == DisplayModes.TABLE_ONLY || viewVariable.getDcemGui().displayMode() == DisplayModes.NONE) {
 				continue;
 			}
 			if (viewVariable.getDcemGui().separator().isEmpty() == false) {
