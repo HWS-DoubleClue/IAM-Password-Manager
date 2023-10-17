@@ -705,6 +705,10 @@ public class UserLogic {
 			urlTokenLogic.deleteUserUrlTokens(objectIdentifier);
 			auditingLogic.deleteAllAuditsForUser(dcemUser);
 			groupLogic.removeMemberFromAllGroups(dcemUser);
+			DcemUserExtension dcemUserExtension = dcemUser.getDcemUserExt();
+			if (dcemUserExtension != null) {
+				em.remove(dcemUserExtension);
+			}
 			em.remove(dcemUser);
 			deleteUserExtension(dcemUser.getId());
 			sb.append(dcemUser.getLoginId());

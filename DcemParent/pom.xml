@@ -61,7 +61,7 @@
 		<mssql-driver.version>4.0</mssql-driver.version>
 		<thrift.version>0.13.0</thrift.version>
 		<jersey.version>2.25</jersey.version>
-		<tomcat.version>9.0.44</tomcat.version>
+		<tomcat.version>9.0.81</tomcat.version>
 		<jackson.version>2.14.0-rc1</jackson.version>
 		<swagger-core-version>1.5.18</swagger-core-version>
 	</properties>
