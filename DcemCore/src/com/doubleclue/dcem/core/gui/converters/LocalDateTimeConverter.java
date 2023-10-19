@@ -45,8 +45,8 @@ public class LocalDateTimeConverter extends DateTimeConverter {
         if (value == null) {
             return super.getAsString(facesContext, uiComponent,value);
         }
-        if (value instanceof Long) {
-        	value = DcemUtils.convertEpoch(((Long)value) * 1000);
+        if (value instanceof Long) { // Long Epoch always UTC 
+        	value = DcemUtils.convertEpoch(((Long)value));       	
         }
         if (value instanceof LocalDateTime) {
             LocalDateTime localDateTime = (LocalDateTime) value;
