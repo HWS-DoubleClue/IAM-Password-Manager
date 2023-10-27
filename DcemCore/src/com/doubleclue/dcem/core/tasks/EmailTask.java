@@ -29,12 +29,12 @@ public class EmailTask extends CoreTask {
 	private static final Logger logger = LogManager.getLogger(EmailTask.class);
 
 	List<DcemUser> users;
-	Map<String, String> map;
+	Map<String, Object> map;
 	String templateName;
 	String subjectResource;
 	byte[] attachment;
 
-	public EmailTask(List<DcemUser> users, Map<String, String> map, String templateName, String subjectResource, byte[] attachment) {
+	public EmailTask(List<DcemUser> users, Map<String, Object> map, String templateName, String subjectResource, byte[] attachment) {
 		super(EmailTask.class.getSimpleName(), null);
 		this.users = users;
 		this.map = map;
