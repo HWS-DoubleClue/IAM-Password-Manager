@@ -356,12 +356,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		this.actionObject = actionObject;
 	}
 
-	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage) {
-		return addAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, false);
-	}
 	
-	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, boolean headOf) {
-		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, null, headOf);
+	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage) {
+		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, null);
 		if (autoViewAction != null) {
 			autoViewActions.add(autoViewAction);
 			return true;
@@ -376,8 +373,8 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	 * @param xhtmlPage
 	 * @param viewLink
 	 */
-	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, ViewLink viewLink, boolean headOf) {
-		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, viewLink, headOf);
+	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, ViewLink viewLink) {
+		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, viewLink);
 		if (autoViewAction != null) {
 			autoViewActions.add(autoViewAction);
 			return true;
@@ -385,12 +382,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		return false;
 	}
 	
-	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, ViewLink viewLink) {
-		return addAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, viewLink, false);
-	}
 
 	protected AutoViewAction createAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage,
-			ViewLink viewLink, boolean headOf) {
+			ViewLink viewLink) {
 		if (dcemDialog != null) {
 			dcemDialog.setParentView(this);
 		}
@@ -398,14 +392,12 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		DcemAction dcemActionManage = new DcemAction(subject.getModuleId(), subject.getName(), DcemConstants.ACTION_MANAGE);
 		DcemAction dcemActionPre = new DcemAction(subject, actionName);
 		
-		
-		
 		dcemActionManage = operatorSessionBean.getPermission(dcemActionManage);
 		if (dcemActionManage == null) {
 			dcemActionManage = new DcemAction(subject.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
 			dcemActionManage = operatorSessionBean.getPermission(dcemActionManage);
 		}
-		if (dcemActionManage != null || (headOf && subject.isShowIfHeadOf())) {
+		if (dcemActionManage != null || subject.forceAction(operatorSessionBean.getDcemUser(), dcemActionPre)) {
 			return new AutoViewAction(dcemActionPre, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);
 		}
 		// DcemAction dcemAction = subject.getDcemActionByName(actionName);

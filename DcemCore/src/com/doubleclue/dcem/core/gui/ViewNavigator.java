@@ -283,17 +283,17 @@ public class ViewNavigator implements Serializable {
 				DefaultSubMenu subMenu = DefaultSubMenu.builder().label(dcemModule.getName()).build();
 				subMenu.setId(dcemModule.getId());
 				for (SubjectAbs subject : subjects) {
-					
-					
+
 					// List<DcemAction> actions = subject.getDcemActions();
 					if (subject.isHiddenMenu() == true) {
 						continue;
 					}
 					if (operatorSessionBean.isPermission(subject.getDcemActions()) == false) {
-						if (subject.isShowIfHeadOf() == false || operatorSessionBean.getDcemUser().isHeadOf() == false) {
+						if (subject.forceView(operatorSessionBean.getDcemUser()) == false) {
 							continue; // ignore if role has Actions for this subject
 						}
-					}	
+					}
+
 					menuItem = DefaultMenuItem.builder().value(subject.getDisplayName()).build();
 					menuItem.setIcon(subject.getIconName());
 					menuItem.setCommand(
@@ -311,25 +311,6 @@ public class ViewNavigator implements Serializable {
 		}
 		return menuModel;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 	public boolean isMessages() {
 		return JsfUtils.isMessages();
