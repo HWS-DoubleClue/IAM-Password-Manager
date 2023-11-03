@@ -34,6 +34,8 @@ public abstract class SubjectAbs implements Serializable {
 	public abstract String getIconName();
 
 	public abstract String getPath();
+	
+	private boolean showIfHeadOf = false;
 
 	public Class<?> getKlass() {
 		return null;
@@ -114,6 +116,14 @@ public abstract class SubjectAbs implements Serializable {
 
 	public void setHiddenMenu(boolean hiddenMenu) {
 		this.hiddenMenu = hiddenMenu;
+	}
+
+	public boolean isShowIfHeadOf() {
+		return showIfHeadOf;
+	}
+
+	public void setShowIfHeadOf(boolean showIfHeadOf) {
+		this.showIfHeadOf = showIfHeadOf;
 	}
 
 }

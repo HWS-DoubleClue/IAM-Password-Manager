@@ -228,6 +228,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 			return;
 		} catch (Exception exp) {
 			JsfUtils.addErrorMessage(exp.toString());
+			logger.warn("exception in show", exp);
 			return;
 		}
 		Map<String, Object> options = new HashMap<String, Object>();
@@ -356,7 +357,11 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	}
 
 	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage) {
-		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, null);
+		return addAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, false);
+	}
+	
+	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, boolean headOf) {
+		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, null, headOf);
 		if (autoViewAction != null) {
 			autoViewActions.add(autoViewAction);
 			return true;
@@ -371,40 +376,45 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	 * @param xhtmlPage
 	 * @param viewLink
 	 */
-	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, ViewLink viewLink) {
-
-		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, viewLink);
+	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, ViewLink viewLink, boolean headOf) {
+		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, viewLink, headOf);
 		if (autoViewAction != null) {
 			autoViewActions.add(autoViewAction);
 			return true;
 		}
 		return false;
 	}
+	
+	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, ViewLink viewLink) {
+		return addAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, viewLink, false);
+	}
 
 	protected AutoViewAction createAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage,
-			ViewLink viewLink) {
+			ViewLink viewLink, boolean headOf) {
 		if (dcemDialog != null) {
 			dcemDialog.setParentView(this);
 		}
 		// DcemAction dcemActionManage = subject.getDcemActionByName(DcemConstants.ACTION_MANAGE);
 		DcemAction dcemActionManage = new DcemAction(subject.getModuleId(), subject.getName(), DcemConstants.ACTION_MANAGE);
-
+		DcemAction dcemActionPre = new DcemAction(subject, actionName);
+		
+		
+		
 		dcemActionManage = operatorSessionBean.getPermission(dcemActionManage);
 		if (dcemActionManage == null) {
 			dcemActionManage = new DcemAction(subject.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
 			dcemActionManage = operatorSessionBean.getPermission(dcemActionManage);
 		}
-		// DcemAction dcemAction = subject.getDcemActionByName(actionName);
-
-		DcemAction dcemActionPre = new DcemAction(subject, actionName);
-		DcemAction dcemAction = operatorSessionBean.getPermission(dcemActionPre);
-		if (dcemAction == null) {
-//			logger.debug("No Action Found! " + dcemActionPre.toString());
-			return null;
+		if (dcemActionManage != null || (headOf && subject.isShowIfHeadOf())) {
+			return new AutoViewAction(dcemActionPre, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);
 		}
-		if (dcemActionManage != null || dcemAction != null) {
+		// DcemAction dcemAction = subject.getDcemActionByName(actionName);
+//		DcemAction dcemActionPre = new DcemAction(subject, actionName);
+		DcemAction dcemAction = operatorSessionBean.getPermission(dcemActionPre);
+		if (dcemAction != null) {
 			return new AutoViewAction(dcemAction, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);
 		}
+//		logger.debug("No Action Found! " + dcemActionPre.toString());
 		return null;
 	}
 

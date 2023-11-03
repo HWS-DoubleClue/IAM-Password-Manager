@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -822,6 +823,11 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 		}
 		photo = dcemUserExt.getPhoto();
 		return photo;
+	}
+	
+	public boolean isHeadOf() {
+		return (dcemUserExt != null && dcemUserExt.getDepartment() != null
+				&& Objects.equals(dcemUserExt.getDepartment().getHeadOf(), this));
 	}
 
 }
