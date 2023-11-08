@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import javax.inject.Inject;
 
 import com.doubleclue.dcem.core.entities.DcemAction;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.logic.RawAction;
@@ -34,6 +35,8 @@ public abstract class SubjectAbs implements Serializable {
 	public abstract String getIconName();
 
 	public abstract String getPath();
+	
+	private boolean showIfHeadOf = false;
 
 	public Class<?> getKlass() {
 		return null;
@@ -114,6 +117,22 @@ public abstract class SubjectAbs implements Serializable {
 
 	public void setHiddenMenu(boolean hiddenMenu) {
 		this.hiddenMenu = hiddenMenu;
+	}
+
+	public boolean isShowIfHeadOf() {
+		return showIfHeadOf;
+	}
+
+	public void setShowIfHeadOf(boolean showIfHeadOf) {
+		this.showIfHeadOf = showIfHeadOf;
+	}
+	
+	public boolean forceView(DcemUser user) {
+		return showIfHeadOf == true && user.isHeadOf();
+	}
+
+	public boolean forceAction(DcemUser dcemUser, DcemAction dcemAction) {
+		return forceView(dcemUser);
 	}
 
 }

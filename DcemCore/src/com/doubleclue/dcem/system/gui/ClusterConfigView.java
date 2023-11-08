@@ -185,9 +185,7 @@ public class ClusterConfigView extends DcemView {
 	}
 
 	public boolean isPermissionSave() {
-		DcemAction dcemAction = new DcemAction(subject, DcemConstants.ACTION_SAVE);
-		DcemAction dcemActionManage = new DcemAction(subject, DcemConstants.ACTION_MANAGE);
-		return operatorSessionBean.isPermission(dcemActionManage, dcemAction);
+		return operatorSessionBean.isPermission(new DcemAction(subject, DcemConstants.ACTION_SAVE));
 	}
 
 	public ClusterConfig getConfig() {

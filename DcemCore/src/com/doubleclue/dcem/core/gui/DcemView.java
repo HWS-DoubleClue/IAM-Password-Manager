@@ -228,6 +228,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 			return;
 		} catch (Exception exp) {
 			JsfUtils.addErrorMessage(exp.toString());
+			logger.warn("exception in show", exp);
 			return;
 		}
 		Map<String, Object> options = new HashMap<String, Object>();
@@ -355,6 +356,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		this.actionObject = actionObject;
 	}
 
+	
 	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage) {
 		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, null);
 		if (autoViewAction != null) {
@@ -372,7 +374,6 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	 * @param viewLink
 	 */
 	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage, ViewLink viewLink) {
-
 		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, viewLink);
 		if (autoViewAction != null) {
 			autoViewActions.add(autoViewAction);
@@ -380,33 +381,21 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		}
 		return false;
 	}
+	
 
 	protected AutoViewAction createAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage,
 			ViewLink viewLink) {
 		if (dcemDialog != null) {
 			dcemDialog.setParentView(this);
 		}
-		// DcemAction dcemActionManage = subject.getDcemActionByName(DcemConstants.ACTION_MANAGE);
-		DcemAction dcemActionManage = new DcemAction(subject.getModuleId(), subject.getName(), DcemConstants.ACTION_MANAGE);
-
-		dcemActionManage = operatorSessionBean.getPermission(dcemActionManage);
-		if (dcemActionManage == null) {
-			dcemActionManage = new DcemAction(subject.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
-			dcemActionManage = operatorSessionBean.getPermission(dcemActionManage);
-		}
-		// DcemAction dcemAction = subject.getDcemActionByName(actionName);
-
-		DcemAction dcemActionPre = new DcemAction(subject, actionName);
-		DcemAction dcemAction = operatorSessionBean.getPermission(dcemActionPre);
-		if (dcemAction == null) {
-//			logger.debug("No Action Found! " + dcemActionPre.toString());
-			return null;
-		}
-		if (dcemActionManage != null || dcemAction != null) {
+		DcemAction dcemAction = new DcemAction(subject, actionName);
+		if (operatorSessionBean.isPermission(dcemAction) == true || subject.forceAction(operatorSessionBean.getDcemUser(), dcemAction)) {
 			return new AutoViewAction(dcemAction, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);
 		}
+//		logger.debug("No Action Found! " + dcemActionPre.toString());
 		return null;
 	}
+
 
 	public void addPredefinedFilter(PredefinedFilter predefinedFilter) {
 		if (predefinedFilters == null) {
