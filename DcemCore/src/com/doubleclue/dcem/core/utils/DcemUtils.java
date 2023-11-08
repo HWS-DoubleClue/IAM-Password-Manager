@@ -1321,7 +1321,7 @@ public class DcemUtils {
 						continue;
 					}
 					if (dcemGui.restricted()) {
-						if (operatorSessionBean.isPermission(reveal, manage) == false) {
+						if (operatorSessionBean.isPermission(reveal) == false) {
 							Method method = null;
 							// for the moment only strings !!!
 							method = getSetterMethodForField(field, entity.getClass(), String.class);

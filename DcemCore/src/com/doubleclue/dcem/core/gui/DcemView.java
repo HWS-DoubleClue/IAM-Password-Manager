@@ -388,27 +388,14 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		if (dcemDialog != null) {
 			dcemDialog.setParentView(this);
 		}
-		// DcemAction dcemActionManage = subject.getDcemActionByName(DcemConstants.ACTION_MANAGE);
-		DcemAction dcemActionManage = new DcemAction(subject.getModuleId(), subject.getName(), DcemConstants.ACTION_MANAGE);
-		DcemAction dcemActionPre = new DcemAction(subject, actionName);
-		
-		dcemActionManage = operatorSessionBean.getPermission(dcemActionManage);
-		if (dcemActionManage == null) {
-			dcemActionManage = new DcemAction(subject.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
-			dcemActionManage = operatorSessionBean.getPermission(dcemActionManage);
-		}
-		if (dcemActionManage != null || subject.forceAction(operatorSessionBean.getDcemUser(), dcemActionPre)) {
-			return new AutoViewAction(dcemActionPre, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);
-		}
-		// DcemAction dcemAction = subject.getDcemActionByName(actionName);
-//		DcemAction dcemActionPre = new DcemAction(subject, actionName);
-		DcemAction dcemAction = operatorSessionBean.getPermission(dcemActionPre);
-		if (dcemAction != null) {
+		DcemAction dcemAction = new DcemAction(subject, actionName);
+		if (operatorSessionBean.isPermission(dcemAction) == true || subject.forceAction(operatorSessionBean.getDcemUser(), dcemAction)) {
 			return new AutoViewAction(dcemAction, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);
 		}
 //		logger.debug("No Action Found! " + dcemActionPre.toString());
 		return null;
 	}
+
 
 	public void addPredefinedFilter(PredefinedFilter predefinedFilter) {
 		if (predefinedFilters == null) {

@@ -179,9 +179,7 @@ public class WelcomeView extends DcemView {
 	}
 
 	public boolean isPrivilegedForDeletingAlerts() {
-		DcemAction dcemAction = new DcemAction(subject, DcemConstants.ACTION_DELETE);
-		DcemAction dcemActionManage = new DcemAction(subject, DcemConstants.ACTION_MANAGE);
-		return operatorSessionBean.isPermission(dcemActionManage, dcemAction);
+		return operatorSessionBean.isPermission(new DcemAction(subject, DcemConstants.ACTION_DELETE));
 	}
 
 	public void changeDateSelection(SelectedFormat format) {

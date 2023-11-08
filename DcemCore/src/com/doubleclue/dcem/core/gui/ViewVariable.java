@@ -177,8 +177,7 @@ public class ViewVariable implements Serializable {
 						if (viewNavigator == null) {
 							viewNavigator = CdiUtils.getReference(ViewNavigator.class);
 						}
-						if (getOperatorSessionBean().isPermission(viewNavigator.getActiveView().getRevealAction(),
-								viewNavigator.getActiveView().getManageAction()) == false) {
+						if (getOperatorSessionBean().isPermission(viewNavigator.getActiveView().getRevealAction()) == false) {
 							return DcemConstants.RESTRICTED_REPLACEMENT;
 						}
 					}

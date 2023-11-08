@@ -29,6 +29,7 @@ import org.primefaces.model.menu.MenuModel;
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
+import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
@@ -282,13 +283,17 @@ public class ViewNavigator implements Serializable {
 			if (subjects != null) {
 				DefaultSubMenu subMenu = DefaultSubMenu.builder().label(dcemModule.getName()).build();
 				subMenu.setId(dcemModule.getId());
+				boolean viewRights = operatorSessionBean
+						.isPermission(new DcemAction(dcemModule.getId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE))
+						|| operatorSessionBean.isPermission(new DcemAction(dcemModule.getId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_VIEW));
 				for (SubjectAbs subject : subjects) {
 
 					// List<DcemAction> actions = subject.getDcemActions();
 					if (subject.isHiddenMenu() == true) {
 						continue;
 					}
-					if (operatorSessionBean.isPermission(subject.getDcemActions()) == false) {
+
+					if (viewRights == false && operatorSessionBean.isPermission(subject.getDcemActions()) == false) {
 						if (subject.forceView(operatorSessionBean.getDcemUser()) == false) {
 							continue; // ignore if role has Actions for this subject
 						}
