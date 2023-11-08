@@ -86,7 +86,7 @@ public class SeleniumCloudsafeCreateFolder extends AbstractTestUnit {
 		List<CloudSafeEntity> cloudSafeEntityList = cloudSafeLogic.getAllUserCloudSafe(seleniumUser, null);
 		for (CloudSafeEntity listEntity : cloudSafeEntityList) {
 			if (listEntity.getName().equals(FOLDERNAME)) {
-				cloudSafeLogic.deleteCloudSafe(listEntity, seleniumUser);
+				cloudSafeLogic.deleteCloudSafe(listEntity, seleniumUser, false);
 			}
 		}
 

@@ -1,6 +1,6 @@
 package com.doubleclue.dcem.test.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,8 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.primefaces.model.SortOrder;
 
@@ -28,8 +26,6 @@ import com.doubleclue.dcem.test.logic.TestLogAction;
  */
 @Entity
 @Table(name="test_log" )
-
-
 public class TestLog extends EntityInterface {
 	
 	@Id
@@ -62,11 +58,11 @@ public class TestLog extends EntityInterface {
 		this.id = (Integer)id;		
 	}
 
-	public Date getTime() {
+	public LocalDateTime getTime() {
 		return time;
 	}
 
-	public void setTime(Date time) {
+	public void setTime(LocalDateTime time) {
 		this.time = time;
 	}
 

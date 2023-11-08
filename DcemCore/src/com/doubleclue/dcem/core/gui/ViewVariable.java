@@ -4,11 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
@@ -16,7 +13,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -32,7 +28,6 @@ import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 
 import com.doubleclue.dcem.core.DcemConstants;
-import com.doubleclue.dcem.core.gui.converters.DefaultConvertor;
 import com.doubleclue.dcem.core.jpa.FilterItem;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.jpa.VariableType;

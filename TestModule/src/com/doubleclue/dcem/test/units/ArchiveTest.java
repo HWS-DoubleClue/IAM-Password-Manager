@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.test.units;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 
@@ -63,9 +64,7 @@ public class ArchiveTest extends AbstractTestUnit {
 	@Override
 	public String start() throws Exception {
 		DcemReporting reporting = new DcemReporting(ReportAction.Activation, (DcemUser) null, AppErrorCodes.INCORRECT_STATE, null, null);
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DAY_OF_YEAR, -4);
-		reporting.setTime(calendar.getTime());
+		reporting.setLocalDateTime(LocalDateTime.now().minusDays(4));
 		int archiveCount = DcemConstants.MAX_ARCHIVE_RECORDS + 20;
 		for (int i = 0; i < archiveCount; i++) {
 			reportingLogic.addReporting(reporting);

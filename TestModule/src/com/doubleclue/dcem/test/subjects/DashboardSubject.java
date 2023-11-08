@@ -42,7 +42,7 @@ public class DashboardSubject extends SubjectAbs {
 	
 	@Override
 	public String getIconName() {
-		return "user_headset.png";
+		return "fa fa-table";
 	}
 
 	@Override

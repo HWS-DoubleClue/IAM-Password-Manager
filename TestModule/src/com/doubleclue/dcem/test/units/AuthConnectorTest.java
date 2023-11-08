@@ -13,8 +13,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.spongycastle.cert.path.validations.ParentCertIssuedValidation;
-
 import com.doubleclue.comm.thrift.AppSystemConstants;
 import com.doubleclue.comm.thrift.AuthGatewayConfig;
 import com.doubleclue.comm.thrift.ThriftAuthMethod;
