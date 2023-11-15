@@ -4,5 +4,5 @@
 				<class>com.doubleclue.dcem.core.jpa.DcemTransactionInterceptor</class>
 	</interceptors>
 	
-	
+
 </beans>

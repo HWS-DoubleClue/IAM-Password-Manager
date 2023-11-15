@@ -46,10 +46,10 @@ public class CreateCrudView extends DcemView {
 
 	private static final String MAP_DIALOG_TABLE = "dialogTable";
 	private static final String MAP_DIALOG_METHODS = "dialogMethods";
-	private static final  String SRC_MAIN_RESOURCE = "/src/main/resources/";
-	private static final  String SRC_MAIN_JAVA = "/src/main/java/";
-	private static final  String SRC = "/src/";
-	private static final  String RESOURCE = "/resources/";
+	private static final String SRC_MAIN_RESOURCE = "/src/main/resources/";
+	private static final String SRC_MAIN_JAVA = "/src/main/java/";
+	private static final String SRC = "/src/";
+	private static final String RESOURCE = "/resources/";
 
 	@Inject
 	private CreateCrudSubject createCredSubject;
@@ -279,15 +279,23 @@ public class CreateCrudView extends DcemView {
 		}
 		try {
 			String packageName = selectedDcemModule.getClass().getSuperclass().getName();
-			int ind = packageName.lastIndexOf("." + selectedDcemModule.getId() + ".");
-			entityPackage = packageName.substring(0, ind + selectedDcemModule.getId().length() + 2) + "entities.";
+			int ind = packageName.lastIndexOf(".");
+			ind = packageName.lastIndexOf(".", ind-1);
+			packageName = packageName.substring(0, ind);
+			entityPackage = packageName + ".entities.";
 			String resource = "/" + selectedDcemModule.getClass().getSuperclass().getName().replace('.', '/') + ".class";
 			URL scannedUrl = this.getClass().getResource(resource);
 			String fileString = scannedUrl.getFile();
 			String sources = fileString.replace("/bin/", SRC);
 
 			int ind2 = sources.lastIndexOf("/" + selectedDcemModule.getId() + "/");
-			moduleSources = sources.substring(0, ind2 + selectedDcemModule.getId().length() + 2);
+			if (ind2 == -1) {
+				ind2 = sources.lastIndexOf("/com/doubleclue/dcem/");
+				int ind3 = sources.indexOf("/", ind2 + "/com/doubleclue/dcem/".length());
+				moduleSources = sources.substring(0, ind3 + 1);
+			} else {
+				moduleSources = sources.substring(0, ind2 + selectedDcemModule.getId().length() + 2);
+			}
 			File moduleSourcesDir = new File(moduleSources);
 			if (moduleSourcesDir.exists() == false) {
 				moduleSources = moduleSources.replace("/src/", SRC_MAIN_JAVA);
@@ -297,6 +305,7 @@ public class CreateCrudView extends DcemView {
 				moduleResources = moduleSources.substring(0, moduleSources.indexOf(SRC)) + RESOURCE;
 				moduleDirectory = moduleResources.substring(0, moduleResources.length() - RESOURCE.length());
 			}
+			System.out.println("CreateCrudView.onChangeModule() moduleSources: " + moduleSources);
 
 			entitySources = moduleSources + "entities" + File.separator;
 			File entityDirectory = new File(entitySources);
@@ -313,13 +322,13 @@ public class CreateCrudView extends DcemView {
 				Class entityClass = Class.forName(entityPackage + name);
 				if (entityClass.getAnnotation(Entity.class) != null) {
 					entities.add(name);
+					try {
+						entityClass = Class.forName(entityPackage + name + "_");
+					} catch (Exception e) {
+						JsfUtils.addErrorMessage("Entity META Data is Missing for : " + name + "_ . Please create the Meta-Files.");
+					}
 				}
-				try {
-					entityClass = Class.forName(entityPackage + name + "_");
-				} catch (Exception e) {
-					JsfUtils.addErrorMessage("Entity META Data is Missing for : " + name + "_ . Please create the Meta-Files.");
-				}
-
+				
 			}
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage("couldn't Find module sources: " + e.toString());
