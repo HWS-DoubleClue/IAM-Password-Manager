@@ -22,7 +22,7 @@ import com.doubleclue.dcem.dev.logic.DevObjectTypes;
  * @author Emanuel Galea
  * 
  */
-@Entity
+//@Entity
 @Table(name="dev_test" )
 public class TestEntity extends EntityInterface {
 	
