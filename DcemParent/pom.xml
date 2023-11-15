@@ -500,6 +500,10 @@
 			<artifactId>arquillian-junit-container</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+		</dependency>
 		<!-- <dependency> <groupId>org.jboss.arquillian.testenricher</groupId> 
 			<artifactId>arquillian-testenricher-cdi</artifactId> <scope>test</scope> 
 			</dependency> <dependency> <groupId>org.jboss.arquillian.container</groupId> 
@@ -851,6 +855,11 @@
 						<groupId>xml-apis</groupId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-jpamodelgen</artifactId>
+				<version>${hibernate.version}</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager -->

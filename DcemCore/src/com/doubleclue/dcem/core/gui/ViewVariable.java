@@ -466,7 +466,7 @@ public class ViewVariable implements Serializable {
 	}
 
 	public String toString() {
-		return "Id=" + id + ", Filter=" + filterItem + ", Attributes=" + attributes;
+		return "Id=" + id + ", Type=" + variableType +  ", Filter=" + filterItem + ", Attributes=" + attributes;
 	}
 
 	public boolean isVisible() {

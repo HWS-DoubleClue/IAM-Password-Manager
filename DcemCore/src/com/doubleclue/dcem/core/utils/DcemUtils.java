@@ -303,6 +303,8 @@ public class DcemUtils {
 			variableType = VariableType.DATE_TIME;
 		} else if (cls.equals(java.sql.Date.class) || cls.equals(LocalDate.class)) {
 			variableType = VariableType.DATE;
+		} else if (cls.equals(LocalTime.class)) {
+			variableType = VariableType.TIME;
 		} else if (cls.isEnum()) {
 			variableType = VariableType.ENUM;
 			if (dcemGui.filterValue().isEmpty() == false) {
