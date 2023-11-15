@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:include src="/mgt/modules/dialogHead.xhtml" />
+
+<f:view locale="#{operatorSession.locale}">
+
+	<h:body class="dialogBody">
+		<span id="customheader"> <h:outputLabel class="#{autoView.icon} dialogTitle" /> <h:outputLabel value="#{viewNavigator.dialogTitle}"
+				styleClass="dialogTitle" />
+		</span>
+		<h:panelGroup>
+			<h:form id="devForm" style="padding-top: 30px; padding-bottom: 50px">
+
+				<p:messages showSummary="true" showDetail="false" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+					<p:outputLabel for="@next" value="Select Module" />
+					<p:selectOneMenu id="module" required="true" value="#{createCrudView.dcemModuleString}" autoWidth="false"  >
+						<f:selectItems value="#{createCrudView.modules}" />
+						<p:ajax event="change" listener="#{createCrudView.onChangeModule}"  />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<p></p>
+				<br></br>
+				<p:commandButton id="ok" style="width: 18em" icon="fa fa-check" value="Create Table SQL Scripts" ajax="true" actionListener="#{createSqlTablesView.actionOk}"></p:commandButton>
+			</h:form>
+		</h:panelGroup>
+	</h:body>
+</f:view>
+</html>

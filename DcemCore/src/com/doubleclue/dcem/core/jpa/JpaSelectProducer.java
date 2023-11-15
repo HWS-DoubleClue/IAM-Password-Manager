@@ -6,19 +6,14 @@
 package com.doubleclue.dcem.core.jpa;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -39,7 +34,6 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.apache.derby.tools.sysinfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.model.SortOrder;
@@ -49,7 +43,6 @@ import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.ViewVariable;
 import com.doubleclue.dcem.core.utils.DcemUtils;
-import com.hazelcast.map.impl.query.Query;
 
 import jersey.repackaged.com.google.common.collect.Lists;
 

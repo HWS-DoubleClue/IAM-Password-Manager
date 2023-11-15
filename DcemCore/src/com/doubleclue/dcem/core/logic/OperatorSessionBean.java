@@ -125,8 +125,8 @@ public class OperatorSessionBean implements Serializable {
 	 * @return
 	 */
 	public boolean isPermission(List<DcemAction> list) {
-		if (dcemUser == null) { // Whats this?
-			return true;
+		if (dcemUser == null) {
+			return false; // changed from true to false
 		}
 		for (DcemAction dcemAction : list) {
 			if (isPermission(dcemAction) == true) {
@@ -152,11 +152,13 @@ public class OperatorSessionBean implements Serializable {
 	}
 
 	public boolean isPermission(DcemAction dcemAction) {
+		DcemAction dcemActionSubjectManager = new DcemAction(dcemAction.getModuleId(), dcemAction.getSubject(), DcemConstants.ACTION_MANAGE);
+		DcemAction dcemActionModuleManager = new DcemAction(dcemAction.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
 		if (dcemUser == null || dcemAction == null) {
 			return false;
 		}
 		try {
-			if (haveAction.contains(dcemAction) == true) {
+			if (haveAction.contains(dcemAction) || haveAction.contains(dcemActionSubjectManager) || haveAction.contains(dcemActionModuleManager) ) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -165,6 +167,7 @@ public class OperatorSessionBean implements Serializable {
 		return false;
 	}
 
+	@Deprecated
 	public DcemAction getPermission(DcemAction dcemAction) {
 		if (dcemUser == null || dcemAction == null) {
 			return null;
@@ -181,6 +184,7 @@ public class OperatorSessionBean implements Serializable {
 		return null;
 	}
 
+	@Deprecated
 	public boolean isPermission(DcemAction dcemActionManage, DcemAction dcemAction) {
 		return haveAction.contains(dcemActionManage) || haveAction.contains(dcemAction);
 	}

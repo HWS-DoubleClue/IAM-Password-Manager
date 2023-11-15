@@ -464,6 +464,13 @@ public class JsfUtils {
 		getFacesContext().addMessage(clientId, facesMessage);
 		PrimeFaces.current().ajax().update(clientId);
 	}
+	
+	public static void addInfoMessageToComponentId(String message, String clientId) {
+		FacesMessage facesMessage = new FacesMessage(message, message);
+		facesMessage.setSeverity(FacesMessage.SEVERITY_INFO);
+		getFacesContext().addMessage(clientId, facesMessage);
+		PrimeFaces.current().ajax().update(clientId);
+	}
 
 	/**
 	 * @param pSeverity

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -222,7 +223,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	@Convert(converter = DbEncryptConverter.class)
 	private String saveit;
 
-	@DcemGui(displayMode = DisplayModes.TABLE_ONLY, styleClass = "mediumInput", visible = false)
+	@DcemGui(displayMode = DisplayModes.TABLE_ONLY, styleClass = "mediumInput", visible = false, ignoreCompare = true)
 	LocalDateTime lastLogin;
 
 	@Size(max = 32)
@@ -230,15 +231,18 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	private String privateMobileNumber;
 
 	@Column(length = 32, nullable = false)
+	@DcemGui(displayMode = DisplayModes.NONE, ignoreCompare = true)
 	byte[] hmac;
 
 	@Column(length = 32, nullable = true, name = "dc_salt")
+	@DcemGui(displayMode = DisplayModes.NONE, ignoreCompare = true)
 	byte[] salt;
 
 	@DcemGui(visible = false)
 	private int passCounter = 0;
 
 	@Column(length = 255, nullable = true)
+	@DcemGui(displayMode = DisplayModes.NONE, ignoreCompare = true)
 	byte[] objectGuid;
 
 	@Transient
@@ -819,6 +823,11 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 		}
 		photo = dcemUserExt.getPhoto();
 		return photo;
+	}
+	
+	public boolean isHeadOf() {
+		return (dcemUserExt != null && dcemUserExt.getDepartment() != null
+				&& Objects.equals(dcemUserExt.getDepartment().getHeadOf(), this));
 	}
 
 }

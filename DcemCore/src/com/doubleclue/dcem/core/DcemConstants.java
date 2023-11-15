@@ -506,4 +506,6 @@ public final class DcemConstants {
 	public static final String SYSTEM_DEFAULT_ZONE = "Europe/Berlin";
 	public static final String TIME_ZONE_OTHER = "Other...";
 
+	public static final String SESSION_LOCALE = "Locale";
+
 }

@@ -543,7 +543,7 @@ public class PasswordSafeView extends AbstractPortalView {
 		List<Group> groups = new ArrayList<Group>(keePassFile.getGroups().size());
 		List<Group> emptyGroups = new ArrayList<Group>(keePassFile.getGroups().size());
 		for (Group group : keePassGroups) {
-			if (group.getUuid().equals(recycleBin.getUuid()) == true) {
+			if (recycleBin != null && group.getUuid().equals(recycleBin.getUuid()) == true) {
 				continue;
 			}
 			if (getGroupEntries(group).size() > 0) {
@@ -1090,6 +1090,7 @@ public class PasswordSafeView extends AbstractPortalView {
 		if (masterPassword.isEmpty() == false) {
 			try {
 				cloudSafeEntity = cloudSafeLogic.getCloudSafe((int) selectedPasswordSafeFile);
+				currentOpenPasswordSafe = cloudSafeEntity;
 				cloudSafeEntity.setWriteAccess(selectedFile.isWriteAccess());
 				InputStream inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, null, null);
 				loadKeepassFile(inputStream, masterPassword);

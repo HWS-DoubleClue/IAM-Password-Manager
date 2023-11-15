@@ -792,27 +792,32 @@ public class DcemApplicationBean implements Serializable {
 		}
 		return freeMarkerConfiguration;
 	}
-
+	
 	public Template getTemplateFromConfig(DcemTemplate dcemTemplate) throws Exception {
+		String content = dcemTemplate.getContent();
+		return getTemplateFromConfig (dcemTemplate.getFullName(), content);
+	}
+
+	public Template getTemplateFromConfig(String tempalteName, String content) throws Exception {
 		getFreeMarkerConfiguration();
 		Template template = null;
-		String fullTempalteName = dcemTemplate.getFullName() + "-" + TenantIdResolver.getCurrentTenantName();
+		tempalteName = tempalteName + "-" + TenantIdResolver.getCurrentTenantName();
 		try {
-			template = freeMarkerConfiguration.getTemplate(fullTempalteName);
+			template = freeMarkerConfiguration.getTemplate(tempalteName);
 		} catch (TemplateNotFoundException e) {
 			DcFreeMarkerStringLoader stringLoader = (DcFreeMarkerStringLoader) freeMarkerConfiguration.getTemplateLoader();
-			stringLoader.putTemplate(fullTempalteName, dcemTemplate.getContent());
+			stringLoader.putTemplate(tempalteName, content);
 			// Wait until the template is loaded in the configuration
 			for (int sleepCounter = 0; sleepCounter < 20; sleepCounter++) {
 				try {
-					template = freeMarkerConfiguration.getTemplate(fullTempalteName);
+					template = freeMarkerConfiguration.getTemplate(tempalteName);
 					break;
 				} catch (TemplateNotFoundException exp) {
 					Thread.sleep(500);
 				}
 			}
 			if (template == null) {
-				throw new TemplateNotFoundException(fullTempalteName, null, "The template could not be loaded after 10 seconds");
+				throw new TemplateNotFoundException(tempalteName, null, "The template could not be loaded after 10 seconds");
 			}
 		} catch (Exception e) {
 			throw e;

@@ -303,6 +303,8 @@ public class DcemUtils {
 			variableType = VariableType.DATE_TIME;
 		} else if (cls.equals(java.sql.Date.class) || cls.equals(LocalDate.class)) {
 			variableType = VariableType.DATE;
+		} else if (cls.equals(LocalTime.class)) {
+			variableType = VariableType.TIME;
 		} else if (cls.isEnum()) {
 			variableType = VariableType.ENUM;
 			if (dcemGui.filterValue().isEmpty() == false) {
@@ -440,7 +442,7 @@ public class DcemUtils {
 		ExpressionFactory eFactory = FacesContext.getCurrentInstance().getApplication().getExpressionFactory();
 		for (int i = 0; i < viewVariables.size(); i++) {
 			viewVariable = viewVariables.get(i);
-			if (viewVariable.getDcemGui().displayMode() == DisplayModes.TABLE_ONLY) {
+			if (viewVariable.getDcemGui().displayMode() == DisplayModes.TABLE_ONLY || viewVariable.getDcemGui().displayMode() == DisplayModes.NONE) {
 				continue;
 			}
 			if (viewVariable.getDcemGui().separator().isEmpty() == false) {
@@ -822,7 +824,7 @@ public class DcemUtils {
 				newField = newObjectClass.getDeclaredField(oldField.getName());
 				newField.setAccessible(true);
 				oldField.setAccessible(true);
-				
+			//	System.out.println("DcemUtils.compareObjects() " + oldField.getName());
 				if (isEntity && Persistence.getPersistenceUtil().isLoaded(newObject, oldField.getName()) == false) {
 					continue;
 				}
@@ -1053,7 +1055,7 @@ public class DcemUtils {
 			}
 			return stringBuilder.toString();
 		} catch (Exception exp) {
-			exp.printStackTrace();
+			logger.info("Compare-Objects", exp);
 			throw new DcemException(DcemErrorCodes.COMPARE_OBJECTS, oldObject.getClass().getName(), exp);
 		}
 	}
@@ -1321,7 +1323,7 @@ public class DcemUtils {
 						continue;
 					}
 					if (dcemGui.restricted()) {
-						if (operatorSessionBean.isPermission(reveal, manage) == false) {
+						if (operatorSessionBean.isPermission(reveal) == false) {
 							Method method = null;
 							// for the moment only strings !!!
 							method = getSetterMethodForField(field, entity.getClass(), String.class);

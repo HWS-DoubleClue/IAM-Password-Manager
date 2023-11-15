@@ -10,9 +10,9 @@
 	<h:outputStylesheet library="primefaces-dcemtheme" name="theme.css" />
 
 	<h:form id="title">
-		<p:remoteCommand autoRun="true" oncomplete="startTimer(#{dcemApplication.getInactivityTime()} * 60);" >
+		<!-- <p:remoteCommand autoRun="true" oncomplete="startTimer(#{dcemApplication.getInactivityTime()} * 60);" /> -->
 
-		</p:remoteCommand>
+
 		<table width="100%;" style="#{adminModule.titleStyle}; height: 6vh;" id="headerbar">
 			<tr>
 				<td id="closeButton" style="text-align: left; padding-left: 0.5em"><a href="javascript:void(0)" onclick="closeNav()"
@@ -43,7 +43,7 @@
 							</div>
 							<p:spacer width="10" />
 							<div style="display: inline-block; vertical-align: middle;">
-								<p:commandLink action="#{viewNavigator.reload}" update="viewPart" style="text-decoration: none" oncomplete="startTimer(#{dcemApplication.getInactivityTime()} * 60);">
+								<p:commandLink action="#{viewNavigator.reload}" update="viewPart" style="text-decoration: none" >
 									<i class="fa fa-refresh" style="color: white; font-size: 1.2em"></i>
 								</p:commandLink>
 							</div>

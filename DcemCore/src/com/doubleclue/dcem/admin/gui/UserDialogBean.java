@@ -131,7 +131,7 @@ public class UserDialogBean extends DcemDialog {
 					return false;
 				}
 			}
-			userLogic.addOrUpdateUser(user, getAutoViewAction().getDcemAction(), true,
+			user = userLogic.addOrUpdateUser(user, getAutoViewAction().getDcemAction(), true,
 					adminModule.getPreferences().isNumericPassword(),
 					adminModule.getPreferences().getUserPasswordLength(), false);
 			DcemUserExtension dcemUserExtension = new DcemUserExtension();
