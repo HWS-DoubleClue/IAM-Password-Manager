@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Entity;
 
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
@@ -28,6 +29,7 @@ import com.doubleclue.dcem.dev.logic.CreateTablesScripts;
 import com.doubleclue.dcem.dev.logic.DevObjectTypes;
 import com.doubleclue.dcem.dev.subjects.CreateCrudSubject;
 import com.doubleclue.dcem.dev.subjects.CreateSqlTablesSubject;
+import com.doubleclue.dcem.system.logic.SystemModule;
 import com.doubleclue.utils.KaraUtils;
 
 @SuppressWarnings("serial")
@@ -58,6 +60,10 @@ public class CreateSqlTablesView extends DcemView {
 			return;
 		}
 		try {
+			if (createCrudView.getSelectedDcemModule().getId() == AdminModule.MODULE_ID || createCrudView.getSelectedDcemModule().getId() == SystemModule.MODULE_ID) {
+				JsfUtils.addErrorMessage("Cannot create tables for " +  createCrudView.getSelectedDcemModule().getName() + ". Please use the 'CreateTables' Utility");
+				return;
+			}
 			createTablesScripts.createTables(createCrudView.getModuleDirectory(), createCrudView.getModuleResources(), createCrudView.getSelectedDcemModule());
 			JsfUtils.addInfoMessage("Tables created successfull at " + createCrudView.getModuleResources() + " com.doubleclue.dcem.db");
 		} catch (Exception e) {

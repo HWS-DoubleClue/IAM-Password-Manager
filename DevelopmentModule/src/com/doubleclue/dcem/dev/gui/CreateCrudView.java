@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Entity;
 
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
@@ -27,7 +28,9 @@ import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.DisplayModes;
 import com.doubleclue.dcem.dev.logic.DevObjectTypes;
 import com.doubleclue.dcem.dev.subjects.CreateCrudSubject;
+import com.doubleclue.dcem.system.logic.SystemModule;
 import com.doubleclue.utils.KaraUtils;
+import com.microsoft.graph.models.Admin;
 
 @SuppressWarnings("serial")
 @Named("createCrudView")
@@ -279,9 +282,13 @@ public class CreateCrudView extends DcemView {
 		}
 		try {
 			String packageName = selectedDcemModule.getClass().getSuperclass().getName();
-			int ind = packageName.lastIndexOf(".");
-			ind = packageName.lastIndexOf(".", ind-1);
-			packageName = packageName.substring(0, ind);
+			if (selectedDcemModule.getId() == AdminModule.MODULE_ID || selectedDcemModule.getId() == SystemModule.MODULE_ID) {
+				packageName = "com.doubleclue.dcen.core.entities";
+			} else {
+				int ind = packageName.lastIndexOf(".");
+				ind = packageName.lastIndexOf(".", ind - 1);
+				packageName = packageName.substring(0, ind);
+			}
 			entityPackage = packageName + ".entities.";
 			String resource = "/" + selectedDcemModule.getClass().getSuperclass().getName().replace('.', '/') + ".class";
 			URL scannedUrl = this.getClass().getResource(resource);
@@ -328,7 +335,7 @@ public class CreateCrudView extends DcemView {
 						JsfUtils.addErrorMessage("Entity META Data is Missing for : " + name + "_ . Please create the Meta-Files.");
 					}
 				}
-				
+
 			}
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage("couldn't Find module sources: " + e.toString());

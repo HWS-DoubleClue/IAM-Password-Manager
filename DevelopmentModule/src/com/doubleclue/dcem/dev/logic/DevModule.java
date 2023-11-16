@@ -42,7 +42,7 @@ public class DevModule extends DcemModule {
 	}
 	
 	public int getRank() {
-		return 120;
+		return 999;
 	}
 
 	@Override

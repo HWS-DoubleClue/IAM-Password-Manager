@@ -60,13 +60,14 @@ public class CreateTablesScripts {
 		outputDirFile.delete();
 
 		System.out.println("Output Directory = " + outputDir);
-		String persistencePath = moduleResources + File.separator + "META-INF" + File.separator + "persistence.xml";
+		String persistencePath = moduleResources + "META-INF" + File.separator + "persistence.xml";
 		File persistenceFile = new File(persistencePath);
 		if (persistenceFile.exists() == false) {
 			throw new Exception ("ERROR: 'persistence.xml' NOT FOUND In " + persistencePath);
 		}
 		System.out.println("CreateTables.main() Path=" + persistencePath);
 		String moduleName = null;
+		String persitensUnitName = "dcem." + dcemModule.getId();
 		
 		for (DatabaseTypes databaseType : DatabaseTypes.values()) {
 			System.out.println("CreateTables.main() Database Type: " + databaseType);
@@ -111,8 +112,8 @@ public class CreateTablesScripts {
 				continue;
 			}
 			moduleName = module.item(0).getNodeValue();
-			if (moduleName.equals(dcemModule.getId()) == false) {
-				throw new Exception ("The persistence-unit name must be same as module-ID. " + moduleName);
+			if (moduleName.equals(persitensUnitName) == false) {
+				throw new Exception ("Incorrect persistence-unit: " + moduleName + ". It should be: " + persitensUnitName);
 			}
 			System.out.println("Module Name " + moduleName);
 			for (int i = 0; i < result.getLength(); i++) {
