@@ -8,21 +8,16 @@
 <ui:include src="/mgt/modules/dialogHead.xhtml" />
 
 <f:view locale="#{operatorSession.locale}">
-
 	<h:body class="dialogBody">
 		<span id="customheader"> <h:outputLabel class="#{autoView.icon} dialogTitle" /> <h:outputLabel value="#{viewNavigator.dialogTitle}"
 				styleClass="dialogTitle" />
 		</span>
-
 		<h:panelGroup>
-
 			<h:form id="devForm" style="padding-top: 30px; padding-bottom: 50px">
 
 				<p:messages showSummary="true" showDetail="false" closable="true">
 					<p:autoUpdate />
 				</p:messages>
-
-
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 
 					<p:outputLabel for="@next" value="Select Module" />
@@ -47,20 +42,16 @@
 					
 					<p:outputLabel  value="Auto Dialog " />
 					<p:selectBooleanCheckbox value="#{createCrudView.autoDialog}"  />
-
+					
+					<p:outputLabel  value="! Overwrite All Existing Files !" />
+					<p:selectBooleanCheckbox value="#{createCrudView.overwriteAllFiles}"  />
 
 				</h:panelGrid>
-
 				<p></p>
 				<br></br>
-
 				<p:commandButton id="ok" style="width: 20em" icon="fa fa-check" value="Create CRUD Java and Xhtml files" ajax="true" actionListener="#{createCrudView.actionOk}"></p:commandButton>
-
 			</h:form>
-
 		</h:panelGroup>
-
-
 	</h:body>
 </f:view>
 </html>

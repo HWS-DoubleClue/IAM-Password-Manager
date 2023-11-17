@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.DcemView;
@@ -38,6 +37,7 @@ public class ${EntityName}Dialog extends DcemDialog {
 	@Inject
 	OperatorSessionBean operatorSessionBean;
 	
+	${(dialogVariables)!}
 	
 	/**
 	 * 
@@ -56,7 +56,6 @@ public class ${EntityName}Dialog extends DcemDialog {
 		return true;
 	}
 
-
 //	public String getHeight() {
 //		return "650";
 //	}
@@ -66,7 +65,6 @@ public class ${EntityName}Dialog extends DcemDialog {
 //	}
 
 	${(dialogMethods)!}
-
 /*
 * This method is called before Dialog is opened
 * 
@@ -74,13 +72,15 @@ public class ${EntityName}Dialog extends DcemDialog {
 	@Override
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		String action = this.getAutoViewAction().getDcemAction().getAction();
+		/*
+		*  Initialze the local variables
+		*/
 		
 	}
 
 	public void leaving() {
-		// clear some objects whcih are not needed
+		/*
+		*  clear local variables
+		*/
 	}
-
-
-	
 }

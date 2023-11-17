@@ -18,7 +18,6 @@ import javax.persistence.Entity;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
-import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
@@ -30,7 +29,7 @@ import com.doubleclue.dcem.dev.logic.DevObjectTypes;
 import com.doubleclue.dcem.dev.subjects.CreateCrudSubject;
 import com.doubleclue.dcem.system.logic.SystemModule;
 import com.doubleclue.utils.KaraUtils;
-import com.microsoft.graph.models.Admin;
+
 
 @SuppressWarnings("serial")
 @Named("createCrudView")
@@ -49,10 +48,12 @@ public class CreateCrudView extends DcemView {
 
 	private static final String MAP_DIALOG_TABLE = "dialogTable";
 	private static final String MAP_DIALOG_METHODS = "dialogMethods";
+	private static final String MAP_DIALOG_VARIABLES = "dialogVariables";
 	private static final String SRC_MAIN_RESOURCE = "/src/main/resources/";
 	private static final String SRC_MAIN_JAVA = "/src/main/java/";
 	private static final String SRC = "/src/";
 	private static final String RESOURCE = "/resources/";
+	private static final String MAP_LOGIC_METHODS = "logicMethods";
 
 	@Inject
 	private CreateCrudSubject createCredSubject;
@@ -66,6 +67,7 @@ public class CreateCrudView extends DcemView {
 	String viewIcon;
 	boolean autoDialog;
 	boolean autoView;
+	boolean overwriteAllFiles;
 	List<String> entities;
 	String moduleSources;
 	String moduleResources;
@@ -117,7 +119,6 @@ public class CreateCrudView extends DcemView {
 
 		createJavaFile(clazz, map, entityName, FREEMARKER_SUBJECT_TEMPLATE, DevObjectTypes.Subject);
 		createJavaFile(clazz, map, entityName, FREEMARKER_VIEW_TEMPLATE, DevObjectTypes.View);
-		createJavaFile(clazz, map, entityName, FREEMARKER_LOGIC_TEMPLATE, DevObjectTypes.Logic);
 
 		// createView(clazz, sources, map, entityName);
 		if (autoDialog == false) {
@@ -125,6 +126,7 @@ public class CreateCrudView extends DcemView {
 			createJavaFile(clazz, map, entityName, FREEMARKER_DIALOG_TEMPLATE, DevObjectTypes.Dialog);
 			createJavaFile(clazz, map, entityName, FREEMARKER_XHTML_TEMPLATE, DevObjectTypes.DialogXhtml);
 		}
+		createJavaFile(clazz, map, entityName, FREEMARKER_LOGIC_TEMPLATE, DevObjectTypes.Logic);
 		return;
 	}
 
@@ -134,7 +136,9 @@ public class CreateCrudView extends DcemView {
 		StringBuffer sb = new StringBuffer();
 		String entityNameVariable = Character.toLowerCase(entityName.charAt(0)) + entityName.substring(1);
 		String resourcBundleName = Character.toUpperCase(selectedDcemModule.getId().charAt(0)) + selectedDcemModule.getId().substring(1) + "Msg";
-
+		StringBuffer dialogMethods = new StringBuffer();
+		StringBuffer dialogVariables = new StringBuffer();
+		StringBuffer logicMethods = new StringBuffer();
 		for (ViewVariable viewVariable : viewVariables) {
 			if (viewVariable.isVisible() == false) {
 				continue;
@@ -147,10 +151,36 @@ public class CreateCrudView extends DcemView {
 			sb.append(TABS);
 			sb.append("<p:outputLabel for=\"@next\" value=\"#{" + resourcBundleName + "['" + viewVariable.getId() + "']} \" />\n");
 			sb.append(TABS);
+			String required = viewVariable.getDcemGui().required() ? "true" : "false";
 			switch (viewVariable.getVariableType()) {
 			case STRING:
-				sb.append("<p:inputText id=\"" + viewVariable.getId() + "\" required=\"true\" value=\"#{" + entityNameVariable + "Dialog.actionObject."
-						+ viewVariable.getId() + "}\" />\n");
+				if (viewVariable.getDcemGui().autoComplete()) {
+					sb.append("<p:autoComplete id=\"" + viewVariable.getId() + "\" minQueryLength=\"1\" queryDelay=\"1000\""   
+							+ " value=\"#{" + entityNameVariable + "Dialog." + viewVariable.getId() + "Name}\" completeMethod=\"#{" + entityNameVariable + "Dialog.autoComplete" 
+							+ variableIdUpper +  "}\" />\n ");
+					dialogMethods.append("\tpublic String get");
+					dialogMethods.append(variableIdUpper +"Name");
+					dialogMethods.append("() {\n");
+					dialogMethods.append(TABS);
+					dialogMethods.append("return ");
+					dialogMethods.append(viewVariable.getId() +"Name");
+					dialogMethods.append(";\n}\n\n");	
+					
+					dialogMethods.append("\tpublic void set");
+					dialogMethods.append(variableIdUpper +"Name");
+					dialogMethods.append("(String name) {\n");
+					dialogMethods.append(TABS);
+					dialogMethods.append("this." + viewVariable.getId()+"Name" + " = name;\n");
+					dialogMethods.append("\treturn;\n\t}\n");
+					
+					dialogVariables.append("String ");
+					dialogVariables.append(viewVariable.getId()+"Name" + ";\n");
+					
+					addAutoComplete (dialogMethods, logicMethods, viewVariable, variableIdUpper, entityName);
+				} else {
+					sb.append("<p:inputText id=\"" + viewVariable.getId() + "\" required=\"" + required + "\" value=\"#{" + entityNameVariable);
+					sb.append("Dialog.actionObject." + viewVariable.getId() + "}\" />\n");
+				}
 				break;
 			case BOOLEAN:
 				sb.append("<p:toggleSwitch id=\"" + viewVariable.getId() + "\" value=\"#{" + entityNameVariable + "Dialog.actionObject." + viewVariable.getId()
@@ -170,7 +200,7 @@ public class CreateCrudView extends DcemView {
 				break;
 			case NUMBER:
 				sb.append("<p:inputNumber id=\"" + viewVariable.getId() + "\" value=\"#{" + entityNameVariable + "Dialog.actionObject." + viewVariable.getId()
-						+ "}\" " + "  />\n");
+						+ "}\" required=\"" + required + "\" />\n");
 				break;
 			case ENUM:
 				sb.append("<p:selectOneMenu id=\"" + viewVariable.getId() + "\" value=\"#{" + entityNameVariable + "Dialog.actionObject." + viewVariable.getId()
@@ -180,28 +210,25 @@ public class CreateCrudView extends DcemView {
 				sb.append(TABS);
 				sb.append("</p:selectOneMenu>\n");
 
-				StringBuffer sbJava = new StringBuffer();
-				sbJava.append("public List<SelectItem> get");
-				sbJava.append(variableIdUpper);
-				sbJava.append("Enums () {\n");
-				sbJava.append(TABS);
-				sbJava.append("ResourceBundle resourceBundle = JsfUtils.getBundle(" + map.get(MAP_MODULE_CLASS_SIMPLE)
+				dialogMethods.append("public List<SelectItem> get");
+				dialogMethods.append(variableIdUpper);
+				dialogMethods.append("Enums () {\n");
+				dialogMethods.append(TABS);
+				dialogMethods.append("ResourceBundle resourceBundle = JsfUtils.getBundle(" + map.get(MAP_MODULE_CLASS_SIMPLE)
 						+ ".RESOURCE_NAME, operatorSessionBean.getLocale());\n");
-				sbJava.append(TABS);
-				sbJava.append("List<SelectItem> list = new ArrayList<>();\n");
-				sbJava.append(TABS);
-				sbJava.append("for (" + viewVariable.getKlass().getName() + " enumObject :  " + viewVariable.getKlass().getName() + ".values()) {\n");
-				sbJava.append(TABS);
-				sbJava.append("\t list.add (new SelectItem (enumObject.name() , JsfUtils.getStringSafely(resourceBundle, enumObject.name())));\n");
-				sbJava.append(TABS + "}\n" + TABS + "return list;\n}\n");
-
-				map.put(MAP_DIALOG_METHODS, sbJava.toString());
+				dialogMethods.append(TABS);
+				dialogMethods.append("List<SelectItem> list = new ArrayList<>();\n");
+				dialogMethods.append(TABS);
+				dialogMethods.append("for (" + viewVariable.getKlass().getName() + " enumObject :  " + viewVariable.getKlass().getName() + ".values()) {\n");
+				dialogMethods.append(TABS);
+				dialogMethods.append("\t list.add (new SelectItem (enumObject.name() , JsfUtils.getStringSafely(resourceBundle, enumObject.name())));\n");
+				dialogMethods.append(TABS + "}\n" + TABS + "return list;\n}\n");
 				break;
 			case UNKNOWN:
 				String subVariable = viewVariable.getDcemGui().subClass();
 				if (subVariable == null || subVariable.isEmpty()) {
 					JsfUtils.addWarnMessage("Uknown Class Variable without a 'subClass definition: " + viewVariable.getId());
-				}
+				} sb.append("<p:outputLabel id=\"" + viewVariable.getId() + "\" style=\"color: red\" value=\" No subClass defined \" />\n");
 				break;
 			default:
 				System.out.println("CreateCrudView.createDialogTable() Unknown Type: " + viewVariable.toString());
@@ -210,7 +237,35 @@ public class CreateCrudView extends DcemView {
 				break;
 			}
 		}
+		map.put(MAP_LOGIC_METHODS, logicMethods.toString());
+		map.put(MAP_DIALOG_METHODS, dialogMethods.toString());
+		map.put(MAP_DIALOG_VARIABLES, dialogVariables.toString());
 		map.put(MAP_DIALOG_TABLE, sb.toString());
+	}
+
+	private void addAutoComplete(StringBuffer dialogMethods, StringBuffer logicMethods, ViewVariable viewVariable, String variableIdUpper, String entityName) {
+		String entityNameVariable = Character.toLowerCase(entityName.charAt(0)) + entityName.substring(1);
+		dialogMethods.append("public List<String> autoComplete" + variableIdUpper);
+		dialogMethods.append("(String name) {\n");
+		dialogMethods.append("\ttry {\n");
+		dialogMethods.append(TABS);
+		dialogMethods.append("return " + entityNameVariable + "Logic.getAutoCompleteList" + variableIdUpper + " (name, 50);\n");
+		dialogMethods.append("\t} catch (Throwable e) {\r\n"
+				+ "		JsfUtils.addErrorMessage(e.getMessage());\r\n"
+				+ "		logger.error(\"autocomplete \" + name, e);\r\n"
+				+ "		return null;\r\n"
+				+ "	}\n}\n");
+
+		logicMethods.append("\tpublic List<String> getAutoCompleteList" + variableIdUpper + " (String name, int max) {\n");
+		logicMethods.append(TABS);
+		logicMethods.append("TypedQuery<String> query = em.createNamedQuery(" + entityName + ".GET_AUTO_COMPLETR_" + variableIdUpper + ", String.class);\n");
+		logicMethods.append(TABS);
+		logicMethods.append("query.setParameter(1, \"%\" + name + \"%\");\n");
+		logicMethods.append(TABS);
+		logicMethods.append("query.setMaxResults(max);\n");
+		logicMethods.append(TABS);
+		logicMethods.append("return query.getResultList();\n}\n");		
+		return;
 	}
 
 	private void createJavaFile(Class<?> clazz, HashMap<String, String> map, String entityName, String templateName, DevObjectTypes devObjectTypes) {
@@ -231,7 +286,6 @@ public class CreateCrudView extends DcemView {
 			packageName = "/subjects/";
 			break;
 		case DialogXhtml:
-
 			break;
 		}
 		try {
@@ -241,7 +295,6 @@ public class CreateCrudView extends DcemView {
 				return;
 			}
 			String templateContent = KaraUtils.readInputStreamText(inputStream);
-
 			freemarker.template.Template template = dcemApplication.getTemplateFromConfig(clazz.getName() + devObjectTypes.name(), templateContent);
 			File viewFile;
 			if (devObjectTypes == DevObjectTypes.DialogXhtml) {
@@ -250,10 +303,17 @@ public class CreateCrudView extends DcemView {
 			} else {
 				viewFile = new File(moduleSources + packageName + entityName + devObjectTypes.name() + ".java");
 			}
+			if (overwriteAllFiles == false) {
+				if (viewFile.exists()) {
+					throw new DevException ("File Already exists : " + viewFile.getAbsolutePath());
+				}
+			}
 			writer = new FileWriter(viewFile);
 			template.process(map, writer);
 			writer.close();
 			JsfUtils.addInfoMessage(devObjectTypes.name() + ": created at " + viewFile.toString());
+		} catch (DevException e) {
+			JsfUtils.addErrorMessage(e.getMessage());
 		} catch (Exception e) {
 			if (writer != null) {
 				try {
@@ -262,7 +322,7 @@ public class CreateCrudView extends DcemView {
 				}
 			}
 			logger.error(devObjectTypes, e);
-			JsfUtils.addErrorMessage("Something went wron while creating : " + devObjectTypes + " Exception: " + e);
+			JsfUtils.addErrorMessage("Something went wrong while creating : " + devObjectTypes + " Exception: " + e);
 			return;
 		}
 	}
@@ -437,6 +497,14 @@ public class CreateCrudView extends DcemView {
 
 	public void setModuleDirectory(String moduleDirectory) {
 		this.moduleDirectory = moduleDirectory;
+	}
+
+	public boolean isOverwriteAllFiles() {
+		return overwriteAllFiles;
+	}
+
+	public void setOverwriteAllFiles(boolean overwriteAllFiles) {
+		this.overwriteAllFiles = overwriteAllFiles;
 	}
 
 }

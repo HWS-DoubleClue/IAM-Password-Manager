@@ -1,7 +1,6 @@
 package com.doubleclue.dcem.${ModuleId}.logic;
 
 import java.util.List;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,10 +15,8 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.entities.DcemAction;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 @ApplicationScoped
 public class ${EntityName}Logic {
@@ -34,7 +31,6 @@ public class ${EntityName}Logic {
 	
 	@Inject
 	AuditingLogic auditingLogic;
-
 	
 	@DcemTransactional
 	public void addOrUpdate (${EntityName} ${EntityNameVariable}, DcemAction dcemAction) throws DcemException {
@@ -46,5 +42,6 @@ public class ${EntityName}Logic {
 		auditingLogic.addAudit(dcemAction, ${EntityNameVariable}.toString());
 	}
 	
+	${(logicMethods)!}
 	
 }
