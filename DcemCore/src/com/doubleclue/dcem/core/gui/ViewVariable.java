@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -272,8 +273,8 @@ public class ViewVariable implements Serializable {
 		String resultValue;
 		switch (variableType) {
 		case DATE:
-			DateFormat dayDateformat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-			resultValue = dayDateformat.format(value);
+			DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+			resultValue = ((LocalDate) value).format(dateFormatter);
 			break;
 		case DATE_TIME:
 			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);
