@@ -177,6 +177,9 @@ public class CreateCrudView extends DcemView {
 					dialogVariables.append(viewVariable.getId()+"Name" + ";\n");
 					
 					addAutoComplete (dialogMethods, logicMethods, viewVariable, variableIdUpper, entityName);
+				} else if (viewVariable.getDcemGui().choose().length > 0 ) {
+					
+					
 				} else {
 					sb.append("<p:inputText id=\"" + viewVariable.getId() + "\" required=\"" + required + "\" value=\"#{" + entityNameVariable);
 					sb.append("Dialog.actionObject." + viewVariable.getId() + "}\" />\n");

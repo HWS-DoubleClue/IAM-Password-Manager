@@ -7,7 +7,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
@@ -943,7 +942,7 @@ public class UserLogic {
 		ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, TimeZone.getDefault().toZoneId());
 		return zonedDateTime.withZoneSameInstant(timeZone.toZoneId()).toLocalDateTime();
 	}
-
+	
 	public LocalDateTime getDefaultZonedTime(LocalDateTime localDateTime, DcemUser dcemUser) {
 		TimeZone timeZone = getTimeZone(dcemUser);
 		if (TimeZone.getDefault().equals(timeZone)) {
