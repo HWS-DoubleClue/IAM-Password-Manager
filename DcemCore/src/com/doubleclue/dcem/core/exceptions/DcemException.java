@@ -33,7 +33,7 @@ public class DcemException extends Exception {
 		try {
 			ResourceBundle bundle = JsfUtils.getApplicationBundle();
 			if (bundle == null) {
-				bundle = ResourceBundle.getBundle(SystemModule.RESOUCE_NAME);
+				bundle = ResourceBundle.getBundle(SystemModule.RESOURCE_NAME);
 			}
 			String error =  JsfUtils.getStringSafely(bundle, DcemErrorCodes.class.getSimpleName() + "." + errorCode.name());
 			if (error.startsWith("???")) {

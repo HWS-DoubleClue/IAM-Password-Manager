@@ -5,11 +5,6 @@
 	version="2.2">
 
 	<application>
-	
-		<resource-bundle>
-			<base-name>com.doubleclue.dcem.core.resources.Messages</base-name>
-			<var>CoreMsg</var>
-		</resource-bundle>
 		<resource-bundle>
 			<base-name>com.doubleclue.dcem.dev.resources.Messages</base-name>
 			<var>DevMsg</var>

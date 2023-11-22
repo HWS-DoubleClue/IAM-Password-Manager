@@ -13,11 +13,7 @@
 			<default-locale>de</default-locale>
 			<supported-locale>en</supported-locale>
 		</locale-config>
-		<!-- <resource-bundle>
-			<base-name>eu.kara.sem.core.resources.Messages</base-name>
-			<var>coreMsg</var>
-		</resource-bundle>
-		<message-bundle>eu.kara.sem.core.resources.Messages</message-bundle> -->
+		
 	</application>
 
 	<application>

@@ -119,7 +119,7 @@ public class SystemModule extends DcemModule {
 	TextResourceLogic textResourceLogic;
 
 	public final static String MODULE_ID = "system";
-	public final static String RESOUCE_NAME = "com.doubleclue.dcem.core.resources.Messages";
+	public final static String RESOURCE_NAME = "com.doubleclue.dcem.core.resources.Messages";
 
 	DecimalFormat df = new DecimalFormat("###,###.00");
 
@@ -169,7 +169,7 @@ public class SystemModule extends DcemModule {
 	}
 
 	public String getResourceName() {
-		return RESOUCE_NAME;
+		return RESOURCE_NAME;
 	}
 
 	public String getName() {

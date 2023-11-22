@@ -13,7 +13,7 @@ public class CoreMsg extends ResourceBundle {
     protected static final Control UTF8_CONTROL = new ResourceBundleUtf8Control(); 
     
     public CoreMsg () {
-    	setParent(ResourceBundle.getBundle(SystemModule.RESOUCE_NAME, 
+    	setParent(ResourceBundle.getBundle(SystemModule.RESOURCE_NAME, 
                 FacesContext.getCurrentInstance().getViewRoot().getLocale(), UTF8_CONTROL));
     }
 
