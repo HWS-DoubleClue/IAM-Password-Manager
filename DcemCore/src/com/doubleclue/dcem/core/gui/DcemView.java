@@ -1,6 +1,5 @@
 package com.doubleclue.dcem.core.gui;
 
-import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -140,6 +139,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		if (autoViewAction == null) {
 			return;
 		}
+		
 		selection = autoViewBean.getSelectedItems();
 		Object selectedObject = null;
 		switch (autoViewAction.getRawAction().getActionSelection()) {
@@ -269,7 +269,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 
 		ViewLink viewLink = autoViewAction.getViewLink();
 		if (viewLink == null) {
-			logger.warn("Missing ViewLink");
+			logger.warn("Missing ViewLink for " + autoViewAction.getActionText());
 			return;
 		}
 		viewNavigator.setActiveView(viewLink.getDestSubject().getModuleId() + DcemConstants.MODULE_VIEW_SPLITTER + viewLink.getDestSubject().getViewName());
@@ -283,8 +283,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 				if (destViewVariable.getId().equals(viewLink.destinationFilterName)) {
 					if (originViewVariable != null) {
 						try {
-							PropertyDescriptor pd = new PropertyDescriptor(viewLink.getOriginVariable(), selection.get(0).getClass());
-							Method getterMethod = pd.getReadMethod();
+							Method getterMethod = DcemUtils.getGetterMethodFromString(viewLink.getOriginVariable(), selection.get(0).getClass());
 							destViewVariable.setFilterValue(getterMethod.invoke(selection.get(0)));
 							// viewVariable.setFilterValue(selection.get(0).getClass().getDeclaredField(viewLink.destinationFilterName).get(selection.get(0)));
 						} catch (Exception exp) {
@@ -292,21 +291,26 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 						}
 						// viewVariable.setFilterValue(((KeyGen) selection.get(0)).getBatchNo());
 						destViewVariable.getFilterItem().setFilterOperator(FilterOperator.EQUALS);
-					} else {
-
 					}
 				} else {
 					destViewVariable.setFilterValue(null);
 				}
 			}
-
 			ViewVariable destViewVariable = DcemUtils.getViewVariableFromId(destViewVariables, viewLink.destinationFilterName);
 			if (destViewVariable == null) {
 				logger.warn("Destination Variable-Link Invalide" + viewLink.destinationFilterName);
 				return;
 			}
-
 		}
+	}
+	
+	public AutoViewAction getAutoViewAction (String name) {
+		for (AutoViewAction autoViewAction :  autoViewActions) {
+			if (autoViewAction.getDcemAction().getAction().equals(name)) {
+				return autoViewAction;
+			}
+		}
+		return null;
 	}
 
 	public List<AutoViewAction> getAutoViewActions() {

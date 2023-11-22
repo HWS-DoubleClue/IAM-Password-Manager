@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
+		<p:commandLink rendered="#{autoAction.link}" ajax="#{autoAction.rawAction.ajax}" action="#{viewNavigator.setActiveDialog(autoAction)}">
+			<i class="#{viewNavigator.getActionIcon(autoAction)}" />
+			<p:outputLabel value=" #{autoAction.actionText}" style="font-weight: bold" />
+		</p:commandLink>
+
+		<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link == false}" action="#{viewNavigator.setActiveDialog(autoAction)}"
+			icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}">
+			<p:ajax event="dialogReturn" update="@form" />
+		</p:commandButton>
+		<p:spacer width="12" />
+	</c:forEach>
+</ui:composition>

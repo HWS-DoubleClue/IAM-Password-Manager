@@ -10,10 +10,11 @@
 			<p:tooltip style="font-size: xx-small; white-space: normal" showEvent="focus" hideEvent="keyup" position="top" />
 
 			<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
-		<!--  		<p:commandLink value="#{autoAction.actionText}" rendered="#{autoAction.link}" ajax="false" action="#{viewNavigator.setActiveDialog(autoAction)}"
-					styleClass="icon_#{viewNavigator.getActionIcon(autoAction)}">
+				<p:commandLink rendered="#{autoAction.link}" ajax="#{autoAction.rawAction.ajax}" action="#{viewNavigator.setActiveDialog(autoAction)}">
+					<i class="#{viewNavigator.getActionIcon(autoAction)}" />
+					<p:outputLabel value=" #{autoAction.actionText}" style="font-weight: bold" />
 				</p:commandLink>
-				-->
+
 				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link == false}" action="#{viewNavigator.setActiveDialog(autoAction)}"
 					icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}">
 					<p:ajax event="dialogReturn" update="pTable" />
@@ -60,7 +61,7 @@
 				value="#{autoView.lazyModel}" var="record" rowKey="#{record.id}" update="tableCount" resizableColumns="false"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" selectionMode="multiple"
 				selection="#{autoView.selectedItems}" lazy="true" sortMode="single" styleClass="borderless" emptyMessage="#{CoreMsg['emptyTable']}"
-				rowStyleClass="#{record.rowStyle}" sortBy="#{autoView.sortBy}" filterBy="#{autoView.filterBy}" filterDelay="1000"  >
+				rowStyleClass="#{record.rowStyle}" sortBy="#{autoView.sortBy}" filterBy="#{autoView.filterBy}" filterDelay="1000">
 
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
 
@@ -95,7 +96,9 @@
 					<h:panelGroup rendered="#{item.variableType eq 'RATING'}">
 						<br></br>
 						<ui:repeat var="val" value="#{item.getRatings(record)}">
-							<div class="ui-rating-star ui-rating-star#{val}" style="cursor: default;"><a></a></div>
+							<div class="ui-rating-star ui-rating-star#{val}" style="cursor: default;">
+								<a></a>
+							</div>
 						</ui:repeat>
 					</h:panelGroup>
 				</p:columns>
