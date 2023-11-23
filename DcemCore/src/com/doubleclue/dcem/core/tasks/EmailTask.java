@@ -65,6 +65,10 @@ public class EmailTask extends CoreTask {
 			try {
 				DbResourceBundle dbResourceBundle = DbResourceBundle.getDbResourceBundle(language.getLocale());
 				dcemTemplateEmail = templateLogic.getTemplateByNameLanguage(templateName, language);
+				if (dcemTemplateEmail == null) {
+					logger.error("Couldn't send Emanuel with template. Tempalte name not found for: " + templateName);
+					continue;
+				}
 				StringWriter stringWriter = new StringWriter();
 				Template tempalte = applicationBean.getTemplateFromConfig(dcemTemplateEmail);
 				tempalte.process(map, stringWriter);
