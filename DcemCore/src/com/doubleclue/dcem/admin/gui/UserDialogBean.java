@@ -43,6 +43,7 @@ import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.RoleLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.doubleclue.utils.RandomUtils;
 import com.doubleclue.utils.StringUtils;
 
 @SuppressWarnings("serial")
@@ -469,6 +470,12 @@ public class UserDialogBean extends DcemDialog {
 
 	public List<SelectItem> getCountryTimezones() {
 		return DcemUtils.getCountryTimezones(continentTimezone);
+	}
+	
+	
+	public void actionGeneratePassword () {
+		newPassword = RandomUtils.generateRandomPasswordExtAlphaNumeric(8);
+		return;		
 	}
 
 	public String getNewPassword() {

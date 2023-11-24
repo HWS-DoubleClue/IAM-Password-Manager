@@ -78,6 +78,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -1838,4 +1839,5 @@ public class DcemUtils {
 		}
 		return list;
 	}
+
 }

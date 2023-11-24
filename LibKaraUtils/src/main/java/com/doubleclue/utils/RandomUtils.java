@@ -48,8 +48,8 @@ public class RandomUtils {
 	 */
 	private static final char[] ALPHA_NUMERIC_ALPHABET_SPECIALCHARS = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q',
 			'R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r',
-			's','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','-','=','_','\'','"','*','%','&','/','\\','(',')',
-			'^','~','@','#','$','?','!',',',';','.',':',' '};	
+			's','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','-','=','_','\'','"','*','%','&','/','(',')',
+			'@','#','$','?','!',';','.',':'};	
 
 
 	public static final String generateRandomSessionID() {
@@ -124,9 +124,6 @@ public class RandomUtils {
 	 * @return String
 	 */
 	public static String generateRandomAlphaLowercaseNumericString(int length){
-		
-		assert(length > 0);
-		
 		StringBuilder buff = new StringBuilder(length);
 		for(int i = 0; i < length; i++){
 			buff.append(RandomUtils.ALPHA_LOWERCASE_NUMERIC_ALPHABET[random.nextInt(RandomUtils.ALPHA_LOWERCASE_NUMERIC_ALPHABET.length)]);
@@ -139,9 +136,14 @@ public class RandomUtils {
 	 * @return String
 	 */
 	public static String generateRandomAlphaUppercaseNumericString(int length){
-		
-		assert(length > 0);
-		
+		StringBuilder buff = new StringBuilder(length);
+		for(int i = 0; i < length; i++){
+			buff.append(RandomUtils.ALPHA_UPPERCASE_NUMERIC_ALPHABET[random.nextInt(RandomUtils.ALPHA_UPPERCASE_NUMERIC_ALPHABET.length)]);
+		}
+		return buff.toString();
+	}
+	
+	public static String generatePassword(int length){
 		StringBuilder buff = new StringBuilder(length);
 		for(int i = 0; i < length; i++){
 			buff.append(RandomUtils.ALPHA_UPPERCASE_NUMERIC_ALPHABET[random.nextInt(RandomUtils.ALPHA_UPPERCASE_NUMERIC_ALPHABET.length)]);
@@ -172,11 +174,6 @@ public class RandomUtils {
 	 * @throws AssertionError when length<=0, passwordGenerationPattern is null or empty
 	 */
 	public static char[] generateRandomByPasswordGenerationPattern(int length, String passwordGenerationPattern){
-		
-		assert(length > 0);
-		assert(passwordGenerationPattern != null);
-		assert(passwordGenerationPattern.isEmpty() == false);
-
 		char[] pswdGenCharSet = passwordGenerationPattern.toCharArray();
 		char[] buff = new char[length];
 		for(int i = 0; i < length; i++){
@@ -192,27 +189,8 @@ public class RandomUtils {
 	 * @param maxlengthOfPswd - maximum length of password to be generated
 	 * @return
 	 */
-	public static final String generateRandomPasswordExtAlphaNumeric(int minlengthOfPswd, int maxlengthOfPswd) throws IllegalArgumentException {
-		// parameter validation
-		if (minlengthOfPswd < 1) {
-			throw new IllegalArgumentException("Illegal minimum length of password to be created. Length must be greater than 0.");
-		}
-		if (maxlengthOfPswd < 1 || minlengthOfPswd > maxlengthOfPswd) {
-			throw new IllegalArgumentException("Illegal maximum length of password to be created. Length must be greater than 0 or must be greater than minimum length.");
-		}
-		char[] allowedChars = ALPHA_NUMERIC_ALPHABET_SPECIALCHARS;
-		// "0123456789abcdefghijklmnopqrstuvwxyzßABCDEFGHIJKLMNOPQRSTUVWXYZ+-=_‘“*%&/\\()^~@#€$£?!,;.: ";
-		int max = allowedChars.length;
-		
-		
-		int pswdlength = minlengthOfPswd + (int)(Math.random() * ((maxlengthOfPswd - minlengthOfPswd)+1));
-		char[] password = new char[pswdlength];
-		Random rand = new Random(System.nanoTime());
-	    for (int i = 0; i < pswdlength; i++) {
-	        password[i] = allowedChars[rand.nextInt(max)];
-	    }
-
-	    return new String(password);
+	public static final String generateRandomPasswordExtAlphaNumeric(int lenght )  {
+		return new String (generateRandomByPasswordGenerationPattern(8, new String (ALPHA_NUMERIC_ALPHABET_SPECIALCHARS)));
 	}
 	
 		
