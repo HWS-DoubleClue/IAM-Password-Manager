@@ -1,6 +1,7 @@
 package com.doubleclue.dcem.core.gui.converters;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -23,6 +24,7 @@ public class LocalDateTimeConverter extends DateTimeConverter {
     public static final String ID = "dcem.LocalDateTimeConverter";
     
     final static DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM);
+    final static DateTimeFormatter df = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
@@ -47,6 +49,10 @@ public class LocalDateTimeConverter extends DateTimeConverter {
         }
         if (value instanceof Long) { // Long Epoch always UTC 
         	value = DcemUtils.convertEpoch(((Long)value));       	
+        }
+        if (value instanceof LocalDate) {
+        	LocalDate localDate = (LocalDate) value;
+        	return localDate.format(df.withLocale(facesContext.getViewRoot().getLocale())); 
         }
         if (value instanceof LocalDateTime) {
             LocalDateTime localDateTime = (LocalDateTime) value;
