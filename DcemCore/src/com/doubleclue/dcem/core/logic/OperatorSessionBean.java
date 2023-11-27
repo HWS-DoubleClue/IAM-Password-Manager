@@ -356,6 +356,11 @@ public class OperatorSessionBean implements Serializable {
 		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, getLocale());
 		return ((SimpleDateFormat) formatter).toPattern();
 	}
+	
+	public String getDatePattern() {
+		DateFormat formatter = DateFormat.getDateInstance(DateFormat.MEDIUM, getLocale());
+		return ((SimpleDateFormat) formatter).toPattern();
+	}
 
 	public String getRolesText() {
 		return rolesText;
