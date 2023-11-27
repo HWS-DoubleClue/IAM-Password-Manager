@@ -139,7 +139,6 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		if (autoViewAction == null) {
 			return;
 		}
-		
 		selection = autoViewBean.getSelectedItems();
 		Object selectedObject = null;
 		switch (autoViewAction.getRawAction().getActionSelection()) {
@@ -155,7 +154,6 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 			}
 			selectedObject = selection.iterator().next();
 			break;
-
 		case ONE_OR_MORE:
 			if (selection == null || selection.size() == 0) {
 				JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "MULTIPLE_ROW_SELECTION", (Object[]) null);
@@ -163,12 +161,10 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 				return;
 			}
 			break;
-
 		case IGNORE:
 		default:
 			break;
 		}
-
 		ActionType actioType = autoViewAction.getRawAction().getActionType();
 		if (actioType == ActionType.VIEW_LINK) {
 			this.actionViewLink(autoViewAction);
@@ -209,11 +205,17 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 
 		if (actioType == ActionType.DIALOG || actioType == ActionType.CREATE_OBJECT) {
 			if (autoDialogBean != null) {
-				setActionObject(selectedObject);
-				setActionSubObject(subObject);
+				if (selectedObject != null) {
+					setActionObject(selectedObject);
+				}
+				if (subObject != null) {
+					setActionSubObject(subObject);
+				}
 			}
 			if (autoViewAction.getDcemDialog() != null) {
-				autoViewAction.getDcemDialog().setActionObject(selectedObject);
+				if (selectedObject != null) {
+					autoViewAction.getDcemDialog().setActionObject(selectedObject);
+				}
 				autoViewAction.getDcemDialog().setSubActionObject(subObject);
 			}
 			if (selectedObject != null && (autoViewAction.xhtmlPage == null || autoViewAction.xhtmlPage.endsWith(DcemConstants.AUTO_DIALOG_PATH))) {
@@ -303,9 +305,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 			}
 		}
 	}
-	
-	public AutoViewAction getAutoViewAction (String name) {
-		for (AutoViewAction autoViewAction :  autoViewActions) {
+
+	public AutoViewAction getAutoViewAction(String name) {
+		for (AutoViewAction autoViewAction : autoViewActions) {
 			if (autoViewAction.getDcemAction().getAction().equals(name)) {
 				return autoViewAction;
 			}
@@ -347,9 +349,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	}
 
 	public Object getActionObject() {
-		if (selection == null) {
-			selection = autoViewBean.getSelectedItems();
-		}
+		 if (selection == null) {
+		 selection = autoViewBean.getSelectedItems();
+		 }
 		if ((actionObject == null) && (selection != null) && (selection.isEmpty() == false)) {
 			return selection.get(0);
 		}
@@ -360,7 +362,6 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		this.actionObject = actionObject;
 	}
 
-	
 	public boolean addAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage) {
 		AutoViewAction autoViewAction = createAutoViewAction(actionName, resourceBundle, dcemDialog, xhtmlPage, null);
 		if (autoViewAction != null) {
@@ -385,7 +386,6 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		}
 		return false;
 	}
-	
 
 	protected AutoViewAction createAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage,
 			ViewLink viewLink) {
@@ -396,10 +396,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		if (operatorSessionBean.isPermission(dcemAction) == true || subject.forceAction(operatorSessionBean.getDcemUser(), dcemAction)) {
 			return new AutoViewAction(dcemAction, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);
 		}
-//		logger.debug("No Action Found! " + dcemActionPre.toString());
+		// logger.debug("No Action Found! " + dcemActionPre.toString());
 		return null;
 	}
-
 
 	public void addPredefinedFilter(PredefinedFilter predefinedFilter) {
 		if (predefinedFilters == null) {
@@ -647,7 +646,8 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 				sortMeta = SortMeta.builder().field(viewVariable.id).order(SortOrder.DESCENDING).build();
 				list.add(sortMeta);
 				break;
-			default: break;
+			default:
+				break;
 			}
 		}
 		return list;
@@ -690,6 +690,5 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	public List<Predicate> getPredicates(CriteriaBuilder criteriaBuilder, Root<?> root) {
 		return new ArrayList<Predicate>();
 	}
-
 
 }
