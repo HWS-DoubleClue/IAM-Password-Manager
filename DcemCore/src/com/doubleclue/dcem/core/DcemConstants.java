@@ -507,5 +507,7 @@ public final class DcemConstants {
 	public static final String TIME_ZONE_OTHER = "Other...";
 
 	public static final String SESSION_LOCALE = "Locale";
+	
+	public static final String ARROW_UP = "\u2191";
 
 }
