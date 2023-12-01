@@ -17,6 +17,7 @@ import javax.persistence.PersistenceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.JDBCException;
+import org.hibernate.StaleObjectStateException;
 import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -121,7 +122,7 @@ public class DcemTransactionInterceptor {
 						throw new DcemException(DcemErrorCodes.DATABASE_CONNECTION_ERROR, exp.getCause().getMessage(), exp);
 					}
 				}
-				if (exp.getCause() instanceof OptimisticLockException) {
+				if (exp.getCause() instanceof OptimisticLockException || exp.getCause() instanceof StaleObjectStateException) {
 					throw new DcemException(DcemErrorCodes.OPTIMISTIC_LOCK, exp.getCause().getMessage(),exp);
 				}
 			}
