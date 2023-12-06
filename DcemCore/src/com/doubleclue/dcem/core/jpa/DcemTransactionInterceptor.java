@@ -11,11 +11,14 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.JDBCException;
+import org.hibernate.StaleObjectStateException;
+import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.hibernate.exception.ConstraintViolationException;
 
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -118,6 +121,9 @@ public class DcemTransactionInterceptor {
 					if (KaraUtils.getRootCause(exp, TimeoutException.class) != null) {
 						throw new DcemException(DcemErrorCodes.DATABASE_CONNECTION_ERROR, exp.getCause().getMessage(), exp);
 					}
+				}
+				if (exp.getCause() instanceof OptimisticLockException || exp.getCause() instanceof StaleObjectStateException) {
+					throw new DcemException(DcemErrorCodes.OPTIMISTIC_LOCK, exp.getCause().getMessage(),exp);
 				}
 			}
 			if (exp instanceof DcemException) {
