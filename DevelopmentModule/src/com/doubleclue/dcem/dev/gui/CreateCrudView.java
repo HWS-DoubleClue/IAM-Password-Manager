@@ -30,7 +30,6 @@ import com.doubleclue.dcem.dev.subjects.CreateCrudSubject;
 import com.doubleclue.dcem.system.logic.SystemModule;
 import com.doubleclue.utils.KaraUtils;
 
-
 @SuppressWarnings("serial")
 @Named("createCrudView")
 @SessionScoped
@@ -109,12 +108,17 @@ public class CreateCrudView extends DcemView {
 		String viewXhtml = null;
 
 		if (autoView == true) {
-			map.put("ViewPath", DcemConstants.AUTO_VIEW_PATH);
+			map.put("ViewPath", "\"" + DcemConstants.AUTO_VIEW_PATH + "\"");
 			map.put("EntityClass", clazz.getSimpleName());
 		} else {
 			viewXhtml = "\"/modules/" + selectedDcemModule.getId() + "/" + entityName + ".xhtml\"";
 			map.put("ViewPath", viewXhtml);
 			map.put("EntityClass", "null");
+		}
+		if (autoDialog == false) {
+			map.put("DialogPath", "\"/modules/" + selectedDcemModule.getId() + "/" + entityName + "Dialog.xhtml\"");
+		} else {
+			map.put("DialogPath", "\"null\"");
 		}
 
 		createJavaFile(clazz, map, entityName, FREEMARKER_SUBJECT_TEMPLATE, DevObjectTypes.Subject);
@@ -146,7 +150,15 @@ public class CreateCrudView extends DcemView {
 			if (viewVariable.getDcemGui().displayMode() == DisplayModes.TABLE_ONLY) {
 				continue;
 			}
-			String variableIdUpper = Character.toUpperCase(viewVariable.getId().charAt(0)) + viewVariable.getId().substring(1);
+			String variableId = viewVariable.getId();
+			String addName = "Name";
+			int ind = variableId.indexOf(".");
+			if (ind != -1) {
+				char ch = Character.toUpperCase(variableId.charAt(ind+1));
+				variableId = variableId.substring(0, ind) + ch + variableId.substring(ind+2);
+				addName ="";
+			}
+			String variableIdUpper = Character.toUpperCase(variableId.charAt(0)) + variableId.substring(1);
 			sb.append("\n");
 			sb.append(TABS);
 			sb.append("<p:outputLabel for=\"@next\" value=\"#{" + resourcBundleName + "['" + viewVariable.getId() + "']} \" />\n");
@@ -155,31 +167,30 @@ public class CreateCrudView extends DcemView {
 			switch (viewVariable.getVariableType()) {
 			case STRING:
 				if (viewVariable.getDcemGui().autoComplete()) {
-					sb.append("<p:autoComplete id=\"" + viewVariable.getId() + "\" minQueryLength=\"1\" queryDelay=\"1000\""   
-							+ " value=\"#{" + entityNameVariable + "Dialog." + viewVariable.getId() + "Name}\" completeMethod=\"#{" + entityNameVariable + "Dialog.autoComplete" 
-							+ variableIdUpper +  "}\" />\n ");
+					sb.append("<p:autoComplete id=\"" + viewVariable.getId() + "\" minQueryLength=\"1\" queryDelay=\"1000\"" + " value=\"#{"
+							+ entityNameVariable + "Dialog." + variableId + addName + "}\" completeMethod=\"#{" + entityNameVariable + "Dialog.autoComplete"
+							+ variableIdUpper + "}\" />\n ");
 					dialogMethods.append("\tpublic String get");
-					dialogMethods.append(variableIdUpper +"Name");
+					dialogMethods.append(variableIdUpper + addName);
 					dialogMethods.append("() {\n");
 					dialogMethods.append(TABS);
 					dialogMethods.append("return ");
-					dialogMethods.append(viewVariable.getId() +"Name");
-					dialogMethods.append(";\n}\n\n");	
-					
+					dialogMethods.append(variableId + addName);
+					dialogMethods.append(";\n}\n\n");
+
 					dialogMethods.append("\tpublic void set");
-					dialogMethods.append(variableIdUpper +"Name");
+					dialogMethods.append(variableIdUpper + addName);
 					dialogMethods.append("(String name) {\n");
 					dialogMethods.append(TABS);
-					dialogMethods.append("this." + viewVariable.getId()+"Name" + " = name;\n");
+					dialogMethods.append("this." + variableId + addName + " = name;\n");
 					dialogMethods.append("\treturn;\n\t}\n");
-					
+
 					dialogVariables.append("String ");
-					dialogVariables.append(viewVariable.getId()+"Name" + ";\n");
-					
-					addAutoComplete (dialogMethods, logicMethods, viewVariable, variableIdUpper, entityName);
-				} else if (viewVariable.getDcemGui().choose().length > 0 ) {
-					
-					
+					dialogVariables.append(variableId + addName + ";\n");
+
+					addAutoComplete(dialogMethods, logicMethods, viewVariable, variableIdUpper, entityName);
+				} else if (viewVariable.getDcemGui().choose().length > 0) {
+
 				} else {
 					sb.append("<p:inputText id=\"" + viewVariable.getId() + "\" required=\"" + required + "\" value=\"#{" + entityNameVariable);
 					sb.append("Dialog.actionObject." + viewVariable.getId() + "}\" />\n");
@@ -231,7 +242,8 @@ public class CreateCrudView extends DcemView {
 				String subVariable = viewVariable.getDcemGui().subClass();
 				if (subVariable == null || subVariable.isEmpty()) {
 					JsfUtils.addWarnMessage("Uknown Class Variable without a 'subClass definition: " + viewVariable.getId());
-				} sb.append("<p:outputLabel id=\"" + viewVariable.getId() + "\" style=\"color: red\" value=\" No subClass defined \" />\n");
+				}
+				sb.append("<p:outputLabel id=\"" + viewVariable.getId() + "\" style=\"color: red\" value=\" No subClass defined \" />\n");
 				break;
 			default:
 				System.out.println("CreateCrudView.createDialogTable() Unknown Type: " + viewVariable.toString());
@@ -253,11 +265,8 @@ public class CreateCrudView extends DcemView {
 		dialogMethods.append("\ttry {\n");
 		dialogMethods.append(TABS);
 		dialogMethods.append("return " + entityNameVariable + "Logic.getAutoCompleteList" + variableIdUpper + " (name, 50);\n");
-		dialogMethods.append("\t} catch (Throwable e) {\r\n"
-				+ "		JsfUtils.addErrorMessage(e.getMessage());\r\n"
-				+ "		logger.error(\"autocomplete \" + name, e);\r\n"
-				+ "		return null;\r\n"
-				+ "	}\n}\n");
+		dialogMethods.append("\t} catch (Throwable e) {\r\n" + "		JsfUtils.addErrorMessage(e.getMessage());\r\n"
+				+ "		logger.error(\"autocomplete \" + name, e);\r\n" + "		return null;\r\n" + "	}\n}\n");
 
 		logicMethods.append("\tpublic List<String> getAutoCompleteList" + variableIdUpper + " (String name, int max) {\n");
 		logicMethods.append(TABS);
@@ -267,7 +276,7 @@ public class CreateCrudView extends DcemView {
 		logicMethods.append(TABS);
 		logicMethods.append("query.setMaxResults(max);\n");
 		logicMethods.append(TABS);
-		logicMethods.append("return query.getResultList();\n}\n");		
+		logicMethods.append("return query.getResultList();\n}\n");
 		return;
 	}
 
@@ -277,7 +286,7 @@ public class CreateCrudView extends DcemView {
 		String packageName = null;
 		switch (devObjectTypes) {
 		case Dialog:
-			dcemApplication.removeFreeMarkerTemplate(clazz.getName() + devObjectTypes.name());
+//			dcemApplication.removeFreeMarkerTemplate(clazz.getName() + devObjectTypes.name());
 		case View:
 			packageName = "/gui/";
 			break;
@@ -285,7 +294,7 @@ public class CreateCrudView extends DcemView {
 			packageName = "/logic/";
 			break;
 		case Subject:
-			dcemApplication.removeFreeMarkerTemplate(clazz.getName() + devObjectTypes.name());
+//			dcemApplication.removeFreeMarkerTemplate(clazz.getName() + devObjectTypes.name());
 			packageName = "/subjects/";
 			break;
 		case DialogXhtml:
@@ -301,14 +310,15 @@ public class CreateCrudView extends DcemView {
 			freemarker.template.Template template = dcemApplication.getTemplateFromConfig(clazz.getName() + devObjectTypes.name(), templateContent);
 			File viewFile;
 			if (devObjectTypes == DevObjectTypes.DialogXhtml) {
-				String xhtmlDirectory = moduleResources + "/META-INF/resources/mgt/modules/" + selectedDcemModule.getId() + "/";
-				viewFile = new File(xhtmlDirectory + entityName + ".xhtml");
+				String dialogPath =  map.get("DialogPath");
+				String xhtmlDirectory = moduleResources + "META-INF/resources/mgt" + dialogPath.substring(1, dialogPath.length()-1);
+				viewFile = new File(xhtmlDirectory);
 			} else {
 				viewFile = new File(moduleSources + packageName + entityName + devObjectTypes.name() + ".java");
 			}
 			if (overwriteAllFiles == false) {
 				if (viewFile.exists()) {
-					throw new DevException ("File Already exists : " + viewFile.getAbsolutePath());
+					throw new DevException("File Already exists : " + viewFile.getAbsolutePath());
 				}
 			}
 			writer = new FileWriter(viewFile);

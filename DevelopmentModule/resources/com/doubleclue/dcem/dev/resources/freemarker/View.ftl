@@ -36,8 +36,8 @@ public class ${EntityName}View extends DcemView {
 	private void init() {
 		subject = ${EntityNameVariable}Subject;
 		ResourceBundle resourceBundle = JsfUtils.getBundle(DcemConstants.CORE_RESOURCE, operatorSessionBean.getLocale());		
-		addAutoViewAction(DcemConstants.ACTION_ADD, resourceBundle, ${EntityNameVariable}Dialog, ${ViewPath});
-		addAutoViewAction(DcemConstants.ACTION_EDIT, resourceBundle, ${EntityNameVariable}Dialog, ${ViewPath});
+		addAutoViewAction(DcemConstants.ACTION_ADD, resourceBundle, ${EntityNameVariable}Dialog, ${DialogPath});
+		addAutoViewAction(DcemConstants.ACTION_EDIT, resourceBundle, ${EntityNameVariable}Dialog, ${DialogPath});
 		addAutoViewAction(DcemConstants.ACTION_DELETE, resourceBundle, ${EntityNameVariable}Dialog, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);		
 	}
 
