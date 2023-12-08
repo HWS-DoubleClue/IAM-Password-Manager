@@ -410,6 +410,13 @@ public class ViewNavigator implements Serializable {
 		}
 		return allLocales;
 	}
+	
+	public String getTopComposition() {
+		if (this.activeView.getTopComposition() != null) {
+			return this.activeView.getTopComposition();
+		}
+		return "";
+	}
 
 	public boolean isGroupViewActive() {
 		if (getActiveView().getSubject().getName().equals(DcemConstants.GROUP_VIEW)) {

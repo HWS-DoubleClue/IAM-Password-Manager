@@ -113,6 +113,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	protected Object actionSubObject;
 	boolean dirty;
 	protected int maxExport = 1000;
+	
+	private String topComposition;
+
 
 	public List<AutoViewAction> getViewActions() {
 		return autoViewActions;
@@ -689,6 +692,14 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	@Override
 	public List<Predicate> getPredicates(CriteriaBuilder criteriaBuilder, Root<?> root) {
 		return new ArrayList<Predicate>();
+	}
+
+	public String getTopComposition() {
+		return topComposition;
+	}
+
+	public void setTopComposition(String topComposition) {
+		this.topComposition = topComposition;
 	}
 
 }

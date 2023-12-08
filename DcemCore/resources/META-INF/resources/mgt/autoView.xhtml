@@ -21,6 +21,8 @@
 				</p:commandButton>
 				<p:spacer width="12" />
 			</c:forEach>
+			
+			<ui:include src="#{viewNavigator.topComposition}" />
 
 			<h:panelGroup id="predfinedFilters" rendered="#{viewNavigator.isPredefinedFilters()}"
 				style="padding-top: 5px; padding-bottom: 8px; border: 1px solid lightgrey">
