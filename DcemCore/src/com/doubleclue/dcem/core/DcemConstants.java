@@ -40,7 +40,9 @@ public final class DcemConstants {
 	public static final String SHOW_MEMBEROF_DIALOG = "/modules/admin/userMemberOfDialog.xhtml";
 	public static final String GROUP_MEMBERS_DIALOG_PATH = "/modules/admin/groupMembersDialog.xhtml";
 	public static final String DEPARTMENT_ORGAMIGRAM_DIALOG = "/modules/admin/departmentOrganigramDialog.xhtml";
-	public static final String DEPARTMENT_DIALOG = "/modules/admin/departmentDialog.xhtml";;
+	public static final String DEPARTMENT_DIALOG = "/modules/admin/departmentDialog.xhtml";
+	public static final String USER_PROFILE_DIALOG = "/modules/admin/userProfileDialog.xhtml";
+	public static final String CHANGE_PASSWORD_DIALOG = "/modules/admin/changePasswordDialog.xhtml";
 
 	// public static final String SHOW_INITIAL_PASSWORD_DIALOG =
 	// "/modules/admin/showInitialPassword.xhtml";
@@ -110,6 +112,8 @@ public final class DcemConstants {
 	public static final String ACTION_DOWNLOAD_PEM = "downloadPem";
 	public static final String ACTION_CLEAR_LOG = "clearLog";
 	public static final String ACTION_SHOW_REPORT = "showReport";
+	public final static String ACTION_USER_PROFILE = "userProfile";
+	public final static String ACTION_CHANGE_PASSWORD = "changePassword";
 
 	public static final String ACTION_IMPORT_LICENCE_KEY = "importLicenceKey";
 	public static final String TEXT_RESOURCE_FILE_TYPE = ".properties";
@@ -509,5 +513,7 @@ public final class DcemConstants {
 	public static final String SESSION_LOCALE = "Locale";
 	
 	public static final String ARROW_UP = "\u2191";
+
+
 
 }

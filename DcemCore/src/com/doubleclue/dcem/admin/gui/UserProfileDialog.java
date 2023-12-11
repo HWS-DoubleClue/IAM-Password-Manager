@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,10 +38,9 @@ import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.utils.DcemUtils;
-import com.doubleclue.dcup.logic.UserPortalProfileLogic;
 import com.doubleclue.utils.KaraUtils;
 
-@Named("userProfileView")
+@Named("userProfileDialog")
 @SessionScoped
 public class UserProfileDialog extends DcemDialog {
 
@@ -163,19 +163,19 @@ public class UserProfileDialog extends DcemDialog {
 					dcemUserExtension.setTimezoneString(countryTimezone);
 				}
 				userLogic.updateUserProfile(clonedDcemUser, dcemUserExtension);
+				DcemUser dcemUser = operatorSessionBean.refeshUser();
 				if (dcemUser.isDomainUser() == true && photoProfile != null) {
 					domainLogic.changeUserPhotoProfile(dcemUser, photoProfile, null);
 				}
 				photoProfile = null;
-				portalSessionBean.changeLanguage(SupportedLanguage.toLanguageKey(lang));
+				FacesContext.getCurrentInstance().getViewRoot().setLocale(dcemUser.getLanguage().getLocale());
 				JsfUtils.addInfoMessage(resourceBundle.getString("userProfile.saveSuccessfully"));
 			} catch (DcemException exp) {
 				logger.warn("Error at profile save", exp);
 				if (exp.getErrorCode() == DcemErrorCodes.CONSTRAIN_VIOLATION_DB) {
-					JsfUtils.addErrorMessage(
-							portalSessionBean.getResourceBundle().getString("error.REGISTRATION_USER_ALREADY_EXISTS"));
+					JsfUtils.addErrorMessage(resourceBundle.getString("error.REGISTRATION_USER_ALREADY_EXISTS"));
 				} else {
-					JsfUtils.addErrorMessage(portalSessionBean.getErrorMessage(exp));
+					JsfUtils.addErrorMessage(exp.getLocalizedMessage());
 					logger.error(exp.getLocalizedMessage());
 				}
 			} catch (Exception e) {

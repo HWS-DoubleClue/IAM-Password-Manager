@@ -114,6 +114,13 @@
 	font-size: 1.0em;
 }
 
+.ui-rowgroup-header.ui-widget-header{
+	border: none;
+	background: #e5e5e5;;
+	color: #222222;
+	font-size: 1.2em;
+}
+
 .ui-widget-header ui-state-hover {
 	border: none;
 	background: #7f7f7f;

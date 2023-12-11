@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,6 +14,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.SortedSet;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -22,6 +22,7 @@ import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ListAttribute;
+import javax.persistence.metamodel.SetAttribute;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +37,7 @@ import com.doubleclue.dcem.core.jpa.VariableType;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.MethodProperty;
+import com.doubleclue.dcem.core.utils.MethodProperty.MethodPropertyType;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 
 /**
@@ -185,11 +187,23 @@ public class ViewVariable implements Serializable {
 			}
 			try {
 				lastMethodProperty = methodProperty;
-				if (methodProperty.isListObject()) {
-					List<?> list = (List<?>) methodProperty.getMethod().invoke(klassObject);
-					return list.toString();
-				} else if (klassObject != null) {
-					klassObject = methodProperty.getMethod().invoke(klassObject);
+				if (methodProperty.getObjectType() != null) {
+					switch (methodProperty.getObjectType()) {
+					case LIST:
+						List<?> list = (List<?>) methodProperty.getMethod().invoke(klassObject);
+						return list.toString();
+					case SORTEDLIST:
+						SortedSet<?> sortedSet = (SortedSet<?>) methodProperty.getMethod().invoke(klassObject);
+						return sortedSet.toString();
+					default:
+						if (klassObject != null) {
+							klassObject = methodProperty.getMethod().invoke(klassObject);
+						}
+					}
+				} else {
+					if (klassObject != null) {
+						klassObject = methodProperty.getMethod().invoke(klassObject);
+					}
 				}
 			} catch (IllegalArgumentException exp) {
 				try {
@@ -245,9 +259,10 @@ public class ViewVariable implements Serializable {
 						methodProperty.setMethod(getterMethod);
 						methodProperty.setConverter(getConverter());
 						if (attribute instanceof ListAttribute<?, ?>) {
-							methodProperty.setListObject(true);
-							/*Field field = lastKlass.getDeclaredField(attribute.getName());
-							Type[] types = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();*/
+							methodProperty.setObjectType(MethodPropertyType.LIST);
+							lastKlass = listClass;
+						} else if (attribute instanceof SetAttribute<?, ?>) {
+							methodProperty.setObjectType(MethodPropertyType.SORTEDLIST);
 							lastKlass = listClass;
 						} else {
 							lastKlass = getterMethod.getReturnType();
@@ -473,7 +488,7 @@ public class ViewVariable implements Serializable {
 	}
 
 	public String toString() {
-		return "Id=" + id + ", Type=" + variableType +  ", Filter=" + filterItem + ", Attributes=" + attributes;
+		return "Id=" + id + ", Type=" + variableType + ", Filter=" + filterItem + ", Attributes=" + attributes;
 	}
 
 	public boolean isVisible() {
