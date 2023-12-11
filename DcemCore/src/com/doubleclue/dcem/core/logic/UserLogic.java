@@ -951,5 +951,40 @@ public class UserLogic {
 		ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, timeZone.toZoneId());
 		return zonedDateTime.withZoneSameInstant(TimeZone.getDefault().toZoneId()).toLocalDateTime();
 	}
+	
+	@DcemTransactional
+	public void updateUserProfile(DcemUser clonedUser, DcemUserExtension dcemUserExtension) throws Exception {
+		DcemUser dcemUser = getUser(clonedUser.getId());
+		String changeInfo;
+		try {
+			changeInfo = DcemUtils.compareObjects(clonedUser, dcemUser);
+		} catch (DcemException e) {
+			changeInfo = e.toString();
+		}
+		dcemUser.setLoginId(clonedUser.getLoginId());
+		dcemUser.setDisplayName(clonedUser.getDisplayName());
+		dcemUser.setEmail(clonedUser.getEmail());
+		dcemUser.setPrivateEmail(clonedUser.getPrivateEmail());
+		dcemUser.setTelephoneNumber(clonedUser.getTelephoneNumber());
+		dcemUser.setMobileNumber(clonedUser.getMobile());
+		dcemUser.setPrivateMobileNumber(clonedUser.getPrivateMobileNumber());
+		dcemUser.setLanguage(clonedUser.getLanguage());
+		DcemUserExtension dcemUserExtensionDb = em.find(DcemUserExtension.class, dcemUser.getId());
+		if (dcemUserExtensionDb == null) {
+			dcemUserExtension.setId(dcemUser.getId());
+			em.persist(dcemUserExtension);
+			dcemUser.setDcemUserExt(dcemUserExtension);
+		} else {
+			if (dcemUserExtension.getPhoto() != null) {
+				dcemUserExtensionDb.setPhoto(dcemUserExtension.getPhoto());
+			}
+			dcemUserExtensionDb.setCountry(dcemUserExtension.getCountry());
+			dcemUserExtensionDb.setTimezone(dcemUserExtension.getTimezone());
+		}
+		// userLogic.updateDcemUserExtension(dcemUser, dcemUserExtension);
+		if (changeInfo != null || changeInfo.isEmpty() == false) {
+			auditingLogic.addAudit(new DcemAction(userSubject, DcemConstants.ACTION_EDIT), dcemUser, changeInfo);
+		}
+	}
 
 }
