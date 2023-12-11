@@ -48,15 +48,19 @@
 						</p:commandLink>
 					</p:menuitem>
 				</c:forEach>
-
 			</p:contextMenu>
 
-			<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}" style="float: right; margin-top: -30px" icon="fa fa-th" />
+			<div style="float: right; margin-top: -30px">
+				<h:outputText id="info" value="" class="fa fa-circle-info"  style="font-size: x-large; color: #005078"/> 
+				<p:spacer width="20" />
+				<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}"  icon="fa fa-th" />
+			</div>
+ 			<p:tooltip for="info" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
 			<p:columnToggler datasource="pTable" trigger="toggler">
 				<p:ajax event="toggle" listener="#{viewNavigator.onToggle}" />
 			</p:columnToggler>
 			<p:remoteCommand name="keyAction" update="autoForm:pTable" action="#{viewNavigator.actionSetDirty}" />
-
+			
 			<p:dataTable id="pTable" widgetVar="viewTable" paginator="true" rowsPerPageTemplate="20,30,50,100,500" rows="20" paginatorPosition="bottom"
 				value="#{autoView.lazyModel}" var="record" rowKey="#{record.id}" update="tableCount" resizableColumns="false"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" selectionMode="multiple"
@@ -75,6 +79,7 @@
 							<h:outputText value="#{item.displayName}" />
 						</h:panelGroup>
 
+
 					</f:facet>
 
 					<f:facet name="filter">
@@ -88,6 +93,7 @@
 							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()" yearNavigator="true">
 						</p:datePicker>
 						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
+
 					</f:facet>
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
 						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />
@@ -102,8 +108,9 @@
 						</ui:repeat>
 					</h:panelGroup>
 				</p:columns>
-			</p:dataTable>
 
+			</p:dataTable>
+			
 			<p:outputPanel>
 				<p:autoUpdate />
 				<p:outputLabel id="tableCount" style="text-align: left;" value="#{CoreMsg['totalCount']} #{autoView.count}">
