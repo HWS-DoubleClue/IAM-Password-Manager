@@ -286,3 +286,10 @@ ul.ui-menu-child {
 	height: 32px !important;
 }
 
+.ui-tooltip-bottom .ui-tooltip-arrow{
+	left: 80% !important;
+	margin-left: 1px !important;
+	margin-top: 2px !important;
+}
+
+
