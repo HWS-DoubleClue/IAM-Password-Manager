@@ -16,4 +16,29 @@ public class CloudSafeUploadFile {
 		this.cloudSafeEntity = cloudSafeEntity;
 	}
 
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public CloudSafeEntity getCloudSafeEntity() {
+		return cloudSafeEntity;
+	}
+
+	public void setCloudSafeEntity(CloudSafeEntity cloudSafeEntity) {
+		this.cloudSafeEntity = cloudSafeEntity;
+	}
+	
+
 }
