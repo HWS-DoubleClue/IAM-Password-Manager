@@ -51,13 +51,14 @@
 					</p:menuitem>
 				</c:forEach>
 			</p:contextMenu>
-
-			<div style="float: right; margin-top: -30px">
-				<h:outputText id="info" value="" class="fa fa-circle-info"  style="font-size: x-large; color: #005078"/> 
+ 			<p:tooltip for="info" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
+			<div style="float: right; margin-top: -35px; display: inline-block;">
+				<h:outputText id="info" value="" class="fa fa-circle-info"  style="font-size: x-large; color: #005078; vertical-align: -3px;"/> 
 				<p:spacer width="20" />
 				<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}"  icon="fa fa-th" />
 			</div>
- 			<p:tooltip for="info" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
+			<div class="testjhsdg">
+ 			</div>
 			<p:columnToggler datasource="pTable" trigger="toggler">
 				<p:ajax event="toggle" listener="#{viewNavigator.onToggle}" />
 			</p:columnToggler>
