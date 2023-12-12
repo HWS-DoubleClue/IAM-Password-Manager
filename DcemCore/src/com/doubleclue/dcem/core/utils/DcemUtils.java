@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
@@ -41,6 +40,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
@@ -71,17 +71,14 @@ import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMultipart;
-import javax.persistence.Convert;
 import javax.persistence.Persistence;
 import javax.persistence.metamodel.Attribute;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.text.RandomStringGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.component.autocomplete.AutoComplete;
 import org.primefaces.component.inputtext.InputText;
@@ -93,7 +90,6 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemAction;
-import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.entities.RoleRestriction;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -103,7 +99,6 @@ import com.doubleclue.dcem.core.gui.DcemGui;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.gui.ViewVariable;
-import com.doubleclue.dcem.core.jpa.EpochDateConverter;
 import com.doubleclue.dcem.core.jpa.FilterItem;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.jpa.VariableType;
@@ -317,7 +312,7 @@ public class DcemUtils {
 		} else {
 			// it is a Class
 			if (dcemGui.subClass().isEmpty() == false) {
-				if (cls.equals(List.class)) {
+				if (cls.equals(List.class) || cls.equals(SortedSet.class)) {
 					variableType = VariableType.LIST;
 					if (dcemGui.filterValue().isEmpty() == false) {
 						filterValue = dcemGui.filterValue();

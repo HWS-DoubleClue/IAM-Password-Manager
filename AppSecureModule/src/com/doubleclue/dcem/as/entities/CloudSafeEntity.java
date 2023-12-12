@@ -195,7 +195,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	@DcemGui
 	@Column(name = "dc_gcm", nullable = false)
-	Boolean isGcm = false;
+	Boolean isGcm = true;
 
 	@DcemGui
 	@Column(name = "recycled", nullable = false)

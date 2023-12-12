@@ -64,6 +64,9 @@ public class WelcomeView extends DcemView {
 
 	@Inject
 	ReportingView reportingView;
+	
+	@Inject
+	UserProfileDialog userProfileDialog;
 
 	private ResourceBundle resourceBundle;
 
@@ -73,6 +76,8 @@ public class WelcomeView extends DcemView {
 
 	private SelectedFormat selectedDateFormat = SelectedFormat.MONTH;
 	private LocalDate currentDate = LocalDate.now();
+	
+	
 
 	public enum Action {
 		NEXT, PREVIOUS
@@ -81,6 +86,15 @@ public class WelcomeView extends DcemView {
 	public enum SelectedFormat {
 		DAY, MONTH, YEAR;
 	};
+	
+	@PostConstruct
+	private void init() {
+		subject = welcomeSubject;
+		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
+		addAutoViewAction(DcemConstants.ACTION_USER_PROFILE, resourceBundle, userProfileDialog, DcemConstants.USER_PROFILE_DIALOG);
+		addAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD, resourceBundle, userProfileDialog, DcemConstants.CHANGE_PASSWORD_DIALOG);
+	}
+	
 
 	public LocalDate getCurrentDate() {
 		return currentDate;
@@ -142,11 +156,7 @@ public class WelcomeView extends DcemView {
 		viewNavigator.setActiveView(dcemModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER + "reportingView");
 	}
 
-	@PostConstruct
-	private void init() {
-		subject = welcomeSubject;
-		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
-	}
+	
 
 	private void setUpCharts() {
 		selectedDateFormat = SelectedFormat.MONTH;
@@ -234,4 +244,10 @@ public class WelcomeView extends DcemView {
 		setUpCharts();
 		super.reload();
 	}
+	
+	public void editProfile () {
+		this.getAutoViewAction(DcemConstants.USER_PROFILE_DIALOG);
+		viewNavigator.setActiveDialog(this.getAutoViewAction(DcemConstants.USER_PROFILE_DIALOG));
+	}
+	
 }

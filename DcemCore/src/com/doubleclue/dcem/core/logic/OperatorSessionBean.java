@@ -460,6 +460,12 @@ public class OperatorSessionBean implements Serializable {
 	public LocalDateTime getDefaultZonedTime(LocalDateTime value) {
 		return userLogic.getDefaultZonedTime(value, dcemUser);
 	}
+
+	public DcemUser refeshUser() {
+		dcemUser = userLogic.getUser(dcemUser.getId());
+		dcemUser.getDcemUserExt();
+		return dcemUser;
+	}
 	
 	
 }

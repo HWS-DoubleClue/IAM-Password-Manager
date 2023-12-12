@@ -5,12 +5,16 @@ import java.lang.reflect.Method;
 import javax.faces.convert.Converter;
 
 public class MethodProperty {
+	
+	public enum MethodPropertyType {
+		LIST, SORTEDLIST, OTHER;
+	}
 
 	String name;
 	Method method;
 	Converter converter;
 	Object klassObject = null;
-	boolean listObject;
+	MethodPropertyType objectType;
 
 	public MethodProperty(String name) {
 		this.name = name;
@@ -61,12 +65,12 @@ public class MethodProperty {
 		return "MethodProperty [name=" + name + ", method=" + method + ", converter=" + converter + ", klassObject=" + klassObject + "]";
 	}
 
-	public boolean isListObject() {
-		return listObject;
+	public MethodPropertyType getObjectType() {
+		return objectType;
 	}
 
-	public void setListObject(boolean listObject) {
-		this.listObject = listObject;
+	public void setObjectType(MethodPropertyType objectType) {
+		this.objectType = objectType;
 	}
 
 }

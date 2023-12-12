@@ -1449,6 +1449,24 @@ public class CloudSafeLogic {
 	public IAtomicLong getGlobalCloudSafeUsageTotal() {
 		return asModule.getTenantData().getGlobalCloudSafeUsageTotal();
 	}
+	
+	@DcemTransactional
+	public List<CloudSafeEntity> saveMultipleFiles(List<CloudSafeUploadFile> uploadedFiles, DcemUser dcemUser )throws Exception {
+		HashSet<String> hashSet = new HashSet<>();
+		List<CloudSafeEntity> savedFiles = new ArrayList<>();
+		for (CloudSafeUploadFile cloudSafeUploadedFile : uploadedFiles) {
+			if (hashSet.contains(cloudSafeUploadedFile.fileName)) {
+				continue;
+			}
+			if (cloudSafeUploadedFile.cloudSafeEntity.getParent() == null) {
+				cloudSafeUploadedFile.cloudSafeEntity.setParent(getCloudSafeRoot());
+			}
+			CloudSafeEntity cloudSafeEntity = setCloudSafeStream(cloudSafeUploadedFile.cloudSafeEntity , (char [])null, new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser);
+			hashSet.add(cloudSafeUploadedFile.fileName);
+			savedFiles.add(cloudSafeEntity);
+		}
+		return savedFiles;
+	}
 
 	@DcemTransactional
 	public List<CloudSafeEntity> saveMultipleFiles(List<DcemUploadFile> uploadedFiles, DcemUser dcemUser, String filePassword, LocalDateTime expiryDate,
@@ -1485,7 +1503,6 @@ public class CloudSafeLogic {
 			cloudSafeEntity.setOwner(cloudSafeOwner);
 			cloudSafeEntity.setParent(parent);
 			cloudSafeEntity.setLastModifiedUser(lastModifiedUser);
-			cloudSafeEntity.setGcm(true);
 			if (passwordProtected) {
 				if (uploadedFile.fileName.endsWith(AsConstants.EXTENSION_PASSWORD_SAFE)) {
 					throw new DcemException(DcemErrorCodes.PASSWORD_NOT_SUPPORTED_KDBX, uploadedFile.fileName);
