@@ -1665,3 +1665,110 @@ body .ui-password-panel {
 	{
 	border-color: #a80000
 }
+
+body .ui-rating .ui-rating-cancel {
+	float: none;
+	display: inline-block;
+	margin-right: 0.5rem;
+	overflow: visible
+}
+
+body .ui-rating .ui-rating-cancel.ui-state-focus {
+	outline: 0 none;
+	outline-offset: 0;
+	box-shadow: 0 0 0 .1rem #fff
+}
+
+body .ui-rating .ui-rating-cancel a {
+	font-family: "primeicons" !important;
+	font-style: normal;
+	font-weight: normal;
+	display: inline-block;
+	background: none;
+	text-indent: 0;
+	transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s, opacity .2s;
+	display: block;
+	font-size: 1.143rem;
+	height: 1.143rem;
+	width: 1.143rem;
+	color: #e4018d;
+	overflow: visible
+}
+
+body .ui-rating .ui-rating-cancel a:before {
+	content: ""
+}
+
+body .ui-rating .ui-rating-cancel a:hover {
+	color: #b5019f
+}
+
+body .ui-rating .ui-rating-star {
+	float: none;
+	display: inline-block;
+	margin-right: .2rem;
+	overflow: visible
+}
+
+body .ui-rating .ui-rating-star.ui-state-focus {
+	outline: 0 none;
+	outline-offset: 0;
+	box-shadow: 0 0 0 .1rem #fff
+}
+
+body .ui-rating .ui-rating-star a {
+	font-family: "primeicons" !important;
+	font-style: normal;
+	font-weight: normal;
+	display: inline-block;
+	background: none;
+	text-indent: 0;
+	display: block;
+	font-size: large;
+	height: 1.0rem;
+	width: 1.0rem;
+	color: #888;
+	overflow: visible
+}
+
+body .ui-rating .ui-rating-star a:before {
+	content: ""
+}
+
+body .ui-rating .ui-rating-star a:hover {
+	color: #81d4fa
+}
+
+body .ui-rating .ui-rating-star-on a {
+	font-family: "primeicons" !important;
+	font-style: normal;
+	font-weight: normal;
+	display: inline-block;
+	background: none;
+	display: block;
+	font-size: large;
+	height: 1rem;
+	width: 1rem;
+	color: yellow
+}
+
+.ui-rating.ui-fadeRating  .ui-rating-star-on  a {
+	font-family: "primeicons" !important;
+	font-style: normal;
+	font-weight: normal;
+	display: inline-block;
+	background: none;
+	display: block;
+	font-size: large;
+	height: 1rem;
+	width: 1rem;
+	color:lightyellow
+}
+
+body .ui-rating .ui-rating-star-on a:before {
+	content: ""
+}
+
+body .ui-state-highlight .ui-rating-star a {
+	color: #212529
+}

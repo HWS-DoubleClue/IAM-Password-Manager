@@ -41,7 +41,7 @@ public final class DcemConstants {
 	public static final String GROUP_MEMBERS_DIALOG_PATH = "/modules/admin/groupMembersDialog.xhtml";
 	public static final String DEPARTMENT_ORGAMIGRAM_DIALOG = "/modules/admin/departmentOrganigramDialog.xhtml";
 	public static final String DEPARTMENT_DIALOG = "/modules/admin/departmentDialog.xhtml";
-	public static final String USER_PROFILE_DIALOG = "/modules/admin/userProfileDialog.xhtml";
+	public static final String USER_PROFILE_DIALOG = "/modules/admin/userDialog.xhtml";
 	public static final String CHANGE_PASSWORD_DIALOG = "/modules/admin/changePasswordDialog.xhtml";
 
 	// public static final String SHOW_INITIAL_PASSWORD_DIALOG =
@@ -514,6 +514,6 @@ public final class DcemConstants {
 	
 	public static final String ARROW_UP = "\u2191";
 
-
+	public static final String UI_FADE_RATING_CLASS = "ui-fadeRating";
 
 }

@@ -31,9 +31,14 @@
 			</p:messages>
 
 			<h:panelGrid columns="2" cellpadding="2" cellspacing="2">
+				<h:panelGroup id="profileFoto">
+					<p:graphicImage cache="false" styleClass="imageProfileUser" value="#{userDialog.photoUserProfile}" />
+				</h:panelGroup>
+				<p:fileUpload listener="#{userDialog.photoProfileListener}" label="#{CoreMsg['uploadAndChange']}" value="#{userDialog.uploadPhotoProfile}"
+					mode="simple" skinSimple="true" immediate="true" auto="true" multiple="false" update="profileFoto" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" fileLimit="1" />
 
-				<p:outputLabel value="#{AdminMsg['type.localDomain']} " />
-				<p:selectOneRadio id="console" value="#{userDialog.userType}" disabled="#{viewNavigator.editAction}">
+				<p:outputLabel value="#{AdminMsg['type.localDomain']} " rendered="#{userDialog.userProfile == false}" />
+				<p:selectOneRadio id="console" value="#{userDialog.userType}" disabled="#{viewNavigator.editAction}" rendered="#{userDialog.userProfile == false}">
 					<f:selectItem itemLabel="#{AdminMsg['userDialog.local']} " itemValue="local" />
 					<f:selectItem itemLabel="#{AdminMsg['userDialog.domain']} " itemValue="domain" />
 					<p:ajax event="change" listener="#{userDialog.changeType}" update="@form"></p:ajax>
@@ -46,13 +51,13 @@
 				</p:inputText>
 
 				<p:outputLabel value="#{CoreMsg['loginId']} " />
-				<h:panelGroup rendered="#{userDialog.getUserType() eq 'domain'}">
+				<h:panelGroup rendered="#{(userDialog.getUserType() eq 'domain') and (userDialog.userProfile == false)}">
 					<p:selectOneMenu id="domain" value="#{userDialog.domainName}" style="vertical-align: middle;" disabled="#{viewNavigator.editAction}">
 						<f:selectItems value="#{userDialog.domainNames}" />
 						<p:ajax event="change" update="@form"></p:ajax>
 					</p:selectOneMenu>
 					<p:autoComplete id="domainLoginId" value="#{userDialog.loginId}" completeMethod="#{userDialog.completeUser}" size="50"
-						disabled="#{viewNavigator.editAction}" />
+						disabled="#{viewNavigator.editAction}" rendered="#{userDialog.userProfile == false}"  />
 				</h:panelGroup>
 				<h:panelGroup rendered="#{userDialog.getUserType() eq 'local'}">
 					<p:inputText id="name" value="#{userDialog.loginId}" required="true" disabled="#{userDialog.userOutranksOperator()}" size="50" maxlength="60"
@@ -60,8 +65,8 @@
 				</h:panelGroup>
 
 				<p:outputLabel for="password" value="#{AdminMsg['userDialog.initialPassword']} "
-					rendered="#{(userDialog.userType eq 'local') and !viewNavigator.editAction}" />
-				<p:inputText id="password" value="#{userDialog.actionObject.initialPassword}" rendered="#{(userDialog.userType eq 'local') and !viewNavigator.editAction}"
+					rendered="#{(userDialog.userType eq 'local') and !viewNavigator.editAction and userDialog.userProfile == false}" />
+				<p:inputText id="password" value="#{userDialog.actionObject.initialPassword}" rendered="#{(userDialog.userType eq 'local') and !viewNavigator.editAction and userDialog.userProfile == false}"
 					required="true" requiredMessage="#{AdminMsg['error.passwordCheck']}">
 					<f:validateLength minimum="4"></f:validateLength>
 				</p:inputText>
@@ -85,55 +90,54 @@
 				<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} " rendered="#{viewNavigator.editAction}" />
 				<p:outputLabel value="#{userDialog.actionObject.partMobileNumber}" rendered="#{viewNavigator.editAction}" />
 
-				<p:outputLabel value="#{AdminMsg['userDialog.disable']} " />
-				<p:selectBooleanCheckbox value="#{userDialog.actionObject.disabled}" disabled="#{userDialog.userOutranksOperator()}" />
+				<p:outputLabel value="#{AdminMsg['userDialog.disable']} " rendered="#{userDialog.userProfile == false}" />
+				<p:selectBooleanCheckbox value="#{userDialog.actionObject.disabled}" disabled="#{userDialog.userOutranksOperator()}" rendered="#{userDialog.userProfile == false}"  />
 
 				<p:outputLabel value="#{AdminMsg['userDialog.langauge']} " />
 				<p:selectOneMenu id="languages" value="#{userDialog.actionObject.language}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}">
 					<f:selectItems value="#{viewNavigator.supportedLanguages}" />
 				</p:selectOneMenu>
 
-				<p:outputLabel value="#{AdminMsg['userDialog.role']} " />
-				<p:selectOneMenu id="roles" value="#{userDialog.selectedRole}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}">
+				<p:outputLabel value="#{AdminMsg['userDialog.role']} " rendered="#{userDialog.userProfile == false}" />
+				<p:selectOneMenu id="roles" value="#{userDialog.selectedRole}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}" rendered="#{userDialog.userProfile == false}">
 					<f:selectItems value="#{userDialog.availableRoles}" />
 				</p:selectOneMenu>
 
 				<p:outputLabel for="@next" value="#{AdminMsg['userDialog.jobTitle']} " />
-				<p:inputText id="jobtitle" value="#{userDialog.jobTitle}" size="50" />
+				<p:inputText id="jobtitle" value="#{userDialog.jobTitle}" size="50" disabled="#{userDialog.userProfile}" />
 
 				<p:outputLabel for="country" value="#{AdminMsg['userDialog.country']} " />
-				<p:selectOneMenu id="country" value="#{userDialog.country}">
+				<p:selectOneMenu id="country" value="#{userDialog.country}" >
 					<f:selectItems value="#{userDialog.availableCountries}" />
 				</p:selectOneMenu>
 
 				<p:outputLabel for="selectTimeZone" value="#{AdminMsg['userDialog.timezone']}" />
-				<h:panelGrid id="selectTimeZone" columns="2" cellpadding="4" cellspacing="4" style="width: 100%">
+				<p:fieldset>
+					<h:panelGrid id="selectTimeZone" columns="2" cellpadding="4" cellspacing="1" >
+						<p:outputLabel for="selectDefaultTimeZone" value="#{AdminMsg['userDialog.defaultTimezone']} " />
+						<p:selectBooleanCheckbox id="selectDefaultTimeZone" value="#{userDialog.defaultTimezone}">
+							<p:ajax event="change" update="selectTimeZone" />
+						</p:selectBooleanCheckbox>
+					</h:panelGrid>
 
-					<p:outputLabel for="selectDefaultTimeZone" value="#{AdminMsg['userDialog.defaultTimezone']} " />
-					<p:selectBooleanCheckbox id="selectDefaultTimeZone" value="#{userDialog.defaultTimezone}">
-						<p:ajax event="change" update="selectTimeZone" />
-					</p:selectBooleanCheckbox>
-
-					<h:panelGrid id="selectTimeZoneContinent" columns="2" cellpadding="2" cellspacing="4" style="width: 100%">
+					<h:panelGrid id="selectTimeZoneContinent" columns="4" cellpadding="2" cellspacing="2" style="width: 100%">
 						<p:outputLabel for="timezone" value="#{AdminMsg['userDialog.timezoneContinent']}" />
 						<p:selectOneMenu id="timezone" disabled="#{userDialog.defaultTimezone}" value="#{userDialog.continentTimezone}" style="margin-left: 1em;">
 							<f:selectItems value="#{userDialog.continentTimezones}">
 							</f:selectItems>
 							<p:ajax event="change" update="timezoneCountry" />
 						</p:selectOneMenu>
-					</h:panelGrid>
 
-					<h:panelGrid id="selectTimeZoneCountry" columns="2" cellpadding="2" cellspacing="4" style="width: 100%">
 						<p:outputLabel for="timezoneCountry" value="#{AdminMsg['userDialog.timezoneCountry']}" />
 						<p:selectOneMenu id="timezoneCountry" disabled="#{userDialog.defaultTimezone}" value="#{userDialog.countryTimezone}" style="margin-left: 1em;">
 							<f:selectItems value="#{userDialog.countryTimezones}">
 							</f:selectItems>
 						</p:selectOneMenu>
 					</h:panelGrid>
-				</h:panelGrid>
+				</p:fieldset>
 
 				<p:outputLabel for="@next" value="#{AdminMsg['userDialog.department']} " />
-				<p:autoComplete id="dept" minQueryLength="1" value="#{userDialog.department}" completeMethod="#{userDialog.completeDepartment}" effect="fade" size="40" />
+				<p:autoComplete id="dept" minQueryLength="1" value="#{userDialog.department}" disabled="#{userDialog.userProfile}" completeMethod="#{userDialog.completeDepartment}" effect="fade" size="40" />
 
 				<p:outputLabel for="@next" value="#{AdminMsg['userDialog.reportsTo']} " />
 				<p:outputLabel id="reportsTo" value="#{userDialog.reportsTo}" />
@@ -143,8 +147,8 @@
 			<p />
 			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}" update="@form"
 				disabled="#{userDialog.userOutranksOperator()}" />
-			<p:spacer width="12" />
-			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" icon="fa fa-close" style="width: 8em" immediate="true"
+			<p:spacer width="20" />
+			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" icon="fa fa-close"  immediate="true"
 				action="#{viewNavigator.actionCloseDialog}" />
 		</h:form>
 	</h:body>

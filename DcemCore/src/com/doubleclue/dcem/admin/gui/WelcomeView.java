@@ -66,7 +66,7 @@ public class WelcomeView extends DcemView {
 	ReportingView reportingView;
 	
 	@Inject
-	UserProfileDialog userProfileDialog;
+	UserDialogBean userDialog;
 
 	private ResourceBundle resourceBundle;
 
@@ -91,8 +91,8 @@ public class WelcomeView extends DcemView {
 	private void init() {
 		subject = welcomeSubject;
 		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
-		addAutoViewAction(DcemConstants.ACTION_USER_PROFILE, resourceBundle, userProfileDialog, DcemConstants.USER_PROFILE_DIALOG);
-		addAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD, resourceBundle, userProfileDialog, DcemConstants.CHANGE_PASSWORD_DIALOG);
+		addAutoViewAction(DcemConstants.ACTION_USER_PROFILE, resourceBundle, userDialog, DcemConstants.USER_PROFILE_DIALOG);
+		addAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD, resourceBundle, userDialog, DcemConstants.CHANGE_PASSWORD_DIALOG);
 	}
 	
 
@@ -166,7 +166,7 @@ public class WelcomeView extends DcemView {
 
 	@Override
 	public void triggerAction(AutoViewAction autoViewAction) {
-		System.out.println("WelcomeView.triggerAction()");
+		super.triggerAction(autoViewAction);
 	}
 
 	public String getWelcomeText() {
@@ -246,8 +246,10 @@ public class WelcomeView extends DcemView {
 	}
 	
 	public void editProfile () {
-		this.getAutoViewAction(DcemConstants.USER_PROFILE_DIALOG);
-		viewNavigator.setActiveDialog(this.getAutoViewAction(DcemConstants.USER_PROFILE_DIALOG));
+		List<Object> certificates = new ArrayList<Object>();
+		certificates.add(operatorSessionBean.getDcemUser());
+		autoViewBean.setSelectedItems(certificates);
+		viewNavigator.setActiveDialog(this.getAutoViewAction(DcemConstants.ACTION_USER_PROFILE));
 	}
 	
 }

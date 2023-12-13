@@ -15,8 +15,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.file.UploadedFile;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.admin.logic.DepartmentLogic;
@@ -100,6 +102,9 @@ public class UserDialogBean extends DcemDialog {
 	private boolean defaultTimezone;
 	String department;
 	String jobTitle;
+	
+	private byte[] photoProfile;
+	private UploadedFile uploadPhotoProfile;
 
 	public boolean actionOk() throws Exception {
 		DcemUser user = (DcemUser) getActionObject();
@@ -223,7 +228,20 @@ public class UserDialogBean extends DcemDialog {
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage(e.getMessage());
 		}
-
+	}
+	
+	public StreamedContent getPhotoUserProfile() {
+		DcemUser dcemUser = (DcemUser) getActionObject();
+		DcemUserExtension userExtension = dcemUser.getDcemUserExt();
+		if (photoProfile != null) {
+			InputStream in = new ByteArrayInputStream(photoProfile);
+			return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
+		} else if (userExtension != null && userExtension.getPhoto() != null) {
+			InputStream in = new ByteArrayInputStream(userExtension.getPhoto());
+			return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
+		} else {
+			return JsfUtils.getDefaultUserImage();
+		}
 	}
 
 	public void actionDisableUser() {
@@ -477,6 +495,22 @@ public class UserDialogBean extends DcemDialog {
 		newPassword = RandomUtils.generateRandomPasswordExtAlphaNumeric(8);
 		return;		
 	}
+	
+	public void photoProfileListener(FileUploadEvent event) {
+		if (event == null) {
+			return;
+		}
+		try {
+			photoProfile = DcemUtils.resizeImage(event.getFile().getContent(), DcemConstants.IMAGE_MAX);
+		} catch (DcemException e) {
+			JsfUtils.addErrorMessage(e.getLocalizedMessage());
+			logger.error("upload photo failed " + e.toString());
+		} catch (Exception e) {
+			JsfUtils.addErrorMessage(e.toString());
+			logger.error("upload photo failed " + e.toString());
+		}
+		return;
+	}
 
 	public String getNewPassword() {
 		return newPassword;
@@ -491,7 +525,7 @@ public class UserDialogBean extends DcemDialog {
 	}
 
 	public String getHeight() {
-		return "750px";
+		return "850px";
 	}
 
 	public String getCountry() {
@@ -540,5 +574,17 @@ public class UserDialogBean extends DcemDialog {
 
 	public void setDefaultTimezone(boolean defaultTimezone) {
 		this.defaultTimezone = defaultTimezone;
+	}
+	
+	public boolean isUserProfile() {
+		return this.getAutoViewAction().getDcemAction().getAction() == DcemConstants.ACTION_USER_PROFILE;
+	}
+
+	public UploadedFile getUploadPhotoProfile() {
+		return uploadPhotoProfile;
+	}
+
+	public void setUploadPhotoProfile(UploadedFile uploadPhotoProfile) {
+		this.uploadPhotoProfile = uploadPhotoProfile;
 	}
 }
