@@ -532,7 +532,7 @@ public class UserDialogBean extends DcemDialog {
 	}
 
 	public String getHeight() {
-		return "850px";
+		return "750px";
 	}
 
 	public String getCountry() {
