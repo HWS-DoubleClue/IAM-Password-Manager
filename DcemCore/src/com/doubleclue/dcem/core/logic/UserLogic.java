@@ -802,6 +802,7 @@ public class UserLogic {
 		}
 		changePassword(dcemUser, currentPassword, newPassword);
 	}
+	
 
 	@DcemTransactional
 	public void changePassword(DcemUser dcemUser, String currentPassword, String newPassword) throws DcemException {

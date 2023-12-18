@@ -27,3 +27,10 @@
   display: block;
   margin: 0 auto 10%;
 }
+
+.imageProfileUser {
+	border: 1px solid #005078;
+	height: 8em;
+	width: 8em;
+	border-radius: 4em;
+}

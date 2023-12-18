@@ -345,7 +345,7 @@ public class OperatorSessionBean implements Serializable {
 	public void setDcemUser(DcemUser dcemUser) {
 		this.dcemUser = dcemUser;
 		loadPhotoImage();
-	}
+	} 
 
 	public String getDateTimeShortPattern() {
 		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, getLocale());

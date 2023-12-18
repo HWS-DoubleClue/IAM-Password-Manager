@@ -131,7 +131,7 @@ public abstract class DcemFilter implements Filter {
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		path = httpServletRequest.getServletPath();
 //		System.out.println("DcemFilter.doFilter() PATH: " + path);
-		if (path.startsWith("/userportal") && adminModule.isUserPortalDisabled()) {
+		if (path.startsWith("/userportal") && adminModule.isSwitchUserPortal() == false) {
 			String redirectUrl = httpServletRequest.getContextPath() + DcemConstants.WEB_MGT_CONTEXT;
 			httpServletResponse.sendRedirect(redirectUrl);
 			return;

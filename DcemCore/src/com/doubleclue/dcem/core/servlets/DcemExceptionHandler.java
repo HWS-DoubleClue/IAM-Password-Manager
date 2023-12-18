@@ -72,7 +72,7 @@ public class DcemExceptionHandler extends HttpServlet {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if (module.isUserPortalDisabled()) {
+				if (module.isSwitchUserPortal() == false) {
 					response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + DcemConstants.DEFAULT_WEB_NAME
 							+ DcemConstants.WEB_MGT_CONTEXT);
 					return;

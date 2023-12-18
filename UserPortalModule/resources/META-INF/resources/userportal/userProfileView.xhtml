@@ -2,12 +2,8 @@
 <!DOCTYPE html
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 
 
@@ -17,88 +13,51 @@
 		<h:outputStylesheet library="css" name="media.css" />
 	</h:head>
 	<h:body>
-		<h:panelGroup
-			rendered="#{portalSessionBean.isViewVisible('USER_PROFILE_VIEW')}">
+		<h:panelGroup rendered="#{portalSessionBean.isViewVisible('USER_PROFILE_VIEW')}">
 			<h:form id="userProfileForm">
 				<p />
 				<br />
-				<p:panel id="basic"
-					style="width: 650px; margin: 0 auto; border: 1px solid #d8d8d8; padding-top:1em">
+				<p:panel id="basic" style="width: 650px; margin: 0 auto; border: 1px solid #d8d8d8; padding-top:1em">
 					<p />
 					<f:facet name="header">
-						<h:outputText style="font-size: 1.2em;padding:1em !important;"
-							value="#{DcupMsg['title.modifyProfile']}" />
+						<h:outputText style="font-size: 1.2em;padding:1em !important;" value="#{DcupMsg['title.modifyProfile']}" />
 					</f:facet>
-					<h:panelGrid id="changeProfileSettings" columns="2" cellpadding="4"
-						cellspacing="4" style="width: 100%">
+					<h:panelGrid id="changeProfileSettings" columns="2" cellpadding="4" cellspacing="4" style="width: 100%">
 						<h:panelGroup id="profileFoto">
-							<p:graphicImage cache="false" styleClass="imageProfileUser"
-								value="#{userProfileView.photoUserProfile}" />
+							<p:graphicImage cache="false" styleClass="imageProfileUser" value="#{userProfileView.photoUserProfile}" />
 						</h:panelGroup>
-						<p:fileUpload listener="#{userProfileView.photoProfileListener}"
-							label="#{DcupMsg['uploadAndChange']}"
-							value="#{userProfileView.uploadPhotoProfile}" mode="simple"
-							skinSimple="true" immediate="true" auto="true" multiple="false"
-							update="profileFoto" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/"
+						<p:fileUpload listener="#{userProfileView.photoProfileListener}" label="#{DcupMsg['uploadAndChange']}" value="#{userProfileView.uploadPhotoProfile}"
+							mode="simple" skinSimple="true" immediate="true" auto="true" multiple="false" update="profileFoto" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/"
 							fileLimit="1" />
 
-						<h:outputLabel value="#{DcupMsg['label.userLoginId']}"
-							rendered="#{userProfileView.user.domainUser == true}" />
-						<h:outputLabel value="#{userProfileView.user.loginId}"
-							required="true" redisplay="true"
-							rendered="#{userProfileView.user.domainUser == true}" />
+						<h:outputLabel value="#{DcupMsg['label.userLoginId']}" rendered="#{userProfileView.user.domainUser == true}" />
+						<h:outputLabel value="#{userProfileView.user.loginId}" required="true" redisplay="true" rendered="#{userProfileView.user.domainUser == true}" />
 
-						<h:outputLabel for="name"
-							value="#{DcupMsg['label.userLoginId']}"
-							rendered="#{userProfileView.user.domainUser == false}" />
-						<p:inputText id="name" value="#{userProfileView.user.loginId}"
-							required="true" redisplay="true"
-							rendered="#{userProfileView.user.domainUser == false}" />
+						<h:outputLabel for="name" value="#{DcupMsg['label.userLoginId']}" rendered="#{userProfileView.user.domainUser == false}" />
+						<p:inputText id="name" value="#{userProfileView.user.loginId}" required="true" redisplay="true" rendered="#{userProfileView.user.domainUser == false}" />
 
-						<h:outputLabel for="displayname"
-							value="#{DcupMsg['label.fullName']}"
-							rendered="#{userProfileView.user.domainUser == false}" />
-						<p:inputText id="displayname"
-							value="#{userProfileView.user.displayName}" redisplay="true"
-							rendered="#{userProfileView.user.domainUser == false}" />
+						<h:outputLabel for="displayname" value="#{DcupMsg['label.fullName']}" rendered="#{userProfileView.user.domainUser == false}" />
+						<p:inputText id="displayname" value="#{userProfileView.user.displayName}" redisplay="true" rendered="#{userProfileView.user.domainUser == false}" />
 
-						<h:outputLabel for="mail" value="#{DcupMsg['label.emailAddress']}"
-							rendered="#{userProfileView.user.domainUser == false}" />
-						<p:inputText id="mail" style="width: 25em"
-							value="#{userProfileView.user.email}" redisplay="true"
-							required="true"
-							requiredMessage="#{DcupMsg['registration.missingEmail']}"
-							rendered="#{userProfileView.user.domainUser == false}" />
+						<h:outputLabel for="mail" value="#{DcupMsg['label.emailAddress']}" rendered="#{userProfileView.user.domainUser == false}" />
+						<p:inputText id="mail" style="width: 25em" value="#{userProfileView.user.email}" redisplay="true" required="true"
+							requiredMessage="#{DcupMsg['registration.missingEmail']}" rendered="#{userProfileView.user.domainUser == false}" />
 
-						<h:outputLabel for="privateMail"
-							value="#{DcupMsg['label.privateEmailAdress']}" />
-						<p:inputText id="privateMail" style="width: 25em"
-							value="#{userProfileView.user.privateEmail}" redisplay="true" />
+						<h:outputLabel for="privateMail" value="#{DcupMsg['label.privateEmailAdress']}" />
+						<p:inputText id="privateMail" style="width: 25em" value="#{userProfileView.user.privateEmail}" redisplay="true" />
 
-						<h:outputLabel for="phone" value="#{DcupMsg['label.phoneNumber']}"
-							rendered="#{userProfileView.user.domainUser == false}" />
-						<p:inputText id="phone"
-							value="#{userProfileView.user.telephoneNumber}" redisplay="true"
-							rendered="#{userProfileView.user.domainUser == false}" />
+						<h:outputLabel for="phone" value="#{DcupMsg['label.phoneNumber']}" rendered="#{userProfileView.user.domainUser == false}" />
+						<p:inputText id="phone" value="#{userProfileView.user.telephoneNumber}" redisplay="true" rendered="#{userProfileView.user.domainUser == false}" />
 
-						<h:outputLabel for="mobile"
-							value="#{DcupMsg['label.mobileNumber']}"
-							rendered="#{userProfileView.user.domainUser == false}" />
-						<p:inputText id="mobile"
-							value="#{userProfileView.user.mobileNumber}" redisplay="true"
-							rendered="#{userProfileView.user.domainUser == false}" />
+						<h:outputLabel for="mobile" value="#{DcupMsg['label.mobileNumber']}" rendered="#{userProfileView.user.domainUser == false}" />
+						<p:inputText id="mobile" value="#{userProfileView.user.mobileNumber}" redisplay="true" rendered="#{userProfileView.user.domainUser == false}" />
 
-						<h:outputLabel for="prvMobile" id="prvMobileInfo"
-							value="#{DcupMsg['label.prvMobile']}" />
-						<p:inputText id="prvMobile"
-							value="#{userProfileView.user.privateMobileNumber}"
-							redisplay="true" />
+						<h:outputLabel for="prvMobile" id="prvMobileInfo" value="#{DcupMsg['label.prvMobile']}" />
+						<p:inputText id="prvMobile" value="#{userProfileView.user.privateMobileNumber}" redisplay="true" />
 
 						<h:outputLabel for="language" value="#{DcupMsg['label.language']}" />
-						<p:selectOneMenu id="language" value="#{userProfileView.lang}"
-							size="20">
-							<f:selectItem itemLabel="#{DcupMsg['label.language.selectOne']}"
-								itemValue="" noSelectionOption="true" />
+						<p:selectOneMenu id="language" value="#{userProfileView.lang}" size="20">
+							<f:selectItem itemLabel="#{DcupMsg['label.language.selectOne']}" itemValue="" noSelectionOption="true" />
 							<f:selectItems value="#{userPortalModule.supportedLanguages}" />
 						</p:selectOneMenu>
 
@@ -107,50 +66,35 @@
 							<f:selectItems value="#{userProfileView.availableCountries}" />
 						</p:selectOneMenu>
 
-						<p:outputLabel for="selectTimeZone"
-							value="#{DcupMsg['label.timezone']}" />
-						<h:panelGrid id="selectTimeZone" columns="2" cellpadding="4"
-							cellspacing="4" style="width: 100%">
+						<p:outputLabel for="selectTimeZone" value="#{DcupMsg['label.timezone']}" />
+						<h:panelGrid id="selectTimeZone" columns="2" cellpadding="4" cellspacing="4" style="width: 100%">
 							<p:outputLabel value="#{DcupMsg['label.defaultTimezone']} " />
-							<p:selectBooleanCheckbox
-								value="#{userProfileView.defaultTimezone}">
+							<p:selectBooleanCheckbox value="#{userProfileView.defaultTimezone}">
 								<p:ajax event="change" update="selectTimeZone" />
 							</p:selectBooleanCheckbox>
 
+							<p:outputLabel for="timezone" value="#{DcupMsg['label.timezoneContinent']}" />
+							<p:selectOneMenu id="timezone" disabled="#{userProfileView.defaultTimezone}" value="#{userProfileView.continentTimezone}" style="margin-left: 1em;">
+								<f:selectItems value="#{userProfileView.continentTimezones}">
+								</f:selectItems>
+								<p:ajax event="change" update="timezoneCountry" />
+							</p:selectOneMenu>
 
-								<p:outputLabel for="timezone"
-									value="#{DcupMsg['label.timezoneContinent']}" />
-								<p:selectOneMenu id="timezone"
-									disabled="#{userProfileView.defaultTimezone}"
-									value="#{userProfileView.continentTimezone}"
-									style="margin-left: 1em;">
-									<f:selectItems value="#{userProfileView.continentTimezones}">
-									</f:selectItems>
-									<p:ajax event="change" update="timezoneCountry" />
-								</p:selectOneMenu>
-
-							<p:outputLabel for="timezoneCountry"
-									value="#{DcupMsg['label.timezoneCountry']}" />
-								<p:selectOneMenu id="timezoneCountry"
-									disabled="#{userProfileView.defaultTimezone}"
-									value="#{userProfileView.countryTimezone}"
-									style="margin-left: 1em;">
-									<f:selectItems value="#{userProfileView.countryTimezones}">
-									</f:selectItems>
-								</p:selectOneMenu>
+							<p:outputLabel for="timezoneCountry" value="#{DcupMsg['label.timezoneCountry']}" />
+							<p:selectOneMenu id="timezoneCountry" disabled="#{userProfileView.defaultTimezone}" value="#{userProfileView.countryTimezone}" style="margin-left: 1em;">
+								<f:selectItems value="#{userProfileView.countryTimezones}">
+								</f:selectItems>
+							</p:selectOneMenu>
 						</h:panelGrid>
 
 
-						<p:tooltip for="prvMobile"
-							value="#{DcupMsg['label.prvMobileInfo']}" />
+						<p:tooltip for="prvMobile" value="#{DcupMsg['label.prvMobileInfo']}" />
 					</h:panelGrid>
 					<p />
 					<div align="center">
 						<h:panelGroup id="saveBtn">
-							<p:commandButton id="saveUserProfile"
-								value="#{DcupMsg['button.save']}"
-								action="#{userProfileView.actionSave}" style="width: 10em"
-								icon="fa fa-save" ajax="false" update="@Form titleId">
+							<p:commandButton id="saveUserProfile" value="#{DcupMsg['button.save']}" action="#{userProfileView.actionSave}" style="width: 10em" icon="fa fa-save"
+								ajax="false" update="@Form titleId">
 							</p:commandButton>
 
 						</h:panelGroup>

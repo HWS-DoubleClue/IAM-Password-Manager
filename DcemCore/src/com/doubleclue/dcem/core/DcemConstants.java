@@ -114,6 +114,7 @@ public final class DcemConstants {
 	public static final String ACTION_SHOW_REPORT = "showReport";
 	public final static String ACTION_USER_PROFILE = "userProfile";
 	public final static String ACTION_CHANGE_PASSWORD = "changePassword";
+	public static final String ACTION_SWITCH_USER_PORTAL = "switchUserPortal";
 
 	public static final String ACTION_IMPORT_LICENCE_KEY = "importLicenceKey";
 	public static final String TEXT_RESOURCE_FILE_TYPE = ".properties";
@@ -515,5 +516,7 @@ public final class DcemConstants {
 	public static final String ARROW_UP = "\u2191";
 
 	public static final String UI_FADE_RATING_CLASS = "ui-fadeRating";
+
+	
 
 }

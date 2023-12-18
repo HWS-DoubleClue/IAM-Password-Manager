@@ -5,6 +5,7 @@ import javax.enterprise.context.ApplicationScoped;
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
+import com.doubleclue.dcem.core.logic.ActionSelection;
 import com.doubleclue.dcem.core.logic.RawAction;
 
 @ApplicationScoped
@@ -14,8 +15,9 @@ public class WelcomeSubject extends SubjectAbs {
 
 	public WelcomeSubject() {
 		
-		rawActions.add(new RawAction(DcemConstants.ACTION_USER_PROFILE, new String[] { DcemConstants.SYSTEM_ROLE_USER }));
-		rawActions.add(new RawAction(DcemConstants.ACTION_CHANGE_PASSWORD, new String[] { DcemConstants.SYSTEM_ROLE_USER }));
+		rawActions.add(new RawAction(DcemConstants.ACTION_USER_PROFILE, new String[] { DcemConstants.SYSTEM_ROLE_USER },  ActionSelection.ONE_ONLY));
+		rawActions.add(new RawAction(DcemConstants.ACTION_CHANGE_PASSWORD, new String[] { DcemConstants.SYSTEM_ROLE_USER },  ActionSelection.ONE_ONLY));
+		rawActions.add(new RawAction(DcemConstants.ACTION_SWITCH_USER_PORTAL, new String[] { DcemConstants.SYSTEM_ROLE_USER },  ActionSelection.ONE_ONLY));
 		
 		rawActions.add(new RawAction(DcemConstants.ACTION_VIEW, null));
 		rawActions.add(new RawAction(DcemConstants.ACTION_DELETE, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }));

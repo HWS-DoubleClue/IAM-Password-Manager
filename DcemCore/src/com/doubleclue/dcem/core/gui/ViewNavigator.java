@@ -269,7 +269,7 @@ public class ViewNavigator implements Serializable {
 		DefaultMenuItem menuItem;
 		for (DcemModule dcemModule : applicationBean.getSortedEnabledModules()) {
 
-			if (adminModule.isUserPortalDisabled() && dcemModule.getName().equals("UserPortal")) {
+			if (adminModule.isSwitchUserPortal() == false && dcemModule.getName().equals("UserPortal")) {
 				continue;
 			}
 

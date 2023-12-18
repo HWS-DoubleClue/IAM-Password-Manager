@@ -28,6 +28,7 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemReporting_;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemView;
@@ -37,6 +38,7 @@ import com.doubleclue.dcem.core.gui.ViewVariable;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.logic.DashboardLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
+import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 
 @SuppressWarnings("serial")
@@ -67,16 +69,23 @@ public class WelcomeView extends DcemView {
 	
 	@Inject
 	UserDialogBean userDialog;
+	
+	@Inject
+	UserPasswordDialog userPasswordDialog;
+	
+	@Inject
+	UserLogic userLogic;
 
 	private ResourceBundle resourceBundle;
 
-	static String[] actions = new String[] { DcemConstants.ACTION_VIEW };
 	private BarChartModel userActivityBarChart;
 	private PieChartModel authMethodsPieChart;
 
 	private SelectedFormat selectedDateFormat = SelectedFormat.MONTH;
 	private LocalDate currentDate = LocalDate.now();
 	
+	boolean changePasswordPermission;
+	boolean editProfilePermission;
 	
 
 	public enum Action {
@@ -91,8 +100,8 @@ public class WelcomeView extends DcemView {
 	private void init() {
 		subject = welcomeSubject;
 		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
-		addAutoViewAction(DcemConstants.ACTION_USER_PROFILE, resourceBundle, userDialog, DcemConstants.USER_PROFILE_DIALOG);
-		addAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD, resourceBundle, userDialog, DcemConstants.CHANGE_PASSWORD_DIALOG);
+		editProfilePermission = addAutoViewAction(DcemConstants.ACTION_USER_PROFILE, resourceBundle, userDialog, DcemConstants.USER_PROFILE_DIALOG);
+		changePasswordPermission = addAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD, resourceBundle, userPasswordDialog, DcemConstants.CHANGE_PASSWORD_DIALOG);
 	}
 	
 
@@ -128,7 +137,6 @@ public class WelcomeView extends DcemView {
 	}
 
 	public void itemSelect(ItemSelectEvent event) {
-
 		LocalDateTime start;
 		LocalDateTime end;
 		Integer value = event.getItemIndex();
@@ -154,9 +162,7 @@ public class WelcomeView extends DcemView {
 		viewVariable.setFilterValue(listValues);
 		DcemModule dcemModule = viewNavigator.getActiveModule();
 		viewNavigator.setActiveView(dcemModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER + "reportingView");
-	}
-
-	
+	}	
 
 	private void setUpCharts() {
 		selectedDateFormat = SelectedFormat.MONTH;
@@ -232,8 +238,6 @@ public class WelcomeView extends DcemView {
 		authMethodsPieChart = dashboardLogic.getAuthMethodsPieChart(currentDate.atStartOfDay(), selectedFormat, resourceBundle);
 	}
 
-	
-
 	public void leavingView() {
 		userActivityBarChart = null;
 		authMethodsPieChart = null;
@@ -246,10 +250,33 @@ public class WelcomeView extends DcemView {
 	}
 	
 	public void editProfile () {
-		List<Object> certificates = new ArrayList<Object>();
-		certificates.add(operatorSessionBean.getDcemUser());
-		autoViewBean.setSelectedItems(certificates);
+		userDialog.setParentView(viewNavigator.getActiveView());
+		List<Object> selectedList = new ArrayList<Object>();
+		DcemUser dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
+		selectedList.add(dcemUser);
+		autoViewBean.setSelectedItems(selectedList);
 		viewNavigator.setActiveDialog(this.getAutoViewAction(DcemConstants.ACTION_USER_PROFILE));
 	}
 	
+	public void updatePassword () {
+		userDialog.setParentView(viewNavigator.getActiveView());
+		List<Object> selectedList = new ArrayList<Object>();
+		DcemUser dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
+		selectedList.add(dcemUser);
+		autoViewBean.setSelectedItems(selectedList);
+		viewNavigator.setActiveDialog(this.getAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD));
+	}
+	
+	public boolean isChangePasswordPermission() {
+		return changePasswordPermission;
+	}
+	public void setChangePasswordPermission(boolean changePasswordPermission) {
+		this.changePasswordPermission = changePasswordPermission;
+	}
+	public boolean isEditProfilePermission() {
+		return editProfilePermission;
+	}
+	public void setEditProfilePermission(boolean editProfilePermission) {
+		this.editProfilePermission = editProfilePermission;
+	}
 }

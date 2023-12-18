@@ -20,9 +20,11 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import com.doubleclue.dcem.admin.preferences.AdminPreferences;
+import com.doubleclue.dcem.admin.subjects.WelcomeSubject;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.Auditing;
+import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemReporting;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.DepartmentEntity;
@@ -39,6 +41,7 @@ import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.GroupLogic;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.logic.module.ModulePreferences;
@@ -91,6 +94,12 @@ public class AdminModule extends DcemModule {
 	@Inject
 	DepartmentLogic departmentLogic;
 
+	@Inject
+	OperatorSessionBean operatorSessionBean;
+
+	@Inject
+	WelcomeSubject welcomeSubject;
+
 	@Override
 	public void start() throws DcemException {
 		super.start();
@@ -142,18 +151,21 @@ public class AdminModule extends DcemModule {
 		return (AdminTenantData) getModuleTenantData();
 	}
 
-	public boolean isUserPortalDisabled() {
+	public boolean isSwitchUserPortal() {
+		if (getPreferences().isDisableUserPortal() == true) {
+			return false;			
+		}
 		try {
-			if (getPreferences().isDisableUserPortal()) {
-				return true;
-			}
 			AdminTenantData adminTenantData = getTenantData();
 			if (adminTenantData.getDisabledModules() != null) {
 				for (String moduleId : adminTenantData.getDisabledModules()) {
 					if (moduleId.equals("up")) {
-						return true;
+						return false;
 					}
 				}
+			}
+			if (operatorSessionBean.isPermission(new DcemAction(welcomeSubject, DcemConstants.ACTION_SWITCH_USER_PORTAL))) {
+				return true;
 			}
 			return false;
 		} catch (Exception e) {

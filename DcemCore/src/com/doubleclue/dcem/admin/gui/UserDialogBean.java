@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -143,6 +143,7 @@ public class UserDialogBean extends DcemDialog {
 			DcemUserExtension dcemUserExtension = new DcemUserExtension();
 			dcemUserExtension.setCountry(country);
 			dcemUserExtension.setJobTitle(jobTitle);
+			dcemUserExtension.setPhoto(photoProfile);
 			if (defaultTimezone) {
 				dcemUserExtension.setTimezoneString(null);
 			} else {
@@ -150,11 +151,16 @@ public class UserDialogBean extends DcemDialog {
 			}
 			dcemUserExtension.setDepartment(departmentEntity);
 			userLogic.updateDcemUserExtension(user, dcemUserExtension);
+			if (user.getId() == operatorSessionBean.getDcemUser().getId()) {
+				FacesContext.getCurrentInstance().getViewRoot().setLocale(user.getLanguage().getLocale());
+				operatorSessionBean.setDcemUser(user);
+				viewNavigator.setMenuModel(null);  // refresh menu
+			}
 			StringUtils.wipeString(user.getInitialPassword());
 			return true;
 		}
 	}
-
+	
 	@Override
 	public void actionConfirm() throws Exception {
 		List<Object> userList = autoViewBean.getSelectedItems();
@@ -376,6 +382,7 @@ public class UserDialogBean extends DcemDialog {
 		leaving = true;
 		continentTimezone = null;
 		countryTimezone = null;
+		uploadPhotoProfile = null;
 
 	}
 
@@ -480,7 +487,7 @@ public class UserDialogBean extends DcemDialog {
 	}
 
 	public List<SelectItem> getContinentTimezones() {
-		if (defaultTimezone) {
+		if (defaultTimezone == true) {
 			setContinentAndCountryTimezone(adminModule.getTimezone());
 		}
 		return DcemUtils.getContinentTimezones();

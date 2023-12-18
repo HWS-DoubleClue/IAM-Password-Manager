@@ -33,11 +33,10 @@
 					</p:ajaxStatus></td>
 				<td style="width: 20%; text-align: right;">
 					<div style="display: block; vertical-align: middle;">
-						<h:panelGroup>
 							<h:outputText id="sessionTimeout" style="font-size: small" value="" />
 							<div style="display: inline-block; vertical-align: middle;">
 								<p:commandLink action="#{adminModule.actionRedirectionToUserPortal}" title="#{DcupMsg['title.switchToUserportal']}"
-									rendered="#{!adminModule.userPortalDisabled}">
+									rendered="#{adminModule.switchUserPortal}">
 									<i class="fa fa-exchange" style="color: white; font-size: 1.2em; margin-left: 1em" />
 								</p:commandLink>
 							</div>
@@ -56,18 +55,13 @@
 								</p:avatar>
 							</div>
 							<p:spacer width="10" />
-
 							<p:menu overlay="true" trigger="userAvatar" my="left top" at="left bottom">
-								<p:menuitem value="#{CoreMsg['titleMenu.profile']} " action="#{welcomeView.editProfile}" ajax="false" icon="fa fa-user-pen" />
-								<p:menuitem value="#{DcupMsg['title.changePasswordView']} " action="#{welcomeView.updatePassword}" icon="fa fa-key" />
+								<p:menuitem value="#{CoreMsg['titleMenu.profile']} " rendered="#{welcomeView.editProfilePermission}" action="#{welcomeView.editProfile}" ajax="true" icon="fa fa-user-pen" >
+									<p:ajax event="dialogReturn"  update="menuForm title viewPart" />
+								</p:menuitem>
+								<p:menuitem value="#{DcupMsg['title.changePasswordView']} " action="#{welcomeView.updatePassword}" icon="fa fa-key" rendered="#{welcomeView.changePasswordPermission}" />
 								<p:menuitem value="#{CoreMsg['titleMenu.logoff']} " action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" />
 							</p:menu>
-
-
-							<!-- <p:menuButton rendered="#{operatorSession.loggedIn}" value="" title="Node: #{dcemApplication.nodeName}" icon="fa fa-user">
-							<p:menuitem immediate="true" value="#{CoreMsg['menu.logoff']}" action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" ajax="true" />
-						</p:menuButton> -->
-						</h:panelGroup>
 					</div>
 				</td>
 			</tr>
