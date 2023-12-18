@@ -17,7 +17,7 @@
 				<p:autoUpdate />
 			</p:messages>
 			<p:tabView>
-				<p:tab title="Header I">
+				<p:tab title="#{CoreMsg['dialog.general']}">
 					<h:panelGrid columns="2" cellpadding="4" cellspacing="2" width="90%">
 						<h:panelGroup id="profileFoto">
 							<p:graphicImage cache="false" styleClass="imageProfileUser" value="#{userDialog.photoUserProfile}" />
@@ -89,7 +89,7 @@
 
 					</h:panelGrid>
 				</p:tab>
-				<p:tab title="Locale">
+				<p:tab title="#{CoreMsg['dialog.location']}">
 					<h:panelGrid columns="2" cellpadding="4" cellspacing="2" width="90%">
 						<p:outputLabel value="#{AdminMsg['userDialog.langauge']} " />
 						<p:selectOneMenu id="languages" value="#{userDialog.actionObject.language}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}">
@@ -127,7 +127,7 @@
 						</p:fieldset>
 					</h:panelGrid>
 				</p:tab>
-				<p:tab title="Position">
+				<p:tab title="#{CoreMsg['dialog.position']}">
 					<h:panelGrid columns="2" cellpadding="4" cellspacing="2" width="90%">
 						<p:outputLabel for="@next" value="#{AdminMsg['userDialog.department']} " />
 						<p:autoComplete id="dept" minQueryLength="1" value="#{userDialog.department}" disabled="#{userDialog.userProfile}"
