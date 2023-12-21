@@ -48,10 +48,10 @@
 					<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{item.enabledInherit}" />
 					<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{item.enabledInherit == false}" />
 				</p:column>
-				<p:column headerText="Path" sortBy="#{item.path}">
+				<p:column headerText="#{CoreMsg['clusterConfig.path']}" sortBy="#{item.path}">
 					<h:outputText value="#{item.connectionServicesType.path}" />
 				</p:column>
-				<p:column headerText="Ext. Port" sortBy="#{item.path}">
+				<p:column headerText="#{CoreMsg['clusterConfig.extPort']}" sortBy="#{item.path}">
 					<h:outputText value="#{item.externalPort}" />
 				</p:column>
 			</p:dataTable>

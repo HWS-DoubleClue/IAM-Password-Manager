@@ -151,7 +151,7 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 	private String info;
 
 	@Column(name = "show_on_dashboard", nullable = false)
-	@DcemGui(name = "On Dashboard", visible = false)
+	@DcemGui(visible = false)
 	private boolean showOnDashboard;
 
 	

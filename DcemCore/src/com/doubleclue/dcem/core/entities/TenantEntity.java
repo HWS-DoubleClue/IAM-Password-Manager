@@ -62,7 +62,7 @@ public class TenantEntity extends EntityInterface implements Serializable  {
 	
 	@Column(name = "dc_schema", length=32, updatable = false)
 	@Pattern (regexp = "^[a-zA-Z][0-9a-zA-Z_-]*$", message = "{tenant.config.dbname.invalid}" )
-	@DcemGui (name="DB-Schema Name")
+	@DcemGui
 	private String schema;
 
 	@Column(name = "dc_disabled", updatable = true)
