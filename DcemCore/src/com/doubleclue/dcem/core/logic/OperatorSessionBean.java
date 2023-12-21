@@ -6,15 +6,12 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -27,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.LazyInitializationException;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -96,11 +94,9 @@ public class OperatorSessionBean implements Serializable {
 	List<DcemGroup> userGroups;
 
 	Map<String, String> userSettings;
-	
-	
+		
 	byte[] image = null;
-	
-	
+		
 
 	/**
 	 * 
@@ -448,9 +444,14 @@ public class OperatorSessionBean implements Serializable {
 	public Map<String, String> getUserSettings() {
 		return userSettings;
 	}
-
-	public void setUserSettings(Map<String, String> userSettings) {
-		this.userSettings = userSettings;
+	
+	public String getLocalStorageUserSetting(String key) {
+		return userSettings.get(key);
+	}
+	
+	public void setLocalStorageUserSetting (String key, String value) throws Exception {
+		userSettings.put(key, value);
+		PrimeFaces.current().executeScript("localStorage.setItem('userSettings', '" + getUserSettingsToString() + "')");
 	}
 
 	public LocalDateTime getUserZonedTime(LocalDateTime value) {
