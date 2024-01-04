@@ -9,7 +9,6 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
-
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -27,9 +26,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import com.doubleclue.dcem.core.DcemConstants;
-import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 
 @ApplicationScoped
 @Named("clientRestApi")
