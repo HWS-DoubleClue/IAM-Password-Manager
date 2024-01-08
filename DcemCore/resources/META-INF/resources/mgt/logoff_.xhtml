@@ -25,10 +25,10 @@
 			</div>
 
 			<div class="box" style="width: 100%; height: 100%;position: absolute;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
-				<div style="padding-left: 5em; padding-top: 2em; text-align: left; height: 2em; font-size: 27px;"></div>
+				<div style="padding-left: 5em; padding-top: 0em; text-align: left; height: 2em; font-size: large;"></div>
 				<p></p>
 				<h:form>
-					<div style="margin: 100px">
+					<div style="margin-left: 10em">
 						<p></p>
 						<h:outputLabel class="fa fa-sign-out" style="font-size: 1.4em; color: #445686; margin-right: 8px; margin-top: 20px;" />
 						<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.logoff.text']}" />
@@ -55,7 +55,7 @@
 						</h:panelGroup>
 						<p />
 						<p:spacer height="50" />
-						<p:commandLink styleClass="logoutInverseText" action="#{mfaLoginView.clearCache()}" immediate="true">
+						<p:commandLink styleClass="logoutInverseText" style="font-size: 1em !Important; position: fixed; bottom: 50px" action="#{mfaLoginView.clearCache()}" immediate="true">
 							<h:outputLabel  class="fa fa-eraser" />
 							<h:outputLabel  value=" #{CoreMsg['title.clearCache']}"  />
 						</p:commandLink>

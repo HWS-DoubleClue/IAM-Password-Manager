@@ -24,12 +24,12 @@
 			</div>
 
 			<div class="box" style="width: 100%; height: 100%;position: absolute;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
-				<div style="padding-left: 5em; padding-top: 2em; text-align: left; height: 2em; font-size: 27px;"></div>
+				<div style="padding-left: 5em; text-align: left; height: 2em; font-size: large;"></div>
 				<p></p>
 				<h:outputLabel class="fa fa-hourglass-end" style="font-size: 1.4em; color: #445686; margin-left: 100px; margin-right: 8px; margin-top: 20px;"></h:outputLabel>
 				<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.error.label.expired']}" />
 				<h:form>
-					<div style="margin: 100px">
+					<div style="margin-left: 10em">
 						<p></p>
 						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso eq false}" />
 						<p:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />
@@ -47,8 +47,8 @@
 								action="#{mfaLoginView.actionAzureLogin}" />
 						</h:panelGroup>
 						<p />
-						<p:spacer height="50" />
-						<p:commandLink styleClass="logoutInverseText" action="#{mfaLoginView.clearCache()}" immediate="true">
+						<p:spacer height="100" />
+						<p:commandLink styleClass="logoutInverseText" style="font-size: 1em !Important; position: fixed; bottom: 50px" action="#{mfaLoginView.clearCache()}" immediate="true">
 							<h:outputLabel class="fa fa-eraser" />
 							<h:outputLabel value=" #{CoreMsg['title.clearCache']}" />
 						</p:commandLink>
