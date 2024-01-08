@@ -626,6 +626,7 @@ public class AuthenticationLogic {
 				if ((exp.getErrorCode() == DcemErrorCodes.DB_TRANSACTION_ERROR) && (exp.getCause() instanceof GraphServiceException)) {
 					throw new DcemException(DcemErrorCodes.CREATE_ACCOUNT_INVALID_CREDENTIALS, null, exp.getCause());
 				}
+				throw exp;
 			}
 		} else {
 			dcemUser = domainLogic.getUser(dcemUser.getDomainEntity().getName(), dcemUser.getAccountName());
