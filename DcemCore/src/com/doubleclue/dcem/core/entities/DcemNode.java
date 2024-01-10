@@ -74,8 +74,8 @@ public class DcemNode extends EntityInterface implements Serializable {
 	String address;
 	
 	@Transient
-	@DcemGui(name= "Health-Check Stopped", displayMode = DisplayModes.TABLE_ONLY)
-	String healthCheck;
+//	@DcemGui(name= "Health-Check Stopped", displayMode = DisplayModes.TABLE_ONLY)
+//	String healthCheck;
 
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY)
 	LocalDateTime startedOn;
@@ -158,12 +158,12 @@ public class DcemNode extends EntityInterface implements Serializable {
 		return name;
 	}
 
-	public String getHealthCheck() {
-		if (DcemCluster.getDcemCluster().getDcemNode().name.equals(this.getName()))  {
-			return HealthCheckServlet.getStopHealthCheck().toString();
-		}
-		return "Unknown";
-	}
+//	public String getHealthCheck() {
+//		if (DcemCluster.getDcemCluster().getDcemNode().name.equals(this.getName()))  {
+//			return HealthCheckServlet.getStopHealthCheck().toString();
+//		}
+//		return "Unknown";
+//	}
 
 	
 

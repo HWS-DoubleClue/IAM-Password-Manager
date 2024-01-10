@@ -18,15 +18,16 @@ public class NodeSubject extends SubjectAbs {
 		rawActions.add(new RawAction(DcemConstants.ACTION_ADD, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN}, ActionSelection.IGNORE));
 		rawActions.add(new RawAction(DcemConstants.ACTION_EDIT, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN}, ActionSelection.ONE_ONLY));
 		rawActions.add(new RawAction(DcemConstants.ACTION_DELETE, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN }, ActionSelection.ONE_ONLY));
-		RawAction rawAction = new RawAction(DcemConstants.ACTION_STOP_HEALTHCHECK, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN }, ActionSelection.ONE_ONLY);
-		rawAction.setActionType(ActionType.EL_METHOD);
-		rawAction.setElMethodExpression("#{nodeDialog.actionStopHealthCheck()}");
-		rawActions.add(rawAction);
 		
-		rawAction = new RawAction(DcemConstants.ACTION_START_HEALTHCHECK, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN }, ActionSelection.ONE_ONLY);
-		rawAction.setActionType(ActionType.EL_METHOD);
-		rawAction.setElMethodExpression("#{nodeDialog.actionStartHealthCheck()}");		
-		rawActions.add(rawAction);
+//		RawAction rawAction = new RawAction(DcemConstants.ACTION_STOP_HEALTHCHECK, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN }, ActionSelection.ONE_ONLY);
+//		rawAction.setActionType(ActionType.EL_METHOD);
+//		rawAction.setElMethodExpression("#{nodeDialog.actionStopHealthCheck()}");
+//		rawActions.add(rawAction);
+//		
+//		rawAction = new RawAction(DcemConstants.ACTION_START_HEALTHCHECK, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN }, ActionSelection.ONE_ONLY);
+//		rawAction.setActionType(ActionType.EL_METHOD);
+//		rawAction.setElMethodExpression("#{nodeDialog.actionStartHealthCheck()}");		
+//		rawActions.add(rawAction);
 	
 		rawActions.add(new RawAction(DcemConstants.ACTION_VIEW,
 				new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }));
