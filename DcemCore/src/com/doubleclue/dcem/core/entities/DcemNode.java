@@ -74,7 +74,7 @@ public class DcemNode extends EntityInterface implements Serializable {
 	String address;
 	
 	@Transient
-	@DcemGui(name= "Health-Check Stopped")
+	@DcemGui(name= "Health-Check Stopped", displayMode = DisplayModes.TABLE_ONLY)
 	String healthCheck;
 
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY)
