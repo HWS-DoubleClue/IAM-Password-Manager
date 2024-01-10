@@ -25,6 +25,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.gui.DcemGui;
+import com.doubleclue.dcem.core.servlets.HealthCheckServlet;
 import com.doubleclue.dcem.core.utils.DisplayModes;
 import com.doubleclue.dcem.system.logic.NodeState;
 import com.hazelcast.core.Member;
@@ -71,6 +72,10 @@ public class DcemNode extends EntityInterface implements Serializable {
 	@Transient
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY)
 	String address;
+	
+	@Transient
+	@DcemGui(name= "Health-Check Stopped")
+	String healthCheck;
 
 	@DcemGui(displayMode = DisplayModes.TABLE_ONLY)
 	LocalDateTime startedOn;
@@ -152,5 +157,14 @@ public class DcemNode extends EntityInterface implements Serializable {
 	public String toString() {
 		return name;
 	}
+
+	public String getHealthCheck() {
+		if (DcemCluster.getDcemCluster().getDcemNode().name.equals(this.getName()))  {
+			return HealthCheckServlet.getStopHealthCheck().toString();
+		}
+		return "Unknown";
+	}
+
+	
 
 }

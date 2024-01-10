@@ -3,8 +3,9 @@ package com.doubleclue.dcem.core.servlets;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,11 +16,14 @@ import org.apache.logging.log4j.Logger;
 
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.config.ConnectionServicesType;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
+import com.doubleclue.dcem.core.tasks.ReloadClassInterface;
 
 @SuppressWarnings("serial")
-@SessionScoped
-public class HealthCheckServlet extends HttpServlet {
+@ApplicationScoped
+@Named ("healthCheckServlet")
+public class HealthCheckServlet extends HttpServlet implements ReloadClassInterface {
 
 	private static final Logger logger = LogManager.getLogger(HealthCheckServlet.class);
 
@@ -27,6 +31,8 @@ public class HealthCheckServlet extends HttpServlet {
 	DcemApplicationBean applicationBean;
 
 	int healthCheckPort;
+	
+	static Boolean stopHealthCheck = false;
 
 	@Override
 	public void init() throws ServletException {
@@ -60,8 +66,21 @@ public class HealthCheckServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
+		if (stopHealthCheck == true) {
+			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			return;
+		}
 		response.getOutputStream().write("OK\n".getBytes("UTF-8"));
 		response.getOutputStream().write(new Date().toString().getBytes("UTF-8"));
+	}
+
+	@Override
+	public void reload(String information) throws DcemException {
+		stopHealthCheck = new Boolean (information);
+	}
+
+	public static Boolean getStopHealthCheck() {
+		return stopHealthCheck;
 	}
 
 }

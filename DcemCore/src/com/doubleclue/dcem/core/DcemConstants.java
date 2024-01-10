@@ -78,6 +78,8 @@ public final class DcemConstants {
 	public static final String ACTION_SHOW_PN_TOKEN = "showPushNotificationToken";
 	public final static String ACTION_EXCEL_EXPORT_ALL = "excelExportAll";
 	public static final String ACTION_START = "start";
+	public static final String ACTION_START_HEALTHCHECK = "startHealthCheck";
+	public static final String ACTION_STOP_HEALTHCHECK = "stopHealthCheck";
 	public static final String ACTION_AZURE_MIGRATION = "azureMigration";
 
 	public final static String AUTO_DIALOG_ID = "AUTO_DIALOG";

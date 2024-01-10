@@ -1621,27 +1621,23 @@ public class DcemUtils {
 				return exception;
 			}
 		}
-
-		//
-		//
-		// Map<Member, Future<Exception>> results =
-		// executorService.submitToAllMembers(new ReloadTask(className, tenantName));
-		// Exception exception = null;
-		// for (Member member : results.keySet()) {
-		// Future<Exception> future = results.get(member);
-		// try {
-		// exception = future.get();
-		// if (exception != null) {
-		// logger.warn("Member: " + member.getAddress() + " Reloading: " + className +
-		// ", " + exception.toString());
-		// return exception;
-		// }
-		// } catch (Exception e) {
-		// logger.warn("Member: " + member.getAddress() + " Reloading: " + className +
-		// ", " + e.toString());
-		// return e;
-		// }
-		// }
+		return null;
+	}
+	
+	public static Exception reloadTaskNode(Class<?> klass, String tenantName, String info, Member member) {
+		IExecutorService executorService = DcemCluster.getDcemCluster().getExecutorService();
+		Future<Exception> future = executorService.submitToMember(new ReloadTask(klass.getAnnotation(Named.class).value(), tenantName, info), member);
+		Exception exception = null;
+			try {
+				exception = future.get();
+			} catch (Exception e) {
+				logger.warn("Member: " + member.getAddress() + "  Reloading: " + klass.getName() + ", " + e.toString());
+				return e;
+			}
+			if (exception != null) {
+				logger.warn("Member: " + member.getAddress() + "  Reloading: " + klass.getName() + ", " + exception.toString());
+				return exception;
+			}
 		return null;
 	}
 
