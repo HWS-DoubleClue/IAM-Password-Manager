@@ -32,13 +32,13 @@
 							<p:ajax event="change" listener="#{userDialog.changeType}" update="@form"></p:ajax>
 						</p:selectOneRadio>
 
-						<p:outputLabel value="#{AdminMsg['userDialog.displayName']} " />
-						<p:inputText id="displayName" value="#{userDialog.actionObject.displayName}" required="#{userDialog.getUserType() eq 'local'}" size="50"
-							disabled="#{userDialog.userOutranksOperator()}" requiredMessage="#{AdminMsg['error.displayNameCheck']}" maxlength="60">
+						<p:outputLabel for="displayName" value="#{AdminMsg['userDialog.displayName']} " />
+						<p:inputText id="displayName" value="#{userDialog.actionObject.displayName}" rendered="#{userDialog.getUserType() eq 'local'}" size="50"
+							disabled="#{userDialog.userOutranksOperator()}" required="true" requiredMessage="#{AdminMsg['error.displayNameCheck']}" maxlength="60">
 							<f:validateLength minimum="4"></f:validateLength>
 						</p:inputText>
 
-						<p:outputLabel value="#{CoreMsg['loginId']} " />
+						<p:outputLabel for="name" value="#{CoreMsg['loginId']} " />
 						<h:panelGroup rendered="#{userDialog.getUserType() eq 'domain'}">
 							<p:selectOneMenu id="domain" value="#{userDialog.domainName}" style="vertical-align: middle;" disabled="#{viewNavigator.addAction == false}">
 								<f:selectItems value="#{userDialog.domainNames}" />
