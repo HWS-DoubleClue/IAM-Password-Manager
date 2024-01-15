@@ -43,8 +43,8 @@ public class NodeView extends DcemView {
 		
 		addAutoViewAction( DcemConstants.ACTION_ADD,  resourceBundle, nodeDialog, null);
 		addAutoViewAction( DcemConstants.ACTION_EDIT,  resourceBundle, nodeDialog, null);
-		addAutoViewAction( DcemConstants.ACTION_STOP_HEALTHCHECK,  resourceBundle, nodeDialog, null);
-		addAutoViewAction( DcemConstants.ACTION_START_HEALTHCHECK,  resourceBundle, nodeDialog, null);
+//		addAutoViewAction( DcemConstants.ACTION_STOP_HEALTHCHECK,  resourceBundle, nodeDialog, null);
+//		addAutoViewAction( DcemConstants.ACTION_START_HEALTHCHECK,  resourceBundle, nodeDialog, null);
 		addAutoViewAction( DcemConstants.ACTION_DELETE,  resourceBundle, nodeDialog, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);
 //
 //
