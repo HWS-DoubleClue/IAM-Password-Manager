@@ -99,7 +99,6 @@
 							<goal>attach-artifact</goal>
 						</goals>
 						<configuration>
-
 							<artifacts>
 								<artifact>
 									<file>target/DCEM-${project.version}.exe</file>
