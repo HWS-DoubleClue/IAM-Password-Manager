@@ -48,14 +48,9 @@
 							<p:commandLink styleClass="logoutInverseText" ajax="false" value=" #{AdminMsg['mfalogin.azureLogin.button']}" action="#{mfaLoginView.actionAzureLogin}" />
 						</h:panelGroup>
 						<p />
-						<h:panelGroup>
-							<p></p>
-							<img src="#{resource['pictures/azure.png']}" />
-							<p:commandLink styleClass="logoutInverseText" ajax="false" value=" #{AdminMsg['mfalogin.azureLogin.button']}" action="#{mfaLoginView.clearCache}" />
-						</h:panelGroup>
-						<p />
+
 						<p:spacer height="50" />
-						<p:commandLink styleClass="logoutInverseText" style="font-size: 1em !Important; position: fixed; bottom: 50px" action="#{mfaLoginView.clearCache()}" immediate="true">
+						<p:commandLink styleClass="logoutInverseText" style="font-size: 1em !Important; position: fixed; bottom: 50px" action="#{logoffView.clearCache()}" immediate="true">
 							<h:outputLabel  class="fa fa-eraser" />
 							<h:outputLabel  value=" #{CoreMsg['title.clearCache']}"  />
 						</p:commandLink>

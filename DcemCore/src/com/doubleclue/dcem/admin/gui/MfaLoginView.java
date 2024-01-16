@@ -99,10 +99,5 @@ public class MfaLoginView extends LoginViewAbstract {
 		PrimeFaces.current().ajax().update("loginForm");
 	}
 	
-	public void clearCache() {
-		JsfUtils.addInfoMessage(adminResourceBundle.getString("browserCacheCleared"));
-		PrimeFaces.current().executeScript("localStorage.clear();");
-	}
-
-
+	
 }
