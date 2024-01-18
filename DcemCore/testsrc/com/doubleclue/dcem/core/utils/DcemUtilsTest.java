@@ -1,14 +1,9 @@
 package com.doubleclue.dcem.core.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.util.HashMap;
-
-import org.junit.Test;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import com.doubleclue.dcem.core.exceptions.DcemException;
-
 public class DcemUtilsTest {
 
 //	@Test
@@ -107,14 +102,14 @@ public class DcemUtilsTest {
 		try {
 			result = DcemUtils.processTemplate(template1, map);
 		} catch (DcemException e) {
-			fail("Template1 failed");
+			Assertions.fail("Template1 failed");
 		}
-		assertEquals(result, "FIRST PART EnterpriseClient bla 10.10 LASTPART");
+		Assertions.assertEquals(result, "FIRST PART EnterpriseClient bla 10.10 LASTPART");
 		
 		map.remove("version");
 		try {
 			result = DcemUtils.processTemplate(template1, map);
-			fail("Template1 should have thrown an exception");
+			Assertions.fail("Template1 should have thrown an exception");
 		} catch (DcemException e) {
 			
 		}
@@ -125,7 +120,7 @@ public class DcemUtilsTest {
 		} catch (DcemException e) {
 			return;
 		}
-		fail("Bad Template should return an exception");
+		Assertions.fail("Bad Template should return an exception");
 		
 		
 	}
