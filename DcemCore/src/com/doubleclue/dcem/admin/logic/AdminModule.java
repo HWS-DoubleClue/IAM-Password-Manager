@@ -164,10 +164,10 @@ public class AdminModule extends DcemModule {
 					}
 				}
 			}
-			if (operatorSessionBean.isPermission(new DcemAction(welcomeSubject, DcemConstants.ACTION_SWITCH_USER_PORTAL))) {
-				return true;
+			if (operatorSessionBean.isLoggedIn() == true && operatorSessionBean.isPermission(new DcemAction(welcomeSubject, DcemConstants.ACTION_SWITCH_USER_PORTAL)) == false) {
+				return false;
 			}
-			return false;
+			return true;
 		} catch (Exception e) {
 			logger.error(e);
 			return false;
