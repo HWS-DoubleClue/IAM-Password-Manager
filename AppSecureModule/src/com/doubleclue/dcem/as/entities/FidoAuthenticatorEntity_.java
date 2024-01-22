@@ -1,12 +1,12 @@
 package com.doubleclue.dcem.as.entities;
 
 import com.doubleclue.dcem.core.entities.DcemUser;
-import java.util.Date;
+import java.time.LocalDateTime;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2019-12-06T22:31:53.966+0100")
+@Generated(value="Dali", date="2024-01-22T11:19:06.468+0100")
 @StaticMetamodel(FidoAuthenticatorEntity.class)
 public class FidoAuthenticatorEntity_ {
 	public static volatile SingularAttribute<FidoAuthenticatorEntity, Integer> id;
@@ -15,6 +15,6 @@ public class FidoAuthenticatorEntity_ {
 	public static volatile SingularAttribute<FidoAuthenticatorEntity, String> credentialId;
 	public static volatile SingularAttribute<FidoAuthenticatorEntity, byte[]> publicKey;
 	public static volatile SingularAttribute<FidoAuthenticatorEntity, Boolean> passwordless;
-	public static volatile SingularAttribute<FidoAuthenticatorEntity, Date> registeredOn;
-	public static volatile SingularAttribute<FidoAuthenticatorEntity, Date> lastUsed;
+	public static volatile SingularAttribute<FidoAuthenticatorEntity, LocalDateTime> registeredOn;
+	public static volatile SingularAttribute<FidoAuthenticatorEntity, LocalDateTime> lastUsed;
 }

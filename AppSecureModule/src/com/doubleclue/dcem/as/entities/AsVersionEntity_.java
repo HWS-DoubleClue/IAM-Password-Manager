@@ -2,12 +2,12 @@ package com.doubleclue.dcem.as.entities;
 
 import com.doubleclue.comm.thrift.ClientType;
 import com.doubleclue.dcem.core.entities.DcemUser;
-import java.util.Date;
+import java.time.LocalDateTime;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2021-08-16T07:59:43.002+0200")
+@Generated(value="Dali", date="2024-01-22T11:19:06.424+0100")
 @StaticMetamodel(AsVersionEntity.class)
 public class AsVersionEntity_ {
 	public static volatile SingularAttribute<AsVersionEntity, Integer> id;
@@ -15,7 +15,7 @@ public class AsVersionEntity_ {
 	public static volatile SingularAttribute<AsVersionEntity, ClientType> clientType;
 	public static volatile SingularAttribute<AsVersionEntity, String> versionStr;
 	public static volatile SingularAttribute<AsVersionEntity, DcemUser> user;
-	public static volatile SingularAttribute<AsVersionEntity, Date> expiresOn;
+	public static volatile SingularAttribute<AsVersionEntity, LocalDateTime> expiresOn;
 	public static volatile SingularAttribute<AsVersionEntity, String> downloadUrl;
 	public static volatile SingularAttribute<AsVersionEntity, String> informationUrl;
 	public static volatile SingularAttribute<AsVersionEntity, Integer> version;
