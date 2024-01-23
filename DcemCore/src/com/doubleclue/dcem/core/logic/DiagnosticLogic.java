@@ -120,7 +120,7 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	@DcemTransactional
 	public void saveNodeStatistics(LocalDateTime date) throws JsonProcessingException {
 		DcemStatistic semStatistic = new DcemStatistic();
-		semStatistic.setTimestamp(removeSeconds(date));
+		semStatistic.setTimestamp(resetSeconds(date));
 		semStatistic.setDcemNode(DcemCluster.getDcemCluster().getDcemNode());
 		ObjectMapper objectMapper = new ObjectMapper();
 
@@ -323,8 +323,8 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		return result;
 	}
 
-	private LocalDateTime removeSeconds(LocalDateTime date) {
-		return date.truncatedTo(ChronoUnit.SECONDS);
+	private LocalDateTime resetSeconds(LocalDateTime date) {
+		return date.truncatedTo(ChronoUnit.MINUTES);
 	}
 
 	public DateFormat getDateFormat() {

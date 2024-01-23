@@ -20,9 +20,7 @@ public class CallGetStatistics implements Callable<List<ModuleStatistic>>, Seria
 
 		try {
 			Thread.currentThread().setName(this.getClass().getSimpleName());
-
 			requestContext = WeldContextUtils.activateRequestContext();
-
 			DiagnosticLogic diagnosticLogic = CdiUtils.getReference(DiagnosticLogic.class);
 			return diagnosticLogic.getNodeStatistics(true);
 		} finally {
