@@ -17,7 +17,7 @@ public class WelcomeSubject extends SubjectAbs {
 		
 		rawActions.add(new RawAction(DcemConstants.ACTION_USER_PROFILE, new String[] { DcemConstants.SYSTEM_ROLE_USER },  ActionSelection.ONE_ONLY));
 		rawActions.add(new RawAction(DcemConstants.ACTION_CHANGE_PASSWORD, new String[] { DcemConstants.SYSTEM_ROLE_USER },  ActionSelection.ONE_ONLY));
-		rawActions.add(new RawAction(DcemConstants.ACTION_SWITCH_USER_PORTAL, new String[] { DcemConstants.SYSTEM_ROLE_USER },  ActionSelection.ONE_ONLY));
+		rawActions.add(new RawAction(DcemConstants.ACTION_SWITCH_USER_PORTAL, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN, DcemConstants.SYSTEM_ROLE_HELPDESK, DcemConstants.SYSTEM_ROLE_VIEWER, DcemConstants.SYSTEM_ROLE_USER },  ActionSelection.ONE_ONLY));
 		
 		rawActions.add(new RawAction(DcemConstants.ACTION_VIEW, null));
 		rawActions.add(new RawAction(DcemConstants.ACTION_DELETE, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }));
