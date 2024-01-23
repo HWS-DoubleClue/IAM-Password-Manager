@@ -38,13 +38,11 @@
 							<p:autoUpdate />
 						</p:messages>
 						<br />
-						<h:outputLabel style="font-size: 2em" class="fa fa-info" />
-						<p:outputLabel value="#{registerView.userInfo}" escape="false" />
-						<p />
 						<p:panel cellpadding="2" cellspacing="2" layout="grid">
 							<p:outputLabel for="name" value="#{DcupMsg['label.username']}" />
 							<p:inputText id="name" value="#{registerView.userId}" maxlength="64" required="true" style="margin-left:1em;width: 18em"
 								requiredMessage="#{DcupMsg['registration.missingUserName']}" autocomplete="off" />
+							<br />
 							<p:captcha id="captcha" label="Captcha" rendered="#{userPortalModule.enableCaptcha}" language="#{portalSessionBean.localeStr}}" />
 							<h:outputText value="" rendered="#{userPortalModule.enableCaptcha}" />
 						</p:panel>						
