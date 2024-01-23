@@ -16,6 +16,17 @@
 	<h:outputStylesheet library="css" name="media.css" />
 </h:head>
 
+<style>
+.ui-g {
+	background-color: #0e5077;
+}
+
+.ui-widget-content {
+	background-color: #0e5077;
+}
+
+</style>
+
 <f:view locale="#{portalSessionBean.locale}">
 	<h:body>
 		<ui:include src="titleLogin.xhtml" />
@@ -25,17 +36,15 @@
 					<p:autoUpdate />
 				</p:messages>
 				<br />
-				<p></p>
-				<div class="ui-g">
+				<p></p>			
 					<p:outputLabel value="#{DcupMsg['registration.secondStepSummaryNotification']}" style="font-size: x-large;" />
-				</div>
 				<p:separator />
 				<br />
 				<p:outputLabel value="#{DcupMsg['registration.secondStepDetailNotification']}" />
 				<p></p>
 				<p:outputLabel value="#{DcupMsg['registration.activationCodeLabel']}" />
 				<p></p>
-				<p:panelGrid  styleClass="ui-fluid sendActivationCode" columnClasses="ui-g-4 ui-mg-3 ui-sm-8 ui-lg-2, ui-g-4 ui-mg-3 ui-sm-12 ui-lg-2" columns="2" layout="grid" style="background-color: #f0f8ff;">
+				<p:panelGrid  styleClass="ui-fluid sendActivationCode" columnClasses="ui-g-4 ui-mg-3 ui-sm-8 ui-lg-2, ui-g-4 ui-mg-3 ui-sm-12 ui-lg-2" columns="2" layout="grid">
 					<p:commandButton id="showActivationCode" value="#{DcupMsg['registration.buttonShow']}" action="#{registerView.displayActivationCode}" icon="fa fa-eye" />
 					<p:outputLabel id="activationCodeLabel" style="font-size: large; font-weight: bold;" value="#{registerView.activationCode}" />
 				</p:panelGrid>
@@ -47,7 +56,7 @@
 				</p:panelGrid>
 				<p></p>
 				<br></br>
-				<p:commandLink id="secureLogin" action="#{registerView.actionGotoLogin}" ajax="false" style="color:#bae2f5" immediate="true">
+				<p:commandLink id="secureLogin" action="#{registerView.actionGotoLogin}" ajax="false" style="color:#ffffff" immediate="true">
 					<i class="fa fa-angle-double-left" />
 					<h:outputText value="#{DcupMsg['button.backToLogin']}" />
 				</p:commandLink>
