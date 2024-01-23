@@ -167,8 +167,12 @@ public class AsActivationLogic {
 
 	private AsPreferences getPreferences() {
 		try {
-			return asModule.getPreferences();
-		} catch (NullPointerException e) { // could not load preferences (happens with newly created tenants)
+			AsPreferences asPreferences =  asModule.getPreferences();
+			if (asPreferences == null) {
+				return new AsPreferences();
+			}
+			return asPreferences;
+		} catch (Exception e) { // could not load preferences (happens with newly created tenants)
 			return new AsPreferences();
 		}
 	}
