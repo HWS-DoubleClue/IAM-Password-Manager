@@ -546,16 +546,6 @@ public class RegisterView implements Serializable {
 		}
 	}
 
-	public String getUserInfo() {
-		String text;
-		if (userPortalModule.getModulePreferences().isEnableLocalUserRegistration()) {
-			text = portalSessionBean.getResourceBundle().getString("registration.userInfoBoth");
-		} else {
-			text = portalSessionBean.getResourceBundle().getString("registration.userInfoLocal");
-		}
-		return text;
-	}
-
 	public UrlTokenEntity getUrlTokenEntity() {
 		return urlTokenEntity;
 	}

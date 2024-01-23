@@ -47,7 +47,7 @@
 				</p:panelGrid>
 				<p></p>
 				<br></br>
-				<p:commandLink id="secureLogin" action="#{registerView.actionGotoLogin}" ajax="false" style="color:blue" immediate="true">
+				<p:commandLink id="secureLogin" action="#{registerView.actionGotoLogin}" ajax="false" style="color:#bae2f5" immediate="true">
 					<i class="fa fa-angle-double-left" />
 					<h:outputText value="#{DcupMsg['button.backToLogin']}" />
 				</p:commandLink>
@@ -55,7 +55,7 @@
 				<p></p>
 				<p:panel id="recoveryPanel" style="margin: 0 auto; border: none;" rendered="#{registerView.localUser}" class="whiteBackground">
 					<f:facet name="header">
-						<p:outputLabel value="#{DcupMsg['title.recoveryKey']}" style="font-size: 1em; text-align:center; color: #800000" />
+						<p:outputLabel value="#{DcupMsg['title.recoveryKey']}" style="font-size: 1em; text-align:center; color: #ffffff" />
 					</f:facet>
 
 					<p:outputLabel value="#{DcupMsg['label.recoveryKeyInfo']}" />
