@@ -105,6 +105,7 @@ public class RegisterView implements Serializable {
 	private String userLoginName;
 	private String activationCode = "";
 	UrlTokenEntity urlTokenEntity;
+	boolean managementLogin;
 
 	@PostConstruct
 	public void init() {
@@ -124,6 +125,9 @@ public class RegisterView implements Serializable {
 			urlTokenLogic.deleteUrlToken(urlTokenEntity);
 		}
 		endConversation();
+		if (managementLogin == true) {
+			return "/mgt/login_.xhtml" + DcemConstants.FACES_REDIRECT;
+		}
 		return DcupConstants.LOGIN_PAGE + DcemConstants.FACES_REDIRECT;
 	}
 
@@ -370,6 +374,8 @@ public class RegisterView implements Serializable {
 	public String actionBackToRegistration() {
 		return DcupConstants.REGISTER_PAGE;
 	}
+	
+
 
 	/**
 	 * @param userLoginId
@@ -562,6 +568,14 @@ public class RegisterView implements Serializable {
 
 	public void setUrlTokenEntity(UrlTokenEntity urlTokenEntity) {
 		this.urlTokenEntity = urlTokenEntity;
+	}
+
+	public boolean isManagementLogin() {
+		return managementLogin;
+	}
+
+	public void setManagementLogin(boolean managementLogin) {
+		this.managementLogin = managementLogin;
 	}
 
 }
