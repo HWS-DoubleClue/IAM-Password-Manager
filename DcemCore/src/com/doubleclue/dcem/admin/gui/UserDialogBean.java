@@ -584,7 +584,8 @@ public class UserDialogBean extends DcemDialog {
 	}
 	
 	public boolean isUserProfile() {
-		return this.getAutoViewAction().getDcemAction().getAction() == DcemConstants.ACTION_USER_PROFILE;
+	//	return this.getAutoViewAction().getDcemAction().getAction() == DcemConstants.ACTION_USER_PROFILE;
+		return true;
 	}
 
 	public UploadedFile getUploadPhotoProfile() {

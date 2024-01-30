@@ -40,7 +40,7 @@ public class LogoffView extends DcemView {
 	}
 	
 	public String actionRequestRegister() {
-		return "/userportal/register_.xhtml" + DcemConstants.FACES_REDIRECT;
+		return "/userportal/register_.xhtml" + DcemConstants.FACES_REDIRECT + "&startedFrom=mgt";
 	}
 
 

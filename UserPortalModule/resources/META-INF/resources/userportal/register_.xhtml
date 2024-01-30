@@ -12,8 +12,13 @@
 	</f:facet>
 	<h:outputStylesheet library="webjars" name="font-awesome/6.2.0/css/all-jsf.css" />
 	<title>DoubleClue UserPortal</title>
-		<h:outputStylesheet library="css" name="portalStyles.css" />
-		<h:outputStylesheet library="css" name="media.css" />
+	<h:outputStylesheet library="css" name="portalStyles.css" />
+	<h:outputStylesheet library="css" name="media.css" />
+
+	<f:metadata>
+		<f:viewParam name="startedFrom" value="#{registerView.startedFrom}" />
+		<f:viewAction action="#{registerView.actionStartedFrom}" />
+	</f:metadata>
 </h:head>
 
 <f:view locale="#{portalSessionBean.locale}">
@@ -29,7 +34,7 @@
 					<br />
 					<p />
 					<p:panel id="registrationPanel" footer="#{DcupMsg['label.requiredField']}" styleClass="whiteBackground">
-						<f:facet name="header" >
+						<f:facet name="header">
 							<h:outputText style="font-size: x-large !important; color:#fff" class="fa fa-user" />
 							<p:outputLabel value="#{DcupMsg['title.createNewAccount']}" styleClass="dialogTitle2" />
 						</f:facet>
@@ -45,16 +50,16 @@
 							<br />
 							<p:captcha id="captcha" label="Captcha" rendered="#{userPortalModule.enableCaptcha}" language="#{portalSessionBean.localeStr}}" />
 							<h:outputText value="" rendered="#{userPortalModule.enableCaptcha}" />
-						</p:panel>						
+						</p:panel>
 						<br />
-						<p:commandButton id="registerAllButton" value="#{DcupMsg['button.next']}" action="#{registerView.actionUserId}"
-							icon="fa fa-arrow-circle-right" style="width: 10em">
+						<p:commandButton id="registerAllButton" value="#{DcupMsg['button.next']}" action="#{registerView.actionUserId}" icon="fa fa-arrow-circle-right"
+							style="width: 10em">
 						</p:commandButton>
 
 						<p />
 						<br />
-	
-						<p:commandLink id="secureLogin" action="#{registerView.actionGotoLogin}" ajax="false"  immediate="true">
+
+						<p:commandLink id="secureLogin" action="#{registerView.actionGotoLogin}" ajax="false" immediate="true">
 							<i class="fa fa-angle-double-left" />
 							<h:outputText value="#{DcupMsg['button.backToLogin']}" />
 						</p:commandLink>

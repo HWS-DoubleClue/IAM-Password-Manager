@@ -518,6 +518,8 @@ public final class DcemConstants {
 	public static final String ARROW_UP = "\u2191";
 
 	public static final String UI_FADE_RATING_CLASS = "ui-fadeRating";
+	
+	public static final String SUBJECT_TITLE_BAR = "TitleBar";
 
 	
 

@@ -1,13 +1,10 @@
 package com.doubleclue.dcem.admin.gui;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -22,13 +19,10 @@ import org.primefaces.model.chart.PieChartModel;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
-import com.doubleclue.dcem.admin.logic.ReportAction;
 import com.doubleclue.dcem.admin.subjects.WelcomeSubject;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemAction;
-import com.doubleclue.dcem.core.entities.DcemReporting_;
-import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemView;
@@ -84,10 +78,6 @@ public class WelcomeView extends DcemView {
 	private SelectedFormat selectedDateFormat = SelectedFormat.MONTH;
 	private LocalDate currentDate = LocalDate.now();
 	
-	boolean changePasswordPermission;
-	boolean editProfilePermission;
-	
-
 	public enum Action {
 		NEXT, PREVIOUS
 	};
@@ -100,8 +90,6 @@ public class WelcomeView extends DcemView {
 	private void init() {
 		subject = welcomeSubject;
 		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
-		editProfilePermission = addAutoViewAction(DcemConstants.ACTION_USER_PROFILE, resourceBundle, userDialog, DcemConstants.USER_PROFILE_DIALOG);
-		changePasswordPermission = addAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD, resourceBundle, userPasswordDialog, DcemConstants.CHANGE_PASSWORD_DIALOG);
 	}
 	
 
@@ -247,36 +235,5 @@ public class WelcomeView extends DcemView {
 	public void reload() {
 		setUpCharts();
 		super.reload();
-	}
-	
-	public void editProfile () {
-		userDialog.setParentView(viewNavigator.getActiveView());
-		List<Object> selectedList = new ArrayList<Object>();
-		DcemUser dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
-		selectedList.add(dcemUser);
-		autoViewBean.setSelectedItems(selectedList);
-		viewNavigator.setActiveDialog(this.getAutoViewAction(DcemConstants.ACTION_USER_PROFILE));
-	}
-	
-	public void updatePassword () {
-		userDialog.setParentView(viewNavigator.getActiveView());
-		List<Object> selectedList = new ArrayList<Object>();
-		DcemUser dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
-		selectedList.add(dcemUser);
-		autoViewBean.setSelectedItems(selectedList);
-		viewNavigator.setActiveDialog(this.getAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD));
-	}
-	
-	public boolean isChangePasswordPermission() {
-		return changePasswordPermission;
-	}
-	public void setChangePasswordPermission(boolean changePasswordPermission) {
-		this.changePasswordPermission = changePasswordPermission;
-	}
-	public boolean isEditProfilePermission() {
-		return editProfilePermission;
-	}
-	public void setEditProfilePermission(boolean editProfilePermission) {
-		this.editProfilePermission = editProfilePermission;
 	}
 }
