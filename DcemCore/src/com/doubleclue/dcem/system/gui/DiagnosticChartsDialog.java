@@ -54,6 +54,10 @@ public class DiagnosticChartsDialog extends DcemDialog {
 	private int timeFromNum = 10;
 
 	private int timeToNum = 40;
+	
+	String [] chartColor = new String [] {"rgb(175, 192, 92)","rgb(75, 192, 192)" };
+	
+	
 
 	// @Override
 	// public int getHeight() {
@@ -112,12 +116,14 @@ public class DiagnosticChartsDialog extends DcemDialog {
 						}
 					}
 				}
+				int i = 0;
 				for (Entry<String, List<Object>> mapEntry : map.entrySet()) {
 					LineChartDataSet dataSet = new LineChartDataSet();
 					dataSet.setLabel(mapEntry.getKey());
 					dataSet.setData(mapEntry.getValue());
-					dataSet.setBorderColor("rgb(75, 192, 192)");
+					dataSet.setBorderColor(chartColor[i/2]);
 					chartData.addChartDataSet(dataSet);
+					i++;
 				}
 				chartData.setLabels(labels);
 				LineChartOptions options = new LineChartOptions();
