@@ -223,7 +223,7 @@ public class EntityManagerProducer {
 		SessionFactory sf = emf.unwrap(SessionFactory.class);
 		org.hibernate.stat.Statistics statistics = sf.getStatistics();
 		StatisticCounter statisticsRecord;
-		if (logger.isDebugEnabled() && systemModule.getSpecialPropery(DcemConstants.SPECIAL_PROPERTY_LOG_DB_STATISTICS) != null) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DB-Statistics: " + statistics.toString());
 			statisticsRecord = new StatisticCounter();
 			statisticsRecord.count = statistics.getSecondLevelCacheHitCount();
