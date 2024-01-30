@@ -121,7 +121,7 @@ public class DiagnosticChartsDialog extends DcemDialog {
 					LineChartDataSet dataSet = new LineChartDataSet();
 					dataSet.setLabel(mapEntry.getKey());
 					dataSet.setData(mapEntry.getValue());
-					dataSet.setBorderColor(chartColor[i/2]);
+					dataSet.setBorderColor(chartColor[i & 0x01]);
 					chartData.addChartDataSet(dataSet);
 					i++;
 				}
