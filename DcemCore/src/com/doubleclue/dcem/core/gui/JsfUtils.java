@@ -10,6 +10,11 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -355,7 +360,7 @@ public class JsfUtils {
 		return ResourceBundle.getBundle(pMessageBundleName, locale, new ResourceBundleUtf8Control());
 	}
 
-	public static Locale getLocale() {
+	public static Locale getLocale() {		
 		FacesContext ctx = getFacesContext();
 		UIViewRoot uiRoot = ctx.getViewRoot();
 		return uiRoot.getLocale();
@@ -1225,5 +1230,13 @@ public class JsfUtils {
 		InputStream in = new ByteArrayInputStream(new byte[] {});
 		return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
 	}
-
+	
+	public static String getLocalDateFormat(LocalDate localDate) {
+		return getLocalDateFormat(localDate, getLocale());
+	}
+	
+	public static String getLocalDateFormat(LocalDate localDate, Locale locale) {
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+		return localDate.format(dateFormatter);
+	}
 }
