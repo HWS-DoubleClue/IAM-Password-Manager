@@ -173,7 +173,6 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 			this.actionViewLink(autoViewAction);
 			return;
 		}
-
 		if (actioType == ActionType.EL_METHOD) {
 			try {
 				setActionObject(selectedObject);

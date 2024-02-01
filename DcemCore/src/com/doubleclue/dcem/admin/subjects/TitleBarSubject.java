@@ -40,6 +40,6 @@ public class TitleBarSubject extends SubjectAbs {
 
 	@Override
 	public String getPath() {
-		return DcemConstants.WELCOME_VIEW_PATH;
+		return null;
 	}
 }

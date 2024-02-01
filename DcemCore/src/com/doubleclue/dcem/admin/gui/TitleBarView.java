@@ -1,13 +1,6 @@
 package com.doubleclue.dcem.admin.gui;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,31 +12,21 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.ItemSelectEvent;
-import org.primefaces.model.chart.BarChartModel;
-import org.primefaces.model.chart.PieChartModel;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
-import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
-import com.doubleclue.dcem.admin.logic.ReportAction;
 import com.doubleclue.dcem.admin.subjects.TitleBarSubject;
-import com.doubleclue.dcem.admin.subjects.WelcomeSubject;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemAction;
-import com.doubleclue.dcem.core.entities.DcemReporting_;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.ViewNavigator;
-import com.doubleclue.dcem.core.gui.ViewVariable;
-import com.doubleclue.dcem.core.jpa.FilterOperator;
-import com.doubleclue.dcem.core.logic.DashboardLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
+import com.doubleclue.dcem.core.logic.RawAction;
 import com.doubleclue.dcem.core.logic.UserLogic;
-import com.doubleclue.dcem.core.logic.module.DcemModule;
 
 @SuppressWarnings("serial")
 @Named("titleBarView")
@@ -54,20 +37,13 @@ public class TitleBarView extends DcemView {
 	OperatorSessionBean operatorSessionBean;
 
 	@Inject
-	WelcomeSubject welcomeSubject;
-
-	@Inject
 	DcemApplicationBean applicationBean;
 
 	@Inject
 	TitleBarSubject titleBarSubject;
 
 	@Inject
-	DcemReportingLogic reportingLogic;
-
-	@Inject
 	ViewNavigator viewNavigator;
-
 
 	@Inject
 	UserDialogBean userDialog;
@@ -87,32 +63,12 @@ public class TitleBarView extends DcemView {
 	@PostConstruct
 	private void init() {
 		subject = titleBarSubject;
-						
 		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
-		editProfilePermission = addAutoViewAction(DcemConstants.ACTION_USER_PROFILE, resourceBundle, userDialog, DcemConstants.USER_PROFILE_DIALOG);
-		changePasswordPermission = addAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD, resourceBundle, userPasswordDialog, DcemConstants.CHANGE_PASSWORD_DIALOG);		
-//		changePasswordPermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD));
-//		editProfilePermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE));
-//		
-//		
-//		changePasswordPermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD));
-//		editProfilePermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE));
-
+		editProfilePermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE) );
+		changePasswordPermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD  ) );
 	}
 	
-
-	@Override
-	public void triggerAction(AutoViewAction autoViewAction) {
-		super.triggerAction(autoViewAction);
-	}
-
-	
-
-	public boolean isPrivilegedForDeletingAlerts() {
-		return operatorSessionBean.isPermission(new DcemAction(subject, DcemConstants.ACTION_DELETE));
-	}
-
-	
+//	DcemConstants.CHANGE_PASSWORD_DIALOG
 	public void leavingView() {
 		
 	}
@@ -123,21 +79,55 @@ public class TitleBarView extends DcemView {
 	}
 	
 	public void editProfile () {
-		userDialog.setParentView(viewNavigator.getActiveView());
 		List<Object> selectedList = new ArrayList<Object>();
 		DcemUser dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
 		selectedList.add(dcemUser);
 		autoViewBean.setSelectedItems(selectedList);
-		viewNavigator.setActiveDialog(this.getAutoViewAction(DcemConstants.ACTION_USER_PROFILE));
+		DcemAction dcemAction = new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE);
+		RawAction rawAction = titleBarSubject.getRawAction(DcemConstants.ACTION_USER_PROFILE);
+		AutoViewAction autoViewAction = new AutoViewAction(dcemAction, userDialog, resourceBundle, rawAction, getWelcomeText(), null);
+		userDialog.setActionObject(dcemUser);
+		viewNavigator.setActiveDialog(autoViewAction);
+		try {
+			userDialog.show(this, autoViewAction);
+		} catch (Exception e) {
+			JsfUtils.addErrorMessage("Something when wrong: Cause:  " + e.toString());
+			logger.warn("userDialog.show", e);
+			return;	
+		}
+		Map<String, Object> options = new HashMap<String, Object>();
+		options.put("modal", true);
+		options.put("position", "top");
+		options.put("headerElement", "customheader");
+		options.put("position", "top");
+		options.put("headerElement", "customheader");
+		options.put("contentWidth", "740");
+		options.put("height", "540");
+		PrimeFaces.current().dialog().openDynamic(DcemConstants.WEB_MGT_CONTEXT + DcemConstants.USER_VIEW_PATH, options, null);
 	}
 	
 	public void updatePassword () {
-		userDialog.setParentView(viewNavigator.getActiveView());
-		List<Object> selectedList = new ArrayList<Object>();
+	//	DcemConstants.CHANGE_PASSWORD_DIALOG
 		DcemUser dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
-		selectedList.add(dcemUser);
-		autoViewBean.setSelectedItems(selectedList);
-		viewNavigator.setActiveDialog(this.getAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD));
+		DcemAction dcemAction = new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD);
+		RawAction rawAction = titleBarSubject.getRawAction(DcemConstants.ACTION_USER_PROFILE);
+		AutoViewAction autoViewAction = new AutoViewAction(dcemAction, userPasswordDialog, resourceBundle, rawAction, getWelcomeText(), null);
+		userDialog.setActionObject(dcemUser);
+		viewNavigator.setActiveDialog(autoViewAction);
+		try {
+			userPasswordDialog.show(this, autoViewAction);
+		} catch (Exception e) {
+			JsfUtils.addErrorMessage("Something when wrong: Cause:  " + e.toString());
+			logger.warn("userDialog.show", e);
+			return;	
+		}
+		Map<String, Object> options = new HashMap<String, Object>();
+		options.put("modal", true);
+		options.put("position", "top");
+		options.put("headerElement", "customheader");
+		options.put("position", "top");
+		options.put("headerElement", "customheader");
+		PrimeFaces.current().dialog().openDynamic(DcemConstants.WEB_MGT_CONTEXT + DcemConstants.CHANGE_PASSWORD_DIALOG, options, null);
 	}
 	
 	public String getWelcomeText() {
