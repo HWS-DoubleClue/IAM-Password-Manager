@@ -545,25 +545,27 @@ public class UserLogic {
 
 	@DcemTransactional
 	public void disableUser(DcemUser user, DcemAction action) throws DcemException {
-		user = em.merge(user);
-		user.setDisabled(true);
-		asModuleApi.killUserDevices(user);
-		auditingLogic.addAudit(action, user.toString());
+		DcemUser userMerged = user;
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaUpdate<DcemUser> updateCriteria = cb.createCriteriaUpdate(DcemUser.class);
+		Root<DcemUser> root = updateCriteria.from(DcemUser.class);
+		updateCriteria.set(root.get(DcemUser_.disabled), true);
+		updateCriteria.where(cb.equal(root.get("id"), user.getId()));
+		em.createQuery(updateCriteria).executeUpdate();
+ 		userMerged.setDisabled(true);		
+		asModuleApi.killUserDevices(userMerged);
+		auditingLogic.addAudit(action, userMerged.toString());
 	}
 
 	@DcemTransactional
 	public void enableUserWoAuditing(DcemUser user) throws DcemException {
-		try {
-			user = em.merge(user);
-		} catch (OptimisticLockException e) {
-			user = getUser(user.getId());
-		}
-		user.setDisabled(false);
-		user.setFailActivations(0);
-		user.setAcSuspendedTill(null);
-		user.setPassCounter(0);
+		DcemUser userMerged = em.find(DcemUser.class, user.getId());
+		userMerged.setDisabled(false);
+		userMerged.setFailActivations(0);
+		userMerged.setAcSuspendedTill(null);
+		userMerged.setPassCounter(0);
 		if (asModuleApi != null) {
-			asModuleApi.resetStayLogin(user);
+			asModuleApi.resetStayLogin(userMerged);
 		}
 	}
 
