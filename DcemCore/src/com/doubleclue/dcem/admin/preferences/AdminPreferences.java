@@ -75,6 +75,9 @@ public class AdminPreferences extends ModulePreferences {
 
 	@DcemGui()
 	boolean useWindowsSSO;
+	
+	@DcemGui()
+	boolean enableCreateAccount;
 
 	@DcemGui(separator = "Location", choose = { "None", "IP", "City" })
 	String locationInformation = "None";
@@ -251,6 +254,14 @@ public class AdminPreferences extends ModulePreferences {
 
 	public void setDisableUserPortal(boolean disableUserPortal) {
 		this.disableUserPortal = disableUserPortal;
+	}
+
+	public boolean isEnableCreateAccount() {
+		return enableCreateAccount;
+	}
+
+	public void setEnableCreateAccount(boolean enableCreateAccount) {
+		this.enableCreateAccount = enableCreateAccount;
 	}
 
 }

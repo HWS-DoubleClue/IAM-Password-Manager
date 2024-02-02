@@ -51,15 +51,15 @@
 							<div style="display: inline-block; vertical-align: middle;">
 								<p:avatar id="userAvatar" dynamicColor="true" styleClass="p-mr-2" size="xlarge" shape="circle" style="margin-right: 0em; cursor: pointer">
 									<p:graphicImage value="#{operatorSession.getFotoProfileUser()}" stream="false"
-										title="#{operatorSession.dcemUser.displayName} at #{dcemApplication.nodeName}" />
+										title="#{titleBarView.welcomeText}" />
 								</p:avatar>
 							</div>
 							<p:spacer width="10" />
 							<p:menu overlay="true" trigger="userAvatar" my="left top" at="left bottom">
-								<p:menuitem value="#{CoreMsg['titleMenu.profile']} " rendered="#{welcomeView.editProfilePermission}" action="#{welcomeView.editProfile}" ajax="true" icon="fa fa-user-pen" >
+								<p:menuitem value="#{CoreMsg['titleMenu.profile']} " rendered="#{titleBarView.editProfilePermission}" action="#{titleBarView.editProfile}" ajax="true" icon="fa fa-user-pen" >
 									<p:ajax event="dialogReturn"  update="menuForm title viewPart" />
 								</p:menuitem>
-								<p:menuitem value="#{DcupMsg['title.changePasswordView']} " action="#{welcomeView.updatePassword}" icon="fa fa-key" rendered="#{welcomeView.changePasswordPermission}" />
+								<p:menuitem value="#{DcupMsg['title.changePasswordView']} " action="#{titleBarView.updatePassword}" icon="fa fa-key" rendered="#{titleBarView.changePasswordPermission}" />
 								<p:menuitem value="#{CoreMsg['titleMenu.logoff']} " action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" />
 							</p:menu>
 					</div>

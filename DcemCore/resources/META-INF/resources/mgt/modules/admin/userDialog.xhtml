@@ -32,7 +32,7 @@
 							<p:ajax event="change" listener="#{userDialog.changeType}" update="@form"></p:ajax>
 						</p:selectOneRadio>
 
-						<p:outputLabel for="displayName" value="#{AdminMsg['userDialog.displayName']} " />
+						<p:outputLabel for="displayName" value="#{AdminMsg['userDialog.displayName']} " rendered="#{userDialog.getUserType() eq 'local'}" />
 						<p:inputText id="displayName" value="#{userDialog.actionObject.displayName}" rendered="#{userDialog.getUserType() eq 'local'}" size="50"
 							disabled="#{userDialog.userOutranksOperator()}" required="true" requiredMessage="#{AdminMsg['error.displayNameCheck']}" maxlength="60">
 							<f:validateLength minimum="4"></f:validateLength>
@@ -71,9 +71,7 @@
 						<p:outputLabel for="mobileNumber" value="#{AdminMsg['userDialog.mobileNumber']} " />
 						<p:inputText id="mobileNumber" value="#{userDialog.actionObject.mobileNumber}" disabled="#{userDialog.userOutranksOperator()}" />
 
-
-						<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} " rendered="#{viewNavigator.addAction == false}" />
-						<p:outputLabel value="#{userDialog.actionObject.partMobileNumber}" rendered="#{viewNavigator.editAction}" />
+						<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} " rendered="#{userDialog.userProfile == true}" />
 						<p:inputText id="prvmobileNumber" value="#{userDialog.actionObject.privateMobileNumber}" rendered="#{userDialog.userProfile == true}" />
 
 

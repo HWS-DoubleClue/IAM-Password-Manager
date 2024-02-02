@@ -39,6 +39,7 @@ import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.ExportRecords;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.licence.LicenceLogic;
+import com.doubleclue.dcem.core.logic.ActionLogic;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.GroupLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
@@ -99,6 +100,9 @@ public class AdminModule extends DcemModule {
 
 	@Inject
 	WelcomeSubject welcomeSubject;
+	
+	@Inject
+	private ActionLogic actionLogic;
 
 	@Override
 	public void start() throws DcemException {
@@ -164,7 +168,7 @@ public class AdminModule extends DcemModule {
 					}
 				}
 			}
-			if (operatorSessionBean.isLoggedIn() == true && operatorSessionBean.isPermission(new DcemAction(welcomeSubject, DcemConstants.ACTION_SWITCH_USER_PORTAL)) == false) {
+			if (operatorSessionBean.isLoggedIn() == true && operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR ,DcemConstants.ACTION_SWITCH_USER_PORTAL)) == false) {
 				return false;
 			}
 			return true;
@@ -408,6 +412,12 @@ public class AdminModule extends DcemModule {
 		} catch (Exception e) {
 			logger.error("Could initialize Tenant Branding for " + tenantEntity.getName(), e);
 		}
+//		DcemAction action = new DcemAction(MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE);
+//		actionLogic.addDcemActionIfNotExists(action);
+//		action = new DcemAction(MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD);
+//		actionLogic.addDcemActionIfNotExists(action);
+//		action = new DcemAction(MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_SWITCH_USER_PORTAL);
+//		actionLogic.addDcemActionIfNotExists(action);
 		try {
 			licenceLogic.loadLicenceKeyContent();
 		} catch (Exception e) {

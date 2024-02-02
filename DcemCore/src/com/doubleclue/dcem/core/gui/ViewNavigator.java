@@ -268,11 +268,9 @@ public class ViewNavigator implements Serializable {
 		menuModel = new DefaultMenuModel();
 		DefaultMenuItem menuItem;
 		for (DcemModule dcemModule : applicationBean.getSortedEnabledModules()) {
-
 			if (adminModule.isSwitchUserPortal() == false && dcemModule.getName().equals("UserPortal")) {
 				continue;
 			}
-
 			if (operatorSessionBean.isModulePermission(dcemModule.getId()) == false) {
 				continue; // ignore if role has no module View or Manage Action.
 			}
@@ -305,13 +303,13 @@ public class ViewNavigator implements Serializable {
 							"#{viewNavigator.setActiveView('" + dcemModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER + subject.getViewName() + "')}");
 					// Create an ID on your Item menu:
 					menuItem.setAjax(true);
-					// menuItem.setId(subject.getModuleId() +
-					// subject.getName());
 					menuItem.setUpdate("viewPart");
 					subMenu.getElements().add(menuItem);
 				}
-				subMenu.setExpanded(false);
-				menuModel.getElements().add(subMenu);
+				if (subMenu.getElements().isEmpty() == false) {
+					subMenu.setExpanded(false);
+					menuModel.getElements().add(subMenu);
+				}
 			}
 		}
 		return menuModel;
@@ -410,7 +408,7 @@ public class ViewNavigator implements Serializable {
 		}
 		return allLocales;
 	}
-	
+
 	public String getTopComposition() {
 		if (this.activeView.getTopComposition() != null) {
 			return this.activeView.getTopComposition();

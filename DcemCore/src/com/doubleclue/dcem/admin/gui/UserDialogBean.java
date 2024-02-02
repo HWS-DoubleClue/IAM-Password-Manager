@@ -335,7 +335,6 @@ public class UserDialogBean extends DcemDialog {
 				&& autoViewAction.getRawAction().getName().equals(DcemConstants.ACTION_RESET_PASSWORD)) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "userDialog.resetPassword.notAllowed");
 		}
-
 		userType = user.isDomainUser() == true ? DcemConstants.TYPE_DOMAIN : DcemConstants.TYPE_LOCAL;
 		if (user.getLoginId() != null) {
 			String[] domainUser = user.getLoginId().split(DcemConstants.DOMAIN_SEPERATOR_REGEX);
@@ -585,6 +584,7 @@ public class UserDialogBean extends DcemDialog {
 	
 	public boolean isUserProfile() {
 		return this.getAutoViewAction().getDcemAction().getAction() == DcemConstants.ACTION_USER_PROFILE;
+	//	return true;
 	}
 
 	public UploadedFile getUploadPhotoProfile() {

@@ -15,7 +15,7 @@
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="1" />
 			</Policies>
-			<DeleteMaxAgeFilesStrategy maxAge="2" />
+
 		</RollingFile>
 		<RollingFile name="Log4JDBC" fileName="${log-path}/${log-JDBC}.log" filePattern="${log-path}/${log-JDBC}-%d{yyyy-MM-dd}.log">
 			<PatternLayout pattern="\n=== %-5p [%d{DATE} %c]: %m%n" />

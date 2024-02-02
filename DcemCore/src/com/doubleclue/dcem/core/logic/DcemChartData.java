@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChartData {
+public class DcemChartData {
 
 	LocalDateTime date;
 	Map<String, Number> map;
@@ -15,7 +15,7 @@ public class ChartData {
 //		this.map = map;
 //	}
 
-	public ChartData(LocalDateTime date, String node, Number number) {
+	public DcemChartData(LocalDateTime date, String node, Number number) {
 		super();
 		this.date = date;
 		this.map = new HashMap<>();
@@ -41,5 +41,12 @@ public class ChartData {
 	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
+
+	@Override
+	public String toString() {
+		return "DcemChartData [date=" + date + ", map=" + map + "]";
+	}
+	
+	
 
 }

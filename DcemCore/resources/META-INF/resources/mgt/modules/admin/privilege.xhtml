@@ -17,7 +17,7 @@
 
 		<p:dataTable styleClass="borderless" id="pTable" value="#{privilegeView.dcemActions}" var="dcemAction" widgetVar="actionsTable" paginator="true" rows="20"
 			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-			paginatorPosition="bottom" rowKey="#{dcemAction.id}" rowsPerPageTemplate="20, 50,100" emptyMessage="#{CoreMsg['emptyTable']}">
+			paginatorPosition="bottom" rowKey="#{dcemAction.id}" rowsPerPageTemplate="20, 50,100" emptyMessage="#{CoreMsg['emptyTable']}"  >
 
 			<p:column filterBy="#{dcemAction.moduleId}" headerText="#{CoreMsg['module']}" filterMatchMode="exact">
 				<f:facet name="filter">
@@ -28,9 +28,10 @@
 				</f:facet>
 				<h:outputText value="#{dcemApplication.getModuleName(dcemAction.moduleId)}" />
 			</p:column>
-			<p:column headerText="#{CoreMsg['subject']}">
-				<f:facet name="header">
-				</f:facet>
+			<p:column headerText="#{CoreMsg['subject']}" style="width: 8em" filterBy="#{dcemApplication.getSubjectName(dcemAction.moduleId, dcemAction.subject)}" filterMatchMode="contains" >
+				<!-- <f:facet name="filter">
+                    <p:inputText value="" onkeyup="PF('pTable').filter()" style="width: 6em" />
+                </f:facet> -->
 				<h:outputText value="#{dcemApplication.getSubjectName(dcemAction.moduleId, dcemAction.subject)}" />
 			</p:column>
 			<p:column headerText="#{CoreMsg['action']}">

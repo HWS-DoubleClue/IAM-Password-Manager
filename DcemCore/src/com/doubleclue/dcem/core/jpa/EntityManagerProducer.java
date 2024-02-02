@@ -223,16 +223,20 @@ public class EntityManagerProducer {
 		SessionFactory sf = emf.unwrap(SessionFactory.class);
 		org.hibernate.stat.Statistics statistics = sf.getStatistics();
 		StatisticCounter statisticsRecord;
-		if (logger.isDebugEnabled() && systemModule.getSpecialPropery(DcemConstants.SPECIAL_PROPERTY_LOG_DB_STATISTICS) != null) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DB-Statistics: " + statistics.toString());
 			statisticsRecord = new StatisticCounter();
 			statisticsRecord.count = statistics.getSecondLevelCacheHitCount();
-			dbStatisticMap.put("DB-SecondLevelHits", statisticsRecord);
+			dbStatisticMap.put("DB-Global SecondLevelHits", statisticsRecord);
 			String[] regions = statistics.getSecondLevelCacheRegionNames();
 			for (String region : regions) {
 				try {
 					CacheRegionStatistics regionStatistic = statistics.getDomainDataRegionStatistics(region);
 					logger.debug("DB-SecondLayerCache: " + regionStatistic.toString());
+					statisticsRecord = new StatisticCounter();
+					statisticsRecord.setCount(regionStatistic.getHitCount());
+					statisticsRecord.setAveTime(regionStatistic.getMissCount());
+					dbStatisticMap.put("Hit-Missed: " + region.toString(), statisticsRecord);
 				} catch (Exception exp) {
 
 				}

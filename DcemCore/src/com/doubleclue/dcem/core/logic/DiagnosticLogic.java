@@ -119,14 +119,14 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 
 	@DcemTransactional
 	public void saveNodeStatistics(LocalDateTime date) throws JsonProcessingException {
-		DcemStatistic semStatistic = new DcemStatistic();
-		semStatistic.setTimestamp(resetSeconds(date));
-		semStatistic.setDcemNode(DcemCluster.getDcemCluster().getDcemNode());
+		DcemStatistic dcemStatistic = new DcemStatistic();
+		dcemStatistic.setTimestamp(resetSeconds(date));
+		dcemStatistic.setDcemNode(DcemCluster.getDcemCluster().getDcemNode());
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		String data = objectMapper.writeValueAsString(getNodeStatistics(false));
-		semStatistic.setData(data);
-		em.persist(semStatistic);
+		dcemStatistic.setData(data);
+		em.persist(dcemStatistic);
 	}
 
 	public void resetCounters() {
@@ -211,27 +211,23 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, List<ChartData>> getChartValues(Set<String> counterFilters, String dateFromStr, String dateToStr) throws Exception {
+	public Map<String, List<DcemChartData>> getChartValues(Set<String> counterFilters, String dateFromStr, String dateToStr) throws Exception {
 		ObjectMapper objectMapper = new ObjectMapper();
 		TypeReference<LinkedList<ModuleStatistic>> typeRef = new TypeReference<LinkedList<ModuleStatistic>>() {
 		};
-		Map<String, List<ChartData>> result = new HashMap<>();
+		Map<String, List<DcemChartData>> result = new HashMap<>();
 		if (dateFromStr == null) {
 			return result;
 		}
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-		LocalDateTime dateFrom = LocalDateTime.parse(dateFromStr, format);
-		LocalDateTime dateTo = LocalDateTime.parse(dateToStr, format);
-//		Date dateFrom = getDateFormat().parse(dateFromStr);
-//		Date dateTo = getDateFormat().parse(dateToStr);
-		
+		LocalDateTime dateFrom = LocalDateTime.parse(dateFromStr, dateTimeFormatter);
+		LocalDateTime dateTo = LocalDateTime.parse(dateToStr, dateTimeFormatter);
 		
 		List<DcemStatistic> statistics = getStatisticsFromTo(dateFrom, dateTo);
 		List<ModuleStatistic> moduleStatistics;
 		Map<String, String> valueMap;
-		List<ChartData> listChartData;
+		List<DcemChartData> listChartData;
 		String value;
-		Map<String, ChartData> mapNodeCounter = new HashMap<String, ChartData>();
+		Map<String, DcemChartData> mapNodeCounter = new HashMap<String, DcemChartData>();
 		for (DcemStatistic dcemStatistic : statistics) {
 			moduleStatistics = objectMapper.readValue(dcemStatistic.getData(), typeRef);
 			for (ModuleStatistic moduleStatistic : moduleStatistics) {
@@ -255,16 +251,16 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 					}
 					listChartData = result.get(counterFilter);
 					if (listChartData == null) {
-						listChartData = new ArrayList<ChartData>(statistics.size());
+						listChartData = new ArrayList<DcemChartData>(statistics.size());
 					}
-					ChartData chartData = mapNodeCounter.get(counterFilter);
+					DcemChartData chartData = mapNodeCounter.get(counterFilter);
 					if (chartData == null) {
-						chartData = new ChartData(dcemStatistic.getTimestamp(), dcemStatistic.getDcemNode().getName(), numValue);
+						chartData = new DcemChartData(dcemStatistic.getTimestamp(), dcemStatistic.getDcemNode().getName(), numValue);
 						mapNodeCounter.put(counterFilter, chartData);
 						listChartData.add(chartData);
 					} else {
 						if (chartData.getDate().equals(dcemStatistic.getTimestamp()) == false) {
-							chartData = new ChartData(dcemStatistic.getTimestamp(),
+							chartData = new DcemChartData(dcemStatistic.getTimestamp(),
 									dcemStatistic.getDcemNode().getName(), numValue);
 						} else {
 							chartData.addNodeNumber(dcemStatistic.getDcemNode().getName(), numValue);
@@ -276,7 +272,6 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 			}
 		}
 		return result;
-
 	}
 
 	public Map<String, List<ChartCountersData>> getChartCounters(List<String> counterFilters, String nodeName, String dateFromStr, String dateToStr)
@@ -288,9 +283,8 @@ public class DiagnosticLogic implements MultiExecutionCallback {
 		if (dateFromStr == null) {
 			return result;
 		}
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-		LocalDateTime dateFrom = LocalDateTime.parse(dateFromStr, format);
-		LocalDateTime dateTo = LocalDateTime.parse(dateToStr, format);
+		LocalDateTime dateFrom = LocalDateTime.parse(dateFromStr, dateTimeFormatter);
+		LocalDateTime dateTo = LocalDateTime.parse(dateToStr, dateTimeFormatter);
 //		Date dateFrom = getDateFormat().parse(dateFromStr);
 //		Date dateTo = getDateFormat().parse(dateToStr);
 				

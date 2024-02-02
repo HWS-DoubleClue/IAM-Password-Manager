@@ -3,7 +3,6 @@ package com.doubleclue.dcup.gui;
 import java.io.Serializable;
 import java.net.ConnectException;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,9 +10,12 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Conversation;
-import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,14 +32,12 @@ import com.doubleclue.dcem.as.logic.AsModule;
 import com.doubleclue.dcem.as.logic.CloudSafeLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AsModuleApi;
-import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.UrlTokenEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
-import com.doubleclue.dcem.core.logic.DomainApi;
 import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.UrlTokenLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
@@ -50,7 +50,7 @@ import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.StringUtils;
 
 @Named("registerView")
-@ConversationScoped
+@SessionScoped
 @SuppressWarnings("serial")
 public class RegisterView implements Serializable {
 
@@ -86,6 +86,8 @@ public class RegisterView implements Serializable {
 
 	@Inject
 	AsActivationLogic asActivationLogic;
+	
+	String startedFrom;
 
 	private static Logger logger = LogManager.getLogger(RegisterView.class);
 
@@ -105,6 +107,7 @@ public class RegisterView implements Serializable {
 	private String userLoginName;
 	private String activationCode = "";
 	UrlTokenEntity urlTokenEntity;
+	boolean managementLogin;
 
 	@PostConstruct
 	public void init() {
@@ -118,12 +121,21 @@ public class RegisterView implements Serializable {
 			logger.warn("RegisterView.init()", exp);
 		}
 	}
+	
+	public void actionStartedFrom () {
+		System.out.println("RegisterView.actionStartedFrom() " + startedFrom);
+	}
 
 	public String actionGotoLogin() {
 		if (urlTokenEntity != null) {
 			urlTokenLogic.deleteUrlToken(urlTokenEntity);
 		}
-		endConversation();
+		ExternalContext extCon = FacesContext.getCurrentInstance().getExternalContext();
+		HttpSession session = (HttpSession) extCon.getSession(true);
+		session.invalidate();
+		if (startedFrom != null) {
+			return "/mgt/login.xhtml" + DcemConstants.FACES_REDIRECT;
+		}
 		return DcupConstants.LOGIN_PAGE + DcemConstants.FACES_REDIRECT;
 	}
 
@@ -150,7 +162,6 @@ public class RegisterView implements Serializable {
 				dcemUser.setPrivateMobileNumber(privateMobileNumber);
 				dcemUser.setLanguage(getSupportedLanguage());
 				recoveryKey = userLogic.registerUser(dcemUser, userPortalModule.getServletUrl(), preferences.getUrlTokenTimeout());
-				endConversation();
 				return DcupConstants.SUCCESS_REGISTRATION_PAGE;
 			}
 		} catch (DcemException e) {
@@ -162,41 +173,6 @@ public class RegisterView implements Serializable {
 		}
 		return null;
 
-	}
-
-	public String actionRegisterDomainUser() {
-		DomainApi domainApi;
-		Pattern pattern = Pattern.compile(DcemConstants.regxTelefonNumber);
-		recoveryKey = null;
-		UserPortalPreferences preferences = userPortalModule.getModulePreferences();
-		try {
-			domainApi = domainLogic.getDomainApi(domainName);
-			if (privateMobileNumber.isEmpty() == false) {
-				Matcher matcherPrv = pattern.matcher(privateMobileNumber);
-				if (!matcherPrv.matches()) {
-					JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error.INVALID_PRIVATE_MOBILE_NUMBER"));
-					return null;
-				}
-			}
-			DcemUser dcemUser = domainApi.getUser(userLoginName);
-			dcemUser.setLanguage(getSupportedLanguage());
-			domainLogic.verifyDomainLogin(dcemUser, StringUtils.getBytesFromUtf8(password));
-			dcemUser.setPrivateMobileNumber(privateMobileNumber);
-			userLogic.addOrUpdateUser(dcemUser, new DcemAction(userSubject, DcemConstants.ACTION_ADD), true,
-					asModule.getPreferences().isNumericActivationCode(), adminModule.getPreferences().getUserPasswordLength(), false);
-			portalSessionBean.setDcemUser(dcemUser);
-			return DcupConstants.JSF_NOTIFICATION_PAGE;
-
-		} catch (DcemException ex) {
-			logger.warn(ex);
-			JsfUtils.addErrorMessage(portalSessionBean.getErrorMessage(ex));
-		} catch (Exception ex) {
-			logger.warn("RegisterDomainUser", ex);
-			JsfUtils.addErrorMessage(ex.toString());
-		} finally {
-			StringUtils.wipeString(password);
-		}
-		return null;
 	}
 
 	private boolean validator() {
@@ -345,7 +321,6 @@ public class RegisterView implements Serializable {
 
 	public String actionUserId() {
 		try {
-			startConversation();
 			userId = userId.trim();
 			domainName = verifyRegistrationUser(userId);
 			if (domainName == null) {
@@ -370,6 +345,8 @@ public class RegisterView implements Serializable {
 	public String actionBackToRegistration() {
 		return DcupConstants.REGISTER_PAGE;
 	}
+	
+
 
 	/**
 	 * @param userLoginId
@@ -451,29 +428,29 @@ public class RegisterView implements Serializable {
 			return false;
 	}
 
-	public String startConversation() {
-		try {
-			if (conversation.isTransient()) {
-				conversation.begin();
-				conversation.setTimeout(adminModule.getPreferences().getInactivityTimer() * (60 * 1000));
-			}
-			return conversation.getId();
-		} catch (Exception exp) {
-			logger.debug(exp);
-		}
-		return null;
-	}
+//	public String startConversation() {
+//		try {
+//			if (conversation.isTransient()) {
+//				conversation.begin();
+//				conversation.setTimeout(adminModule.getPreferences().getInactivityTimer() * (60 * 1000));
+//			}
+//			return conversation.getId();
+//		} catch (Exception exp) {
+//			logger.debug(exp);
+//		}
+//		return null;
+//	}
 
-	public void endConversation() {
-		try {
-			if (conversation.isTransient() == false) {
-				conversation.end();
-			}
-		} catch (Exception exp) {
-			logger.debug(exp);
-		}
-		return;
-	}
+//	public void endConversation() {
+//		try {
+//			if (conversation.isTransient() == false) {
+//				conversation.end();
+//			}
+//		} catch (Exception exp) {
+//			logger.debug(exp);
+//		}
+//		return;
+//	}
 
 	public String getRecoveryKey() {
 		if (isLocalUser() == false) {
@@ -483,7 +460,6 @@ public class RegisterView implements Serializable {
 			return recoveryKey;
 		}
 		if (portalSessionBean.getDcemUser() != null) {
-			startConversation();
 			// creating the recovery key
 			CloudSafeEntity cloudSafeEntity = new CloudSafeEntity(CloudSafeOwner.USER, portalSessionBean.getDcemUser(), null, DcemConstants.RECOVERY_KEY, null,
 					CloudSafeOptions.ENC.name(), false, null, portalSessionBean.getDcemUser());
@@ -552,6 +528,22 @@ public class RegisterView implements Serializable {
 
 	public void setUrlTokenEntity(UrlTokenEntity urlTokenEntity) {
 		this.urlTokenEntity = urlTokenEntity;
+	}
+
+	public boolean isManagementLogin() {
+		return managementLogin;
+	}
+
+	public void setManagementLogin(boolean managementLogin) {
+		this.managementLogin = managementLogin;
+	}
+
+	public String getStartedFrom() {
+		return startedFrom;
+	}
+
+	public void setStartedFrom(String startedFrom) {
+		this.startedFrom = startedFrom;
 	}
 
 }

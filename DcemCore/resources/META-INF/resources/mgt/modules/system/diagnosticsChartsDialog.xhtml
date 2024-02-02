@@ -41,7 +41,7 @@
 
 			<p:scrollPanel id="scrollPanel" mode="native" style="width:100%; height: 800px"	>
 				<c:forEach items="#{diagnosticsChartsDialog.lineChartModelsList}" var="charItem">
-					<p:chart type="line" model="#{charItem}" style="height:400px;" />
+					<p:lineChart model="#{charItem}" style="height:400px;" />
 				</c:forEach>
 			</p:scrollPanel>
 		</h:form>

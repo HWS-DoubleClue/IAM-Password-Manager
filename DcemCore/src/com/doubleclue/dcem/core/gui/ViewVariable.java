@@ -294,8 +294,7 @@ public class ViewVariable implements Serializable {
 			resultValue = ((LocalTime) value).format(dateFormatter);
 			break;
 		case DATE:
-			dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
-			resultValue = ((LocalDate) value).format(dateFormatter);
+			resultValue = JsfUtils.getLocalDateFormat((LocalDate) value);
 			break;
 		case DATE_TIME:
 			DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);

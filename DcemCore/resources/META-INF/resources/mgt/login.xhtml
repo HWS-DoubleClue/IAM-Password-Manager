@@ -23,6 +23,7 @@
  	//#endif
  	-->
 	<h:outputScript library="js" name="loginDCEM.js" />
+	<h:outputStylesheet library="webjars" name="font-awesome/6.2.0/css/all-jsf.css" />
 </h:head>
 
 <f:view locale="#{operatorSession.locale}">
@@ -74,6 +75,12 @@
 						<p:graphicImage library="pictures" name="support.svg" width="32" height="32" style="vertical-align: middle;" />
 						<p:outputLabel value="Enterprise Management" class="dialogTitle" />
 					</h:panelGroup>
+					<p:commandLink id="register" action="#{logoffView.actionRequestRegister}" rendered="#{adminModule.modulePreferences.enableCreateAccount}"
+						ajax="false" style="float:right;">
+						<h:outputText class="fa fa-user-plus" style="font-size: large" />
+						<p:spacer width="2em" />
+						<p:outputLabel style="font-size: medium; cursor: pointer" value=" #{DcupMsg['title.createNewAccount']}" />
+					</p:commandLink>
 
 					<p />
 					<p:outputLabel value="#{AdminMsg['mfalogin.login']}" class="dialogTitle" style="margin-left: 8px; font-size: 1.6em;"
@@ -99,9 +106,9 @@
 
 						<p:commandButton id="login" value="#{AdminMsg['mfalogin.login.button']}" action="#{mfaLoginView.actionLogin}" style="width: 91%;" ajax="true" async="true"
 							icon="fa fa-sign-in" />
-							<p></p>
-						<p:commandButton id="azureLogin" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{mfaLoginView.actionAzureLogin}" style="width: 91%;" ajax="false" async="true"
-							icon="ui-icon-azure" rendered="#{mfaLoginView.azureLogin}" />
+						<p></p>
+						<p:commandButton id="azureLogin" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{mfaLoginView.actionAzureLogin}" style="width: 91%;"
+							ajax="false" async="true" icon="ui-icon-azure" rendered="#{mfaLoginView.azureLogin}" />
 
 					</p:panel>
 
