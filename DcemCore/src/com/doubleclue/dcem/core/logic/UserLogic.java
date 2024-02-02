@@ -545,14 +545,8 @@ public class UserLogic {
 
 	@DcemTransactional
 	public void disableUser(DcemUser user, DcemAction action) throws DcemException {
-		DcemUser userMerged = user;
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaUpdate<DcemUser> updateCriteria = cb.createCriteriaUpdate(DcemUser.class);
-		Root<DcemUser> root = updateCriteria.from(DcemUser.class);
-		updateCriteria.set(root.get(DcemUser_.disabled), true);
-		updateCriteria.where(cb.equal(root.get("id"), user.getId()));
-		em.createQuery(updateCriteria).executeUpdate();
- 		userMerged.setDisabled(true);		
+		DcemUser userMerged = em.find(DcemUser.class, user.getId());
+		userMerged.setDisabled(true);		
 		asModuleApi.killUserDevices(userMerged);
 		auditingLogic.addAudit(action, userMerged.toString());
 	}
