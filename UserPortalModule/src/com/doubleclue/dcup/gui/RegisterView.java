@@ -503,10 +503,6 @@ public class RegisterView implements Serializable {
 			return true;
 	}
 
-	public boolean isRegisterViewVisible() {
-		return userPortalModule.getModulePreferences().isCreateAccountEnabled();
-	}
-
 	public String getActivationCode() {
 		return activationCode;
 	}
