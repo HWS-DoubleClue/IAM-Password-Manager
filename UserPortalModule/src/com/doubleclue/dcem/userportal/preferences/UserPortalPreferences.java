@@ -19,7 +19,6 @@ public class UserPortalPreferences extends ModulePreferences {
 
 	private boolean enableCaptcha = false;
 	private boolean enableAutoComplete = true;
-	private boolean enableLocalUserRegistration = false;
 
 	private int urlTokenTimeout = 120; // minutes
 
@@ -76,11 +75,6 @@ public class UserPortalPreferences extends ModulePreferences {
 		return (value != null) ? value : false;
 	}
 
-	@JsonIgnore
-	public boolean isCreateAccountEnabled() {
-		return enableLocalUserRegistration == true;
-	}
-
 	public boolean isEnableCaptcha() {
 		return enableCaptcha;
 	}
@@ -128,14 +122,6 @@ public class UserPortalPreferences extends ModulePreferences {
 
 	public void setNotificationType(NotificationType notificationType) {
 		this.notificationType = notificationType;
-	}
-
-	public boolean isEnableLocalUserRegistration() {
-		return enableLocalUserRegistration;
-	}
-
-	public void setEnableLocalUserRegistration(boolean enableLocalUserRegistration) {
-		this.enableLocalUserRegistration = enableLocalUserRegistration;
 	}
 
 	public int getUrlTokenTimeout() {
