@@ -78,7 +78,7 @@
 						<!-- Login Form -->
 						<p:panel id="basic" style="width: 40em; margin: 0 auto; border: none;" styleClass="loginPanelContainer">
 							<p:panel id="loginPanel" widgetVar="loginPanel" style="border:none;">
-								<p:commandLink id="register" action="#{upLoginView.actionRequestRegister}" rendered="#{userPortalModule.modulePreferences.createAccountEnabled}"
+								<p:commandLink id="register" action="#{upLoginView.actionRequestRegister}" rendered="#{adminModule.preferences.enableCreateAccount}"
 									ajax="false" style="float:right;text-decoration: none;">
 									<p:graphicImage library="pictures" name="addUser.svg" width="32" height="32" style="vertical-align: middle;" />
 									<p:spacer width="10em"></p:spacer>
