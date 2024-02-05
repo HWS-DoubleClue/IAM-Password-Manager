@@ -19,9 +19,6 @@
 				<p:outputLabel value="#{DcupMsg['label.enableAutoComplete']}" />
 				<p:inputSwitch value="#{userPortalConfigView.userPortalConfig.enableAutoComplete}" style="width: 2em;" />
 
-				<p:outputLabel value="#{DcupMsg['label.enableLocalUserRegistration']}" />
-				<p:inputSwitch value="#{userPortalConfigView.userPortalConfig.enableLocalUserRegistration}" style="width: 2em;" />
-
 				<p:outputLabel value="#{DcupMsg['label.notificationType']}" />
 				<p:selectOneMenu id="notification" value="#{userPortalConfigView.selectedNotificationType}">
 					<f:selectItems value="#{userPortalConfigView.notificationTypeList}" />

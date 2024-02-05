@@ -34,10 +34,6 @@ public class AsApiUPGuiConfig implements Serializable {
 	@JsonProperty("enableAutoComplete")
 	private boolean enableAutoComplete = false;
 
-	@JsonProperty("enableLocalUserRegistration")
-	private boolean enableLocalUserRegistration = false;
-
-
 	@JsonProperty("title")
 	private String title = null;
 
@@ -274,14 +270,6 @@ public class AsApiUPGuiConfig implements Serializable {
 			return "null";
 		}
 		return o.toString().replace("\n", "\n    ");
-	}
-
-	public boolean isEnableLocalUserRegistration() {
-		return enableLocalUserRegistration;
-	}
-
-	public void setEnableLocalUserRegistration(boolean enableLocalUserRegistration) {
-		this.enableLocalUserRegistration = enableLocalUserRegistration;
 	}
 
 }
