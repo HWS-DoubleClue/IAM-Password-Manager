@@ -120,9 +120,9 @@ public class EntityManagerProducer {
 	}
 
 	/**
-	 * this function should only be used by methods that must use an entity
-	 * manager and are not called during a request. For Request(scoped) usage
-	 * just usage normal injection!
+	 * this function should only be used by methods that must use an entity manager
+	 * and are not called during a request. For Request(scoped) usage just usage
+	 * normal injection!
 	 * 
 	 * currently the only place where this is used is for application startup
 	 * functions
@@ -141,8 +141,8 @@ public class EntityManagerProducer {
 	}
 
 	/**
-	 * parse all META-INF/persistance.xml's and add all entities to the
-	 * persistence context
+	 * parse all META-INF/persistance.xml's and add all entities to the persistence
+	 * context
 	 * 
 	 * @param puConfiguration
 	 * @throws IOException
@@ -151,7 +151,8 @@ public class EntityManagerProducer {
 
 		HashSet<String> classesMap = new HashSet<String>();
 
-		Enumeration<URL> persistenceXMLres = Thread.currentThread().getContextClassLoader().getResources("META-INF/persistence.xml");
+		Enumeration<URL> persistenceXMLres = Thread.currentThread().getContextClassLoader()
+				.getResources("META-INF/persistence.xml");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			while (persistenceXMLres.hasMoreElements()) {
@@ -159,7 +160,8 @@ public class EntityManagerProducer {
 				DocumentBuilder builder = factory.newDocumentBuilder();
 				Document persistenceDocument = builder.parse(persistenceXMLURL.openStream());
 				XPath xPath = XPathFactory.newInstance().newXPath();
-				NodeList result = (NodeList) xPath.evaluate("/persistence/persistence-unit/class/text()", persistenceDocument, XPathConstants.NODESET);
+				NodeList result = (NodeList) xPath.evaluate("/persistence/persistence-unit/class/text()",
+						persistenceDocument, XPathConstants.NODESET);
 
 				for (int i = 0; i < result.getLength(); i++) {
 					String className = result.item(i).getNodeValue();
@@ -223,7 +225,7 @@ public class EntityManagerProducer {
 		SessionFactory sf = emf.unwrap(SessionFactory.class);
 		org.hibernate.stat.Statistics statistics = sf.getStatistics();
 		StatisticCounter statisticsRecord;
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && dbStatistics == true) {
 			logger.debug("DB-Statistics: " + statistics.toString());
 			statisticsRecord = new StatisticCounter();
 			statisticsRecord.count = statistics.getSecondLevelCacheHitCount();
@@ -242,24 +244,25 @@ public class EntityManagerProducer {
 				}
 			}
 		}
-
-		String[] queries = statistics.getQueries();
-		for (String query : queries) {
-			String queryLow = query.toLowerCase();
-			int startName = queryLow.indexOf(QUERY_FROM);
-			if (startName >= 0) {
-				startName += QUERY_FROM.length();
-				int endName = queryLow.indexOf(' ', startName + QUERY_FROM.length());
-				String name = "DB-" + query.substring(startName, endName);
-				org.hibernate.stat.QueryStatistics queryStatistics = statistics.getQueryStatistics(query);
-				statisticsRecord = dbStatisticMap.get(name);
-				if (statisticsRecord == null) {
-					statisticsRecord = new StatisticCounter();
-					dbStatisticMap.put(name, statisticsRecord);
+		if (dbStatistics == true) {
+			String[] queries = statistics.getQueries();
+			for (String query : queries) {
+				String queryLow = query.toLowerCase();
+				int startName = queryLow.indexOf(QUERY_FROM);
+				if (startName >= 0) {
+					startName += QUERY_FROM.length();
+					int endName = queryLow.indexOf(' ', startName + QUERY_FROM.length());
+					String name = "DB-" + query.substring(startName, endName);
+					org.hibernate.stat.QueryStatistics queryStatistics = statistics.getQueryStatistics(query);
+					statisticsRecord = dbStatisticMap.get(name);
+					if (statisticsRecord == null) {
+						statisticsRecord = new StatisticCounter();
+						dbStatisticMap.put(name, statisticsRecord);
+					}
+					statisticsRecord.count = queryStatistics.getExecutionCount();
+					statisticsRecord.aveTime = queryStatistics.getExecutionAvgTime();
+					statisticsRecord.longestTime = queryStatistics.getExecutionMaxTime();
 				}
-				statisticsRecord.count = queryStatistics.getExecutionCount();
-				statisticsRecord.aveTime = queryStatistics.getExecutionAvgTime();
-				statisticsRecord.longestTime = queryStatistics.getExecutionMaxTime();
 			}
 		}
 		return dbStatisticMap;
