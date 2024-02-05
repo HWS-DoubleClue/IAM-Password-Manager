@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.enterprise.context.SessionScoped;
@@ -11,9 +12,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -31,6 +36,7 @@ import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.entities.DepartmentEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.gui.AutoDialogBean;
 import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemDialog;
@@ -54,7 +60,7 @@ import com.doubleclue.utils.RandomUtils;
 public class UserDialogBean extends DcemDialog {
 
 	private Logger logger = LogManager.getLogger(UserDialogBean.class);
-	
+
 	@Inject
 	UserLogic userLogic;
 
@@ -102,14 +108,56 @@ public class UserDialogBean extends DcemDialog {
 	private boolean defaultTimezone;
 	String department;
 	String jobTitle;
-	
+
 	private byte[] photoProfile;
 	private UploadedFile uploadPhotoProfile;
-	
+
 	DcemUser dcemUser;
 	DcemAction dcemAction;
 
-	public boolean actionOk() throws Exception {
+	public void actionAddSave() throws Exception {
+		try {
+			if (isUserProfile()) {
+				if (addSave() == true) {
+					actionCloseDialog();
+				}
+			} else {
+				if (addSave() == true) {
+					actionCloseDialog();
+				}
+			}
+		} catch (DcemException dcemExp) {
+			logger.warn("OK Action Failed", dcemExp);
+			switch (dcemExp.getErrorCode()) {
+			case CONSTRAIN_VIOLATION_DB:
+				JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "db.constrain.at.insert", (Object[]) null);
+				return;
+			case CONSTRAIN_VIOLATION:
+				JsfUtils.addErrorMessage("Verification Error: " + dcemExp.getMessage());
+				return;
+			case EXCEPTION:
+				JsfUtils.addErrorMessage("Something went wrong. Cause: " + dcemExp.getMessage());
+				return;
+			default:
+				JsfUtils.addErrorMessage(dcemExp.getLocalizedMessage());
+				return;
+
+			}
+		} catch (Exception exp) {
+			ConstraintViolationException constrainViolation = DcemUtils.getConstainViolation(exp);
+			if (constrainViolation != null) {
+				JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "db.constrain.at.insert", (Object[]) null);
+			} else {
+				JsfUtils.addErrorMessage(exp.toString());
+				logger.warn("OK Action Failed", exp);
+			}
+			return;
+		}
+		JsfUtils.addFacesInformationMessage("successful", "mainMessages");
+		return;
+	}
+
+	private boolean addSave() throws Exception {
 		if (userOutranksOperator()) {
 			throw new DcemException(DcemErrorCodes.CANNOT_EDIT_OUTRANKING_USER, dcemUser.getLoginId());
 		} else {
@@ -139,7 +187,7 @@ public class UserDialogBean extends DcemDialog {
 					return false;
 				}
 			}
-			dcemUser = userLogic.addOrUpdateUser(dcemUser, getAutoViewAction().getDcemAction(), true,
+			dcemUser = userLogic.addOrUpdateUser(dcemUser, dcemAction, true,
 					adminModule.getPreferences().isNumericPassword(),
 					adminModule.getPreferences().getUserPasswordLength(), false);
 			DcemUserExtension dcemUserExtension = new DcemUserExtension();
@@ -156,12 +204,12 @@ public class UserDialogBean extends DcemDialog {
 			if (dcemUser.getId() == operatorSessionBean.getDcemUser().getId()) {
 				FacesContext.getCurrentInstance().getViewRoot().setLocale(dcemUser.getLanguage().getLocale());
 				operatorSessionBean.setDcemUser(dcemUser);
-				viewNavigator.setMenuModel(null);  // refresh menu
+				viewNavigator.setMenuModel(null); // refresh menu
 			}
 			return true;
 		}
 	}
-	
+
 	@Override
 	public void actionConfirm() throws Exception {
 		List<Object> userList = autoViewBean.getSelectedItems();
@@ -235,7 +283,7 @@ public class UserDialogBean extends DcemDialog {
 			JsfUtils.addErrorMessage(e.getMessage());
 		}
 	}
-	
+
 	public StreamedContent getPhotoUserProfile() {
 		DcemUserExtension userExtension = dcemUser.getDcemUserExt();
 		if (photoProfile != null) {
@@ -326,13 +374,14 @@ public class UserDialogBean extends DcemDialog {
 	public List<SelectItem> getAvailableCountries() {
 		return applicationBean.getAvailableCountries(operatorSessionBean.getLocale());
 	}
-	
-	public void showMyProfile () throws Exception {
+
+	public void showMyProfile() throws Exception {
 		dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
-		dcemAction = new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE);
+		dcemAction = new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR,
+				DcemConstants.ACTION_USER_PROFILE);
 		updateShow();
 	}
-	
+
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		dcemUser = (DcemUser) this.getActionObject();
 		if (dcemUser.isDomainUser()
@@ -343,7 +392,7 @@ public class UserDialogBean extends DcemDialog {
 		updateShow();
 	}
 
-	private void updateShow () throws Exception {
+	private void updateShow() throws Exception {
 		userType = dcemUser.isDomainUser() == true ? DcemConstants.TYPE_DOMAIN : DcemConstants.TYPE_LOCAL;
 		if (dcemUser.getLoginId() != null) {
 			String[] domainUser = dcemUser.getLoginId().split(DcemConstants.DOMAIN_SEPERATOR_REGEX);
@@ -381,7 +430,7 @@ public class UserDialogBean extends DcemDialog {
 		if (userOutranksOperator()) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "userDialog.error.userOutranksOperator");
 		}
-		photoProfile = null; 
+		photoProfile = null;
 		leaving = false;
 	}
 
@@ -427,6 +476,9 @@ public class UserDialogBean extends DcemDialog {
 	}
 
 	public boolean userOutranksOperator() {
+		if (dcemUser == null) {
+			return false;
+		}
 		DcemRole userRole = dcemUser.getDcemRole();
 		return (userRole != null) ? userRole.getRank() > getOperatorRank() : false;
 	}
@@ -464,6 +516,9 @@ public class UserDialogBean extends DcemDialog {
 	}
 
 	public String getReportsTo() {
+		if (dcemUser == null) {
+			return null;
+		}
 		DcemUserExtension dcemUserExtension = dcemUser.getDcemUserExt();
 		if (dcemUserExtension != null && dcemUserExtension.getDepartment() != null
 				&& dcemUserExtension.getDepartment().getHeadOf() != null) {
@@ -499,13 +554,12 @@ public class UserDialogBean extends DcemDialog {
 	public List<SelectItem> getCountryTimezones() {
 		return DcemUtils.getCountryTimezones(continentTimezone);
 	}
-	
-	
-	public void actionGeneratePassword () {
+
+	public void actionGeneratePassword() {
 		newPassword = RandomUtils.generateRandomPasswordExtAlphaNumeric(8);
-		return;		
+		return;
 	}
-	
+
 	public void photoProfileListener(FileUploadEvent event) {
 		if (event == null) {
 			return;
@@ -520,6 +574,15 @@ public class UserDialogBean extends DcemDialog {
 			logger.error("upload photo failed " + e.toString());
 		}
 		return;
+	}
+
+	public void actionCloseDialog() {
+		if (isUserProfile() == true) {
+			leavingDialog();
+			PrimeFaces.current().dialog().closeDynamic(null);
+		} else {
+			viewNavigator.actionCloseDialog();
+		}
 	}
 
 	public String getNewPassword() {
@@ -585,7 +648,7 @@ public class UserDialogBean extends DcemDialog {
 	public void setDefaultTimezone(boolean defaultTimezone) {
 		this.defaultTimezone = defaultTimezone;
 	}
-	
+
 	public boolean isUserProfile() {
 		return dcemAction.getAction() == DcemConstants.ACTION_USER_PROFILE;
 	}
@@ -596,5 +659,13 @@ public class UserDialogBean extends DcemDialog {
 
 	public void setUploadPhotoProfile(UploadedFile uploadPhotoProfile) {
 		this.uploadPhotoProfile = uploadPhotoProfile;
+	}
+
+	public DcemUser getDcemUser() {
+		return dcemUser;
+	}
+
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
 	}
 }

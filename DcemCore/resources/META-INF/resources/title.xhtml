@@ -9,10 +9,7 @@
 	<link rel="shortcut icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
 	<h:outputStylesheet library="primefaces-dcemtheme" name="theme.css" />
 
-	<h:form id="title">
-		<!-- <p:remoteCommand autoRun="true" oncomplete="startTimer(#{dcemApplication.getInactivityTime()} * 60);" /> -->
-
-
+	<h:form id="titleForm">
 		<table width="100%;" style="#{adminModule.titleStyle}; height: 6vh;" id="headerbar">
 			<tr>
 				<td id="closeButton" style="text-align: left; padding-left: 0.5em"><a href="javascript:void(0)" onclick="closeNav()"
@@ -55,10 +52,10 @@
 								</p:avatar>
 							</div>
 							<p:spacer width="10" />
-							<p:menu overlay="true" trigger="userAvatar" my="left top" at="left bottom">
+							<p:menu id="titleMenu" overlay="true" trigger="userAvatar" my="left top" at="left bottom">
 								<p:menuitem value="#{CoreMsg['titleMenu.profile']} " rendered="#{titleBarView.editProfilePermission}" action="#{titleBarView.editProfile}" ajax="true" icon="fa fa-user-pen" >
-									<p:ajax event="dialogReturn"  update="menuForm title viewPart" />
-								</p:menuitem>
+								<p:ajax event="dialogReturn" update="menuForm titleForm:titleMenu titleForm:userAvatar viewPart" />
+							</p:menuitem>
 								<p:menuitem value="#{DcupMsg['title.changePasswordView']} " action="#{titleBarView.updatePassword}" icon="fa fa-key" rendered="#{titleBarView.changePasswordPermission}" />
 								<p:menuitem value="#{CoreMsg['titleMenu.logoff']} " action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" />
 							</p:menu>

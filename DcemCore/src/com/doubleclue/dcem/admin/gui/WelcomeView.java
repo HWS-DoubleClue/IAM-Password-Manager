@@ -92,6 +92,10 @@ public class WelcomeView extends DcemView {
 		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
 	}
 	
+	public boolean isPermissionView() {
+		return operatorSessionBean.isPermission(welcomeSubject.getDcemActions());
+	}
+	
 
 	public LocalDate getCurrentDate() {
 		return currentDate;

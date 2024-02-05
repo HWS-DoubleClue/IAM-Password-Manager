@@ -136,12 +136,12 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	private DcemUserExtension dcemUserExt;
 
 	@Column(length = 255, nullable = true)
-	@Size(min = 2, max = 255)
+	@Size(min = 4, max = 255)
 	@DcemGui(style = "width: 25em")
 	private String displayName;
 
 	@Column(length = 255, nullable = false)
-	@Size(min = 2, max = 255)
+	@Size(min = 4, max = 255)
 	@DcemGui
 	private String loginId;
 

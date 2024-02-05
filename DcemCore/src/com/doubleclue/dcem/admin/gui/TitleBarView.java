@@ -108,10 +108,10 @@ public class TitleBarView extends DcemView {
 	}
 	
 	public void updatePassword () {
-		DcemAction dcemAction = new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD);
-		RawAction rawAction = titleBarSubject.getRawAction(DcemConstants.ACTION_USER_PROFILE);
-		AutoViewAction autoViewAction = new AutoViewAction(dcemAction, userPasswordDialog, resourceBundle, rawAction, getWelcomeText(), null);
-		viewNavigator.setActiveDialog(autoViewAction);
+//		DcemAction dcemAction = new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD);
+//		RawAction rawAction = titleBarSubject.getRawAction(DcemConstants.ACTION_USER_PROFILE);
+//		AutoViewAction autoViewAction = new AutoViewAction(dcemAction, userPasswordDialog, resourceBundle, rawAction, getWelcomeText(), null);
+//		viewNavigator.setActiveDialog(autoViewAction);
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("position", "top");

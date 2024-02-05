@@ -13,7 +13,7 @@ public class WelcomeSubject extends SubjectAbs {
 	private static final long serialVersionUID = 1L;
 
 	public WelcomeSubject() {
-		rawActions.add(new RawAction(DcemConstants.ACTION_VIEW, null));
+		rawActions.add(new RawAction(DcemConstants.ACTION_VIEW, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }));
 		rawActions.add(new RawAction(DcemConstants.ACTION_DELETE, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN }));
 	}
 

@@ -276,6 +276,8 @@ public class DcemMain {
 		if (productVersion.getVersionInt() < dbVersion.getVersion()) {
 			logger.error("This Product-Version: " + productVersion.getVersionStr() + " (" + productVersion.getVersionInt() + "), Current DB-Version: "
 					+ dbVersion.getVersionStr() + "(" + dbVersion.getVersion() + ")");
+			logger.info(
+					"\nDATABASE MIGRATION FAILED. Tip: You may set the Java System Variable '-DignoreDbVersion=true' to skip this error, in case you already migrate DB manually. Be carefull and have a look at the logs!\n");
 			if (ignoreDbVersion == false) {
 				fatalExit(conn, "This Version cannot run with a newer database version!", null);
 			}
