@@ -215,9 +215,6 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 				}
 			}
 			if (autoViewAction.getDcemDialog() != null) {
-				if (selectedObject != null) {
-					autoViewAction.getDcemDialog().setActionObject(selectedObject);
-				}
 				autoViewAction.getDcemDialog().setSubActionObject(subObject);
 			}
 			if (selectedObject != null && (autoViewAction.xhtmlPage == null || autoViewAction.xhtmlPage.endsWith(DcemConstants.AUTO_DIALOG_PATH))) {

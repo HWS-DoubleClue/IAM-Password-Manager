@@ -35,8 +35,6 @@ public class DcemDialog implements Serializable {
 
 	AutoViewAction autoViewAction;
 	
-	Object actionObject;
-
 	String height = null;
 	String width = null;
 
@@ -44,7 +42,7 @@ public class DcemDialog implements Serializable {
 	}
 
 	public void setParentView(DcemView sasView) {
-		System.out.println("DcemDialog.setParentView() " + this.toString() + " parentView " + parentView);
+//		System.out.println("DcemDialog.setParentView() " + this.toString() + " parentView " + parentView);
 		parentView = sasView;
 	}
 
@@ -56,9 +54,6 @@ public class DcemDialog implements Serializable {
 	// }
 
 	public Object getActionObject() {
-		if (actionObject != null) {
-			return actionObject;   // in this case the action object comes not from View
-		}
 		return parentView.getActionObject();
 	}
 
@@ -79,10 +74,7 @@ public class DcemDialog implements Serializable {
 		return parentView.getActionSubObject();
 	}
 
-	public void setActionObject(Object object) {
-		this.actionObject = object;
-	}
-
+	
 	public String getDisplayName() {
 		return autoViewAction.getActionText();
 	}

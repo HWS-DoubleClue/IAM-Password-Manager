@@ -6,6 +6,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
@@ -63,24 +64,19 @@ public class UserPasswordDialog extends DcemDialog {
 	private String passwordOld = "";
 	private String passwordNew;
 
-	@Override
-	public boolean actionOk() {
-
+	public void actionSave () {
 		try {
 			userLogic.changePassword(operatorSessionBean.getDcemUser(), passwordOld, passwordNew);
-			// JsfUtils.addInfoMessage(portalSessionBean.getResourceBundle().getString("info.passwordChange"));
-			StringUtils.wipeString(passwordOld);
-			StringUtils.wipeString(passwordNew);
 			passwordOld = null;
 			passwordNew = null;
-			return true;
+			actionCloseDialog();
 		} catch (DcemException e) {
 			JsfUtils.addErrorMessage(e.getLocalizedMessage());
 		} catch (Exception e) {
 			logger.error("", e);
 			JsfUtils.addErrorMessage(e.getMessage());
 		}
-		return false;
+		return;
 	}
 
 	public String getPasswordOld() {
@@ -97,6 +93,10 @@ public class UserPasswordDialog extends DcemDialog {
 
 	public void setPasswordNew(String passwordNew) {
 		this.passwordNew = passwordNew;
+	}
+	
+	public void actionCloseDialog () {
+		PrimeFaces.current().dialog().closeDynamic(null);
 	}
 
 }
