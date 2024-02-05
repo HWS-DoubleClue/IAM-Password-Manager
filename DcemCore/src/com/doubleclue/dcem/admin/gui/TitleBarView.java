@@ -70,7 +70,7 @@ public class TitleBarView extends DcemView {
 	
 //	DcemConstants.CHANGE_PASSWORD_DIALOG
 	public void leavingView() {
-		
+		System.out.println("TitleBarView.leavingView()");
 	}
 
 	@Override
@@ -79,17 +79,18 @@ public class TitleBarView extends DcemView {
 	}
 	
 	public void editProfile () {
-		List<Object> selectedList = new ArrayList<Object>();
-		DcemUser dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
-		selectedList.add(dcemUser);
-		autoViewBean.setSelectedItems(selectedList);
-		DcemAction dcemAction = new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE);
-		RawAction rawAction = titleBarSubject.getRawAction(DcemConstants.ACTION_USER_PROFILE);
-		AutoViewAction autoViewAction = new AutoViewAction(dcemAction, userDialog, resourceBundle, rawAction, getWelcomeText(), null);
-		userDialog.setActionObject(dcemUser);
-		viewNavigator.setActiveDialog(autoViewAction);
+		
+//		DcemUser dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
+//		List<Object> selectedList = new ArrayList<Object>();
+//		selectedList.add(dcemUser);
+//		autoViewBean.setSelectedItems(selectedList);
+//		DcemAction dcemAction = new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE);
+//		RawAction rawAction = titleBarSubject.getRawAction(DcemConstants.ACTION_USER_PROFILE);
+//		userDialog.setParentView(this);
+//		AutoViewAction autoViewAction = new AutoViewAction(dcemAction, userDialog, resourceBundle, rawAction, getWelcomeText(), null);
+//		viewNavigator.setActiveDialog(autoViewAction);
 		try {
-			userDialog.show(this, autoViewAction);
+			userDialog.showMyProfile();
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage("Something when wrong: Cause:  " + e.toString());
 			logger.warn("userDialog.show", e);
@@ -107,20 +108,10 @@ public class TitleBarView extends DcemView {
 	}
 	
 	public void updatePassword () {
-	//	DcemConstants.CHANGE_PASSWORD_DIALOG
-		DcemUser dcemUser = userLogic.getUser(operatorSessionBean.getDcemUser().getId());
 		DcemAction dcemAction = new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD);
 		RawAction rawAction = titleBarSubject.getRawAction(DcemConstants.ACTION_USER_PROFILE);
 		AutoViewAction autoViewAction = new AutoViewAction(dcemAction, userPasswordDialog, resourceBundle, rawAction, getWelcomeText(), null);
-		userDialog.setActionObject(dcemUser);
 		viewNavigator.setActiveDialog(autoViewAction);
-		try {
-			userPasswordDialog.show(this, autoViewAction);
-		} catch (Exception e) {
-			JsfUtils.addErrorMessage("Something when wrong: Cause:  " + e.toString());
-			logger.warn("userDialog.show", e);
-			return;	
-		}
 		Map<String, Object> options = new HashMap<String, Object>();
 		options.put("modal", true);
 		options.put("position", "top");
