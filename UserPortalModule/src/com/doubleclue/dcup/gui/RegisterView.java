@@ -147,7 +147,7 @@ public class RegisterView implements Serializable {
 	public String actionRegisterLocalUser() {
 		UserPortalPreferences preferences = userPortalModule.getModulePreferences();
 		try {
-			if (!preferences.isEnableLocalUserRegistration()) {
+			if (adminModule.getPreferences().isEnableCreateAccount() == false) {
 				throw new DcemException(DcemErrorCodes.UNALLOWED_ACTION, " registration as a local user");
 			}
 			if (validator()) {
@@ -354,14 +354,13 @@ public class RegisterView implements Serializable {
 	 * @throws DcemException
 	 */
 	private String verifyRegistrationUser(String userLoginId) throws DcemException {
-		UserPortalPreferences preferences = userPortalModule.getModulePreferences();
 		if ((StringUtils.isValidNameId(userLoginId) == false) || userLoginId.contains(DcemConstants.DOMAIN_SEPERATOR)) {
 			throw new DcemException(DcemErrorCodes.ID_WITH_SPECIAL_CHARACTERS, userLoginId);
 		}
 		userLoginName = userId;
 
 		// Local User Registration
-		if (preferences.isEnableLocalUserRegistration() == false) {
+		if (adminModule.getPreferences().isEnableCreateAccount() == false) { 
 				throw new DcemException(DcemErrorCodes.LOCAL_USER_REGISTRATION_NOT_ALLOWED, userLoginId);
 		}
 		DcemUser dcemUser = userLogic.getUser(userLoginId);
@@ -497,14 +496,7 @@ public class RegisterView implements Serializable {
 	}
 
 	public boolean isRegistrationLocalUserViewVisible() {
-		if (!userPortalModule.getModulePreferences().isEnableLocalUserRegistration()) {
-			return false;
-		} else
-			return true;
-	}
-
-	public boolean isRegisterViewVisible() {
-		return userPortalModule.getModulePreferences().isCreateAccountEnabled();
+		return adminModule.getPreferences().isEnableCreateAccount() == true;
 	}
 
 	public String getActivationCode() {

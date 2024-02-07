@@ -25,50 +25,48 @@
 	<h:body>
 
 		<ui:include src="titleLogin.xhtml" />
-		<h:panelGroup rendered="#{registerView.registerViewVisible}">
 
-			<div class="ui-fluid">
-				<h:form id="registerForm">
+		<div class="ui-fluid">
+			<h:form id="registerForm">
+
+				<p />
+				<br />
+				<p />
+				<p:panel id="registrationPanel" footer="#{DcupMsg['label.requiredField']}" styleClass="whiteBackground">
+					<f:facet name="header">
+						<h:outputText style="font-size: x-large !important; color:#fff" class="fa fa-user" />
+						<p:outputLabel value="#{DcupMsg['title.createNewAccount']}" styleClass="dialogTitle2" />
+					</f:facet>
+					<p:separator />
+					<p:messages id="msgs" showDetail="true" showSummary="false" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+					<br />
+					<p:panel cellpadding="2" cellspacing="2" layout="grid">
+						<p:outputLabel for="name" value="#{DcupMsg['label.username']}" />
+						<p:inputText id="name" value="#{registerView.userId}" maxlength="64" required="true" style="margin-left:1em;width: 18em"
+							requiredMessage="#{DcupMsg['registration.missingUserName']}" autocomplete="off" />
+						<br />
+						<p:captcha id="captcha" label="Captcha" rendered="#{userPortalModule.enableCaptcha}" language="#{portalSessionBean.localeStr}}" />
+						<h:outputText value="" rendered="#{userPortalModule.enableCaptcha}" />
+					</p:panel>
+					<br />
+					<p:commandButton id="registerAllButton" value="#{DcupMsg['button.next']}" action="#{registerView.actionUserId}" icon="fa fa-arrow-circle-right"
+						style="width: 10em">
+					</p:commandButton>
 
 					<p />
 					<br />
-					<p />
-					<p:panel id="registrationPanel" footer="#{DcupMsg['label.requiredField']}" styleClass="whiteBackground">
-						<f:facet name="header">
-							<h:outputText style="font-size: x-large !important; color:#fff" class="fa fa-user" />
-							<p:outputLabel value="#{DcupMsg['title.createNewAccount']}" styleClass="dialogTitle2" />
-						</f:facet>
-						<p:separator />
-						<p:messages id="msgs" showDetail="true" showSummary="false" closable="true">
-							<p:autoUpdate />
-						</p:messages>
-						<br />
-						<p:panel cellpadding="2" cellspacing="2" layout="grid">
-							<p:outputLabel for="name" value="#{DcupMsg['label.username']}" />
-							<p:inputText id="name" value="#{registerView.userId}" maxlength="64" required="true" style="margin-left:1em;width: 18em"
-								requiredMessage="#{DcupMsg['registration.missingUserName']}" autocomplete="off" />
-							<br />
-							<p:captcha id="captcha" label="Captcha" rendered="#{userPortalModule.enableCaptcha}" language="#{portalSessionBean.localeStr}}" />
-							<h:outputText value="" rendered="#{userPortalModule.enableCaptcha}" />
-						</p:panel>
-						<br />
-						<p:commandButton id="registerAllButton" value="#{DcupMsg['button.next']}" action="#{registerView.actionUserId}" icon="fa fa-arrow-circle-right"
-							style="width: 10em">
-						</p:commandButton>
 
-						<p />
-						<br />
-
-						<p:commandLink id="secureLogin" action="#{registerView.actionGotoLogin}" ajax="false" immediate="true">
-							<i class="fa fa-angle-double-left" />
-							<h:outputText value="#{DcupMsg['button.backToLogin']}" />
-						</p:commandLink>
-					</p:panel>
+					<p:commandLink id="secureLogin" action="#{registerView.actionGotoLogin}" ajax="false" immediate="true">
+						<i class="fa fa-angle-double-left" />
+						<h:outputText value="#{DcupMsg['button.backToLogin']}" />
+					</p:commandLink>
+				</p:panel>
 
 
-				</h:form>
-			</div>
-		</h:panelGroup>
+			</h:form>
+		</div>
 
 	</h:body>
 </f:view>

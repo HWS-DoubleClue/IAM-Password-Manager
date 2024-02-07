@@ -3,6 +3,8 @@
  */
 package com.doubleclue.dcem.core.logic;
 
+import static org.junit.Assert.fail;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -13,8 +15,9 @@ import javax.persistence.EntityManager;
 
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
+import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -25,6 +28,7 @@ import com.doubleclue.dcem.system.logic.SystemModule;
  * @author emanuel.galea
  *
  */
+@RunWith(Arquillian.class)
 public class ConfigLogicTest extends AbstractArquillianTest {
 
 	@Inject
@@ -42,7 +46,7 @@ public class ConfigLogicTest extends AbstractArquillianTest {
 			configLogic.getDbVerification();
 		} catch (DcemException exp) {
 			logger.error("Couldn't set the DB Verification Key", exp);
-			Assertions.fail(exp.toString());	
+			fail(exp.toString());
 		}
 
 		Session session = em.unwrap(Session.class);
@@ -62,23 +66,23 @@ public class ConfigLogicTest extends AbstractArquillianTest {
 					+ DcemConstants.CONFIG_KEY_DB_VERIFICATION + "' and moduleId='" + SystemModule.MODULE_ID + "'");
 			if (rs.next() == false) {
 				logger.error("No DB Verification Key found");
-				Assertions.fail();
+				fail();
 			}
 			byte[] value = rs.getBytes(1);
 			if (Arrays.equals(ConfigLogic.DB_VERIFICATION, value) == true) {
 				logger.error("DB Verification Key is not encrypted at all");
-				Assertions.fail();
+				fail();
 			}
 			
 			if (Arrays.equals(ConfigLogic.DB_VERIFICATION, DbEncryption.decryptSeed(value)) == false) {
 				logger.error("DB Verification Key is dencrypted failed.");
-				Assertions.fail();
+				fail();
 			}
 			
 
 		} catch (Exception exp) {
 			logger.error("Couldn't set the DB Verification Key", exp);
-			Assertions.fail(exp.toString());
+			fail(exp.toString());
 		}
 		
 	}
