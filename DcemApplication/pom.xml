@@ -148,6 +148,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
+						<?m2e ignore?>
 						<id>copy-dependencies</id>
 						<phase>prepare-package</phase>
 						<goals>
