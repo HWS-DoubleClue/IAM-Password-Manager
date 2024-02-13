@@ -2,7 +2,7 @@
 
 /* General Settings */
 body {
-	background: #f0f8ff;
+	background: #F6FAFF;
 	font-family: "Segoe UI", sans-serif;
 	font-size: 14px;
 	margin: 0;
@@ -23,7 +23,7 @@ body {
 
 .header6 {
 	font-size: x-small;
-	color: #ffffff;
+	color: #000;
 	padding: 10px;
 }
 
@@ -143,7 +143,7 @@ body {
 
 /* Menu */
 #sidemenu {
-	background-color: #303030;
+	background-color: #E7F1FF;
 }
 
 .selectMenu {
@@ -174,7 +174,7 @@ body {
 
 /* Tab View */
 .ui-tabs-nav {
-	background-color: #ffffff !important;
+	background-color: #f0f8ff !important;
 }
 
 .wideButton20 {
@@ -254,8 +254,10 @@ ul.ui-menu-child {
 }
 
 .closebtn {
-	font-size: 2em !important;
+	font-size: 1.5em !important;
 	color: #fff;
+	transition-property: transform;
+	transition-duration: 1s;
 }
 
 .rowErrorClass {
@@ -280,16 +282,15 @@ ul.ui-menu-child {
 }
 
 .ui-icon-azure {
-	background: url("#{resource['pictures/azure.png']}") no-repeat !important;
+	background: url("#{resource['pictures/azure.png']}") no-repeat
+		!important;
 	margin-top: -12px !important;
 	width: 32px !important;
 	height: 32px !important;
 }
 
-.ui-tooltip-bottom .ui-tooltip-arrow{
+.ui-tooltip-bottom .ui-tooltip-arrow {
 	left: 80% !important;
 	margin-left: 1px !important;
 	margin-top: 2px !important;
 }
-
-

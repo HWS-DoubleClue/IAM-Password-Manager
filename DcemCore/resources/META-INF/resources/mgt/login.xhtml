@@ -69,7 +69,7 @@
 				<!-- <h:inputHidden id="accounts" value="#{mfaLoginView.accounts}" /> -->
 
 				<!-- Login Form -->
-				<p:panel id="basic" style="width: 35em; margin: 0 auto; border: 0px;">
+				<p:panel id="basic" style="width: 35em; margin: 0 auto; border: 0px; background-color: #f0f8ff">
 					<p />
 					<h:panelGroup id="customheader" style="vertical-align: middle; position: relative; vertical-align: center">
 						<p:graphicImage library="pictures" name="support.svg" width="32" height="32" style="vertical-align: middle;" />
@@ -92,7 +92,7 @@
 					<p:focus for="name" rendered="#{mfaLoginView.userNameDisable == false}" />
 
 					<!-- login panel -->
-					<p:panel style="width: 95%; margin: 0 auto; border: none; font-size: 1.2em; margin-left:1em;" rendered="#{mfaLoginView.loginPanelRendered}">
+					<p:panel style="width: 95%; margin: 0 auto; border: none; font-size: 1.2em; margin-left:1em; background-color: #f0f8ff;" rendered="#{mfaLoginView.loginPanelRendered}">
 						<h:outputLabel class="labelLogin" value="#{AdminMsg['mfalogin.login.username']}" />
 						<br></br>
 						<h:panelGroup>

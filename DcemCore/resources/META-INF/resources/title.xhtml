@@ -13,10 +13,10 @@
 		<table width="100%;" style="#{adminModule.titleStyle}; height: 6vh;" id="headerbar">
 			<tr>
 				<td id="closeButton" style="text-align: left; padding-left: 0.5em"><a href="javascript:void(0)" onclick="closeNav()"
-					style="paddin-left: 0; margin-left: 0;"><i class="closebtn fa fa-caret-left"
+					style="paddin-left: 0; margin-left: 0;"><i class="closebtn fa fa-bars"
 						onclick="setLocalStorageValue('sideMenuClose',true);removeLocalStorage('sideMenuOpen')"></i></a></td>
 
-				<td id="sidebarbtn" style="text-align: left; padding-left: 0.5em"><span class="fa fa-bars" style="cursor: pointer; font-size: 1.8em;"
+				<td id="sidebarbtn" style="text-align: left; padding-left: 0.5em"><span class="closebtn fa fa-bars" style="cursor: pointer;"
 					onclick="openNav()" onmousedown="setLocalStorageValue('sideMenuOpen',true);removeLocalStorage('sideMenuClose')"></span></td>
 
 				<td><h:outputText value="#{adminModule.titleEnterpriseManagment} " /> <h:outputText class="fa fa-shuffle" style="color: white; font-size: 1.6em"

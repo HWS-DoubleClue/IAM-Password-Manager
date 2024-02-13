@@ -1,7 +1,7 @@
 /* Component containers----------------------------------*/
 .ui-widget {
 	font-family: "Segoe UI", sans-serif;
-	font-size: 14px;
+	font-size: 15px;
 }
 
 .ui-dialog {
@@ -46,35 +46,36 @@
 }
 
 .ui-panelmenu .ui-panelmenu-header {
-	color: #ffffff !important;
+	color: #000 !important;
 	border: none !important;
 	outline: none !important;
 }
 
 .ui-panelmenu-header a {
-	background-color: #303030 !important;
-	color: white !important;
+	background-color: #e7f1ff !important;
+	color: #000 !important;
 	border: none !important;
 	outline: none !important;
 }
 
 .ui-panelmenu-header a:hover {
-	background-color: #005078 !important;
-	color: #ffffff !important;
+	background-color: #f6faff !important;
+	color: #000 !important;
 }
 
 .ui-panelmenu-content {
-	background-color: #303030 !important;
+	background-color: #e7f1ff !important;
 	border: none !important;
 	margin-left: 18px;
 }
 
 .ui-panelmenu-content a {
-	color: #ffffff !important;
+	color: #000 !important;
 }
 
 .ui-panelmenu-content a:hover {
-	background-color: #005078;
+	background-color: #f6faff;
+	color: #000 !important;
 }
 
 .ui-selectonemenu-panel {
@@ -341,7 +342,7 @@
 
 .ui-panelmenu-header .ui-icon-triangle-1-e {
 	background-image:
-		url("#{resource['primefaces-dcemtheme:images/triangle_right_16_white.png']}")
+		url("#{resource['primefaces-dcemtheme:images/angle-right-solid.svg']}")
 		!Important;
 	background-repeat: no-repeat;
 	background-position: 0px 0px !Important;
@@ -362,7 +363,7 @@
 
 .ui-panelmenu-header .ui-icon-triangle-1-s {
 	background-image:
-		url("#{resource['primefaces-dcemtheme:images/triangle_down_16_white.png']}")
+		url("#{resource['primefaces-dcemtheme:images/angle-down-solid.svg']}")
 		!Important;
 	background-repeat: no-repeat;
 	background-position: 0px 0px !Important;
@@ -1207,13 +1208,13 @@
 
 .ui-button.ui-state-hover {
 	border: none !important;
-	background-color: #0050F0 !important;
+	background-color: #003048 !important;
 	color: #ffffff !important;
 }
 
 .ui-button.ui-state-active {
 	border: none !important;
-	background-color: #0050FF !important;
+	background-color: #003048 !important;
 	color: #ffffff !important;
 }
 

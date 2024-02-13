@@ -69,7 +69,7 @@
 }
 
 .ui-panelmenu-header a {
-	background-color: #303030 !important;
+	background-color: #FFF !important;
 	color: white !important;
 	border: none !important;
 	outline: none !important;
@@ -81,7 +81,7 @@
 }
 
 .ui-panelmenu-content {
-	background-color: #303030 !important;
+	background-color: #FFF !important;
 	border: none !important;
 	margin-left: 18px;
 }
@@ -368,7 +368,7 @@
 
 .ui-panelmenu-header .ui-icon-triangle-1-e {
 	background-image:
-		url("#{resource['primefaces-dcemtheme:images/triangle_right_16_white.png']}")
+		url("#{resource['primefaces-dcemtheme:images/caret-down-solid.svg']}")
 		!Important;
 	background-repeat: no-repeat;
 	background-position: 0px 0px !Important;
@@ -389,7 +389,7 @@
 
 .ui-panelmenu-header .ui-icon-triangle-1-s {
 	background-image:
-		url("#{resource['primefaces-dcemtheme:images/triangle_down_16_white.png']}")
+		url("#{resource['primefaces-dcemtheme:images/caret-down-solid.svg']}")
 		!Important;
 	background-repeat: no-repeat;
 	background-position: 0px 0px !Important;
