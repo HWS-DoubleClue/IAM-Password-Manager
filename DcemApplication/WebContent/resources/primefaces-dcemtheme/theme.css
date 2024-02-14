@@ -38,7 +38,7 @@
 }
 
 .ui-dialog .ui-dialog-title {
-	color: #005078 !important;
+	color: #0075B1 !important;
 	font-size: 1.8em;
 	vertical-align: middle;
 	text-decoration: none;
@@ -89,7 +89,7 @@
 }
 
 .ui-panel-title {
-	color: #005078 !important;
+	color: #0075B1 !important;
 }
 
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button
@@ -115,7 +115,7 @@
 	font-size: 1.0em;
 }
 
-.ui-rowgroup-header.ui-widget-header{
+.ui-rowgroup-header.ui-widget-header {
 	border: none;
 	background: #e5e5e5;;
 	color: #222222;
@@ -142,7 +142,7 @@
 }
 
 .ui-tabs-header a:active {
-	background-color: #005078;
+	background-color: #0075B1;
 }
 
 /* Interaction states----------------------------------*/
@@ -179,7 +179,7 @@
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active
 	{
 	border: 1px solid #C3C3C3;
-	background: #ffffff !important;
+	background: #F7F7F7 !important;
 	font-weight: normal;
 	color: #212121;
 }
@@ -188,7 +188,7 @@
 	{
 	color: white;
 	text-decoration: none;
-	background-color: #005078;
+	background-color: #0075B1;
 }
 
 .ui-widget:active {
@@ -1201,14 +1201,15 @@
 
 .ui-button {
 	color: #ffffff !important;
-	background-color: #005078 !important;
+	background-color: #0075B1 !important;
 	border: none !important;
-	border-radius: 3px;
+	border-radius: 7px;
+	padding: .1em;
 }
 
 .ui-button.ui-state-hover {
 	border: none !important;
-	background-color: #003048 !important;
+	background-color: #00517B !important;
 	color: #ffffff !important;
 }
 
@@ -1224,6 +1225,10 @@
 
 .ui-button-text:hover {
 	color: #ffffff !important;
+}
+
+.ui-tooltip.ui-tooltip-bottom {
+	font-size: 13px;
 }
 
 body .ui-toggleswitch {
@@ -1271,7 +1276,7 @@ body .ui-toggleswitch.ui-toggleswitch-focus .ui-toggleswitch-slider {
 }
 
 body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
-	background: #005078;
+	background: #0075B1;
 }
 
 body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
@@ -1288,7 +1293,24 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 
 .ui-datatable.borderless th {
 	text-align: left;
-	padding: 0px 2px 0px 2px;
+	padding: 5px;
+	background-color: #F7F7F7;
+}
+
+.ui-paginator .ui-paginator-current, .ui-paginator .ui-paginator-rpp-options
+	{
+	color: #000;
+	background-color: #F9F9F9;
+}
+
+.ui-paginator .ui-paginator-current {
+	background-color: transparent;
+}
+
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td,
+	.ui-datatable tfoot th {
+	border-left: none;
+	border: none;
 }
 
 .ui-treetable.borderless tbody, .ui-treetable.borderless tbody td {
@@ -1298,7 +1320,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 
 .ui-datatable.borderless tr.ui-datatable-even:hover, .ui-datatable.borderless tr.ui-datatable-odd:hover
 	{
-	background: #98dCFF;
+	background: #CEE2FF;
 	cursor: pointer;
 }
 
@@ -1315,6 +1337,9 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 .ui-datatable table, .ui-datatable-resizable table {
 	table-layout: auto !important;
 	border-color: #d8d8d8 !important;
+}
+.ui-datatable tr.ui-state-highlight{
+	background-color: #e7f1ff;
 }
 
 .floatingLable {
@@ -1475,7 +1500,7 @@ body .vis-timeline .vis-item.vis-selected .vis-item-content {
 }
 
 body .vis-timeline .vis-time-axis .vis-text {
-	color: #005078;
+	color: #0075B1;
 }
 
 body .vis-timeline .vis-panel .vis-shadow {
@@ -1687,7 +1712,8 @@ body .ui-rating .ui-rating-cancel a {
 	display: inline-block;
 	background: none;
 	text-indent: 0;
-	transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s, opacity .2s;
+	transition: background-color .2s, color .2s, border-color .2s,
+		box-shadow .2s, opacity .2s;
 	display: block;
 	font-size: 1.143rem;
 	height: 1.143rem;
@@ -1763,7 +1789,7 @@ body .ui-rating .ui-rating-star-on a {
 	font-size: large;
 	height: 1rem;
 	width: 1rem;
-	color:lightyellow
+	color: lightyellow
 }
 
 body .ui-rating .ui-rating-star-on a:before {

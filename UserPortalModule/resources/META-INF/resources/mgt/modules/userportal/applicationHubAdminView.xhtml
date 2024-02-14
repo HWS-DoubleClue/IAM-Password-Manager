@@ -21,7 +21,7 @@
 			</h:panelGroup>
 			<button id="pluginCallbackBtn" value="" onclick="pluginCallback(this.value); return false;" style="display: none"></button>
 			<h:panelGroup style="float:right;padding-top: 3px;">
-				<i style="vertical-align: inherit; margin-right: 5px; color: #005078;" class="fa fa-search fa-lg"></i>
+				<i style="vertical-align: inherit; margin-right: 5px; color: #0075B1;" class="fa fa-search fa-lg"></i>
 				<p:inputText id="SeachField" placeholder="#{DcupMsg['searchPlaceHolder']}" value="#{applicationHubAdminView.searchValue}" size="20"
 					ondblclick="onchange(); return false;" onkeypress="if (event.keyCode == 13) {onchange(); return false; }" title="#{CoreMsg['filterTooltip']}">
 					<p:ajax event="keyup" listener="#{applicationHubAdminView.filterApplications}" update="applications" />
@@ -68,7 +68,7 @@
 				</f:facet>
 				<p:tabView id="tabView" activeIndex="0">
 					<p:tab title="#{DcupMsg['appHubAdmin.addAppApplication']}">
-					<a style="font-size: 1.5em; position: absolute; top: 0.5em; right: 1.5em; color: #005078" title="#{DcupMsg['appHub.linkToRecordGuide']}" href="#{DcupMsg['appHub.linkToHelp']}" target="_blank"><i class="fa fa-book"></i></a>
+					<a style="font-size: 1.5em; position: absolute; top: 0.5em; right: 1.5em; color: #0075B1" title="#{DcupMsg['appHub.linkToRecordGuide']}" href="#{DcupMsg['appHub.linkToHelp']}" target="_blank"><i class="fa fa-book"></i></a>
 						<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 							<p:outputLabel value="#{DcupMsg['appHubAdmin.addAppName']}" />
 							<h:panelGroup style="display: inherit;">
@@ -94,7 +94,7 @@
 						</h:panelGrid>
 					</p:tab>
 					<p:tab title="#{DcupMsg['appHubAdmin.addAppActions']}">
-					<a style="font-size: 1.5em; position: absolute; top: 0.5em; right: 1.5em; color: #005078" title="#{DcupMsg['appHub.linkToRecordGuide']}" href="#{DcupMsg['appHub.linkToHelp']}" target="_blank"><i class="fa fa-book"></i></a>
+					<a style="font-size: 1.5em; position: absolute; top: 0.5em; right: 1.5em; color: #0075B1" title="#{DcupMsg['appHub.linkToRecordGuide']}" href="#{DcupMsg['appHub.linkToHelp']}" target="_blank"><i class="fa fa-book"></i></a>
 						<p />
 						<!-- Remote Commands Start-->
 						<p:remoteCommand name="finishExecutePlugin" update="actionsTable" action="#{applicationHubAdminView.actionFinishExecutePlugin}" />

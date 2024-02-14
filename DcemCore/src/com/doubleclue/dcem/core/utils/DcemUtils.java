@@ -466,7 +466,7 @@ public class DcemUtils {
 					helpButton.setValue("<i class=\"fa fa-question-circle\" aria-hidden=\"true\"></i>");
 					helpButton.setId("helpButton" + input.getId());
 					helpButton
-							.setStyle("padding:2px;color:#005078;cursor:pointer;font-size: 1.2em;margin-left: 0.5em;");
+							.setStyle("padding:2px;color:#0075B1;cursor:pointer;font-size: 1.2em;margin-left: 0.5em;");
 					OverlayPanel op = new OverlayPanel();
 					op.setDismissable(false);
 					op.setShowCloseIcon(true);

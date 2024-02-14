@@ -2,7 +2,7 @@
 
 /* General Settings */
 body {
-	background: #F6FAFF;
+	background: #fff;
 	font-family: "Segoe UI", sans-serif;
 	font-size: 14px;
 	margin: 0;
@@ -11,13 +11,13 @@ body {
 
 .header1 {
 	font-size: x-large;
-	color: #005078;
+	color: #0075B1;
 	padding: 10px !important;
 }
 
 .header3 {
 	font-size: large;
-	color: #005078;
+	color: #0075B1;
 	padding: 10px;
 }
 
@@ -29,14 +29,14 @@ body {
 
 .viewTitle {
 	font-size: 1.6em;
-	color: #005078;
+	color: #0075B1;
 	vertical-align: middle;
 	margin-left: 5px;
 	text-decoration: none;
 }
 
 .dialogTitle {
-	color: #005078 !important;
+	color: #0075B1 !important;
 	vertical-align: middle;
 	margin-left: 8px;
 	font-size: large;
@@ -53,13 +53,13 @@ body {
 }
 
 .tenantBrandingTitle {
-	color: #005078 !important;
+	color: #0075B1 !important;
 	margin-left: 0;
 	font-size: 1.4em;
 }
 
 .ui-accordion-header {
-	color: #005078 !important;
+	color: #0075B1 !important;
 }
 
 .ui-accordion-content.ui-helper-reset.ui-widget-content {
@@ -106,7 +106,7 @@ body {
 	width: 200px;
 	border: 1px solid red;
 	white-space: nowrap;
-	background-color: #005078;
+	background-color: #0075B1;
 	text-align: center;
 	margin: 1em 0;
 }
@@ -117,7 +117,7 @@ body {
 
 /* Header Bar */
 #headerbar {
-	background-color: #005078;
+	background-color: #0075B1;
 	padding-left: 0px;
 	margin: 0;
 	border-spacing: 0px;
@@ -143,7 +143,7 @@ body {
 
 /* Menu */
 #sidemenu {
-	background-color: #E7F1FF;
+	background-color: #e7f1ff;
 }
 
 .selectMenu {
@@ -227,8 +227,8 @@ body {
 }
 
 .ui-paginator {
-	background-color: #d8d8d8 !important;
-	color: #555555 !important;
+	background-color: #F7F7F7 !important;
+	color: #F7F7F7 !important;
 }
 
 .columnLabel {

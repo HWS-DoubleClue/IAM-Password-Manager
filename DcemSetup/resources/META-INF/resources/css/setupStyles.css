@@ -31,7 +31,7 @@ body {
 
 .viewTitle {
 	font-size: 1.5em;
-	color: #005078;
+	color: #0075B1;
 	vertical-align: middle;
 	margin-left: 5px;
 	text-decoration: none;
@@ -47,7 +47,7 @@ body {
 
 /* Header Bar */
 #headerbar {
-	background-color: #005078;
+	background-color: #0075B1;
 	padding-left: 10px;
 	height: 6vH;
 }

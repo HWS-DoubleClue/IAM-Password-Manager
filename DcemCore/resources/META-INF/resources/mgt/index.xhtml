@@ -22,6 +22,7 @@
 	font-size: 1.9em;
 	width: 1.6em;
 	height: 1.2em;
+	color: #0075b1;
 }
 </style>
 </h:head>
@@ -49,7 +50,7 @@
 				<h:outputLabel value="Version: #{dcemApplication.version}" />
 			</div>
 			<div class="flexBoxSpacing"></div>
-			<a target="_blank" href="https://hws-gruppe.de/"> <img src="#{resource['pictures/DC_powered_black.svg']}" class="poweredByImage"> </img>
+			<a target="_blank" href="https://hws-gruppe.de/"> <img src="#{resource['pictures/DC_powered_black.svg']}" width="" class="poweredByImage"> </img>
 			</a>
 		</div>
 
@@ -61,7 +62,7 @@
 					<div style="margin-bottom: 1em; margin-top: 1em">
 						<h:outputText style="" class="#{autoView.icon} viewTitle"></h:outputText>
 						<h:outputText styleClass="viewTitle" value=" #{autoView.title}" />
-						<p:button style="margin-right: 1em;color: #005078 !important;float: right;background-color: inherit !important;" href="#{autoView.helpResource}"
+						<p:button style="margin-right: 1em;float: right;background-color: inherit !important;" href="#{autoView.helpResource}"
 							icon="fa fa-book" target="_blank" id="helpBtn" rendered="#{autoView.helpResource != null}" />
 						<p:tooltip for="helpBtn" value="#{CoreMsg['readUserManual']}" showEffect="clip" hideEffect="fold" />
 					</div>

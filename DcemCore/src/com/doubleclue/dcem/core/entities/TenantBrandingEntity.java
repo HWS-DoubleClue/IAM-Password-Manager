@@ -18,7 +18,7 @@ public class TenantBrandingEntity {
 
 	private String backgroundColor = "#f0f8ff";
 
-	final static String BANNER_STYLE_CSS = "color: #ffffff;vertical-align: middle !important;font-size: large;background-color: #005078;text-align: center;";
+	final static String BANNER_STYLE_CSS = "color: #ffffff;vertical-align: middle !important;font-size: large;background-color: #0075B1;text-align: center;";
 
 	private String bannerStyleCSS = BANNER_STYLE_CSS;
 

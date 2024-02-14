@@ -1159,7 +1159,7 @@
 
 .ui-button {
 	color: white !important;
-	background-color: #005078 !important;
+	background-color: #0075B1 !important;
 	border: none !important;
 	border-radius: 3px;
 }
@@ -1175,12 +1175,12 @@
 }
 
 .ui-wizard-nav-back {
-	background-color: #005078 !important;
+	background-color: #0075B1 !important;
 	width: 8em;
 }
 
 .ui-wizard-nav-next {
-	background-color: #005078 !important;
+	background-color: #0075B1 !important;
 	width: 8em;
 }
 

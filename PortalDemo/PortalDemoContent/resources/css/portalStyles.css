@@ -17,7 +17,7 @@ body {
 
 .header3 {
 	font-size: large;
-	color: #005078;
+	color: #0075B1;
 	padding: 10px;
 	
 }
@@ -30,14 +30,14 @@ body {
 
 .viewTitle {
 	font-size: 1.6em;
-	color: #005078;
+	color: #0075B1;
 	vertical-align: middle;
 	margin-left: 5px;
 	text-decoration: none;
 	}
 
 .dialogTitle {
-	color: #005078 !important;
+	color: #0075B1 !important;
 	font-size: 1.6em;
 	vertical-align: middle;
 	margin-left: 8px;

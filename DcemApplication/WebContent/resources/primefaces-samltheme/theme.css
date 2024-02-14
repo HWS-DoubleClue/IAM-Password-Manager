@@ -12,13 +12,13 @@ body {
 
 .header1 {
 	font-size: x-large;
-	color: #005078;
+	color: #0075B1;
 	padding: 10px !important;
 }
 
 .header3 {
 	font-size: large;
-	color: #005078;
+	color: #0075B1;
 	padding: 10px;
 }
 
@@ -30,14 +30,14 @@ body {
 
 .viewTitle {
 	font-size: 1.6em;
-	color: #005078;
+	color: #0075B1;
 	vertical-align: middle;
 	margin-left: 5px;
 	text-decoration: none;
 }
 
 .dialogTitle {
-	color: #005078 !important;
+	color: #0075B1 !important;
 	font-size: 1.6em;
 	vertical-align: middle;
 	margin-left: 8px;
@@ -50,7 +50,7 @@ body {
 
 /* Header Bar */
 #headerbar {
-	background-color: #005078;
+	background-color: #0075B1;
 	height: 60px;
 	line-height: 60px;
 	vertical-align: middle;
@@ -460,7 +460,7 @@ ul.ui-menu-child {
 }
 
 .ui-panelmenu-header a:hover {
-	background-color: #005078 !important;
+	background-color: #0075B1 !important;
 }
 
 .ui-panelmenu-content {
@@ -483,7 +483,7 @@ ul.ui-menu-child {
 }
 
 .ui-panel-title {
-	color: #005078 !important;
+	color: #0075B1 !important;
 }
 
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button
@@ -571,7 +571,7 @@ ul.ui-menu-child {
 	{
 	color: white;
 	text-decoration: none;
-	background-color: #005078;
+	background-color: #0075B1;
 }
 
 .ui-widget:active {
@@ -1554,7 +1554,7 @@ ul.ui-menu-child {
 
 .ui-button {
 	color: #ffffff !important;
-	background-color: #005078 !important;
+	background-color: #0075B1 !important;
 	border: none !important;
 	border-radius: 3px;
 }

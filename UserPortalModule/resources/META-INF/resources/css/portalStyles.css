@@ -84,7 +84,7 @@
 
 .viewTitle {
 	font-size: 1.6em;
-	color: #005078;
+	color: #0075B1;
 	vertical-align: middle;
 	text-decoration: none;
 	position: absolute;
@@ -156,7 +156,7 @@
 
 * {
 	scrollbar-width: auto; /* "auto" or "thin"  */
-	scrollbar-color: #bae2f5 #005078;
+	scrollbar-color: #bae2f5 #0075B1;
 }
 
 .ui-icon.addActionIcon {
@@ -793,7 +793,7 @@
 }
 
 .imageProfileUser {
-	border: 1px solid #005078;
+	border: 1px solid #0075B1;
 	height: 8em;
 	width: 8em;
 	border-radius: 4em;
