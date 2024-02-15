@@ -1337,7 +1337,8 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 	word-wrap: break-word;
 }
 
-.ui-datatable.borderless tr.ui-datatable-even:hover, .ui-datatable.borderless tr.ui-datatable-odd:hover
+.ui-datatable.borderless tr.ui-datatable-even:hover, .ui-datatable.borderless tr.ui-datatable-odd:hover,
+	.ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight:hover
 	{
 	background: #CEE2FF;
 	cursor: pointer;
@@ -1360,7 +1361,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 
 .ui-datatable tr.ui-state-highlight, .ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight
 	{
-	background-color: #e7f1ff;
+	background-color: #B2E4FE;
 }
 
 .floatingLable {
