@@ -198,7 +198,7 @@
 /* Interaction Cues----------------------------------*/
 .ui-state-highlight, .ui-widget-content .ui-state-highlight,
 	.ui-widget-header .ui-state-highlight {
-	background: #bae2f5;
+	background-color: #bae2f5;
 	color: #212121;
 }
 
@@ -243,6 +243,7 @@
 	background-image: none;
 } /* Icons----------------------------------*/ /* states and images */
 .ui-icon {
+	font-size: .9rem;
 	width: 16px;
 	height: 16px;
 	background-image:
@@ -1357,7 +1358,8 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 	border-color: #d8d8d8 !important;
 }
 
-.ui-datatable tr.ui-state-highlight {
+.ui-datatable tr.ui-state-highlight, .ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight
+	{
 	background-color: #e7f1ff;
 }
 
