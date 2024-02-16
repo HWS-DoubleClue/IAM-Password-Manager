@@ -1,6 +1,6 @@
 #
-# 
-# Copyright (c) 2003, 2018, Oracle and/or its affiliates. All rights reserved.
+#
+# Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -37,12 +37,24 @@ allfonts.chinese-gb18030-extb=SimSun-ExtB
 allfonts.chinese-hkscs=MingLiU_HKSCS
 allfonts.chinese-ms950-extb=MingLiU-ExtB
 allfonts.devanagari=Mangal
+allfonts.bengali=Vrinda
+allfonts.gujarati=Shruti
+allfonts.gurmukhi=Raavi
+allfonts.kannada=Tunga
+allfonts.malayalam=Kartika
+allfonts.oriya=Kalinga
+allfonts.sinhala=Iskoola Pota
+allfonts.tamil=Latha
+allfonts.telugu=Gautami
+allfonts.khmer=Khmer UI
+allfonts.mongolian=Mongolian Baiti
+allfonts.myanmar=Myanmar Text
 allfonts.dingbats=Wingdings
-allfonts.lucida=Lucida Sans Regular
 allfonts.symbol=Symbol
 allfonts.symbols=Segoe UI Symbol
-allfonts.thai=Lucida Sans Regular
+allfonts.thai=DokChampa
 allfonts.georgian=Sylfaen
+allfonts.korean-fallback=Malgun Gothic
 
 serif.plain.alphabetic=Times New Roman
 serif.plain.chinese-ms950=MingLiU
@@ -77,28 +89,28 @@ sansserif.plain.chinese-ms950=MingLiU
 sansserif.plain.chinese-ms950-extb=MingLiU-ExtB
 sansserif.plain.hebrew=David
 sansserif.plain.japanese=MS Gothic
-sansserif.plain.korean=Gulim
+sansserif.plain.korean=Malgun Gothic
 
 sansserif.bold.alphabetic=Arial Bold
 sansserif.bold.chinese-ms950=PMingLiU
 sansserif.bold.chinese-ms950-extb=PMingLiU-ExtB
 sansserif.bold.hebrew=David Bold
 sansserif.bold.japanese=MS Gothic
-sansserif.bold.korean=Gulim
+sansserif.bold.korean=Malgun Gothic Bold
 
 sansserif.italic.alphabetic=Arial Italic
 sansserif.italic.chinese-ms950=PMingLiU
 sansserif.italic.chinese-ms950-extb=PMingLiU-ExtB
 sansserif.italic.hebrew=David
 sansserif.italic.japanese=MS Gothic
-sansserif.italic.korean=Gulim
+sansserif.italic.korean=Malgun Gothic
 
 sansserif.bolditalic.alphabetic=Arial Bold Italic
 sansserif.bolditalic.chinese-ms950=PMingLiU
 sansserif.bolditalic.chinese-ms950-extb=PMingLiU-ExtB
 sansserif.bolditalic.hebrew=David Bold
 sansserif.bolditalic.japanese=MS Gothic
-sansserif.bolditalic.korean=Gulim
+sansserif.bolditalic.korean=Malgun Gothic Bold
 
 monospaced.plain.alphabetic=Courier New
 monospaced.plain.chinese-ms950=MingLiU
@@ -133,28 +145,28 @@ dialog.plain.chinese-ms950=MingLiU
 dialog.plain.chinese-ms950-extb=MingLiU-ExtB
 dialog.plain.hebrew=David
 dialog.plain.japanese=MS Gothic
-dialog.plain.korean=Gulim
+dialog.plain.korean=Malgun Gothic
 
 dialog.bold.alphabetic=Arial Bold
 dialog.bold.chinese-ms950=PMingLiU
 dialog.bold.chinese-ms950-extb=PMingLiU-ExtB
 dialog.bold.hebrew=David Bold
 dialog.bold.japanese=MS Gothic
-dialog.bold.korean=Gulim
+dialog.bold.korean=Malgun Gothic Bold
 
 dialog.italic.alphabetic=Arial Italic
 dialog.italic.chinese-ms950=PMingLiU
 dialog.italic.chinese-ms950-extb=PMingLiU-ExtB
 dialog.italic.hebrew=David
 dialog.italic.japanese=MS Gothic
-dialog.italic.korean=Gulim
+dialog.italic.korean=Malgun Gothic
 
 dialog.bolditalic.alphabetic=Arial Bold Italic
 dialog.bolditalic.chinese-ms950=PMingLiU
 dialog.bolditalic.chinese-ms950-extb=PMingLiU-ExtB
 dialog.bolditalic.hebrew=David Bold
 dialog.bolditalic.japanese=MS Gothic
-dialog.bolditalic.korean=Gulim
+dialog.bolditalic.korean=Malgun Gothic Bold
 
 dialoginput.plain.alphabetic=Courier New
 dialoginput.plain.chinese-ms950=MingLiU
@@ -219,7 +231,8 @@ sequence.dialog.x-MS950-HKSCS-XP=alphabetic,chinese-ms950,chinese-hkscs,dingbats
 sequence.dialoginput.x-MS950-HKSCS-XP=alphabetic,chinese-ms950,chinese-hkscs,dingbats,symbol,chinese-ms950-extb
 
 sequence.allfonts.UTF-8.hi=alphabetic/1252,devanagari,dingbats,symbol
-sequence.allfonts.UTF-8.ja=alphabetic,japanese,devanagari,dingbats,symbol
+sequence.allfonts.UTF-8.ja=alphabetic,japanese,dingbats,symbol
+sequence.allfonts.UTF-8.ko=alphabetic,korean,dingbats,symbol
 
 sequence.allfonts.windows-1255=hebrew,alphabetic/1252,dingbats,symbol
 
@@ -237,13 +250,16 @@ sequence.dialoginput.x-windows-949=alphabetic,korean,dingbats,symbol
 
 sequence.allfonts.x-windows-874=alphabetic,thai,dingbats,symbol
 
-sequence.fallback=lucida,symbols,\
+sequence.fallback=symbols,\
                   chinese-ms950,chinese-hkscs,chinese-ms936,chinese-gb18030,\
-                  japanese,korean,chinese-ms950-extb,chinese-ms936-extb,georgian
+                  japanese,korean-fallback,chinese-ms950-extb,chinese-ms936-extb,\
+                  georgian,devanagari,bengali,gujarati,gurmukhi,kannada,\
+                  malayalam,oriya,sinhala,tamil,telugu,thai,khmer,mongolian,\
+                  myanmar
 
 # Exclusion Ranges
 
-exclusion.alphabetic=0700-1cff,1d80-1e9f,1f00-2017,2020-20ab,20ad-f8ff
+exclusion.alphabetic=0700-1cff,1d80-1e9f,1f00-2017,2020-20ab,20ad-20b8,20bb-20bc,20be-f8ff
 exclusion.chinese-gb18030=0390-03d6,2200-22ef,2701-27be
 exclusion.hebrew=0041-005a,0060-007a,007f-00ff,20ac-20ac
 
@@ -293,10 +309,24 @@ filename.Gulim=gulim.TTC
 filename.Batang=batang.TTC
 filename.GulimChe=gulim.TTC
 
-filename.Lucida_Sans_Regular=LucidaSansRegular.ttf
+filename.Gautami=gautami.ttf
+filename.Iskoola_Pota=iskpota.ttf
+filename.Kalinga=kalinga.ttf
+filename.Kartika=kartika.ttf
+filename.Latha=latha.ttf
 filename.Mangal=MANGAL.TTF
+filename.Raavi=raavi.ttf
+filename.Shruti=shruti.ttf
+filename.Tunga=TUNGA.TTF
+filename.Vrinda=vrinda.ttf
+filename.DokChampa=dokchamp.ttf
+filename.Khmer_UI=KhmerUI.ttf
+filename.Mongolian_Baiti=monbaiti.ttf
+filename.Myanmar_Text=mmrtext.ttf
 filename.Symbol=SYMBOL.TTF
 filename.Wingdings=WINGDING.TTF
 
 filename.Sylfaen=sylfaen.ttf
 filename.Segoe_UI_Symbol=SEGUISYM.TTF
+filename.Malgun_Gothic=malgun.ttf
+filename.Malgun_Gothic_Bold=malgunbd.TTF

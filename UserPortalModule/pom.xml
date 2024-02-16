@@ -34,7 +34,6 @@
 
 	</dependencies>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 		</plugins>
 	</build>

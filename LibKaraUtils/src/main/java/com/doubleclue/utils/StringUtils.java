@@ -281,17 +281,17 @@ public class StringUtils {
 		return true;
 	}
 
-	public static void wipeString(String secret) {
-		if (secret == null) {
-			return;
-		}
-		try {
-			Field valueField = String.class.getDeclaredField("value");
-			valueField.setAccessible(true);
-			char[] chars = (char[]) valueField.get(secret);
-			Arrays.fill(chars, '-');
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void wipeString(String secret) {
+//		if (secret == null) {
+//			return;
+//		}
+//		try {
+//			Field valueField = String.class.getDeclaredField("value");
+//			valueField.setAccessible(true);
+//			char[] chars = (char[]) valueField.get(secret);
+//			Arrays.fill(chars, '-');
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

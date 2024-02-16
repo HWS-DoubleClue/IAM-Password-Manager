@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>E-Mail-Adresse bestätigen</title>
+    <style>
+        .vertical-center {
+ 	         margin: 0;
+	         position: absolute;
+	         top: 50%;
+	         right: 0;
+	         left:0;
+	         -ms-transform: translateY(-50%);
+	         transform: translateY(-50%);
+	         text-align: center;
+	         font-size: medium;
+	         font-family: Arial, sans-serif;
+         }
+        
+        #heading_1 {
+            color: #005078;
+            font-size: x-large;
+            padding: 1.2em;
+            text-align: center;
+        }
+
+        #heading_2 {
+            color: black;
+            font-size: large;
+        }
+
+        #divider {
+            background-color: #005078;
+            height: 0.8em;
+            margin-top: 0.5em;
+        }
+
+        #wrapper {
+            margin: 0.5em 1.8em;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="vertical-center">
+       <div>
+        <p> <span id="heading_1">DoubleClue</span><br><span id="heading_2">Cleverly Secures Identities</span></p>
+       </div>
+       <div id="divider">
+       </div>
+
+       <p></p><br><p></p>
+    <div id="wrapper">
+    Hallo {{UserName}},<br> 
+    vielen dank für die Registrierung Ihres DoubleClue-Kontos. 
+    <div><br></div>
+    Um die Kontoerstellung abzuschließen und Zugang zum DoubleClue UserPortal zu erhalten, müssen Sie zunächst Ihre E-Mail-Adresse verifizieren.
+    Nutzen Sie dafür den folgenden Link:<br>      
+    <div><br></div>
+    <a style="font-weight:bold; color:#850000; text-align: center;" href="{{ResetLink}}">E-Mail-Adresse verifizieren</a><br> 
+    <div><br></div>
+    Bei Problemen und Fragen kontaktieren Sie Ihren Administrator.<br> 
+    <div><br></div>
+    Mit freundlichen Grüßen<br>
+    Ihr DoubleClue-Team
+    <div><br></div>
+    <div><br></div>
+    Die DoubleClue App - verfügbar im 
+    <a style="font-weight:bold; color:#850000; text-align: center;" href="https://apps.apple.com/de/app/doubleclue/id1296803375">App Store</a>,
+	<a style="font-weight:bold; color:#850000; text-align: center;" href="https://play.google.com/store/apps/details?id=com.doubleclue.android&hl=gsw">Google Play Store</a>,
+	und als Desktop App unter <a style="font-weight:bold; color:#850000; text-align: center;" href="https://doubleclue.com/files/DoubleClue-Desktop.zip">https://doubleclue.com</a>.
+    </div>
+    </div>
+
+</body>
+
+</html>

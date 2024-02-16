@@ -12,8 +12,6 @@
 		<relativePath>../DcemParent</relativePath>
 	</parent>
 
-
-
 	<dependencies>
 
 		<dependency>
@@ -59,6 +57,10 @@
 			<artifactId>DcemCore</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.doubleclue.dcem.lib</groupId>
+			<artifactId>JarLoader</artifactId>
 		</dependency>
  
 
@@ -118,9 +120,7 @@
 	<build>
 
 		<finalName>DcemSetup</finalName>
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>

@@ -1,6 +1,5 @@
 
-
 CD ..
-set INSTALLATION_PATH=%CD%
-"%INSTALLATION_PATH%\jvm\bin\java" -DDCEM_HOME="%INSTALLATION_PATH%\DCEM_HOME" -DINSTALLATION_PATH="%INSTALLATION_PATH%" -DdebugLog=false -Dlog4jdbc=false -jar "%INSTALLATION_PATH%\DcemSetup.jar"
+set dcem_installation_path=%CD%
+"%dcem_installation_path%\jvm\bin\java" -classpath "DcemSetup.jar;bin\*;Plugins\*" -DDCEM_HOME="%dcem_installation_path%\DCEM_HOME" -DINSTALLATION_PATH="%dcem_installation_path%" -DdebugLog=false -Dlog4jdbc=false com.doubleclue.dcem.setup.MainSetup
 EXIT /B %ERRORLEVEL%

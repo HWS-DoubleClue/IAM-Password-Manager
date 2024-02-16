@@ -1,9 +1,10 @@
 eclipse.preferences.version=1
-encoding//resources/com/doubleclue/dcem/text/radius/TextResouces_de.properties=UTF-8
-encoding//resources/com/doubleclue/dcem/text/radius/TextResouces_en.properties=UTF-8
-encoding//src/com/doubleclue/dcem/otp/resources/Messages.properties=UTF-8
-encoding//src/com/doubleclue/dcem/otp/resources/Messages_de.properties=UTF-8
+encoding//src/main/java=UTF-8
+encoding//src/main/java/com/doubleclue/dcem/otp/resources/Messages.properties=UTF-8
+encoding//src/main/java/com/doubleclue/dcem/otp/resources/Messages_de.properties=UTF-8
+encoding//src/main/resources=UTF-8
+encoding//src/main/resources/com/doubleclue/dcem/text/radius/TextResouces_de.properties=UTF-8
+encoding//src/main/resources/com/doubleclue/dcem/text/radius/TextResouces_en.properties=UTF-8
 encoding/<project>=UTF-8
-encoding/resources=UTF-8
 encoding/src=UTF-8
 encoding/testsrc=UTF-8

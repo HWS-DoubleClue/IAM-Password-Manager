@@ -20,25 +20,7 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<plugins>
-			<!-- COMPILER PLUGIN -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<includes>
-						<include>**/*.java</include>
-						<!-- <include>*</include> -->
-						<!-- <include>**/META-INF/**</include> -->
-					</includes>
-				</configuration>
-			</plugin>
-
-
-		</plugins>
+		
 	</build>
 
 

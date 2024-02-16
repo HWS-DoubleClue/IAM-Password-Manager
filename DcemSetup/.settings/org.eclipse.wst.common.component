@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                                
+                                                    
+    
+    
+    
+    
+    
     
     
     
@@ -7,7 +12,12 @@
     
     
     <wb-module deploy-name="SemApplication">
-                                                                
+                                                                                                        
+        
+        
+        
+        
+        
         
         
         
@@ -20,23 +30,28 @@
         
         
         
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-                                                
-        
-        
-        
-        
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/testsrc"/>
-                                                
-        
-        
-        
-        
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/apt"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/annotations"/>
+                        
+        
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+                        
+        
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
+                
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-test-sources/test-annotations"/>
-                                                                
+                
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
+                
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/testsrc"/>
+                
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/annotations"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+                                                                                                        
+        
+        
+        
+        
+        
         
         
         
@@ -44,7 +59,12 @@
         
         
         <property name="context-root" value="sem"/>
-                                                                
+                                                                                                        
+        
+        
+        
+        
+        
         
         
         
@@ -52,7 +72,12 @@
         
         
         <property name="java-output-path" value="/DcemApplication/bin"/>
-                                                            
+                                                                                                    
+    
+    
+    
+    
+    
     
     
     
@@ -60,7 +85,12 @@
     
     
     </wb-module>
-                            
+                                                
+
+
+
+
+
 
 
 

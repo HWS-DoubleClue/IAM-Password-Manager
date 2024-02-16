@@ -74,11 +74,6 @@
 			</exclusions>
 		</dependency>
 
-
-		<!-- <dependency> <groupId>org.jboss.shrinkwrap.resolver</groupId> <artifactId>shrinkwrap-resolver-impl-maven</artifactId> 
-			<version>2.0.0-alpha-1</version> <exclusions> <exclusion> <groupId>org.apache.httpcomponents</groupId> 
-			<artifactId>httpcore</artifactId> </exclusion> </exclusions> </dependency> -->
-
 		<dependency>
 			<groupId>com.yubico</groupId>
 			<artifactId>webauthn-server-core</artifactId>
@@ -90,33 +85,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>com.google.firebase</groupId>
-			<artifactId>firebase-admin</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.oauth-client</groupId>
-					<artifactId>google-oauth-client</artifactId>
-				</exclusion>
-
-				<exclusion>
-					<groupId>com.google.cloud</groupId>
-					<artifactId>google-cloud-storage</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.google.cloud</groupId>
-					<artifactId>google-cloud-firestore</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
+		
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-
 		<plugins>
-
 		</plugins>
 	</build>
 </project>

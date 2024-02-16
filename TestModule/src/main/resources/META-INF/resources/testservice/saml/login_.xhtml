@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+<f:metadata>
+	<f:event type="preRenderView" listener="#{upLoginView.onPreRenderView}" />
+</f:metadata>
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</f:facet>
+	<title>SAML Test SP</title>
+
+	<style>
+h1 {
+	font-family: 'Segoe UI', Arial, sans-serif;
+	text-align: center;
+	color: white;
+}
+</style>
+</h:head>
+
+<f:view>
+	<h:body>
+		<div id="container" style="width: auto; height: 94vh; position: relative; border: none;">
+			<div class="box" style=" width: 100%; height: 100%;position: absolute;border: none yellow;#{adminModule.loginBackgroundColor};">
+				<div class="signInText" style="padding-left: 5em; padding-top: 2em; text-align: left; height: 2em; font-size: 27px;">
+					<h:outputText style="#{adminModule.signInTextStyle};" value="#{adminModule.signInText}" />
+				</div>
+
+				<h:form id="loginForm" widgetVar="loginForm"
+					style=" width 50em; margin: 0 25% auto 25%; border: 1px solid #c3c3c3; border-radius: 3px; background: #005078; color: #222222">
+					<h:panelGroup>
+						<h1>SAML TEST SERVICE PROVIDER</h1>
+						<p:panel id="basic" style="width: 60%; margin: 0 auto 10px auto; border: 1px solid #c3c3c3;" styleClass="loginPanelContainer">
+							<p:panel id="loginPanel" widgetVar="loginPanel" style="border:none; text-align: center">
+								<p:messages id="msgs" showDetail="false" sticky="true" closable="true" keepAlive="true">
+									<p:autoUpdate />
+								</p:messages>
+
+								<p:commandButton styleClass="btnOfLogin" id="loginWithDoubleClue" value="Login with DoubleClue"
+									action="#{samlTestServiceView.actionGoToIdp()}" style="width: 88%" icon="fa fa-sign-in" />
+							</p:panel>
+						</p:panel>
+					</h:panelGroup>
+				</h:form>
+			</div>
+		</div>
+	</h:body>
+</f:view>
+</html>

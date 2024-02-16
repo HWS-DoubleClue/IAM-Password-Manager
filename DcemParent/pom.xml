@@ -54,12 +54,12 @@
 		<hibernate-validator.version>5.6.15.Final</hibernate-validator.version>
 		<commons-io.version>2.0.1</commons-io.version>
 		<servletapi.version>4.0.1</servletapi.version>
-		<jaxwsrt.version>2.2.10</jaxwsrt.version>
+		<jaxwsrt.version>2.3.5</jaxwsrt.version>
 		<jaxwstools.version>2.2.6</jaxwstools.version>
 		<jspapi.version>2.2.1-b03</jspapi.version>
 		<mssql-driver.version>4.0</mssql-driver.version>
 		<thrift.version>0.13.0</thrift.version>
-		<jersey.version>2.25</jersey.version>
+		<jersey.version>2.41</jersey.version>
 		<tomcat.version>9.0.81</tomcat.version>
 		<jackson.version>2.14.0-rc1</jackson.version>
 		<swagger-core-version>1.5.18</swagger-core-version>
@@ -67,7 +67,6 @@
 		<junit.platform.version>1.8.1</junit.platform.version>
 	</properties>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>testsrc</testSourceDirectory>
 		<outputDirectory>bin</outputDirectory>
 		<testOutputDirectory>testbin</testOutputDirectory>
@@ -75,24 +74,15 @@
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
 			</resource>
 			<!--<resource>
 				<directory>target/generated-sources/apt</directory>
 				<includes>
 					<include>**/*.java</include>
 				</includes>
-			</resource>-->
+			</resource>-->			
 			<resource>
-				<directory>src</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<directory>resources</directory>
+				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*</include>
 				</includes>
@@ -100,10 +90,10 @@
 		</resources>
 		<testResources>
 			<testResource>
-				<directory>testsrc</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
+				<directory>src/test/java</directory>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
 			</testResource>
 		</testResources>
 		<plugins>
@@ -129,6 +119,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.6.1</version>
 				<executions>
 					<execution>
 						<id>unpack-resources</id>
@@ -147,8 +138,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>21</source>
+					<target>21</target>
 					<includes>
 						<include>
 							**/*.java
@@ -386,13 +377,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.5.1</version>
+					<version>3.12.1</version>
 				</plugin>
 				<!-- jar plugin -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>3.3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -748,6 +739,11 @@
 				<artifactId>RedHatSatelliteModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.doubleclue.dcem.lib</groupId>
+				<artifactId>JarLoader</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<!-- <dependency> <groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>CrmModule</artifactId> 
 				<version>${project.version}</version> </dependency> -->
@@ -774,7 +770,7 @@
 			<dependency>
 				<groupId>com.doubleclue.lib</groupId>
 				<artifactId>LibWebSocketOkHttp</artifactId>
-				<version>${project.version}</version>
+				<version>2.8.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.doubleclue.userportal</groupId>
@@ -784,7 +780,7 @@
 			<dependency>
 				<groupId>com.doubleclue.lib</groupId>
 				<artifactId>LibPlatformWindows</artifactId>
-				<version>${project.version}</version>
+				<version>2.8.1-SNAPSHOT</version>
 			</dependency>
 			<!-- <dependency> <groupId>com.doubleclue.lib</groupId>
 			<artifactId>LibPlatformLinux</artifactId> 
@@ -792,7 +788,7 @@
 			<dependency>
 				<groupId>com.doubleclue.lib</groupId>
 				<artifactId>LibDcSdk</artifactId>
-				<version>${project.version}</version>
+				<version>2.8.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.doubleclue.lib</groupId>
@@ -937,9 +933,21 @@
 				<version>${jaxwsrt.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.sun.xml.ws</groupId>
+				<artifactId>jaxws-ri</artifactId>
+				<version>2.3.7</version>
+			</dependency>
+			<!--			<dependency>
 				<groupId>org.jboss.weld.servlet</groupId>
 				<artifactId>weld-servlet</artifactId>
 				<version>${weld-servlet.version}</version>
+			</dependency>-->
+			<!--
+			https://mvnrepository.com/artifact/org.jboss.weld.servlet/weld-servlet-core -->
+			<dependency>
+				<groupId>org.jboss.weld.servlet</groupId>
+				<artifactId>weld-servlet-core</artifactId>
+				<version>3.1.9.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss</groupId>
@@ -1022,9 +1030,12 @@
 				<version>${hibernate.version}</version> </dependency> -->
 			<dependency>
 				<groupId>org.glassfish.jersey.containers</groupId>
-				<!-- if your container implements Servlet API older than 3.0,
-				use "jersey-container-servlet-core" -->
 				<artifactId>jersey-container-servlet</artifactId>
+				<version>${jersey.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.inject</groupId>
+				<artifactId>jersey-hk2</artifactId>
 				<version>${jersey.version}</version>
 			</dependency>
 			<!-- Required only when you are using JAX-RS Client -->
