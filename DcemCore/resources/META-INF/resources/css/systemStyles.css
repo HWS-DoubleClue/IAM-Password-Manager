@@ -1,6 +1,119 @@
 @CHARSET "ISO-8859-1";
 
 /* General Settings */
+.toggle {
+	background: transparent;
+	border: none;
+	width: 25px;
+	height: 6vh;
+	cursor: pointer;
+	outline: 0;
+	border-radius: 4px;
+	padding: 0;
+}
+
+.toggle span {
+	width: 100%;
+	height: 4px;
+	background: #fff;
+	display: block;
+	position: relative;
+	coursor: pointer;
+	border-radius: 4px;
+}
+
+.toggle span:before, .toggle span:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	transition: all 0.3s ease-out;
+	border-radius: 4px;
+}
+
+.toggle span:before {
+	top: -8px;
+}
+
+.toggle span:after {
+	top: 8px;
+}
+
+.toggle span.toggle {
+	background: transparent;
+}
+
+.toggle span.toggle:before {
+	top: 0;
+	transform: rotate(-45deg);
+	background: #fff;
+}
+
+.toggle span.toggle:after {
+	top: 0;
+	transform: rotate(45deg);
+	background: #fff;
+}
+
+
+.toggleSideBar {
+	background: transparent;
+	border: none;
+	width: 25px;
+	height: 6vh;
+	cursor: pointer;
+	outline: 0;
+	border-radius: 4px;
+	padding: 0;
+}
+
+#toggleSideBar span {
+	width: 100%;
+	height: 4px;
+	background: #fff;
+	display: block;
+	position: relative;
+	coursor: pointer;
+	border-radius: 4px;
+}
+
+#toggleSideBar span:before, #toggleSideBar span:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	transition: all 0.3s ease-out;
+	border-radius: 4px;
+}
+
+#toggleSideBar span:before {
+	top: -8px;
+}
+
+#toggleSideBar span:after {
+	top: 8px;
+}
+
+#toggleSideBar span.toggle {
+	background: transparent;
+}
+
+#toggleSideBar span.toggle:before {
+	top: 0;
+	transform: rotate(-45deg);
+	background: #fff;
+}
+
+#toggleSideBar span.toggle:after {
+	top: 0;
+	transform: rotate(45deg);
+	background: #fff;
+}
+
 body {
 	background: #fff;
 	font-family: "Segoe UI", sans-serif;

@@ -33,29 +33,22 @@
 
 		<!-- <p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()"
 			oncomplete="PF('statusDialog').hide()" /> -->
+			<ui:include src="../title.xhtml" />
 
 		<div id="sidemenu" class="sideBarDcem">
 			<h:form id="menuForm">
-				<div style="margin-top: 2px; margin-bottom: 20px; margin-left: 2px; height: auto; width: 95%">
-					<h:commandLink action="#{viewNavigator.actionRedirectionToHome}" styleClass="viewTitle" update="viewPart">
-						<p:graphicImage cache="false" styleClass="companyLogoStyle" value="#{adminModule.logo}" rendered="#{!adminModule.defaultCompanyLogo}" />
-						<p:graphicImage library="pictures" cache="false" styleClass="companyLogoStyle" name="DC_Logo_blue_bar_209x64.png"
-							rendered="#{adminModule.defaultCompanyLogo}" />
-					</h:commandLink>
-				</div>
+
 				<p:panelMenu model="#{viewNavigator.menuModel}" widgetVar="hbPanelMenu" id="hbPanelMenu" stateful="true"   />
 		
 			</h:form>
 			<div class="header6" style="margin-top: 30px">
 				<h:outputLabel value="Version: #{dcemApplication.version}" />
 			</div>
-			<div class="flexBoxSpacing"></div>
 			<a target="_blank" href="https://hws-gruppe.de/"> <img src="#{resource['pictures/DC_powered_black.svg']}" width="" class="poweredByImage"> </img>
 			</a>
 		</div>
 
 		<div id="contentPart" style="vertical-align: top; border: 0; border-style: solid; overflow: auto; height: 100vh;">
-			<ui:include src="../title.xhtml" />
 			<div style="margin-left: 0.4em; margin-right: 0.4em">
 				<h:panelGroup id="viewPart" style="">
 
