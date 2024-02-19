@@ -22,6 +22,7 @@
 	font-size: 1.9em;
 	width: 1.6em;
 	height: 1.2em;
+	color: #0075b1;
 }
 </style>
 </h:head>
@@ -32,36 +33,29 @@
 
 		<!-- <p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()"
 			oncomplete="PF('statusDialog').hide()" /> -->
+			<ui:include src="../title.xhtml" />
 
 		<div id="sidemenu" class="sideBarDcem">
 			<h:form id="menuForm">
-				<div style="margin-top: 2px; margin-bottom: 20px; margin-left: 2px; height: auto; width: 95%">
-					<h:commandLink action="#{viewNavigator.actionRedirectionToHome}" styleClass="viewTitle" update="viewPart">
-						<p:graphicImage cache="false" styleClass="companyLogoStyle" value="#{adminModule.logo}" rendered="#{!adminModule.defaultCompanyLogo}" />
-						<p:graphicImage library="pictures" cache="false" styleClass="companyLogoStyle" name="DC_white_bar_209x64center.png"
-							rendered="#{adminModule.defaultCompanyLogo}" />
-					</h:commandLink>
-				</div>
+
 				<p:panelMenu model="#{viewNavigator.menuModel}" widgetVar="hbPanelMenu" id="hbPanelMenu" stateful="true"   />
 		
 			</h:form>
 			<div class="header6" style="margin-top: 30px">
 				<h:outputLabel value="Version: #{dcemApplication.version}" />
 			</div>
-			<div class="flexBoxSpacing"></div>
-			<a target="_blank" href="https://hws-gruppe.de/"> <img src="#{resource['pictures/DC_powered_white.svg']}" class="poweredByImage"> </img>
+			<a target="_blank" href="https://hws-gruppe.de/"> <img src="#{resource['pictures/DC_powered_black.svg']}" width="" class="poweredByImage"> </img>
 			</a>
 		</div>
 
 		<div id="contentPart" style="vertical-align: top; border: 0; border-style: solid; overflow: auto; height: 100vh;">
-			<ui:include src="../title.xhtml" />
 			<div style="margin-left: 0.4em; margin-right: 0.4em">
 				<h:panelGroup id="viewPart" style="">
 
 					<div style="margin-bottom: 1em; margin-top: 1em">
 						<h:outputText style="" class="#{autoView.icon} viewTitle"></h:outputText>
 						<h:outputText styleClass="viewTitle" value=" #{autoView.title}" />
-						<p:button style="margin-right: 1em;color: #005078 !important;float: right;background-color: inherit !important;" href="#{autoView.helpResource}"
+						<p:button style="margin-right: 1em;float: right;background-color: inherit !important;" href="#{autoView.helpResource}"
 							icon="fa fa-book" target="_blank" id="helpBtn" rendered="#{autoView.helpResource != null}" />
 						<p:tooltip for="helpBtn" value="#{CoreMsg['readUserManual']}" showEffect="clip" hideEffect="fold" />
 					</div>

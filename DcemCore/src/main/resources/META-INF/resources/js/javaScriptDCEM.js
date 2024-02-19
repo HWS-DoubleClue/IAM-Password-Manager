@@ -66,21 +66,18 @@ function dateTemplateFunc(date) {
 
 // Start index page
 function openNav() {
-	document.getElementById("closeButton").style.display = "table-cell";
 	document.getElementById("sidemenu").style.width = "15.75em";
 	document.getElementById("sidemenu").style.transition = "0.5s all";
 	document.getElementById("contentPart").style.marginLeft = "15.75em";
 	document.getElementById("contentPart").style.transition = "0.5s all";
-	document.getElementById("sidebarbtn").style.display = "none";
 }
 
+
 function closeNav() {
-	document.getElementById("closeButton").style.display = "none";
 	document.getElementById("sidemenu").style.width = "0";
 	document.getElementById("sidemenu").style.transition = "0.5s all";
 	document.getElementById("contentPart").style.marginLeft = "0";
 	document.getElementById("contentPart").style.transition = "0.5s all";
-	document.getElementById("sidebarbtn").style.display = "table-cell";
 }
 
 function setLocalStorageValue(key, value) {
@@ -91,12 +88,30 @@ function removeLocalStorage(key) {
 	localStorage.removeItem(key);
 }
 
+function toggleNav() {
+	var sideMenu = document.getElementById("sidemenu");
+	if (sideMenu.style.width === "0px" || sideMenu.style.width === "") {
+		//document.querySelector('.toggle span').classList.add('toggle');
+		openNav()
+		setLocalStorageValue('sideMenuOpen', true);
+		removeLocalStorage('sideMenuClose');
+	} else {
+		//document.querySelector('.toggle span').classList.remove('toggle');
+		closeNav()
+		setLocalStorageValue('sideMenuClose', true);
+		removeLocalStorage('sideMenuOpen');
+
+	}
+}
+
 window.onload = function getLocalStorgeSideMenuStatus() {
 	if (localStorage.getItem('sideMenuClose') == 'true') {
 		closeNav();
 		removeLocalStorage('sideMenuOpen');
 
 	} else {
+		//document.querySelector('.toggle span').classList.add('toggle');
+
 		openNav();
 		removeLocalStorage('sideMenuClose');
 	}
@@ -120,26 +135,26 @@ function switchPwdVisibleState(eyeBtn) {
 
 
 function startTimer(duration) {
-    var timer = duration, minutes, seconds;
-   //  console.log("duration " + timer);
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
+	var timer = duration, minutes, seconds;
+	//  console.log("duration " + timer);
+	setInterval(function() {
+		minutes = parseInt(timer / 60, 10);
+		seconds = parseInt(timer % 60, 10);
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-//        console.log(timer);
+		minutes = minutes < 10 ? "0" + minutes : minutes;
+		seconds = seconds < 10 ? "0" + seconds : seconds;
+		//        console.log(timer);
 		if (timer < 600) {  // show time if less than 10 minutes
-        	document.getElementById("title:sessionTimeout").innerText = minutes + ":" + seconds;
-        }
+			document.getElementById("title:sessionTimeout").innerText = minutes + ":" + seconds;
+		}
 		timer = timer - 10;
-        if (timer < 0) {
-            timer = duration;
-        }
-    }, 10000);
+		if (timer < 0) {
+			timer = duration;
+		}
+	}, 10000);
 }
 
 
 
 
-		// end perferences
+// end perferences

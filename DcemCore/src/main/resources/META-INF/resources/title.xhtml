@@ -9,18 +9,24 @@
 	<link rel="shortcut icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
 	<h:outputStylesheet library="primefaces-dcemtheme" name="theme.css" />
 
-	<h:form id="title">
-		<!-- <p:remoteCommand autoRun="true" oncomplete="startTimer(#{dcemApplication.getInactivityTime()} * 60);" /> -->
-
-
+	<h:form id="titleForm">
 		<table width="100%;" style="#{adminModule.titleStyle}; height: 6vh;" id="headerbar">
 			<tr>
-				<td id="closeButton" style="text-align: left; padding-left: 0.5em"><a href="javascript:void(0)" onclick="closeNav()"
-					style="paddin-left: 0; margin-left: 0;"><i class="closebtn fa fa-caret-left"
+				<td style="padding-left:1em; padding-right:1em;" class="toggle" id="toggle" onclick="toggleNav()"><span></span></td>
+				<!-- <td id="closeButton" style="text-align: left; padding-left: 0.5em"><a href="javascript:void(0)" onclick="closeNav()"
+					style="paddin-left: 0; margin-left: 0;"><i class="closebtn fa fa-shield"
 						onclick="setLocalStorageValue('sideMenuClose',true);removeLocalStorage('sideMenuOpen')"></i></a></td>
 
-				<td id="sidebarbtn" style="text-align: left; padding-left: 0.5em"><span class="fa fa-bars" style="cursor: pointer; font-size: 1.8em;"
-					onclick="openNav()" onmousedown="setLocalStorageValue('sideMenuOpen',true);removeLocalStorage('sideMenuClose')"></span></td>
+				<td id="sidebarbtn" style="text-align: left; padding-left: 0.5em"><span class="closebtn fa fa-bars" style="cursor: pointer;" onclick="openNav()"
+					onmousedown="setLocalStorageValue('sideMenuOpen',true);removeLocalStorage('sideMenuClose')"></span></td> -->
+
+				<td><h:commandLink action="#{viewNavigator.actionRedirectionToHome}">
+						<div style="float: left; border: none; width: auto; height: 6vh;">
+							<p:graphicImage cache="false" styleClass="companyLogoStyle" value="#{adminModule.logo}" rendered="#{!adminModule.defaultCompanyLogo}" />
+							<p:graphicImage library="pictures" cache="false" styleClass="companyLogoStyle" name="DC_white_bar_209x64center.png"
+								rendered="#{adminModule.defaultCompanyLogo}" />
+						</div>
+					</h:commandLink></td>
 
 				<td><h:outputText value="#{adminModule.titleEnterpriseManagment} " /> <h:outputText class="fa fa-shuffle" style="color: white; font-size: 1.6em"
 						rendered="#{operatorSession.masterAdminGuest}" /></td>
@@ -33,35 +39,36 @@
 					</p:ajaxStatus></td>
 				<td style="width: 20%; text-align: right;">
 					<div style="display: block; vertical-align: middle;">
-							<h:outputText id="sessionTimeout" style="font-size: small" value="" />
-							<div style="display: inline-block; vertical-align: middle;">
-								<p:commandLink action="#{adminModule.actionRedirectionToUserPortal}" title="#{DcupMsg['title.switchToUserportal']}"
-									rendered="#{adminModule.switchUserPortal}">
-									<i class="fa fa-exchange" style="color: white; font-size: 1.2em; margin-left: 1em" />
-								</p:commandLink>
-							</div>
-							<p:spacer width="10" />
-							<div style="display: inline-block; vertical-align: middle;">
-								<p:commandLink action="#{viewNavigator.reload}" update="viewPart" style="text-decoration: none">
-									<i class="fa fa-refresh" style="color: white; font-size: 1.2em"></i>
-								</p:commandLink>
+						<h:outputText id="sessionTimeout" style="font-size: small" value="" />
+						<div style="display: inline-block; vertical-align: middle;">
+							<p:commandLink action="#{adminModule.actionRedirectionToUserPortal}" title="#{DcupMsg['title.switchToUserportal']}"
+								rendered="#{adminModule.switchUserPortal}">
+								<i class="fa fa-exchange" style="color: white; font-size: 1.2em; margin-left: 1em" />
+							</p:commandLink>
+						</div>
+						<p:spacer width="10" />
+						<div style="display: inline-block; vertical-align: middle;">
+							<p:commandLink action="#{viewNavigator.reload}" update="viewPart" style="text-decoration: none">
+								<i class="fa fa-refresh" style="color: white; font-size: 1.2em"></i>
+							</p:commandLink>
 
-							</div>
-							<p:spacer width="10" />
-							<div style="display: inline-block; vertical-align: middle;">
-								<p:avatar id="userAvatar" dynamicColor="true" styleClass="p-mr-2" size="xlarge" shape="circle" style="margin-right: 0em; cursor: pointer">
-									<p:graphicImage value="#{operatorSession.getFotoProfileUser()}" stream="false"
-										title="#{titleBarView.welcomeText}" />
-								</p:avatar>
-							</div>
-							<p:spacer width="10" />
-							<p:menu overlay="true" trigger="userAvatar" my="left top" at="left bottom">
-								<p:menuitem value="#{CoreMsg['titleMenu.profile']} " rendered="#{titleBarView.editProfilePermission}" action="#{titleBarView.editProfile}" ajax="true" icon="fa fa-user-pen" >
-									<p:ajax event="dialogReturn"  update="menuForm title viewPart" />
-								</p:menuitem>
-								<p:menuitem value="#{DcupMsg['title.changePasswordView']} " action="#{titleBarView.updatePassword}" icon="fa fa-key" rendered="#{titleBarView.changePasswordPermission}" />
-								<p:menuitem value="#{CoreMsg['titleMenu.logoff']} " action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" />
-							</p:menu>
+						</div>
+						<p:spacer width="10" />
+						<div style="display: inline-block; vertical-align: middle;">
+							<p:avatar id="userAvatar" dynamicColor="true" styleClass="p-mr-2" size="xlarge" shape="circle" style="margin-right: 0em; cursor: pointer">
+								<p:graphicImage value="#{operatorSession.getFotoProfileUser()}" stream="false" title="#{titleBarView.welcomeText}" />
+							</p:avatar>
+						</div>
+						<p:spacer width="10" />
+						<p:menu id="titleMenu" overlay="true" trigger="userAvatar" my="left top" at="left bottom">
+							<p:menuitem value="#{CoreMsg['titleMenu.profile']} " rendered="#{titleBarView.editProfilePermission}" action="#{titleBarView.editProfile}" ajax="true"
+								icon="fa fa-user-pen">
+								<p:ajax event="dialogReturn" update="menuForm titleForm:titleMenu titleForm:userAvatar viewPart" />
+							</p:menuitem>
+							<p:menuitem value="#{DcupMsg['title.changePasswordView']} " action="#{titleBarView.updatePassword}" icon="fa fa-key"
+								rendered="#{titleBarView.changePasswordPermission}" />
+							<p:menuitem value="#{CoreMsg['titleMenu.logoff']} " action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" />
+						</p:menu>
 					</div>
 				</td>
 			</tr>

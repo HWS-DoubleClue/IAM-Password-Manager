@@ -1,8 +1,121 @@
 @CHARSET "ISO-8859-1";
 
 /* General Settings */
+.toggle {
+	background: transparent;
+	border: none;
+	width: 25px;
+	height: 6vh;
+	cursor: pointer;
+	outline: 0;
+	border-radius: 4px;
+	padding: 0;
+}
+
+.toggle span {
+	width: 100%;
+	height: 4px;
+	background: #fff;
+	display: block;
+	position: relative;
+	coursor: pointer;
+	border-radius: 4px;
+}
+
+.toggle span:before, .toggle span:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	transition: all 0.3s ease-out;
+	border-radius: 4px;
+}
+
+.toggle span:before {
+	top: -8px;
+}
+
+.toggle span:after {
+	top: 8px;
+}
+
+.toggle span.toggle {
+	background: transparent;
+}
+
+.toggle span.toggle:before {
+	top: 0;
+	transform: rotate(-45deg);
+	background: #fff;
+}
+
+.toggle span.toggle:after {
+	top: 0;
+	transform: rotate(45deg);
+	background: #fff;
+}
+
+
+.toggleSideBar {
+	background: transparent;
+	border: none;
+	width: 25px;
+	height: 6vh;
+	cursor: pointer;
+	outline: 0;
+	border-radius: 4px;
+	padding: 0;
+}
+
+#toggleSideBar span {
+	width: 100%;
+	height: 4px;
+	background: #fff;
+	display: block;
+	position: relative;
+	coursor: pointer;
+	border-radius: 4px;
+}
+
+#toggleSideBar span:before, #toggleSideBar span:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	transition: all 0.3s ease-out;
+	border-radius: 4px;
+}
+
+#toggleSideBar span:before {
+	top: -8px;
+}
+
+#toggleSideBar span:after {
+	top: 8px;
+}
+
+#toggleSideBar span.toggle {
+	background: transparent;
+}
+
+#toggleSideBar span.toggle:before {
+	top: 0;
+	transform: rotate(-45deg);
+	background: #fff;
+}
+
+#toggleSideBar span.toggle:after {
+	top: 0;
+	transform: rotate(45deg);
+	background: #fff;
+}
+
 body {
-	background: #f0f8ff;
+	background: #fff;
 	font-family: "Segoe UI", sans-serif;
 	font-size: 14px;
 	margin: 0;
@@ -11,32 +124,32 @@ body {
 
 .header1 {
 	font-size: x-large;
-	color: #005078;
+	color: #0075B1;
 	padding: 10px !important;
 }
 
 .header3 {
 	font-size: large;
-	color: #005078;
+	color: #0075B1;
 	padding: 10px;
 }
 
 .header6 {
 	font-size: x-small;
-	color: #ffffff;
+	color: #000;
 	padding: 10px;
 }
 
 .viewTitle {
 	font-size: 1.6em;
-	color: #005078;
+	color: #0075B1;
 	vertical-align: middle;
 	margin-left: 5px;
 	text-decoration: none;
 }
 
 .dialogTitle {
-	color: #005078 !important;
+	color: #0075B1 !important;
 	vertical-align: middle;
 	margin-left: 8px;
 	font-size: large;
@@ -53,13 +166,13 @@ body {
 }
 
 .tenantBrandingTitle {
-	color: #005078 !important;
+	color: #0075B1 !important;
 	margin-left: 0;
 	font-size: 1.4em;
 }
 
 .ui-accordion-header {
-	color: #005078 !important;
+	color: #0075B1 !important;
 }
 
 .ui-accordion-content.ui-helper-reset.ui-widget-content {
@@ -106,7 +219,7 @@ body {
 	width: 200px;
 	border: 1px solid red;
 	white-space: nowrap;
-	background-color: #005078;
+	background-color: #0075B1;
 	text-align: center;
 	margin: 1em 0;
 }
@@ -117,7 +230,7 @@ body {
 
 /* Header Bar */
 #headerbar {
-	background-color: #005078;
+	background-color: #0075B1;
 	padding-left: 0px;
 	margin: 0;
 	border-spacing: 0px;
@@ -143,7 +256,7 @@ body {
 
 /* Menu */
 #sidemenu {
-	background-color: #303030;
+	background-color: #e7f1ff;
 }
 
 .selectMenu {
@@ -174,7 +287,7 @@ body {
 
 /* Tab View */
 .ui-tabs-nav {
-	background-color: #ffffff !important;
+	background-color: #f0f8ff !important;
 }
 
 .wideButton20 {
@@ -227,8 +340,8 @@ body {
 }
 
 .ui-paginator {
-	background-color: #d8d8d8 !important;
-	color: #555555 !important;
+	background-color: #F7F7F7 !important;
+	color: #F7F7F7 !important;
 }
 
 .columnLabel {
@@ -254,8 +367,10 @@ ul.ui-menu-child {
 }
 
 .closebtn {
-	font-size: 2em !important;
+	font-size: 1.5em !important;
 	color: #fff;
+	transition-property: transform;
+	transition-duration: 1s;
 }
 
 .rowErrorClass {
@@ -280,16 +395,15 @@ ul.ui-menu-child {
 }
 
 .ui-icon-azure {
-	background: url("#{resource['pictures/azure.png']}") no-repeat !important;
+	background: url("#{resource['pictures/azure.png']}") no-repeat
+		!important;
 	margin-top: -12px !important;
 	width: 32px !important;
 	height: 32px !important;
 }
 
-.ui-tooltip-bottom .ui-tooltip-arrow{
+.ui-tooltip-bottom .ui-tooltip-arrow {
 	left: 80% !important;
 	margin-left: 1px !important;
 	margin-top: 2px !important;
 }
-
-
