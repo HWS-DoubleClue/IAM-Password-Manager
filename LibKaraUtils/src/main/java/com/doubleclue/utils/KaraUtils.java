@@ -95,7 +95,6 @@ public class KaraUtils {
 	}
 
 	static public Attributes getManifestInformation(String classPath) throws IOException {
-
 		if (classPath.startsWith("jar") == true) {
 
 			String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
@@ -107,7 +106,6 @@ public class KaraUtils {
 			return attributes;
 		} else {
 			// ONLX in Development environment
-
 			int ind = classPath.indexOf("/bin/");
 			URL url;
 			if (ind > 0) {
@@ -120,7 +118,6 @@ public class KaraUtils {
 					url = new URL(urlPath);
 				} else {
 					return null;
-
 				}
 			}
 			InputStream inputStream = url.openStream();
@@ -146,9 +143,9 @@ public class KaraUtils {
 				}
 			}
 		} catch (Exception e) {
+			System.err.println("getProductVersion() " + e.toString());
 			productVersion = new ProductVersion(null, "1.0.0");
 		}
-
 		return productVersion;
 	}
 

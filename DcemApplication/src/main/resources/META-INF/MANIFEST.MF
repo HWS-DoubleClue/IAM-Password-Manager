@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 Archiver-Version: Eclipse
-Implementation-Version: 2.11.0-SNAPSHOT
+Implementation-Version: 2.6.1-SNAPSHOT
 
