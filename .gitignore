@@ -1,0 +1,8 @@
+/bin/
+/testbin/
+/target/
+/testLogs/
+/.factorypath
+.classpath
+.project
+.settings/
