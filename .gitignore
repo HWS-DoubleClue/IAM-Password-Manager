@@ -1,8 +1,9 @@
-/bin/
-/testbin/
-/target/
-/testLogs/
+**/bin/
+**/testbin/
+**/target/
+**/testLogs/
+**/.settings/
 .factorypath
 .classpath
 .project
-.settings/
+
