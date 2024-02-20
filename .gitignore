@@ -2,7 +2,7 @@
 /testbin/
 /target/
 /testLogs/
-/.factorypath
+.factorypath
 .classpath
 .project
 .settings/
