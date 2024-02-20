@@ -67,7 +67,6 @@
 		<junit.platform.version>1.8.1</junit.platform.version>
 	</properties>
 	<build>
-		<testSourceDirectory>testsrc</testSourceDirectory>
 		<outputDirectory>bin</outputDirectory>
 		<testOutputDirectory>testbin</testOutputDirectory>
 		<defaultGoal>deploy</defaultGoal>
