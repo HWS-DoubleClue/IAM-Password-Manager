@@ -58,10 +58,10 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+<!--		<dependency>
 			<groupId>com.doubleclue.dcem.lib</groupId>
 			<artifactId>JarLoader</artifactId>
-		</dependency>
+		</dependency>-->
  
 
 		<dependency>

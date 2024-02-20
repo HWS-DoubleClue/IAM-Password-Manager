@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.nio.file.FileSystems;
 import java.security.KeyStore;
 import java.security.Security;
 import java.sql.Connection;
@@ -41,7 +40,6 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.hibernate.exception.GenericJDBCException;
 
-import com.doubleclue.dcem.JarLoader;
 import com.doubleclue.dcem.admin.servlet.LoginWebFilter;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.DcemJarScanFilter;
@@ -104,9 +102,9 @@ public class DcemMain {
 		}
 
 		try {
-		//	System.out.println("Current FileSystem-Path: " + FileSystems.getDefault().getPath("").toAbsolutePath().toString());
+			// System.out.println("Current FileSystem-Path: " + FileSystems.getDefault().getPath("").toAbsolutePath().toString());
 			System.out.println("Installation Path: " + LocalPaths.getDcemInstallDir());
-			
+
 		} catch (Exception e) {
 			System.err.println("ERROR: Couldn't get the Installation Path: " + e);
 			System.exit(-1);
@@ -293,22 +291,8 @@ public class DcemMain {
 			fatalExit(null, "Couldn't start the Cluster", exp);
 		}
 		TenantIdResolver.setMasterTenant(TenantLogic.getMasterTenant(localConfig));
+		// Initialising the Database connection
 
-		/**
-		 * 
-		 * Loading the Module Plugins
-		 */
-		try {
-			File pluginsDirectory = LocalPaths.getPluginsDirectory();
-			String information = JarLoader.addDirectoryToClassPath(pluginsDirectory);
-			logger.info(information);
-		} catch (Throwable e1) {
-			logger.error("Couldn't load Plugins " + e1.toString());
-		}
-
-		/*
-		 * Initialising the Database connection
-		 */
 		DbFactoryProducer dbFactoryProducer = DbFactoryProducer.getInstance();
 
 		try {
@@ -375,7 +359,7 @@ public class DcemMain {
 		} catch (Exception exp) {
 			fatalExit(null, "Couldn't start tomcat web app: " + clusterConfig.getWebAppName() + ", from directory: " + webappDirLocation, exp);
 		}
-		//tomcat.getHost().setAppBase(LocalPaths.getDcemInstallDir().getAbsolutePath());
+		// tomcat.getHost().setAppBase(LocalPaths.getDcemInstallDir().getAbsolutePath());
 		tomcat.setSilent(true);
 		standardContext.setCookies(true);
 
@@ -702,6 +686,5 @@ public class DcemMain {
 			return true;
 		}
 	}
-	
-	
+
 }

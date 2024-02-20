@@ -50,7 +50,6 @@
 
 	<build>
 		<finalName>LibOAuth</finalName>
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			
 		</plugins>

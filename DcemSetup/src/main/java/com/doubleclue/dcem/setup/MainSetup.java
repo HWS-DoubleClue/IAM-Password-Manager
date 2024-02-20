@@ -7,12 +7,9 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.X509Certificate;
@@ -34,7 +31,6 @@ import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import com.doubleclue.dcem.JarLoader;
 import com.doubleclue.dcem.core.DcemJarScanFilter;
 import com.doubleclue.dcem.core.config.LocalConfig;
 import com.doubleclue.dcem.core.config.LocalConfigProvider;
@@ -45,7 +41,6 @@ import com.doubleclue.dcem.core.jpa.JdbcUtils;
 import com.doubleclue.dcem.core.logging.DcemLogLevel;
 import com.doubleclue.dcem.core.logging.LogUtils;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
-import com.doubleclue.utils.KaraUtils;
 
 public class MainSetup {
 
@@ -71,7 +66,7 @@ public class MainSetup {
 		javaVersion = System.getProperty("java.version");
 		System.out.println("Java Version: " + javaVersion);
 		Security.addProvider(new BouncyCastleProvider());
-		
+
 		Locale.setDefault(Locale.ENGLISH);
 		Locale.setDefault(Locale.Category.DISPLAY, Locale.ENGLISH);
 		try {
@@ -90,7 +85,7 @@ public class MainSetup {
 		LogUtils.initLog4j(null, null, dcemLogLevel, fromEclipse);
 		logger = LogManager.getLogger(MainSetup.class);
 		logger.info("DCEM_HOME: " + LocalPaths.getDcemHomeDir());
-	
+
 		System.out.println("Install Directory: " + LocalPaths.getDcemInstallDir());
 		if (SystemUtils.IS_OS_WINDOWS) {
 			System.setProperty("javax.net.ssl.trustStoreType", "Windows-ROOT");
@@ -111,18 +106,6 @@ public class MainSetup {
 			logger.info("New local configuration file created");
 		}
 		System.setProperty("org.jboss.weld.xml.disableValidating", "true");
-		
-		/**
-		 * 
-		 * Loading the Module Plugins
-		 */
-		try {
-			File pluginsDirectory = LocalPaths.getPluginsDirectory();
-			String information = JarLoader.addDirectoryToClassPath(pluginsDirectory);
-			logger.info(information);
-		} catch (Exception e1) {
-			logger.error("Couldn't load Plugins ", e1);
-		}
 		localConfig = config;
 		Tomcat tomcat = new Tomcat();
 		tomcat.setBaseDir(LocalPaths.getDcemHomeFile().getAbsolutePath());
