@@ -148,11 +148,11 @@ public class OperatorSessionBean implements Serializable {
 	}
 
 	public boolean isPermission(DcemAction dcemAction) {
-		DcemAction dcemActionSubjectManager = new DcemAction(dcemAction.getModuleId(), dcemAction.getSubject(), DcemConstants.ACTION_MANAGE);
-		DcemAction dcemActionModuleManager = new DcemAction(dcemAction.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
 		if (dcemUser == null || dcemAction == null) {
 			return false;
 		}
+		DcemAction dcemActionSubjectManager = new DcemAction(dcemAction.getModuleId(), dcemAction.getSubject(), DcemConstants.ACTION_MANAGE);
+		DcemAction dcemActionModuleManager = new DcemAction(dcemAction.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
 		try {
 			if (haveAction.contains(dcemAction) || haveAction.contains(dcemActionSubjectManager) || haveAction.contains(dcemActionModuleManager) ) {
 				return true;
