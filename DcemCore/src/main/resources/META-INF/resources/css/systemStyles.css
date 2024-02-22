@@ -1,6 +1,21 @@
 @CHARSET "ISO-8859-1";
 
 /* General Settings */
+.navFlexBox {
+	height: 6vh;
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center
+}
+
+.navFlexBox div {
+	padding-left: 1em;
+	padding-right: 1em;
+	display: flex;
+	align-items: center;
+}
+
 .toggle {
 	background: transparent;
 	border: none;
@@ -56,7 +71,6 @@
 	transform: rotate(45deg);
 	background: #fff;
 }
-
 
 .toggleSideBar {
 	background: transparent;
