@@ -6,4 +6,6 @@
 .factorypath
 .classpath
 .project
+derby.log
+hs_err_pid*
 
