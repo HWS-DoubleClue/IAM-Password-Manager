@@ -33,13 +33,11 @@
 
 		<!-- <p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()"
 			oncomplete="PF('statusDialog').hide()" /> -->
-			<ui:include src="../title.xhtml" />
+		<ui:include src="../title.xhtml" />
 
 		<div id="sidemenu" class="sideBarDcem">
 			<h:form id="menuForm">
-
 				<p:panelMenu model="#{viewNavigator.menuModel}" widgetVar="hbPanelMenu" id="hbPanelMenu" stateful="true"   />
-		
 			</h:form>
 			<div class="header6" style="margin-top: 0px">
 				<h:outputLabel value="Version: #{dcemApplication.version}" />
@@ -48,7 +46,7 @@
 			</a>
 		</div>
 
-		<div id="contentPart" style="vertical-align: top; border: 0; border-style: solid; overflow: auto; height: 100vh;">
+		<div id="contentPart" style="vertical-align: top; border: 0; border-style: solid; overflow: auto; height: 94vh;">
 			<div style="margin-left: 0.4em; margin-right: 0.4em">
 				<h:panelGroup id="viewPart" style="">
 
