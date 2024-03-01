@@ -5,7 +5,7 @@
 	version="2.2">
 	<application>
 		<resource-bundle>
-			<base-name>com.doubleclue.dcem.oauth.resources.OauthMsg</base-name>
+			<base-name>com.doubleclue.dcem.oauth.resources.Messages</base-name>
 			<var>oauthMsg</var>
 		</resource-bundle>
 	</application>

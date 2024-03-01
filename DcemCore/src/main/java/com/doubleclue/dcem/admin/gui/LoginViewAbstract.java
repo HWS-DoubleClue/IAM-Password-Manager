@@ -1229,6 +1229,7 @@ public abstract class LoginViewAbstract implements Serializable {
 	}
 
 	public void setMgtUrlView(String mgtUrlView) {
+		System.out.println("LoginViewAbstract.setMgtUrlView() " + mgtUrlView);
 		this.mgtUrlView = mgtUrlView;
 	}
 

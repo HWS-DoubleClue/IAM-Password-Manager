@@ -17,15 +17,15 @@
 		</locale-config>
 
 		<resource-bundle>
-			<base-name>com.doubleclue.dcem.core.resources.CoreMsg</base-name>
+			<base-name>com.doubleclue.dcem.core.resources.Messages</base-name>
 			<var>CoreMsg</var>
 		</resource-bundle>
 		<resource-bundle>
-			<base-name>com.doubleclue.dcem.admin.resources.DbMsg</base-name>
+			<base-name>com.doubleclue.dcem.admin.dbresources.DbMsg</base-name>
 			<var>DbMsg</var>
 		</resource-bundle>
 		<resource-bundle>
-			<base-name>com.doubleclue.dcem.admin.resources.AdminMsg</base-name>
+			<base-name>com.doubleclue.dcem.admin.resources.Messages</base-name>
 			<var>AdminMsg</var>
 		</resource-bundle>
 

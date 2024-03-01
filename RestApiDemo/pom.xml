@@ -10,18 +10,15 @@
 	<artifactId>RestApiDemo</artifactId>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>com.doubleclue.lib</groupId>
 			<artifactId>LibRestDcClient</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<build>
 		<finalName>RestApiDemo</finalName>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -37,7 +34,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-
 	</build>
 
 </project>
