@@ -7,7 +7,7 @@
 	<application>
 		
 		<resource-bundle>
-			<base-name>com.doubleclue.dcem.otp.resources.OtpMsg</base-name>
+			<base-name>com.doubleclue.dcem.otp.resources.Messages</base-name>
 			<var>otpMsg</var>
 		</resource-bundle>
 		

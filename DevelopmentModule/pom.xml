@@ -16,7 +16,6 @@
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>DcemCore</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<build>

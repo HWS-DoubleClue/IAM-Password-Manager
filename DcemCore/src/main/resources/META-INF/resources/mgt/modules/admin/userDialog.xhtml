@@ -32,10 +32,10 @@
 							<p:ajax event="change" listener="#{userDialog.changeType}" update="@form"></p:ajax>
 						</p:selectOneRadio>
 
-						<p:outputLabel for="displayName" value="#{AdminMsg['userDialog.displayName']} " />
-						<p:inputText id="displayName" value="#{userDialog.actionObject.displayName}" rendered="#{userDialog.getUserType() eq 'local'}" size="50"
+						<p:outputLabel for="displayName" value="#{AdminMsg['userDialog.displayName']} " rendered="#{userDialog.getUserType() eq 'local'}" />
+						<p:inputText id="displayName" value="#{userDialog.dcemUser.displayName}" rendered="#{userDialog.getUserType() eq 'local'}" size="50"
 							disabled="#{userDialog.userOutranksOperator()}" required="true" requiredMessage="#{AdminMsg['error.displayNameCheck']}" maxlength="60">
-							<f:validateLength minimum="4"></f:validateLength>
+							<f:validateLength minimum="2"></f:validateLength>
 						</p:inputText>
 
 						<p:outputLabel for="name" value="#{CoreMsg['loginId']} " />
@@ -49,36 +49,36 @@
 						</h:panelGroup>
 						<h:panelGroup rendered="#{userDialog.getUserType() eq 'local'}">
 							<p:inputText id="name" value="#{userDialog.loginId}" required="true" disabled="#{userDialog.userOutranksOperator()}" size="50" maxlength="60"
-								requiredMessage="#{AdminMsg['error.userNameCheck']}" />
+								requiredMessage="#{AdminMsg['error.userNameCheck']}">
+								<f:validateLength minimum="2"></f:validateLength>
+							</p:inputText>
 						</h:panelGroup>
 
 						<p:outputLabel for="password" value="#{AdminMsg['userDialog.initialPassword']} "
 							rendered="#{(userDialog.userType eq 'local') and viewNavigator.addAction}" />
-						<p:inputText id="password" value="#{userDialog.actionObject.initialPassword}" rendered="#{(userDialog.userType eq 'local') and viewNavigator.addAction}"
+						<p:inputText id="password" value="#{userDialog.dcemUser.initialPassword}" rendered="#{(userDialog.userType eq 'local') and viewNavigator.addAction}"
 							required="true" requiredMessage="#{AdminMsg['error.passwordCheck']}">
 							<f:validateLength minimum="4"></f:validateLength>
 						</p:inputText>
 
 						<p:outputLabel value="#{AdminMsg['userDialog.email']} " />
-						<p:inputText id="email" value="#{userDialog.actionObject.email}" size="50" disabled="#{userDialog.userOutranksOperator()}" />
+						<p:inputText id="email" value="#{userDialog.dcemUser.email}" size="50" disabled="#{userDialog.userOutranksOperator()}" />
 
 						<p:outputLabel value="#{AdminMsg['userDialog.privateEmail']} " />
-						<p:inputText id="privateEmail" value="#{userDialog.actionObject.privateEmail}" size="50" disabled="#{userDialog.userOutranksOperator()}" />
+						<p:inputText id="privateEmail" value="#{userDialog.dcemUser.privateEmail}" size="50" disabled="#{userDialog.userOutranksOperator()}" />
 
 						<p:outputLabel for="telNumber" value="#{AdminMsg['userDialog.phoneNumber']} " />
-						<p:inputText id="telNumber" value="#{userDialog.actionObject.telephoneNumber}" disabled="#{userDialog.userOutranksOperator()}" />
+						<p:inputText id="telNumber" value="#{userDialog.dcemUser.telephoneNumber}" disabled="#{userDialog.userOutranksOperator()}" />
 
 						<p:outputLabel for="mobileNumber" value="#{AdminMsg['userDialog.mobileNumber']} " />
-						<p:inputText id="mobileNumber" value="#{userDialog.actionObject.mobileNumber}" disabled="#{userDialog.userOutranksOperator()}" />
+						<p:inputText id="mobileNumber" value="#{userDialog.dcemUser.mobileNumber}" disabled="#{userDialog.userOutranksOperator()}" />
 
-
-						<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} " rendered="#{viewNavigator.addAction == false}" />
-						<p:outputLabel value="#{userDialog.actionObject.partMobileNumber}" rendered="#{viewNavigator.editAction}" />
-						<p:inputText id="prvmobileNumber" value="#{userDialog.actionObject.privateMobileNumber}" rendered="#{userDialog.userProfile == true}" />
+						<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} " rendered="#{userDialog.userProfile == true}" />
+						<p:inputText id="prvmobileNumber" value="#{userDialog.dcemUser.privateMobileNumber}" rendered="#{userDialog.userProfile == true}" />
 
 
 						<p:outputLabel value="#{AdminMsg['userDialog.disable']} " rendered="#{userDialog.userProfile == false}" />
-						<p:selectBooleanCheckbox value="#{userDialog.actionObject.disabled}" disabled="#{userDialog.userOutranksOperator()}"
+						<p:selectBooleanCheckbox value="#{userDialog.dcemUser.disabled}" disabled="#{userDialog.userOutranksOperator()}"
 							rendered="#{userDialog.userProfile == false}" />
 
 						<p:outputLabel value="#{AdminMsg['userDialog.role']} " rendered="#{userDialog.userProfile == false}" />
@@ -92,7 +92,7 @@
 				<p:tab title="#{CoreMsg['dialog.location']}">
 					<h:panelGrid columns="2" cellpadding="4" cellspacing="2" width="90%">
 						<p:outputLabel value="#{AdminMsg['userDialog.langauge']} " />
-						<p:selectOneMenu id="languages" value="#{userDialog.actionObject.language}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}">
+						<p:selectOneMenu id="languages" value="#{userDialog.dcemUser.language}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}">
 							<f:selectItems value="#{viewNavigator.supportedLanguages}" />
 						</p:selectOneMenu>
 
@@ -144,10 +144,10 @@
 				</p:tab>
 			</p:tabView>
 			<p />
-			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}" update="@form"
+			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{userDialog.actionAddSave}"
 				disabled="#{userDialog.userOutranksOperator()}" />
 			<p:spacer width="20" />
-			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" icon="fa fa-close" immediate="true" action="#{viewNavigator.actionCloseDialog}" />
+			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" icon="fa fa-close" immediate="true" action="#{userDialog.actionCloseDialog}" />
 		</h:form>
 	</h:body>
 </f:view>

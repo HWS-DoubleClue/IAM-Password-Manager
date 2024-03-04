@@ -6,7 +6,7 @@
 
 	<application>
 		<resource-bundle>
-			<base-name>com.doubleclue.dcem.userportal.resources.DcupMsg</base-name>
+			<base-name>com.doubleclue.dcem.userportal.resources.Messages</base-name>
 			<var>DcupMsg</var>
 		</resource-bundle>
 	</application>

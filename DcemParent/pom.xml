@@ -67,7 +67,6 @@
 		<junit.platform.version>1.8.1</junit.platform.version>
 	</properties>
 	<build>
-		<testSourceDirectory>testsrc</testSourceDirectory>
 		<outputDirectory>bin</outputDirectory>
 		<testOutputDirectory>testbin</testOutputDirectory>
 		<defaultGoal>deploy</defaultGoal>
@@ -1105,7 +1104,7 @@
 			<dependency>
 				<groupId>org.webjars</groupId>
 				<artifactId>font-awesome</artifactId>
-				<version>6.2.0</version>
+				<version>6.5.1</version>
 			</dependency>
 			<!-- <dependency> <groupId>org.primefaces.extensions</groupId>
 			<artifactId>primefaces-extensions</artifactId> 

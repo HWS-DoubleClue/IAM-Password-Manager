@@ -8,7 +8,7 @@
 <h:head>
  	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>#{adminModule.title}</title>
-	<h:outputStylesheet library="webjars" name="font-awesome/6.2.0/css/all-jsf.css" />
+	<h:outputStylesheet library="webjars" name="font-awesome/6.5.1/css/all-jsf.css" />
 	<f:facet name="first">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	</f:facet>
@@ -33,22 +33,20 @@
 
 		<!-- <p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()"
 			oncomplete="PF('statusDialog').hide()" /> -->
-			<ui:include src="../title.xhtml" />
+		<ui:include src="../title.xhtml" />
 
 		<div id="sidemenu" class="sideBarDcem">
 			<h:form id="menuForm">
-
 				<p:panelMenu model="#{viewNavigator.menuModel}" widgetVar="hbPanelMenu" id="hbPanelMenu" stateful="true"   />
-		
 			</h:form>
-			<div class="header6" style="margin-top: 30px">
+			<div class="header6" style="margin-top: 0px">
 				<h:outputLabel value="Version: #{dcemApplication.version}" />
 			</div>
-			<a target="_blank" href="https://hws-gruppe.de/"> <img src="#{resource['pictures/DC_powered_black.svg']}" width="" class="poweredByImage"> </img>
+			<a target="_blank" href="https://hws-gruppe.de/"> <img src="#{resource['pictures/DC_powered_black.svg']}" class="poweredByImage"> </img>
 			</a>
 		</div>
 
-		<div id="contentPart" style="vertical-align: top; border: 0; border-style: solid; overflow: auto; height: 100vh;">
+		<div id="contentPart" style="vertical-align: top; border: 0; border-style: solid; overflow: auto; height: 94vh;">
 			<div style="margin-left: 0.4em; margin-right: 0.4em">
 				<h:panelGroup id="viewPart" style="">
 
