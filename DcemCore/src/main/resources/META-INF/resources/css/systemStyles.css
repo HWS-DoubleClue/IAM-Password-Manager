@@ -1,7 +1,55 @@
 @CHARSET "ISO-8859-1";
 
-/* General Settings */
+body {
+	background: #fff;
+	font-family: "Segoe UI", sans-serif;
+	font-size: 14px;
+	margin: 0;
+	overflow: hidden;
+}
+
+.parent-flex-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 6vh;
+	width: 100%;
+	position: sticky;
+}
+
+.flex-container-center {
+	flex: 1;
+	text-align: center;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%); /* Center the div perfectly */
+}
+
+.flex-container {
+	display: flex;
+	height: 6vh;
+}
+
+.center {
+	flex: 1;
+	text-align: center;
+	position: absolute;
+	left: 50%;
+	/* Position the left edge of the centered div at 50% of the container's width */
+	top: 50%;
+	/* Position the top edge of the centered div at 50% of the container's height */
+	transform: translate(-50%, -50%); /* Center the div perfectly */
+}
+
+.flex-container div {
+	padding-left: 1em;
+}
+
 .toggle {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	background: transparent;
 	border: none;
 	width: 25px;
@@ -10,6 +58,7 @@
 	outline: 0;
 	border-radius: 4px;
 	padding: 0;
+	text-align: center;
 }
 
 .toggle span {
@@ -56,7 +105,6 @@
 	transform: rotate(45deg);
 	background: #fff;
 }
-
 
 .toggleSideBar {
 	background: transparent;
@@ -112,14 +160,6 @@
 	top: 0;
 	transform: rotate(45deg);
 	background: #fff;
-}
-
-body {
-	background: #fff;
-	font-family: "Segoe UI", sans-serif;
-	font-size: 14px;
-	margin: 0;
-	overflow: hidden;
 }
 
 .header1 {
