@@ -35,7 +35,7 @@
 						<p:outputLabel for="displayName" value="#{AdminMsg['userDialog.displayName']} " rendered="#{userDialog.getUserType() eq 'local'}" />
 						<p:inputText id="displayName" value="#{userDialog.dcemUser.displayName}" rendered="#{userDialog.getUserType() eq 'local'}" size="50"
 							disabled="#{userDialog.userOutranksOperator()}" required="true" requiredMessage="#{AdminMsg['error.displayNameCheck']}" maxlength="60">
-							<f:validateLength minimum="4"></f:validateLength>
+							<f:validateLength minimum="2"></f:validateLength>
 						</p:inputText>
 
 						<p:outputLabel for="name" value="#{CoreMsg['loginId']} " />
@@ -50,7 +50,7 @@
 						<h:panelGroup rendered="#{userDialog.getUserType() eq 'local'}">
 							<p:inputText id="name" value="#{userDialog.loginId}" required="true" disabled="#{userDialog.userOutranksOperator()}" size="50" maxlength="60"
 								requiredMessage="#{AdminMsg['error.userNameCheck']}">
-								<f:validateLength minimum="4"></f:validateLength>
+								<f:validateLength minimum="2"></f:validateLength>
 							</p:inputText>
 						</h:panelGroup>
 
