@@ -38,7 +38,7 @@
 }
 
 .ui-dialog .ui-dialog-title {
-	color: #0075B1 !important;
+	color: #0e4f77 !important;
 	font-size: 1.8em;
 	vertical-align: middle;
 	text-decoration: none;
@@ -52,19 +52,19 @@
 }
 
 .ui-panelmenu-header a {
-	background-color: #e7f1ff !important;
+	background-color: #f7f7f7 !important;
 	color: #000 !important;
 	border: none !important;
 	outline: none !important;
 }
 
 .ui-panelmenu-header a:hover {
-	background-color: #f6faff !important;
+	background-color: #DEDEDE !important;
 	color: #000 !important;
 }
 
 .ui-panelmenu-content {
-	background-color: #e7f1ff !important;
+	background-color: #f7f7f7 !important;
 	border: none !important;
 	margin-left: 18px;
 }
@@ -74,7 +74,7 @@
 }
 
 .ui-panelmenu-content a:hover {
-	background-color: #f6faff;
+	background-color: #DEDEDE;
 	color: #000 !important;
 }
 
@@ -89,7 +89,7 @@
 }
 
 .ui-panel-title {
-	color: #0075B1 !important;
+	color: #0e4f77 !important;
 }
 
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button
@@ -142,7 +142,7 @@
 }
 
 .ui-tabs-header a:active {
-	background-color: #0075B1;
+	background-color: #0e4f77;
 }
 
 /* Interaction states----------------------------------*/
@@ -188,7 +188,7 @@
 	{
 	color: white;
 	text-decoration: none;
-	background-color: #0075B1;
+	background-color: #0e4f77;
 }
 
 .ui-widget:active {
@@ -1201,27 +1201,26 @@
 }
 
 .ui-button {
-	color: #ffffff !important;
-	background-color: #0075B1 !important;
-	border: none !important;
+	color: #0e4f77 !important;
+	background-color: #fff !important;
+	border: 1px solid #0e4f77 !important;
 	border-radius: 7px;
 	padding: .1em;
 }
 
-.ui-button.ui-state-hover {
-	border: none !important;
+.ui-button.ui-state-hover, .ui-button.ui-state-active {
+	/* 	border: none !important; */
 	background-color: #00517B !important;
 	color: #ffffff !important;
 }
 
-.ui-button.ui-state-active {
-	border: none !important;
-	background-color: #003048 !important;
-	color: #ffffff !important;
+.ui-button-text {
+	color: #0e4f77 !important;
 }
 
-.ui-button-text {
-	color: #ffffff !important;
+.ui-button.ui-state-active .ui-button-text, .ui-button.ui-state-hover .ui-button-text
+	{
+	color: #fff !important;
 }
 
 .ui-button-text:hover {
@@ -1277,7 +1276,7 @@ body .ui-toggleswitch.ui-toggleswitch-focus .ui-toggleswitch-slider {
 }
 
 body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
-	background: #0075B1;
+	background: #0e4f77;
 }
 
 body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
@@ -1340,7 +1339,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 .ui-datatable.borderless tr.ui-datatable-even:hover, .ui-datatable.borderless tr.ui-datatable-odd:hover,
 	.ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight:hover
 	{
-	background: #CEE2FF;
+	background: #DEDEDE;
 	cursor: pointer;
 }
 
@@ -1361,7 +1360,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 
 .ui-datatable tr.ui-state-highlight, .ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight
 	{
-	background-color: #B2E4FE;
+	background-color: #cee2ff;
 }
 
 .floatingLable {
@@ -1522,7 +1521,7 @@ body .vis-timeline .vis-item.vis-selected .vis-item-content {
 }
 
 body .vis-timeline .vis-time-axis .vis-text {
-	color: #0075B1;
+	color: #0e4f77;
 }
 
 body .vis-timeline .vis-panel .vis-shadow {
