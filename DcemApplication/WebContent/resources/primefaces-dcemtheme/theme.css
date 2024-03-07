@@ -1205,7 +1205,7 @@
 	background-color: #fff !important;
 	border: 1px solid #0e4f77 !important;
 	border-radius: 7px;
-	padding: .1em;
+	padding: 0;
 }
 
 .ui-button.ui-state-hover, .ui-button.ui-state-active {
@@ -1339,7 +1339,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 .ui-datatable.borderless tr.ui-datatable-even:hover, .ui-datatable.borderless tr.ui-datatable-odd:hover,
 	.ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight:hover
 	{
-	background: #DEDEDE;
+	background: #C5C5C5;
 	cursor: pointer;
 }
 
@@ -1360,7 +1360,8 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 
 .ui-datatable tr.ui-state-highlight, .ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight
 	{
-	background-color: #cee2ff;
+	background-color: #DEDEDE;
+	
 }
 
 .floatingLable {
