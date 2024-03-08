@@ -295,10 +295,9 @@ body {
 }
 
 /* Menu */
-#sidemenu {
-	background-color: #f7f7f7;
-	overflow-y: auto;
-}
+/* #sidemenu { */
+/* 	background-color: #f7f7f7; */
+/* } */
 
 .selectMenu {
 	display: inline-block;

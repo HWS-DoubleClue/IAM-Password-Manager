@@ -1339,7 +1339,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 .ui-datatable.borderless tr.ui-datatable-even:hover, .ui-datatable.borderless tr.ui-datatable-odd:hover,
 	.ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight:hover
 	{
-	background: #C5C5C5;
+	background: #92c6d4;
 	cursor: pointer;
 }
 
@@ -1360,7 +1360,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 
 .ui-datatable tr.ui-state-highlight, .ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight
 	{
-	background-color: #DEDEDE;
+	background-color: #bae2f5;
 	
 }
 

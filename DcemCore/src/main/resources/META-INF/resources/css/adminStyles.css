@@ -5,6 +5,7 @@
 }
 
 .sideBarDcem {
+	background-color: #f7f7f7;
 	display: flex;
 	flex-flow: column;
 	float: left;
@@ -14,7 +15,6 @@
 	margin-top: 0px;
 	width: 220px;
 	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2), 0 0 20px 0 rgba(0, 0, 0, 0.19);
-	overflow: hidden;
 }
 
 .flexBoxSpacing {
