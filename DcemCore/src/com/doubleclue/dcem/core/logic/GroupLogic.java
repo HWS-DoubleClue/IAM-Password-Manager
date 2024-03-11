@@ -266,6 +266,9 @@ public class GroupLogic {
 			dcemGroup = (DcemGroup) object;
 			dcemGroup = em.merge(dcemGroup);
 			for (DcemModule module : applicationBean.getSortedModules()) {
+				module.deleteGroupFromDbPre(dcemGroup);
+			}
+			for (DcemModule module : applicationBean.getSortedModules()) {
 				module.deleteGroupFromDb(dcemGroup);
 			}
 			dcemGroup.getMembers().clear();

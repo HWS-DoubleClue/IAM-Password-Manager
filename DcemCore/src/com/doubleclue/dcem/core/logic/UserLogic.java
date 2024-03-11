@@ -694,6 +694,9 @@ public class UserLogic {
 			}
 			dcemUser = em.merge(dcemUser);
 			for (DcemModule module : applicationBean.getSortedModules()) {
+				module.deleteUserFromDbPre(dcemUser);
+			}
+			for (DcemModule module : applicationBean.getSortedModules()) {
 				module.deleteUserFromDb(dcemUser);
 			}
 			String objectIdentifier = Integer.toString(dcemUser.getId());

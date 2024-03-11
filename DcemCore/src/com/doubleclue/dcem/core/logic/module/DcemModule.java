@@ -279,6 +279,11 @@ public abstract class DcemModule implements Serializable {
 	public void deleteGroupFromDb(DcemGroup dcemGroup) throws DcemException {
 		return;
 	}
+	
+	@DcemTransactional
+	public void deleteGroupFromDbPre(DcemGroup dcemGroup) throws DcemException {
+		return;
+	}
 
 	public ModuleTenantData getModuleTenantData() {
 		return moduleTenantMap.get(TenantIdResolver.getCurrentTenantName());
@@ -338,6 +343,9 @@ public abstract class DcemModule implements Serializable {
 
 	public void deleteUserFromDb(DcemUser dcemUser) throws DcemException {
 		return;
-		
+	}
+	
+	public void deleteUserFromDbPre(DcemUser dcemUser) throws DcemException {
+		return;
 	}
 }
