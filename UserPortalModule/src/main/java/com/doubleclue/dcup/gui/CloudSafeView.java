@@ -1581,6 +1581,7 @@ public class CloudSafeView extends AbstractPortalView {
 		setEditFolderProcess(false);
 		filePassword = null;
 		setAddFolderName(null);
+		passwordProtected = false;
 		PrimeFaces.current().executeScript("PF('processFolderDialog').show();");
 		PrimeFaces.current().ajax().update("processFolderForm:processFolderDialog");
 	}
