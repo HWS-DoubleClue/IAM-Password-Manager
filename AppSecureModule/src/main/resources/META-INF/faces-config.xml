@@ -7,7 +7,7 @@
 	<application>
 		
 		<resource-bundle>
-			<base-name>com.doubleclue.dcem.as.resources</base-name>
+			<base-name>com.doubleclue.dcem.as.resources.Messages</base-name>
 			<var>asMsg</var>
 		</resource-bundle>
 
