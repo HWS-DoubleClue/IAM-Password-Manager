@@ -648,7 +648,7 @@
 
 		<h:form id="processFolderForm">
 			<p:dialog id="processFolderDialog" widgetVar="processFolderDialog" modal="true" draggable="true" resizable="false" style="border:none;">
-				<p:ajax event="open" update="processFolderForm:addFolderInput processFolderForm:uploadPasswordsfolder processFolderForm:addPasswordsParentFolder" />
+				<p:ajax event="open" update="processFolderForm:addFolderInput" />
 
 				<f:facet name="header">
 					<h:outputLabel value="#{DcupMsg['dialog.addFolder']}" rendered="#{cloudSafeView.editFolderProcess == false}" class="dialogTitle" />
@@ -662,9 +662,10 @@
 
 				<h:panelGrid id="addFolderInput" columns="2" cellpadding="4" cellspacing="2">
 					<p:outputLabel for="addFolderName" value="#{DcupMsg['dialog.addFolder.folderName']}" />
-					<p:inputText id="addFolderName" size="36" value="#{cloudSafeView.addFolderName}" maxlength="100" />
+					<p:inputText id="addFolderName" size="36" value="#{cloudSafeView.addFolderName}" maxlength="100" required="true" />
 				</h:panelGrid>
 
+				<!--   NOT SUPPORTED
 				<h:panelGroup id="addPasswordsParentFolder" rendered="#{cloudSafeView.parentProtected == false}">
 					<h:panelGrid columns="2" cellpadding="4" cellspacing="2">
 						<p:outputLabel for="passwordProtectedFolder" value="#{DcupMsg['label.folderPasswordProtected']}" />
@@ -681,7 +682,7 @@
 								<h:outputLabel escape="false" value="#{DcupMsg['warning.password.cloudSafeAddFolder']}" />
 							</h:panelGroup>
 							<p></p>
-							<!--   NOT SUPPORTED
+							
 							<h:panelGrid columns="2" cellpadding="4" cellspacing="4" rendered="#{cloudSafeView.passwordProtected == true}">
 								<p:outputLabel for="folderPassword" value="#{DcupMsg['dialog.passwordCloud']}" />
 								<p:password id="folderPassword" value="#{cloudSafeView.filePassword}" feedback="true" validatorMessage="#{DcupMsg['registration.noMatchPassword']}"
@@ -691,12 +692,12 @@
 								<p:password id="folderPassword2" value="#{cloudSafeView.filePassword}" toggleMask="true" />
 
 							</h:panelGrid>
-							-->
 							<p></p>
 
 						</p:fieldset>
 					</h:panelGroup>
 				</h:panelGroup>
+				-->
 				<p />
 				<p:commandButton value="#{DcupMsg['button.ok']}" rendered="#{cloudSafeView.editFolderProcess == false}" action="#{cloudSafeView.addFolder}"
 					styleClass="wideButton" icon="fa fa-check" ajax="true" update="cloudSafeForm:cloudSafeTable cloudSafeForm:cloudSafeKacheln">
