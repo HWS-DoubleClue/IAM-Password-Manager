@@ -12,7 +12,7 @@ body {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	height: 6vh;
+	height: 3.5em;
 	width: 100%;
 	position: sticky;
 }
@@ -28,7 +28,7 @@ body {
 
 .flex-container {
 	display: flex;
-	height: 6vh;
+/* 	height: 6vh; */
 }
 
 .center {
@@ -53,7 +53,7 @@ body {
 	background: transparent;
 	border: none;
 	width: 25px;
-	height: 6vh;
+/* 	height: 6vh; */
 	cursor: pointer;
 	outline: 0;
 	border-radius: 4px;
@@ -110,7 +110,7 @@ body {
 	background: transparent;
 	border: none;
 	width: 25px;
-	height: 6vh;
+/* 	height: 6vh; */
 	cursor: pointer;
 	outline: 0;
 	border-radius: 4px;

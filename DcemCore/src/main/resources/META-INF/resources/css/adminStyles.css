@@ -15,21 +15,29 @@
 	background-color: #f7f7f7;
 	display: flex;
 	flex-flow: column;
-	float: left;	
+	float: left;
 	height: 94vh;
 	width: 15.75em;
-	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2), 0 0 20px 0 rgba(0, 0, 0, 0.19);	
+	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2), 0 0 20px 0 rgba(0, 0, 0, 0.19);
 	transition: all 0.5s ease 0s;
 }
 
 .sideBarDcem.close {
-	width: 0;	
+	/* 	width: 0; */
+	display: none;
+}
+
+#conentPart {
+	margin-left: 15.75em;
+}
+
+#contentPart.extended {
+	margin-left: 0;
 }
 
 .info-bottom {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	padding: 1em 0;
 }
 
@@ -61,4 +69,12 @@
 	height: 6em;
 	width: 6em;
 	border-radius: 4em;
+}
+
+#contentPart {
+	vertical-align: top;
+	border: 0;
+	border-style: solid;
+	overflow: auto;
+	height: 94vh;
 }
