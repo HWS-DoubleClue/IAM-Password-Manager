@@ -46,18 +46,18 @@
 		<ui:include src="../title.xhtml" />
 
 		<div id="sidemenu" class="sideBarDcem">
-			<h:form id="menuForm">
-				<p:panelMenu model="#{viewNavigator.menuModel}"
-					widgetVar="hbPanelMenu" id="hbPanelMenu" stateful="true" />
-			</h:form>
+			<div class="menuButtons">
+				<h:form id="menuForm">
+					<p:panelMenu model="#{viewNavigator.menuModel}"
+						widgetVar="hbPanelMenu" id="hbPanelMenu" stateful="true" />
+				</h:form>
+			</div>
 			<div class="info-bottom">
 				<a target="_blank" href="https://hws-gruppe.de/"> <img
 					src="#{resource['pictures/DC_powered_black.svg']}"
 					class="poweredByImage"> </img>
 				</a>
-				<div class="header6" style="margin-top: 0px">
-					<h:outputLabel value="Version: #{dcemApplication.version}" />
-				</div>
+				<h:outputLabel value="Version: #{dcemApplication.version}" styleClass="versionInfo"/>
 			</div>
 		</div>
 
