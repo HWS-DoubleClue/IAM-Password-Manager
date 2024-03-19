@@ -65,20 +65,20 @@ function dateTemplateFunc(date) {
 
 
 // Start index page
-function openNav() {
-	document.getElementById("sidemenu").style.width = "15.75em";
-	document.getElementById("sidemenu").style.transition = "0.5s all";
-	document.getElementById("contentPart").style.marginLeft = "15.75em";
-	document.getElementById("contentPart").style.transition = "0.5s all";
-}
-
-
-function closeNav() {
-	document.getElementById("sidemenu").style.width = "0";
-	document.getElementById("sidemenu").style.transition = "0.5s all";
-	document.getElementById("contentPart").style.marginLeft = "0";
-	document.getElementById("contentPart").style.transition = "0.5s all";
-}
+//function openNav() {
+//	document.getElementById("sidemenu").style.width = "15.75em";
+//	document.getElementById("sidemenu").style.transition = "0.5s all";
+//	document.getElementById("contentPart").style.marginLeft = "15.75em";
+//	document.getElementById("contentPart").style.transition = "0.5s all";
+//}
+//
+//
+//function closeNav() {
+//	document.getElementById("sidemenu").style.width = "0";
+//	document.getElementById("sidemenu").style.transition = "0.5s all";
+//	document.getElementById("contentPart").style.marginLeft = "0";
+//	document.getElementById("contentPart").style.transition = "0.5s all";
+//}
 
 function setLocalStorageValue(key, value) {
 	localStorage.setItem(key, value);
@@ -89,33 +89,31 @@ function removeLocalStorage(key) {
 }
 
 function toggleNav() {
-	var sideMenu = document.getElementById("sidemenu");
-	if (sideMenu.style.width === "0px" || sideMenu.style.width === "") {
-		//document.querySelector('.toggle span').classList.add('toggle');
-		openNav()
-		setLocalStorageValue('sideMenuOpen', true);
-		removeLocalStorage('sideMenuClose');
-	} else {
-		//document.querySelector('.toggle span').classList.remove('toggle');
-		closeNav()
-		setLocalStorageValue('sideMenuClose', true);
-		removeLocalStorage('sideMenuOpen');
-
-	}
+	$("#sidemenu").toggleClass("close");
+	//	var sideMenu = document.getElementById("sidemenu");
+	//	if (sideMenu.style.width === "0px" || sideMenu.style.width === "") {
+	//		document.querySelector('.toggle span').classList.add('toggle');
+	//		openNav()
+	//		setLocalStorageValue('sideMenuOpen', true);
+	//		removeLocalStorage('sideMenuClose');
+	//	} else {
+	//		document.querySelector('.toggle span').classList.remove('toggle');
+	//		closeNav()
+	//		setLocalStorageValue('sideMenuClose', true);
+	//		removeLocalStorage('sideMenuOpen');
+	//
+	//	}
 }
 
-window.onload = function getLocalStorgeSideMenuStatus() {
-	if (localStorage.getItem('sideMenuClose') == 'true') {
-		closeNav();
-		removeLocalStorage('sideMenuOpen');
-
-	} else {
-		//document.querySelector('.toggle span').classList.add('toggle');
-
-		openNav();
-		removeLocalStorage('sideMenuClose');
-	}
-}
+//window.onload = function getLocalStorgeSideMenuStatus() {
+//	if (localStorage.getItem('sideMenuClose') == 'true') {
+//		$("#sidemenu").addClass("close");
+//	} else {
+//		$("#sidemenu").removeClass("close");
+//		//			openNav();
+//		//			removeLocalStorage('sideMenuClose');
+//	}
+//}
 // End index page
 
 // start perferences
