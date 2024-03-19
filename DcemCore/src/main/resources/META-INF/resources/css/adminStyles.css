@@ -17,6 +17,11 @@
 	box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2), 0 0 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+.info-bottom{
+	position: fixed;
+	bottom: 0;
+}
+
 .flexBoxSpacing {
 	flex-grow: 1;
 	align-items: flex-end;
