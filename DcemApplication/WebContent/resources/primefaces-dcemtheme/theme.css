@@ -165,7 +165,7 @@
 	.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus
 	{
 	/* border: 1px solid #806060; */
-	background: #94c8d5;
+	background: #D0EBF8;
 	font-weight: normal;
 	color: #222222;
 }
@@ -173,7 +173,7 @@
 .ui-state-hover a, .ui-state-hover a:hover {
 	color: #222222;
 	text-decoration: none;
-	background-color: #94c8d5;
+	background-color: #D0EBF8;
 }
 
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active
@@ -1339,7 +1339,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 .ui-datatable.borderless tr.ui-datatable-even:hover, .ui-datatable.borderless tr.ui-datatable-odd:hover,
 	.ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight:hover
 	{
-	background: #92c6d4;
+	background: #D0EBF8;
 	cursor: pointer;
 }
 
@@ -1361,7 +1361,6 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 .ui-datatable tr.ui-state-highlight, .ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight
 	{
 	background-color: #bae2f5;
-	
 }
 
 .floatingLable {
