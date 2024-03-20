@@ -62,9 +62,10 @@ public class ResourceFinder {
 			final JarEntry jarEntry = entries.nextElement();
 			String entryName = jarEntry.getName();
 			if (entryName.startsWith(scannedPackage) && entryName.endsWith(endsWith)) {
-				String fileName = entryName.replace('/', '.');
+				int idx = entryName.lastIndexOf("/");
+				String fileName = entryName.substring(idx+1);
 				inputStream = jarFile.getInputStream(jarEntry);
-				fileContents.add(new FileContent(fileName.substring(scannedPackage.length()+1), KaraUtils.readInputStream(inputStream)));
+				fileContents.add(new FileContent(fileName, KaraUtils.readInputStream(inputStream)));
 			}
 		}
 		jarFile.close();
