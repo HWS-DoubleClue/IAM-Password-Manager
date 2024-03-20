@@ -2,15 +2,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <ui:include src="/mgt/modules/dialogHead.xhtml" />
 
 <f:view locale="#{operatorSession.locale}">
 
 	<h:body class="dialogBody">
-		<h:outputLabel value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle" />
+		<!-- 		<h:outputLabel value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle" /> -->
 		<h:form id="userForm" style="padding-bottom: 100px">
 
 			<p:messages showSummary="true" showDetail="false" closable="true">
@@ -18,71 +22,115 @@
 			</p:messages>
 			<p:tabView>
 				<p:tab title="#{CoreMsg['dialog.general']}">
-					<h:panelGrid columns="2" cellpadding="4" cellspacing="2" width="90%">
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="2"
+						width="90%">
 						<h:panelGroup id="profileFoto">
-							<p:graphicImage cache="false" styleClass="imageProfileUser" value="#{userDialog.photoUserProfile}" />
+							<p:graphicImage cache="false" styleClass="imageProfileUser"
+								value="#{userDialog.photoUserProfile}" />
 						</h:panelGroup>
-						<p:fileUpload listener="#{userDialog.photoProfileListener}" label="#{CoreMsg['profilePhoto']}" value="#{userDialog.uploadPhotoProfile}" mode="simple"
-							skinSimple="true" immediate="true" auto="true" multiple="false" update="profileFoto" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" fileLimit="1" />
+						<p:fileUpload listener="#{userDialog.photoProfileListener}"
+							label="#{CoreMsg['profilePhoto']}"
+							value="#{userDialog.uploadPhotoProfile}" mode="simple"
+							skinSimple="true" immediate="true" auto="true" multiple="false"
+							update="profileFoto" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/"
+							fileLimit="1" />
 
-						<p:outputLabel value="#{AdminMsg['type.localDomain']} " rendered="#{userDialog.userProfile == false}" />
-						<p:selectOneRadio id="console" value="#{userDialog.userType}" disabled="#{viewNavigator.editAction}" rendered="#{userDialog.userProfile == false}">
-							<f:selectItem itemLabel="#{AdminMsg['userDialog.local']} " itemValue="local" />
-							<f:selectItem itemLabel="#{AdminMsg['userDialog.domain']} " itemValue="domain" />
-							<p:ajax event="change" listener="#{userDialog.changeType}" update="@form"></p:ajax>
+						<p:outputLabel value="#{AdminMsg['type.localDomain']} "
+							rendered="#{userDialog.userProfile == false}" />
+						<p:selectOneRadio id="console" value="#{userDialog.userType}"
+							disabled="#{viewNavigator.editAction}"
+							rendered="#{userDialog.userProfile == false}">
+							<f:selectItem itemLabel="#{AdminMsg['userDialog.local']} "
+								itemValue="local" />
+							<f:selectItem itemLabel="#{AdminMsg['userDialog.domain']} "
+								itemValue="domain" />
+							<p:ajax event="change" listener="#{userDialog.changeType}"
+								update="@form"></p:ajax>
 						</p:selectOneRadio>
 
-						<p:outputLabel for="displayName" value="#{AdminMsg['userDialog.displayName']} " rendered="#{userDialog.getUserType() eq 'local'}" />
-						<p:inputText id="displayName" value="#{userDialog.dcemUser.displayName}" rendered="#{userDialog.getUserType() eq 'local'}" size="50"
-							disabled="#{userDialog.userOutranksOperator()}" required="true" requiredMessage="#{AdminMsg['error.displayNameCheck']}" maxlength="60">
+						<p:outputLabel for="displayName"
+							value="#{AdminMsg['userDialog.displayName']} "
+							rendered="#{userDialog.getUserType() eq 'local'}" />
+						<p:inputText id="displayName"
+							value="#{userDialog.dcemUser.displayName}"
+							rendered="#{userDialog.getUserType() eq 'local'}" size="50"
+							disabled="#{userDialog.userOutranksOperator()}" required="true"
+							requiredMessage="#{AdminMsg['error.displayNameCheck']}"
+							maxlength="60">
 							<f:validateLength minimum="2"></f:validateLength>
 						</p:inputText>
 
 						<p:outputLabel for="name" value="#{CoreMsg['loginId']} " />
 						<h:panelGroup rendered="#{userDialog.getUserType() eq 'domain'}">
-							<p:selectOneMenu id="domain" value="#{userDialog.domainName}" style="vertical-align: middle;" disabled="#{viewNavigator.addAction == false}">
+							<p:selectOneMenu id="domain" value="#{userDialog.domainName}"
+								style="vertical-align: middle;"
+								disabled="#{viewNavigator.addAction == false}">
 								<f:selectItems value="#{userDialog.domainNames}" />
 								<p:ajax event="change" update="@form"></p:ajax>
 							</p:selectOneMenu>
-							<p:autoComplete id="domainLoginId" value="#{userDialog.loginId}" completeMethod="#{userDialog.completeUser}" size="50"
+							<p:autoComplete id="domainLoginId" value="#{userDialog.loginId}"
+								completeMethod="#{userDialog.completeUser}" size="50"
 								disabled="#{viewNavigator.addAction == false}" />
 						</h:panelGroup>
 						<h:panelGroup rendered="#{userDialog.getUserType() eq 'local'}">
-							<p:inputText id="name" value="#{userDialog.loginId}" required="true" disabled="#{userDialog.userOutranksOperator()}" size="50" maxlength="60"
+							<p:inputText id="name" value="#{userDialog.loginId}"
+								required="true" disabled="#{userDialog.userOutranksOperator()}"
+								size="50" maxlength="60"
 								requiredMessage="#{AdminMsg['error.userNameCheck']}">
 								<f:validateLength minimum="2"></f:validateLength>
 							</p:inputText>
 						</h:panelGroup>
 
-						<p:outputLabel for="password" value="#{AdminMsg['userDialog.initialPassword']} "
+						<p:outputLabel for="password"
+							value="#{AdminMsg['userDialog.initialPassword']} "
 							rendered="#{(userDialog.userType eq 'local') and viewNavigator.addAction}" />
-						<p:inputText id="password" value="#{userDialog.dcemUser.initialPassword}" rendered="#{(userDialog.userType eq 'local') and viewNavigator.addAction}"
-							required="true" requiredMessage="#{AdminMsg['error.passwordCheck']}">
+						<p:inputText id="password"
+							value="#{userDialog.dcemUser.initialPassword}"
+							rendered="#{(userDialog.userType eq 'local') and viewNavigator.addAction}"
+							required="true"
+							requiredMessage="#{AdminMsg['error.passwordCheck']}">
 							<f:validateLength minimum="4"></f:validateLength>
 						</p:inputText>
 
 						<p:outputLabel value="#{AdminMsg['userDialog.email']} " />
-						<p:inputText id="email" value="#{userDialog.dcemUser.email}" size="50" disabled="#{userDialog.userOutranksOperator()}" />
+						<p:inputText id="email" value="#{userDialog.dcemUser.email}"
+							size="50" disabled="#{userDialog.userOutranksOperator()}" />
 
 						<p:outputLabel value="#{AdminMsg['userDialog.privateEmail']} " />
-						<p:inputText id="privateEmail" value="#{userDialog.dcemUser.privateEmail}" size="50" disabled="#{userDialog.userOutranksOperator()}" />
+						<p:inputText id="privateEmail"
+							value="#{userDialog.dcemUser.privateEmail}" size="50"
+							disabled="#{userDialog.userOutranksOperator()}" />
 
-						<p:outputLabel for="telNumber" value="#{AdminMsg['userDialog.phoneNumber']} " />
-						<p:inputText id="telNumber" value="#{userDialog.dcemUser.telephoneNumber}" disabled="#{userDialog.userOutranksOperator()}" />
+						<p:outputLabel for="telNumber"
+							value="#{AdminMsg['userDialog.phoneNumber']} " />
+						<p:inputText id="telNumber"
+							value="#{userDialog.dcemUser.telephoneNumber}"
+							disabled="#{userDialog.userOutranksOperator()}" />
 
-						<p:outputLabel for="mobileNumber" value="#{AdminMsg['userDialog.mobileNumber']} " />
-						<p:inputText id="mobileNumber" value="#{userDialog.dcemUser.mobileNumber}" disabled="#{userDialog.userOutranksOperator()}" />
+						<p:outputLabel for="mobileNumber"
+							value="#{AdminMsg['userDialog.mobileNumber']} " />
+						<p:inputText id="mobileNumber"
+							value="#{userDialog.dcemUser.mobileNumber}"
+							disabled="#{userDialog.userOutranksOperator()}" />
 
-						<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} " rendered="#{userDialog.userProfile == true}" />
-						<p:inputText id="prvmobileNumber" value="#{userDialog.dcemUser.privateMobileNumber}" rendered="#{userDialog.userProfile == true}" />
+						<p:outputLabel value="#{AdminMsg['userDialog.prvMobileInfo']} "
+							rendered="#{userDialog.userProfile == true}" />
+						<p:inputText id="prvmobileNumber"
+							value="#{userDialog.dcemUser.privateMobileNumber}"
+							rendered="#{userDialog.userProfile == true}" />
 
 
-						<p:outputLabel value="#{AdminMsg['userDialog.disable']} " rendered="#{userDialog.userProfile == false}" />
-						<p:selectBooleanCheckbox value="#{userDialog.dcemUser.disabled}" disabled="#{userDialog.userOutranksOperator()}"
+						<p:outputLabel value="#{AdminMsg['userDialog.disable']} "
+							rendered="#{userDialog.userProfile == false}" />
+						<p:selectBooleanCheckbox value="#{userDialog.dcemUser.disabled}"
+							disabled="#{userDialog.userOutranksOperator()}"
 							rendered="#{userDialog.userProfile == false}" />
 
-						<p:outputLabel value="#{AdminMsg['userDialog.role']} " rendered="#{userDialog.userProfile == false}" />
-						<p:selectOneMenu id="roles" value="#{userDialog.selectedRole}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}"
+						<p:outputLabel value="#{AdminMsg['userDialog.role']} "
+							rendered="#{userDialog.userProfile == false}" />
+						<p:selectOneMenu id="roles" value="#{userDialog.selectedRole}"
+							style="width:125px"
+							disabled="#{userDialog.userOutranksOperator()}"
 							rendered="#{userDialog.userProfile == false}">
 							<f:selectItems value="#{userDialog.availableRoles}" />
 						</p:selectOneMenu>
@@ -90,36 +138,52 @@
 					</h:panelGrid>
 				</p:tab>
 				<p:tab title="#{CoreMsg['dialog.location']}">
-					<h:panelGrid columns="2" cellpadding="4" cellspacing="2" width="90%">
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="2"
+						width="90%">
 						<p:outputLabel value="#{AdminMsg['userDialog.langauge']} " />
-						<p:selectOneMenu id="languages" value="#{userDialog.dcemUser.language}" style="width:125px" disabled="#{userDialog.userOutranksOperator()}">
+						<p:selectOneMenu id="languages"
+							value="#{userDialog.dcemUser.language}" style="width:125px"
+							disabled="#{userDialog.userOutranksOperator()}">
 							<f:selectItems value="#{viewNavigator.supportedLanguages}" />
 						</p:selectOneMenu>
 
-						<p:outputLabel for="country" value="#{AdminMsg['userDialog.country']} " />
+						<p:outputLabel for="country"
+							value="#{AdminMsg['userDialog.country']} " />
 						<p:selectOneMenu id="country" value="#{userDialog.country}">
 							<f:selectItems value="#{userDialog.availableCountries}" />
 						</p:selectOneMenu>
 
-						<p:outputLabel for="selectTimeZone" value="#{AdminMsg['userDialog.timezone']}" />
+						<p:outputLabel for="selectTimeZone"
+							value="#{AdminMsg['userDialog.timezone']}" />
 						<p:fieldset>
-							<h:panelGrid id="selectTimeZone" columns="2" cellpadding="2" cellspacing="2">
-								<p:outputLabel for="selectDefaultTimeZone" value="#{AdminMsg['userDialog.defaultTimezone']} " />
-								<p:selectBooleanCheckbox id="selectDefaultTimeZone" value="#{userDialog.defaultTimezone}">
+							<h:panelGrid id="selectTimeZone" columns="2" cellpadding="2"
+								cellspacing="2">
+								<p:outputLabel for="selectDefaultTimeZone"
+									value="#{AdminMsg['userDialog.defaultTimezone']} " />
+								<p:selectBooleanCheckbox id="selectDefaultTimeZone"
+									value="#{userDialog.defaultTimezone}">
 									<p:ajax event="change" update="selectTimeZoneContinent" />
 								</p:selectBooleanCheckbox>
 							</h:panelGrid>
 
-							<h:panelGrid id="selectTimeZoneContinent" columns="4" cellpadding="2" cellspacing="2" style="width: 100%">
-								<p:outputLabel for="timezone" value="#{AdminMsg['userDialog.timezoneContinent']}" />
-								<p:selectOneMenu id="timezone" disabled="#{userDialog.defaultTimezone}" value="#{userDialog.continentTimezone}" style="margin-left: 1em;">
+							<h:panelGrid id="selectTimeZoneContinent" columns="4"
+								cellpadding="2" cellspacing="2" style="width: 100%">
+								<p:outputLabel for="timezone"
+									value="#{AdminMsg['userDialog.timezoneContinent']}" />
+								<p:selectOneMenu id="timezone"
+									disabled="#{userDialog.defaultTimezone}"
+									value="#{userDialog.continentTimezone}"
+									style="margin-left: 1em;">
 									<f:selectItems value="#{userDialog.continentTimezones}">
 									</f:selectItems>
 									<p:ajax event="change" update="timezoneCountry" />
 								</p:selectOneMenu>
 
-								<p:outputLabel for="timezoneCountry" value="#{AdminMsg['userDialog.timezoneCountry']}" />
-								<p:selectOneMenu id="timezoneCountry" disabled="#{userDialog.defaultTimezone}" value="#{userDialog.countryTimezone}" style="margin-left: 1em;">
+								<p:outputLabel for="timezoneCountry"
+									value="#{AdminMsg['userDialog.timezoneCountry']}" />
+								<p:selectOneMenu id="timezoneCountry"
+									disabled="#{userDialog.defaultTimezone}"
+									value="#{userDialog.countryTimezone}" style="margin-left: 1em;">
 									<f:selectItems value="#{userDialog.countryTimezones}">
 									</f:selectItems>
 								</p:selectOneMenu>
@@ -128,26 +192,40 @@
 					</h:panelGrid>
 				</p:tab>
 				<p:tab title="#{CoreMsg['dialog.position']}">
-					<h:panelGrid columns="2" cellpadding="4" cellspacing="2" width="90%">
-						<p:outputLabel for="@next" value="#{AdminMsg['userDialog.department']} " />
-						<p:autoComplete id="dept" minQueryLength="1" value="#{userDialog.department}" disabled="#{userDialog.userProfile}"
-							completeMethod="#{userDialog.completeDepartment}" effect="fade" size="40" />
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="2"
+						width="90%">
+						<p:outputLabel for="@next"
+							value="#{AdminMsg['userDialog.department']} " />
+						<p:autoComplete id="dept" minQueryLength="1"
+							value="#{userDialog.department}"
+							disabled="#{userDialog.userProfile}"
+							completeMethod="#{userDialog.completeDepartment}" effect="fade"
+							size="40" />
 
-						<p:outputLabel for="@next" value="#{AdminMsg['userDialog.jobTitle']} " />
-						<p:inputText id="jobtitle" value="#{userDialog.jobTitle}" size="50" disabled="#{userDialog.userProfile}" />
+						<p:outputLabel for="@next"
+							value="#{AdminMsg['userDialog.jobTitle']} " />
+						<p:inputText id="jobtitle" value="#{userDialog.jobTitle}"
+							size="50" disabled="#{userDialog.userProfile}" />
 
-						<p:outputLabel for="@next" value="#{AdminMsg['userDialog.reportsTo']} " rendered="#{viewNavigator.addAction == false}" />
-						<p:outputLabel id="reportsTo" value="#{userDialog.reportsTo}" rendered="#{viewNavigator.addAction == false}" />
+						<p:outputLabel for="@next"
+							value="#{AdminMsg['userDialog.reportsTo']} "
+							rendered="#{viewNavigator.addAction == false}" />
+						<p:outputLabel id="reportsTo" value="#{userDialog.reportsTo}"
+							rendered="#{viewNavigator.addAction == false}" />
 
 					</h:panelGrid>
 
 				</p:tab>
 			</p:tabView>
 			<p />
-			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{userDialog.actionAddSave}"
+			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check"
+				value="#{CoreMsg['OK']}" ajax="true"
+				actionListener="#{userDialog.actionAddSave}"
 				disabled="#{userDialog.userOutranksOperator()}" />
 			<p:spacer width="20" />
-			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" icon="fa fa-close" immediate="true" action="#{userDialog.actionCloseDialog}" />
+			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}"
+				icon="fa fa-close" immediate="true"
+				action="#{userDialog.actionCloseDialog}" />
 		</h:form>
 	</h:body>
 </f:view>
