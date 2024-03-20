@@ -3,6 +3,7 @@
 **/target/
 **/testLogs/
 **/.settings/
+**/work/
 .factorypath
 .classpath
 .project

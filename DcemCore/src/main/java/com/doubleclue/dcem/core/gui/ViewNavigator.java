@@ -30,6 +30,7 @@ import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
 import com.doubleclue.dcem.core.entities.DcemAction;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
@@ -87,11 +88,19 @@ public class ViewNavigator implements Serializable {
 	public String getViewPath() {
 		if (activeView != null) {
 			return activeView.getSubject().getPath();
-
 		} else {
 			// TODO
 			return null;
 		}
+	}
+	
+	public String getUrlLink () {
+		try {
+			return applicationBean.getDcemManagementUrl(null) + "/preLogin_.xhtml?view=" +activeModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER + activeView.getSubject().getViewName();
+		} catch (DcemException e) {
+			return e.getMessage();
+		}
+		
 	}
 
 	public void actionRedirectionToHome() {

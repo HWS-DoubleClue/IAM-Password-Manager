@@ -696,6 +696,7 @@ public class UserLogic {
 			if (dcemUser.getId() == operatorSessionBean.getDcemUser().getId()) {
 				throw new DcemException(DcemErrorCodes.CANNOT_DELETE_YOURSELF, null);
 			}
+			dcemUser = em.merge(dcemUser);
 			for (DcemModule module : applicationBean.getSortedModules()) {
 				module.deleteUserFromDbPre(dcemUser);
 			}
