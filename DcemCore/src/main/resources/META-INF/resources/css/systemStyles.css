@@ -28,7 +28,7 @@ body {
 
 .flex-container {
 	display: flex;
-/* 	height: 6vh; */
+	/* 	height: 6vh; */
 }
 
 .center {
@@ -53,7 +53,7 @@ body {
 	background: transparent;
 	border: none;
 	width: 25px;
-/* 	height: 6vh; */
+	/* 	height: 6vh; */
 	cursor: pointer;
 	outline: 0;
 	border-radius: 4px;
@@ -110,7 +110,7 @@ body {
 	background: transparent;
 	border: none;
 	width: 25px;
-/* 	height: 6vh; */
+	/* 	height: 6vh; */
 	cursor: pointer;
 	outline: 0;
 	border-radius: 4px;
@@ -298,7 +298,6 @@ body {
 /* #sidemenu { */
 /* 	background-color: #f7f7f7; */
 /* } */
-
 .selectMenu {
 	display: inline-block;
 	vertical-align: center;
@@ -323,11 +322,6 @@ body {
 .menuEnabled {
 	color: white;
 	text-decoration: underline;
-}
-
-/* Tab View */
-.ui-tabs-nav {
-	background-color: #f7f7f7 !important;
 }
 
 .wideButton20 {
