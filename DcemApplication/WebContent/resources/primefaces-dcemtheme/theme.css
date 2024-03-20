@@ -99,7 +99,7 @@
 }
 
 .ui-widget-content {
-	border: 1px solid #c3c3c3;
+/* 	border: 1px solid #c3c3c3; */
 	background: #ffffff;
 	color: #222222;
 }
@@ -1156,7 +1156,7 @@
 }
 
 .ui-growl-title {
-	
+	word-break: break-word;
 }
 
 .ui-shadow {

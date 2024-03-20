@@ -14,7 +14,7 @@
 			<p:tabView id="tabs">
 				<p:tab id="policyTab" title="Policies">
 					<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
-						<p:commandButton style="color: white !important" styleClass="actionButton" value="#{autoAction.actionText}" 
+						<p:commandButton styleClass="actionButton" value="#{autoAction.actionText}" 
 						rendered="#{autoAction.rawAction.name != 'assign' and autoAction.rawAction.name != 'testUserPolicy'}"
 							action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}"
 							onclick="startAjaxStatus()">
