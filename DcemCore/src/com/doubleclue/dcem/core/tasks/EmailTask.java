@@ -24,62 +24,75 @@ import freemarker.template.Template;
 
 public class EmailTask extends CoreTask {
 
-	private static final Logger logger = LogManager.getLogger(EmailTask.class);
+    private static final Logger logger = LogManager.getLogger(EmailTask.class);
 
-	List<DcemUser> users;
-	Map<String, Object> map;
-	String templateName;
-	String subjectResource;
-	byte[] attachment;
+    List<DcemUser> users;
+    Map<String, Object> map;
+    String templateName;
+    String subject;
+    byte[] attachment;
+    boolean readSubjectFromResource;
+    
+    public EmailTask(List<DcemUser> users, Map<String, Object> map, String templateName, String subjectResource, byte[] attachment) {
+        super(EmailTask.class.getSimpleName(), null);
+        this.users = users;
+        this.map = map;
+        this.templateName = templateName;
+        this.subject = subjectResource;
+        this.attachment = attachment;
+        this.readSubjectFromResource = true;
+    }
 
-	public EmailTask(List<DcemUser> users, Map<String, Object> map, String templateName, String subjectResource, byte[] attachment) {
-		super(EmailTask.class.getSimpleName(), null);
-		this.users = users;
-		this.map = map;
-		this.templateName = templateName;
-		this.subjectResource = subjectResource;
-		this.attachment = attachment;
-	}
-
-	@Override
-	public void runTask() {
-		logger.debug("EmailTask started");
-		long start = System.currentTimeMillis();
-		DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
-		TemplateLogic templateLogic = CdiUtils.getReference(TemplateLogic.class);
-		HashMap<SupportedLanguage, Set<String>> mapSortEmailsByLanguage = new HashMap<SupportedLanguage, Set<String>>();
-		for (DcemUser dcemUser : users) {
-			Set<String> emails = mapSortEmailsByLanguage.get(dcemUser.getLanguage());
-			if (emails == null) {
-				emails = new HashSet<String>();
-				mapSortEmailsByLanguage.put(dcemUser.getLanguage(), emails);
-			}
-			if (dcemUser.getEmail() == null || dcemUser.getEmail().isEmpty() == true) {
-				logger.info("Could not send email to '" + dcemUser.getLoginId() + "'. User has no Email!");
-				continue;
-			}
-			emails.add(dcemUser.getEmail());
-		}
-		DcemTemplate dcemTemplateEmail = null;
-		for (SupportedLanguage language : mapSortEmailsByLanguage.keySet()) {
-			try {
-				DbResourceBundle dbResourceBundle = DbResourceBundle.getDbResourceBundle(language.getLocale());
-				dcemTemplateEmail = templateLogic.getTemplateByNameLanguage(templateName, language);
-				if (dcemTemplateEmail == null) {
-					logger.error("Couldn't send Emanuel with template. Tempalte name not found for: " + templateName);
-					continue;
-				}
-				StringWriter stringWriter = new StringWriter();
-				Template tempalte = applicationBean.getTemplateFromConfig(dcemTemplateEmail);
-				tempalte.process(map, stringWriter);
-				SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), stringWriter.toString(), dbResourceBundle.getString(subjectResource), attachment);
-			} catch (Exception e) {
-				logger.error("E-Mail Task FAILED", e);
-				continue;
-			}
-			// String body = StringUtils.substituteTemplate(dcemTemplateEmail.getContent(), map);
-		}
-		logger.debug("EmailTask ends: " + (System.currentTimeMillis() - start));
-	}
+    public EmailTask(List<DcemUser> users, Map<String, Object> map, String templateName, String subjectResource, byte[] attachment, boolean readSubjectFromResource) {
+        super(EmailTask.class.getSimpleName(), null);
+        this.users = users;
+        this.map = map;
+        this.templateName = templateName;
+        this.subject = subjectResource;
+        this.attachment = attachment;
+        this.readSubjectFromResource = readSubjectFromResource;
+    }
+    
+    @Override
+    public void runTask() {
+        logger.debug("EmailTask started");
+        long start = System.currentTimeMillis();
+        DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
+        TemplateLogic templateLogic = CdiUtils.getReference(TemplateLogic.class);
+        HashMap<SupportedLanguage, Set<String>> mapSortEmailsByLanguage = new HashMap<SupportedLanguage, Set<String>>();
+        for (DcemUser dcemUser : users) {
+            Set<String> emails = mapSortEmailsByLanguage.get(dcemUser.getLanguage());
+            if (emails == null) {
+                emails = new HashSet<String>();
+                mapSortEmailsByLanguage.put(dcemUser.getLanguage(), emails);
+            }
+            if (dcemUser.getEmail() == null || dcemUser.getEmail().isEmpty() == true) {
+                logger.info("Could not send email to '" + dcemUser.getLoginId() + "'. User has no Email!");
+                continue;
+            }
+            emails.add(dcemUser.getEmail());
+        }
+        DcemTemplate dcemTemplateEmail = null;
+        for (SupportedLanguage language : mapSortEmailsByLanguage.keySet()) {
+            try {
+                DbResourceBundle dbResourceBundle = DbResourceBundle.getDbResourceBundle(language.getLocale());
+                dcemTemplateEmail = templateLogic.getTemplateByNameLanguage(templateName, language);
+                if (dcemTemplateEmail == null) {
+                    logger.error("Couldn't send Emanuel with template. Tempalte name not found for: " + templateName);
+                    continue;
+                }
+                StringWriter stringWriter = new StringWriter();
+                Template tempalte = applicationBean.getTemplateFromConfig(dcemTemplateEmail);
+                tempalte.process(map, stringWriter);
+                String subjectString = readSubjectFromResource ? dbResourceBundle.getString(subject) : subject;
+                SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), stringWriter.toString(), subjectString, attachment);
+            } catch (Exception e) {
+                logger.error("E-Mail Task FAILED", e);
+                continue;
+            }
+            // String body = StringUtils.substituteTemplate(dcemTemplateEmail.getContent(), map);
+        }
+        logger.debug("EmailTask ends: " + (System.currentTimeMillis() - start));
+    }
 
 }
