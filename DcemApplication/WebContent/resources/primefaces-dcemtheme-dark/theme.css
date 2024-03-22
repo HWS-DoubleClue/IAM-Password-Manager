@@ -13,7 +13,7 @@
 }
 
 .dialogBody {
-	background-color: #ffffff;
+	background-color: #6d6d6d;
 }
 
 .ui-messages-warn {
@@ -24,7 +24,7 @@
 }
 
 .ui-dialog-titlebar {
-	background-color: #ffffff !important;
+	background-color: #6d6d6d !important;
 	margin: 15px 0px 0px 10px !important;
 }
 
@@ -79,7 +79,7 @@
 }
 
 .ui-selectonemenu-panel {
-	color: #ffffff !important;
+	color: #6d6d6d !important;
 }
 
 .ui-panel-titlebar {
@@ -100,7 +100,7 @@
 
 .ui-widget-content {
 /* 	border: 1px solid #c3c3c3; */
-	background: #ffffff;
+	background: #6d6d6d;
 	color: #222222;
 }
 
@@ -111,7 +111,7 @@
 .ui-widget-header {
 	border: none;
 	background: #7f7f7f;
-	color: #ffffff;
+	color: #6d6d6d;
 	font-size: 1.0em;
 }
 
@@ -125,7 +125,7 @@
 .ui-widget-header ui-state-hover {
 	border: none;
 	background: #7f7f7f;
-	color: #ffffff;
+	color: #6d6d6d;
 	font-size: 1.0em;
 }
 
@@ -1125,7 +1125,7 @@
 /* PrimeFaces Extensions */
 .ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield
 	{
-	background: #ffffff;
+	background: #6d6d6d;
 	color: #555555;
 }
 
@@ -1236,7 +1236,7 @@
 
 .ui-button {
 	color: #0e4f77 !important;
-	background-color: #fff;
+	background-color: #6d6d6d !important;
 	border: 1px solid #0e4f77 !important;
 	border-radius: 7px;
 	padding: 0;
@@ -1245,7 +1245,7 @@
 .ui-button.ui-state-hover, .ui-button.ui-state-active {
 	/* 	border: none !important; */
 	background-color: #00517B !important;
-	color: #ffffff !important;
+	color: #6d6d6d !important;
 }
 
 .ui-button-text {
@@ -1254,11 +1254,11 @@
 
 .ui-button.ui-state-active .ui-button-text, .ui-button.ui-state-hover .ui-button-text
 	{
-	color: #fff !important;
+	color: #6d6d6d !important;
 }
 
 .ui-button-text:hover {
-	color: #ffffff !important;
+	color: #6d6d6d !important;
 }
 
 .ui-tooltip.ui-tooltip-bottom {
@@ -1662,7 +1662,7 @@ body .ui-password-panel {
 
 .ui-texteditor .ui-editor-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options
 	{
-	background: #fff;
+	background: #6d6d6d;
 	border: 1px solid #c8c8c8;
 	box-shadow: 0 3px 6px 0 rgba(0, 0, 0, .16);
 	border-radius: 3px;
@@ -1695,7 +1695,7 @@ body .ui-password-panel {
 }
 
 .ui-texteditor .ql-container .ql-editor {
-	background: #fff;
+	background: #6d6d6d;
 	color: #333;
 	border-bottom-right-radius: 3px;
 	border-bottom-left-radius: 3px
@@ -1757,7 +1757,7 @@ body .ui-rating .ui-rating-cancel {
 body .ui-rating .ui-rating-cancel.ui-state-focus {
 	outline: 0 none;
 	outline-offset: 0;
-	box-shadow: 0 0 0 .1rem #fff
+	box-shadow: 0 0 0 .1rem #6d6d6d
 }
 
 body .ui-rating .ui-rating-cancel a {
@@ -1795,7 +1795,7 @@ body .ui-rating .ui-rating-star {
 body .ui-rating .ui-rating-star.ui-state-focus {
 	outline: 0 none;
 	outline-offset: 0;
-	box-shadow: 0 0 0 .1rem #fff
+	box-shadow: 0 0 0 .1rem #6d6d6d
 }
 
 body .ui-rating .ui-rating-star a {

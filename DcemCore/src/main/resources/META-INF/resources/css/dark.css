@@ -1,0 +1,185 @@
+body {
+	background: #313338;
+	/*background: #212121;*/
+	color: #e1e1e1;
+}
+
+.sideBarDcem {
+	/*background:#313338;*/
+	/*background: #171717;*/
+	/*background: #1e2124;*/
+	background: #2B2D31;
+}
+
+.sideBarDcem {
+	box-shadow: 3px #4e4e4e;
+}
+
+body .viewTitle {
+	color: white;
+}
+
+.ui-button-icon-left {
+	color: white;
+	/*color: #94c8d5;*/
+}
+
+#helpBtn>.fa-book {
+	color: white !important;
+	/*color: #94c8d5 !important;*/
+}
+
+.info-button {
+	color: white !important;
+}
+
+#autoForm .ui-button {
+	/*background-color: #484848 !important;*/
+	background: #313338;
+	/*background: #1e2124 !important;*/
+}
+
+.ui-button .ui-button-text {
+	color: #DEDEDE !important;
+	/*color: white !important;*/
+	border-radius: 7px;
+	border: 1px solid #424242;
+	/*border: none !important;*/
+}
+
+/*element .ui-button {
+	border: none !important;
+}*/
+body .ui-button a:hover {
+	color: #484848 !important;
+	background: #2B2D31 !important;
+}
+
+.ui-widget-header {
+	background: #2B2D31 !important;
+	border: #424242 !important;
+}
+
+.ui-widget-header .ui-state-default {
+	color: #DEDEDE !important;
+	background: #2B2D31 !important;
+}
+
+.ui-paginator .ui-paginator-last .ui-icon {
+	color: #DEDEDE !important;
+}
+
+.ui-paginator-current {
+	color: #DEDEDE !important;
+}
+
+.ui-datatable-even {
+	background: #313338 !important;
+	/*background: #212121 !important;*/
+	color: #DEDEDE !important;
+}
+
+.ui-datatable-even:hover {
+	color: white !important;
+	background: #393C41 !important;
+}
+
+.ui-datatable-odd {
+	background: #2B2D31 !important;
+	color: #DEDEDE !important;
+}
+
+.ui-datatable-odd:hover {
+	color: white !important;
+	background: #393C41 !important;
+}
+
+.ui-datatable.borderless th {
+	background: #2B2D31 !important;
+	color: #DEDEDE !important;
+}
+
+.ui-inputfield {
+	/*background: #1e2124 !important;*/
+	background: #313338 !important;
+	color: #DEDEDE !important;
+}
+
+.ui-panelmenu .ui-panelmenu-header {
+	color: #DEDEDE !important;
+	background: #1b1b1b !important;
+}
+
+.ui-datatable .ui-sortable-column-icon {
+	color: #DEDEDE !important;
+}
+
+.ui-state-active a, .ui-state-active a:link, .ui-panelmenu-header.ui-state-default a
+	{
+	/*background: #313338 !important;*/
+	color: #DEDEDE !important;
+	/*background: #171717 !important;*/
+	background: #2B2D31 !important;
+}
+
+.ui-panelmenu .ui-panelmenu-header .ui-icon {
+	color: #DEDEDE !important;
+}
+
+.ui-panelmenu-header a {
+	/*background: #313338 !important*/
+	/*background: #171717 !important;*/
+	background: #1e2124 !important;
+}
+
+.ui-panelmenu .ui-panelmenu-content {
+	/*background: #313338 !important;*/
+	color: #DEDEDE !important;
+	/*background: #171717 !important;*/
+	background: #2B2D31 !important;
+}
+
+.ui-panelmenu-content a {
+	color: #DEDEDE !important;
+}
+
+body .ui-panelmenu-content a {
+	color: #DEDEDE !important;
+}
+
+/*.ui-panelmenu-content a:hover {
+	background: #838383 !important;
+	color: white !important;
+}*/
+.ui-button-icon-only .ui-button-text {
+	border: none;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-list {
+	/*background: #313338 !important;*/
+	background: #1e2124 !important;
+	color: #DEDEDE !important;
+	border: 1px solid #424242 !important;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight {
+	color: black !important;
+	background: #DEDEDE !important;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-list-item:hover {
+	background: #DEDEDE !important;
+}
+
+body .ui-button {
+	color: #DEDEDE !important;
+	background: #1e2124;
+	border: 1px solid #424242 !important;
+}
+body .ui-button:hover {
+	background: #393C41 !important;
+} 
+
+body .ui-widget-select {
+	border: 1px solid #424242 !important;
+}
