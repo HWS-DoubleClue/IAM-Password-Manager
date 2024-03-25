@@ -73,15 +73,8 @@ public class DcemDialog implements Serializable {
 		return parentView.getActionSubObject();
 	}
 
-	public void setActionObject(Object object) {
-		// can be overwritten
-	}
 
 	public String getDisplayName() {
-		// DcemModule dcemModule = this.parentView.getModule();
-		// String resourceName = dcemModule.getResourceName();
-		// ResourceBundle resourceBundle = JsfUtils.getBundle(resourceName);
-		// return JsfUtils.getStringSafely(resourceBundle, this.getId());
 		return autoViewAction.getActionText();
 	}
 
@@ -171,5 +164,8 @@ public class DcemDialog implements Serializable {
 	}
 
 	public void leavingDialog() {
+	}
+
+	public void setActionObject(Object selectedObject) {
 	}
 }

@@ -51,9 +51,9 @@
 					</p:menuitem>
 				</c:forEach>
 			</p:contextMenu>
- 			<p:tooltip for="info" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
+ 			<p:tooltip for="infoTip" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
 			<div style="float: right; margin-top: -35px; display: inline-block;">
-				<h:outputText id="info" value="" class="fa fa-circle-info"  style="font-size: x-large; color: #005078; vertical-align: -3px;"/> 
+				<h:outputText id="infoTip" value="" class="fa fa-circle-info"  style="font-size: x-large; color: #005078; vertical-align: -3px;"/> 
 				<p:spacer width="20" />
 				<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}"  icon="fa fa-th" />
 			</div>

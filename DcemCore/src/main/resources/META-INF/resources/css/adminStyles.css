@@ -4,15 +4,7 @@
 	width: 60%;
 }
 
-.menuButtons {
-	height: 100%;
-	display: block;
-	overflow-y: auto;
-	padding-top: .5em;
-}
-
 .sideBarDcem {
-	background-color: #f7f7f7;
 	display: flex;
 	flex-flow: column;
 	float: left;
@@ -51,6 +43,7 @@
 .versionInfo {
 	font-size: x-small;
 	padding: 0 1em;
+
 }
 
 .flexBoxSpacing {
@@ -59,9 +52,8 @@
 }
 
 .poweredByImage {
-	width: 70%;
-	/* 	display: block; */
-	/* 	margin: 0 auto 10%; */
+	width: 40%;
+	display: block;
 }
 
 .imageProfileUser {

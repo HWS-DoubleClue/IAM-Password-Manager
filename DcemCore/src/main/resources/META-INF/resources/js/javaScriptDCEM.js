@@ -63,7 +63,6 @@ function dateTemplateFunc(date) {
 	return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
 }
 
-
 function setLocalStorageValue(key, value) {
 	localStorage.setItem(key, value);
 }
@@ -89,8 +88,6 @@ window.onload = function getLocalStorgeSideMenuStatus() {
 	}
 }
 
-
-// start perferences
 function switchPwdVisibleState(eyeBtn) {
 	var field = $(eyeBtn).siblings('input');
 	var button = $(eyeBtn).children('i')[0];
@@ -126,7 +123,31 @@ function startTimer(duration) {
 	}, 10000);
 }
 
+function copyTextToClipboard(text) {
+	if (!navigator.clipboard) {
+		fallbackCopyTextToClipboard(text);
+		return;
+	}
+	navigator.clipboard.writeText(text).then(function() {
+		console.log('Async: Copying to clipboard was successful!');
+	}, function(err) {
+		console.error('Async: Could not copy text: ', err);
+	});
+}
 
+function fallbackCopyTextToClipboard(text) {
+	var textArea = document.createElement("textarea");
+	textArea.value = text;
+	document.body.appendChild(textArea);
+	textArea.focus();
+	textArea.select();
 
-
-// end perferences
+	try {
+		var successful = document.execCommand('copy');
+		var msg = successful ? 'successful' : 'unsuccessful';
+		console.log('Fallback: Copying text command was ' + msg);
+	} catch (err) {
+		console.error('Fallback: Oops, unable to copy', err);
+	}
+	document.body.removeChild(textArea);
+}
