@@ -99,7 +99,7 @@
 }
 
 .ui-widget-content {
-	border: 1px solid #c3c3c3;
+/* 	border: 1px solid #c3c3c3; */
 	background: #ffffff;
 	color: #222222;
 }
@@ -140,9 +140,42 @@
 .ui-dialog-title {
 	font-size: 1.2em;
 }
+/* Tab View */
+.ui-tabs-nav {
+	background-color: transparent !important;
+	text-align: center;
+}
+
+.ui-tabs .ui-tabs-nav .ui-state-active {
+	background: transparent !important;
+	font-weight: bold !important;
+}
+
+.ui-tabs .ui-tabs-nav li {
+	background: transparent;
+	border: none;
+	/* 	padding: 0 1em !important; */
+	/* 	width: 8em; */
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	background: transparent;
+	border: none;
+	color: #555555;
+	padding-left: 2em !important;
+	padding-right: 2em !important;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-active a {
+	border-bottom: 2px solid #0e4f77 !important;
+}
+
+.ui-tabs-outline {
+	outline: none !important;
+}
 
 .ui-tabs-header a:active {
-	background-color: #0075B1;
+
 }
 
 /* Interaction states----------------------------------*/
@@ -165,7 +198,7 @@
 	.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus
 	{
 	/* border: 1px solid #806060; */
-	background: #94c8d5;
+	background: #D0EBF8;
 	font-weight: normal;
 	color: #222222;
 }
@@ -173,7 +206,7 @@
 .ui-state-hover a, .ui-state-hover a:hover {
 	color: #222222;
 	text-decoration: none;
-	background-color: #94c8d5;
+	background-color: #D0EBF8;
 }
 
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active
@@ -1122,7 +1155,7 @@
 }
 
 .ui-growl-title {
-	
+	word-break: break-word;
 }
 
 .ui-shadow {
@@ -1340,7 +1373,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 .ui-datatable.borderless tr.ui-datatable-even:hover, .ui-datatable.borderless tr.ui-datatable-odd:hover,
 	.ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight:hover
 	{
-	background: #CEE2FF;
+	background: #D0EBF8;
 	cursor: pointer;
 }
 
@@ -1361,7 +1394,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 
 .ui-datatable tr.ui-state-highlight, .ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight
 	{
-	background-color: #B2E4FE;
+	background-color: #bae2f5;
 }
 
 .floatingLable {

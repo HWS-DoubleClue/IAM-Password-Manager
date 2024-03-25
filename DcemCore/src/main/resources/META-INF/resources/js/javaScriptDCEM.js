@@ -63,23 +63,6 @@ function dateTemplateFunc(date) {
 	return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
 }
 
-
-// Start index page
-function openNav() {
-	document.getElementById("sidemenu").style.width = "15.75em";
-	document.getElementById("sidemenu").style.transition = "0.5s all";
-	document.getElementById("contentPart").style.marginLeft = "15.75em";
-	document.getElementById("contentPart").style.transition = "0.5s all";
-}
-
-
-function closeNav() {
-	document.getElementById("sidemenu").style.width = "0";
-	document.getElementById("sidemenu").style.transition = "0.5s all";
-	document.getElementById("contentPart").style.marginLeft = "0";
-	document.getElementById("contentPart").style.transition = "0.5s all";
-}
-
 function setLocalStorageValue(key, value) {
 	localStorage.setItem(key, value);
 }
@@ -89,32 +72,21 @@ function removeLocalStorage(key) {
 }
 
 function toggleNav() {
-	var sideMenu = document.getElementById("sidemenu");
-	if (sideMenu.style.width === "0px" || sideMenu.style.width === "") {
-		//document.querySelector('.toggle span').classList.add('toggle');
-		openNav()
-		setLocalStorageValue('sideMenuOpen', true);
-		removeLocalStorage('sideMenuClose');
-	} else {
-		//document.querySelector('.toggle span').classList.remove('toggle');
-		closeNav()
-		setLocalStorageValue('sideMenuClose', true);
-		removeLocalStorage('sideMenuOpen');
-
-	}
+	$("#sidemenu").toggleClass("close");
+	$("#contentPart").toggleClass("extended");
+	setLocalStorageValue('sideMenuClose', $("#sidemenu").hasClass("close"));
 }
 
 window.onload = function getLocalStorgeSideMenuStatus() {
 	if (localStorage.getItem('sideMenuClose') == 'true') {
-		closeNav();
-		removeLocalStorage('sideMenuOpen');
+		$("#sidemenu").addClass("close");
+		$("#contentPart").addClass("extended");
+
 	} else {
-		//document.querySelector('.toggle span').classList.add('toggle');
-		openNav();
-		removeLocalStorage('sideMenuClose');
+		$("#sidemenu").removeClass("close");
+		$("#contentPart").removeClass("extended");
 	}
 }
-// End index page
 
 function switchPwdVisibleState(eyeBtn) {
 	var field = $(eyeBtn).siblings('input');
