@@ -25,8 +25,15 @@
 
 	<style>
 #helpBtn>.fa-book {
-	font-size: 1.9em;
-	width: 1.6em;
+	font-size: 1.5em;
+	width: 1.2em;
+	height: 1.2em;
+	color: #0075b1;
+	}
+	
+#copyLinkBtn>.fa-copy {
+	font-size: 1.5em;
+	width: 1.2em;
 	height: 1.2em;
 	color: #0e4f77;
 }
@@ -66,15 +73,25 @@
 			<div style="margin-left: 1.2em; margin-right: 1.2em">
 				<h:panelGroup id="viewPart" style="">
 
-					<div style="margin-bottom: 1em; margin-top: 1em">
+					<div style="margin-bottom: 0.8em; margin-top: 0.8em">
 						<h:outputText style="" class="#{autoView.icon} viewTitle"></h:outputText>
 						<h:outputText styleClass="viewTitle" value=" #{autoView.title}" />
+<<<<<<< HEAD
 						<p:button
 							style="margin-right: 1em;float: right;background-color: inherit !important;"
 							href="#{autoView.helpResource}" icon="fa fa-book" target="_blank"
 							id="helpBtn" rendered="#{autoView.helpResource != null}" />
 						<p:tooltip for="helpBtn" value="#{CoreMsg['readUserManual']}"
 							showEffect="clip" hideEffect="fold" />
+=======
+						<p:button style="margin-right: 0em;float: right;background-color: inherit !important;" 
+							icon="fa fa-copy" id="copyLinkBtn" onclick="copyTextToClipboard('#{viewNavigator.urlLink}');return false;"   />
+						<p:tooltip for="copyLinkBtn" value="#{CoreMsg['copyUrlLinkTip']}" showEffect="clip" hideEffect="fold" />
+												
+						<p:button style="margin-right: 0em;float: right;background-color: inherit !important;" href="#{autoView.helpResource}"
+							icon="fa fa-book" target="_blank" id="helpBtn" rendered="#{autoView.helpResource != null}" />
+						<p:tooltip for="helpBtn" value="#{CoreMsg['readUserManual']}" showEffect="clip" hideEffect="fold" />
+>>>>>>> b4fa8af1569cd7aa25d5035534b170316dc3c959
 					</div>
 
 					<ui:include src="/mgt#{viewNavigator.getViewPath()}" />

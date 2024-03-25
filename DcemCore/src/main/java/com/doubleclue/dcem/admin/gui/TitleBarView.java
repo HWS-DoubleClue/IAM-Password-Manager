@@ -59,11 +59,9 @@ public class TitleBarView extends DcemView {
 	UserLogic userLogic;
 
 	private ResourceBundle resourceBundle;
-	
 	boolean changePasswordPermission;
 	boolean editProfilePermission;
-	
-	
+		
 	@PostConstruct
 	private void init() {
 		subject = titleBarSubject;
@@ -71,30 +69,18 @@ public class TitleBarView extends DcemView {
 		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
 		editProfilePermission = addAutoViewAction(DcemConstants.ACTION_USER_PROFILE, resourceBundle, userDialog, DcemConstants.USER_PROFILE_DIALOG);
 		changePasswordPermission = addAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD, resourceBundle, userPasswordDialog, DcemConstants.CHANGE_PASSWORD_DIALOG);		
-//		changePasswordPermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD));
-//		editProfilePermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE));
-//		
-//		
-//		changePasswordPermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD));
-//		editProfilePermission = operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE));
-
 	}
 	
-
 	@Override
 	public void triggerAction(AutoViewAction autoViewAction) {
 		super.triggerAction(autoViewAction);
 	}
 
-	
-
 	public boolean isPrivilegedForDeletingAlerts() {
 		return operatorSessionBean.isPermission(new DcemAction(subject, DcemConstants.ACTION_DELETE));
 	}
-
 	
 	public void leavingView() {
-		
 	}
 
 	@Override
