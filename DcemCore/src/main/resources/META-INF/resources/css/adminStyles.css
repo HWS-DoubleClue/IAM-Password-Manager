@@ -38,13 +38,12 @@
 .info-bottom {
 	display: flex;
 	flex-direction: column;
-	padding: 1em 0;
+	padding: 1em 0; 
 }
 
 .info-bottom a {
 	height: fit-content;
 	display: flex;
-	justify-content: center;
 	width: 100%;
 }
 
@@ -59,9 +58,9 @@
 }
 
 .poweredByImage {
-	width: 70%;
+	width: 40%;
 	/* 	display: block; */
-	/* 	margin: 0 auto 10%; */
+	/* margin: 0 auto 10%;  */
 }
 
 .imageProfileUser {
