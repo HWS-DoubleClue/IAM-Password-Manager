@@ -1772,3 +1772,8 @@ body .ui-rating .ui-rating-star-on a:before {
 body .ui-state-highlight .ui-rating-star a {
 	color: #212529
 }
+
+.ui-autocomplete-empty-message {
+	color: red;
+	font-weight: bold;
+}
