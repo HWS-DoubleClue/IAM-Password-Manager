@@ -80,6 +80,7 @@
 
 .ui-selectonemenu-panel {
 	color: #ffffff !important;
+	border: 1px solid #c3c3c3;
 }
 
 .ui-panel-titlebar {
@@ -99,7 +100,7 @@
 }
 
 .ui-widget-content {
-/* 	border: 1px solid #c3c3c3; */
+	/* 	border: 1px solid #c3c3c3; */
 	background: #ffffff;
 	color: #222222;
 }
@@ -143,7 +144,7 @@
 /* Tab View */
 .ui-tabs-nav {
 	background-color: transparent !important;
-	text-align: center;
+	text-align: left;
 }
 
 .ui-tabs .ui-tabs-nav .ui-state-active {
@@ -1335,6 +1336,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 	text-align: left;
 	padding: 10px 5px;
 	background-color: #F7F7F7;
+	border: none;
 }
 
 .ui-datatable.borderless tbody tr {
