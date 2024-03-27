@@ -155,6 +155,9 @@
 .ui-tabs .ui-tabs-nav li {
 	background: transparent;
 	border: none;
+	/* 	border-left: 1px solid #00000011; */
+	border-radius: 4px 4px 0 0;
+	margin: 0 !important;
 	/* 	padding: 0 1em !important; */
 	/* 	width: 8em; */
 }
@@ -167,8 +170,20 @@
 	padding-right: 2em !important;
 }
 
+.ui-tabs .ui-tabs-nav li a {
+	border-bottom: 2px solid #00000021 !important;
+}
+
 .ui-tabs .ui-tabs-nav li.ui-state-active a {
 	border-bottom: 2px solid #0e4f77 !important;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-hover {
+	background: #00000008 !important;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-active.ui-state-hover {
+	background: transparent !important;
 }
 
 .ui-tabs-outline {
@@ -177,9 +192,12 @@
 
 .ui-tabs-header a:active {
 	/* 	background-color: #0e4f77; */
-	
 }
 
+
+.ui-autocomplete-panel {
+	border: 1px solid #c3c3c3;
+}
 /* Interaction states----------------------------------*/
 .ui-state-default, .ui-widget-content .ui-state-default,
 	.ui-widget-header .ui-state-default {
@@ -200,7 +218,7 @@
 	.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus
 	{
 	/* border: 1px solid #806060; */
-	background: #D0EBF8;
+	background: #D0EBF8 !important;
 	font-weight: normal;
 	color: #222222;
 }
@@ -1343,10 +1361,12 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 	border: none;
 }
 
-.ui-datatable.borderless tbody tr:nth-child(even) {
+.ui-datatable tbody tr:nth-child(even) {
 	background-color: #f7f7f7;
 }
-
+/* .ui-datatable.borderless tbody tr:nth-child(even) { */
+/* 	background-color: #f7f7f7; */
+/* } */
 .ui-paginator .ui-paginator-current, .ui-paginator .ui-paginator-rpp-options
 	{
 	color: #000;
@@ -1396,7 +1416,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 
 .ui-datatable tr.ui-state-highlight, .ui-datatable.borderless tbody tr:nth-child(even).ui-state-highlight
 	{
-	background-color: #bae2f5;
+	background-color: #bae2f5 !important;
 }
 
 .floatingLable {
