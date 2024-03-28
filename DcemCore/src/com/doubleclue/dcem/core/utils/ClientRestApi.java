@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -31,9 +32,9 @@ import com.doubleclue.dcem.core.DcemConstants;
 @ApplicationScoped
 @Named("clientRestApi")
 public class ClientRestApi {
-	
-	boolean traceRestApi; 
-	
+
+	boolean traceRestApi;
+
 	enum HttpVerb {
 		HTTP_GET, HTTP_PUT, HTTP_PATCH, HTTP_DELETE, HTTP_POST;
 	}
@@ -66,7 +67,10 @@ public class ClientRestApi {
 		return getResponse(url, false, HttpVerb.HTTP_DELETE, authHeader, true, null, null, null, unsecure, timeoutSeconds);
 	}
 
-	
+	public CloseableHttpResponse deleteRequest(String url, String authHeader, String body, boolean unsecure, int timeoutSeconds, String accept, String contentType) throws Exception {
+		return getResponse(url, false, HttpVerb.HTTP_DELETE, authHeader, false, body, contentType, accept, unsecure, timeoutSeconds);
+	}
+
 	public CloseableHttpResponse deleteRequest(String url, UsernamePasswordCredentials credentials, boolean unsecure, int timeoutSeconds) throws Exception {
 		return getResponse(url, false, HttpVerb.HTTP_DELETE, credentials, null, null, unsecure, timeoutSeconds);
 	}
@@ -97,7 +101,11 @@ public class ClientRestApi {
 		StringEntity entity;
 		switch (httpVerb) {
 		case HTTP_DELETE:
-			request = new HttpDelete(url);
+			if (body == null || body.isEmpty()) {
+				request = new HttpDelete(url);
+			} else {
+				request = RequestBuilder.create("DELETE").setUri(url).setEntity(new StringEntity(body)).build();
+			}
 			break;
 		case HTTP_GET:
 			request = new HttpGet(url);
@@ -176,7 +184,7 @@ public class ClientRestApi {
 			sb.append(url);
 			sb.append(System.lineSeparator());
 			sb.append("Response-Time (msec): ");
-			sb.append(System.currentTimeMillis()- start);
+			sb.append(System.currentTimeMillis() - start);
 			sb.append(System.lineSeparator());
 			for (StackTraceElement element : stacktrace) {
 				String className = element.getClassName();
@@ -188,7 +196,7 @@ public class ClientRestApi {
 				}
 				if (className.startsWith("com.doubleclue")) {
 					sb.append(className);
-					sb.append (":");
+					sb.append(":");
 					sb.append(element.getMethodName());
 					sb.append(System.lineSeparator());
 				} else {
