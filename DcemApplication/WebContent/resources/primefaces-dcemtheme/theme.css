@@ -121,7 +121,7 @@
 .ui-widget-header {
 	border: none;
 	background: #eee;
-/* 	color: #ffffff; */
+	/* 	color: #ffffff; */
 	font-size: 1.0em;
 }
 
@@ -1272,7 +1272,7 @@
 	padding: 0;
 }
 
-.ui-button.ui-state-hover  {
+.ui-button.ui-state-hover {
 	/* 	border: none !important; */
 	background-color: #00517B;
 	color: #ffffff;
@@ -1286,8 +1286,7 @@
 	color: #00517B;
 }
 
- .ui-button.ui-state-hover .ui-button-text
-	{
+.ui-button.ui-state-hover .ui-button-text {
 	color: #fff;
 }
 
@@ -1436,6 +1435,7 @@ body .ui-datatable.borderlessMFALogin tr.ui-datatable-even:hover, body .ui-datat
 
 .ui-datatable table, .ui-datatable-resizable table {
 	table-layout: auto !important;
+	width: 100%;
 	border-color: #d8d8d8 !important;
 }
 
@@ -1919,7 +1919,7 @@ body .ui-state-highlight .ui-rating-star a {
 	background: #fff;
 }
 
-.datePickerInput .ui-inputfield {
+.datePickerInput .ui-inputfield, .p-datepicker .ui-inputfield {
 	border-bottom-right-radius: 0;
 	border-top-right-radius: 0;
 }
@@ -1944,4 +1944,36 @@ body .ui-state-highlight .ui-rating-star a {
 
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
 	cursor: default;
+}
+
+.ui-autocomplete-input.ui-autocomplete-dd-input {
+	border-radius: 3px;
+}
+
+.ui-autocomplete .ui-state-default.ui-button {
+	border: none;
+	border-top: 1px solid #C3C3C3;
+	border-bottom: 1px solid #C3C3C3;
+	border-right: 1px solid #C3C3C3;
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+	border-bottom-right-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.ui-autocomplete.ui-inputfield.ui-state-focus .ui-state-default.ui-button,
+	.ui-autocomplete .ui-state-default.ui-button.ui-state-hover {
+	background: #fff;
+	border-color: #777777;
+}
+
+.ui-autocomplete .ui-state-default.ui-button .ui-icon {
+	background-image:
+		url("/dcem/javax.faces.resource/images/angle-down-solid.svg.xhtml?ln=primefaces-dcemtheme&v=12.0.0");
+	background-position: 0;
+}
+
+.ui-autocomplete .ui-autocomplete-dropdown {
+	width: 16px !important;
+	padding: 0 11px;
 }
