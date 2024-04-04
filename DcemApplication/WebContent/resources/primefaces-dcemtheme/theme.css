@@ -1856,3 +1856,41 @@ body .ui-rating .ui-rating-star-on a:before {
 body .ui-state-highlight .ui-rating-star a {
 	color: #212529
 }
+
+.ui-autocomplete-empty-message {
+	color: red;
+	font-weight: bold;
+}
+
+body .ui-input-icon-left,
+body .ui-input-icon-right {
+    position: relative;
+    display: inline-block;
+}
+body .ui-fluid .ui-input-icon-left,
+body .ui-fluid .ui-input-icon-right {
+    display: block;
+}
+body .ui-input-icon-left > i,
+body .ui-input-icon-right > i {
+    position: absolute;
+    top: 50%;
+    margin-top: -0.5rem;
+}
+body .ui-input-icon-left > i:first-of-type {
+    left: 0.429rem;
+    color: #848484;
+}
+body .ui-input-icon-left > .ui-inputfield {
+    padding-left: 1.858rem;
+}
+body .ui-input-icon-right > i:last-of-type {
+    right: 0.429rem;
+    color: #848484;
+}
+body .ui-input-icon-right > .ui-inputfield {
+    padding-right: 1.858rem;
+}
+
+
+
