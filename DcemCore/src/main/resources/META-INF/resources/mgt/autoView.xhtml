@@ -41,16 +41,14 @@
 
 			<p:contextMenu id="myContext" for="pTable" style="width: 250px">
 				<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
-					<p:menuitem>
-						<p:commandLink styleClass="ui-menuitem-link" value="" rendered="#{autoAction.link == false}" action="#{viewNavigator.setActiveDialog(autoAction)}" icon=""
-							ajax="true">
-							<h:outputText styleClass="#{viewNavigator.getActionIcon(autoAction)}" />
-							<h:outputText value=" #{autoAction.actionText}" />
-							<p:ajax event="dialogReturn" update="pTable" />
-						</p:commandLink>
+					<p:menuitem styleClass="ui-menuitem-link" rendered="#{autoAction.link == false}" action="#{viewNavigator.setActiveDialog(autoAction)}">
+						<h:outputText styleClass="#{viewNavigator.getActionIcon(autoAction)}" />
+						<h:outputText value=" #{autoAction.actionText}" />
+						<p:ajax event="dialogReturn" update="pTable" />
 					</p:menuitem>
 				</c:forEach>
 			</p:contextMenu>
+			
  			<p:tooltip for="infoTip" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
 			<div style="float: right; margin-top: -35px; display: inline-block;">
 				<h:outputText id="infoTip" value="" class="fa fa-circle-info"  style="font-size: x-large; color: #005078; vertical-align: -3px;"/> 
