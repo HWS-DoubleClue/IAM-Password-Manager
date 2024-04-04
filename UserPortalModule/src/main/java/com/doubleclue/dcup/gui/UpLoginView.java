@@ -206,9 +206,7 @@ public class UpLoginView extends LoginViewAbstract {
 
 	@Override
 	public String actionPreLoginOk() {
-
 		String page = super.actionPreLoginOk();
-		System.out.println("UpLoginView.actionPreLoginOk() " + page);
 		if (page == null) {
 			page = DcupConstants.HTML_PAGE_USERSTORAGE;
 		}
@@ -233,5 +231,4 @@ public class UpLoginView extends LoginViewAbstract {
 	public void clearCache() {
 		PrimeFaces.current().executeScript("localStorage.clear();");
 	}
-
 }
