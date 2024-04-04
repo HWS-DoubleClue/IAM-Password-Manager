@@ -1,13 +1,9 @@
 package com.doubleclue.dcem.core.jpa;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Hashtable;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.derby.tools.sysinfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.c3p0.internal.C3P0ConnectionProvider;
@@ -15,11 +11,6 @@ import org.hibernate.engine.config.spi.ConfigurationService;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.hibernate.service.spi.ServiceRegistryAwareService;
 import org.hibernate.service.spi.ServiceRegistryImplementor;
-
-import com.mchange.v2.c3p0.impl.NewProxyConnection;
-import com.microsoft.sqlserver.jdbc.SQLServerConnection;
-
-import net.sf.log4jdbc.sql.jdbcapi.ConnectionSpy;
 
 public class MultiTenantConnectionProviderImpl implements MultiTenantConnectionProvider, ServiceRegistryAwareService {
 

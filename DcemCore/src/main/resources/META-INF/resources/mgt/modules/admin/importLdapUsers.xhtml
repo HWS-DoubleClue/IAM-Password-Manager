@@ -15,9 +15,7 @@
 			<p />
 			<p:tabView id="tabs">
 				<p:tab id="users" title="#{CoreMsg['importDomain.users']} ">
-					<p:panel>
-						<span id="customheader"> <h:outputLabel value="Filter" class="dialogTitle" style="margin-left: 0; font-size: 1.4em;" />
-						</span>
+					<p:fieldset legend="Filter">
 						<h:panelGrid columns="2">
 							<p:outputLabel value="#{CoreMsg['importDomain.reversedDn']}" for="ldapTree" rendered="#{importLdapUsersView.ldapDomain}" />
 							<h:panelGroup rendered="#{importLdapUsersView.ldapDomain}">
@@ -34,10 +32,10 @@
 								<p:tooltip for="userAccount" showEvent="focus" hideEvent="blur" position="top" />
 								<p:spacer width="10px"></p:spacer>
 								<p:commandButton id="ok" value="#{CoreMsg['importDomain.search']}" ajax="true" update="grid usersPanel" async="true" icon="fa fa-search"
-									style="color: white;" actionListener="#{importLdapUsersView.search}" />
+									actionListener="#{importLdapUsersView.search}" />
 							</h:panelGroup>
 						</h:panelGrid>
-					</p:panel>
+					</p:fieldset>
 					<p />
 					<p />
 					<p:panel>
@@ -73,13 +71,13 @@
 						</span>
 						<p />
 						<p:commandButton id="import" value="#{CoreMsg['importDomain.importselectedusers']}" ajax="true" update="grid"
-							actionListener="#{importLdapUsersView.actionImportUsers}" icon="fa fa-upload" style="color: white !important;" />
+							actionListener="#{importLdapUsersView.actionImportUsers}" icon="fa fa-upload" />
 						<p />
 						<p:commandButton id="selectAll" value="#{CoreMsg['importDomain.selectall']}" rendered="#{importLdapUsersView.domainUsers.isEmpty() == false}"
-							ajax="true" update="grid" actionListener="#{importLdapUsersView.selectAll}" icon="fa fa-plus" style="color: white !important;" />
+							ajax="true" update="grid" actionListener="#{importLdapUsersView.selectAll}" icon="fa fa-plus"  />
 						<p:commandButton id="deselectAll" value="#{CoreMsg['importDomain.deselectall']}" ajax="true" update="grid"
 							rendered="#{importLdapUsersView.domainUsers.isEmpty() == false}" actionListener="#{importLdapUsersView.deselectAll}" icon="fa fa-minus"
-							style="color: white !important;" />
+							 />
 						<p:selectManyCheckbox id="grid" value="#{importLdapUsersView.selectedUsers}" layout="grid" style="padding: 5px" columns="2">
 							<f:selectItems value="#{importLdapUsersView.users}" var="user" itemLabel="#{user}" itemValue="#{user}" />
 						</p:selectManyCheckbox>
@@ -93,7 +91,7 @@
 					<p:tooltip for="groupSearch" showEvent="focus" hideEvent="blur" position="top" />
 					<p:spacer width="10px"></p:spacer>
 					<p:commandButton id="okGroup" value="#{CoreMsg['importDomain.search']}" ajax="true" update="groupGrid" async="true" icon="fa fa-search"
-						style="color: white;" actionListener="#{importLdapUsersView.searchGroup}" />
+						 actionListener="#{importLdapUsersView.searchGroup}" />
 					<p />
 					<p:panel>
 						<span id="customheader"> <h:outputLabel value="Import" class="dialogTitle" style="margin-left: 0; font-size:1.4em;" />
@@ -121,10 +119,10 @@
 						</p:outputPanel>
 						<p />
 						<p:commandButton id="importGroup" value="#{AdminMsg['importDomain.importselectedGroups']}" ajax="true" update="grid"
-							actionListener="#{importLdapUsersView.actionImportGroups(false)}" icon="fa fa-upload" style="color: white !important;" />
+							actionListener="#{importLdapUsersView.actionImportGroups(false)}" icon="fa fa-upload"  />
 						<p:spacer width="12" />
 						<p:commandButton id="importGroupWithUsers" value="#{AdminMsg['importDomain.importselectedGroupsWithUsers']}" ajax="true" update="grid"
-							actionListener="#{importLdapUsersView.actionImportGroups(true)}" icon="fa fa-upload" style="color: white !important;" />
+							actionListener="#{importLdapUsersView.actionImportGroups(true)}" icon="fa fa-upload"  />
 						<p />
 					</p:panel>
 					<p />
@@ -133,10 +131,10 @@
 						</span>
 						<p />
 						<p:commandButton id="selectAllGroups" value="#{CoreMsg['importDomain.selectall']}" ajax="true" update="groupGrid"
-							actionListener="#{importLdapUsersView.selectAllGroups}" icon="fa fa-plus" style="color: white !important;" />
+							actionListener="#{importLdapUsersView.selectAllGroups}" icon="fa fa-plus"  />
 					&nbsp;
 				<p:commandButton id="deselectAllGroups" value="#{CoreMsg['importDomain.deselectall']}" ajax="true" update="groupGrid"
-							actionListener="#{importLdapUsersView.deselectAllGroups}" icon="fa fa-minus" style="color: white !important;" />
+							actionListener="#{importLdapUsersView.deselectAllGroups}" icon="fa fa-minus"  />
 						<p:selectManyCheckbox id="groupGrid" value="#{importLdapUsersView.selectedGroups}" layout="grid" style="padding: 2" columns="4">
 							<f:selectItems value="#{importLdapUsersView.groups}" var="group" itemLabel="#{group}" itemValue="#{group}" />
 						</p:selectManyCheckbox>
