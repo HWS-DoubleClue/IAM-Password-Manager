@@ -60,7 +60,7 @@
 		<mssql-driver.version>4.0</mssql-driver.version>
 		<thrift.version>0.13.0</thrift.version>
 		<jersey.version>2.41</jersey.version>
-		<tomcat.version>9.0.81</tomcat.version>
+		<tomcat.version>9.0.86</tomcat.version>
 		<jackson.version>2.14.0-rc1</jackson.version>
 		<swagger-core-version>1.5.18</swagger-core-version>
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
@@ -1112,7 +1112,7 @@
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast</artifactId>
-				<version>3.12.1</version>
+				<version>3.12.13</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -1158,7 +1158,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-text</artifactId>
-				<version>1.9</version>
+				<version>1.11.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.twelvemonkeys.imageio</groupId>
