@@ -26,7 +26,7 @@
 			<p:panel id="autoPanel" rendered="#{preferencesView.hasPreferences()}">
 
 				<p:commandButton value="#{CoreMsg['AUTO_ACTION.save']}" action="#{preferencesView.actionSave}" 
-					rendered="#{preferencesView.permissionSave}" icon="fa fa-save"  style="width: 8em; color: white;" />
+					rendered="#{preferencesView.permissionSave}" icon="fa fa-save"  style="width: 8em;" />
 					
 					<p></p>
 				<h:panelGrid id="panelGrid" columns="2" binding="#{preferencesView.panelGrid}" styleClass="autoDialogTable"

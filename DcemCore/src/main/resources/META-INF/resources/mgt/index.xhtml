@@ -63,8 +63,8 @@
 			<div style="margin-left: 1.2em; margin-right: 1.2em">
 				<h:panelGroup id="viewPart" style="">
 					<h:form>
-						<div style="margin-bottom: 1em; margin-top: 1em">
-							<h:outputText style="" class="#{autoView.icon} viewTitle"></h:outputText>
+						<div style="margin-bottom: 0.5em; margin-top: 0.5em">
+							<h:outputText style="" class="#{autoView.icon} viewTitle" />
 							<h:outputText styleClass="viewTitle" value=" #{autoView.title}" />
 							<p:commandLink style="float: right; border: none" icon="fa fa-copy" id="copyLinkBtn"
 								onclick="copyTextToClipboard('#{viewNavigator.urlLink}');return false;">

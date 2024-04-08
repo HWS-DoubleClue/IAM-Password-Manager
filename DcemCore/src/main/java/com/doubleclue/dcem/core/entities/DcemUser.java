@@ -420,6 +420,9 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	}
 
 	public String getDisplayName() {
+		if (displayName == null || displayName.isEmpty()) {
+			displayName = getAccountName();
+		}
 		return displayName;
 	}
 
@@ -556,8 +559,6 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 		if (this == obj)
 			return true;
 		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
 			return false;
 		if (id == null) {
 			if (((EntityInterface) obj).getId() != null)

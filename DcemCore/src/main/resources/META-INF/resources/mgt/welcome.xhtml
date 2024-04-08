@@ -2,11 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
 
 <h:form id="adminIndex">
 	<style type="text/css">
@@ -59,71 +56,49 @@
 }
 </style>
 
-	<h:outputText style="font-size: 1.1em"
-		value="#{welcomeView.welcomeText}"></h:outputText>
+	<h:outputText style="font-size: 1.1em" value="#{welcomeView.welcomeText}"></h:outputText>
 	<p></p>
 
 	<h:panelGroup rendered="#{welcomeView.permissionView}">
 		<h:panelGroup layout="block" rendered="#{reportingLogic.welcomeViewAlerts.isEmpty() eq false}">
 			<p>#{CoreMsg['welcomeAlerts.text']}</p>
-			<p:dataList value="#{reportingLogic.welcomeViewAlerts.entrySet()}"
-				var="alertCategory" type="definition">
+			<p:dataList value="#{reportingLogic.welcomeViewAlerts.entrySet()}" var="alertCategory" type="definition">
 				<p style="font-weight: bold;">#{CoreMsg['welcomeAlerts.category.'.concat(alertCategory.key)]}:</p>
-				<p:dataTable value="#{alertCategory.value.entrySet()}"
-					var="alertEntry" styleClass="alertTable">
+				<p:dataTable value="#{alertCategory.value.entrySet()}" var="alertEntry" styleClass="alertTable">
 					<p:column>
-						<p:staticMessage
-							severity="#{alertEntry.value.getWelcomViewAlertSeverity()}"
+						<p:staticMessage severity="#{alertEntry.value.getWelcomViewAlertSeverity()}"
 							summary="#{alertEntry.value.source != null ? alertEntry.value.source.concat(':') : null}"
 							detail="#{alertEntry.value.localDateTime.toString().concat(' - ').concat(alertEntry.value.info == null ? CoreMsg['DcemErrorCodes.'.concat(alertEntry.value.errorCode)] : alertEntry.value.info)}" />
 					</p:column>
 					<p:column rendered="#{welcomeView.privilegedForDeletingAlerts}">
-						<p:commandButton
-							styleClass="#{'ui-button-alert ui-button-'.concat(alertEntry.value.getWelcomViewAlertSeverity())}"
-							ajax="false"
-							action="#{dcemApplication.removeAlert(alertCategory.key, alertEntry.key, alertEntry.value.id)}"
-							value="x" />
+						<p:commandButton styleClass="#{'ui-button-alert ui-button-'.concat(alertEntry.value.getWelcomViewAlertSeverity())}" ajax="false"
+							action="#{dcemApplication.removeAlert(alertCategory.key, alertEntry.key, alertEntry.value.id)}" value="x" />
 					</p:column>
 				</p:dataTable>
 			</p:dataList>
 		</h:panelGroup>
 
 		<div align="center" style="padding: 1em;">
-			<h:outputLabel id="chosenDateLabel" value="#{welcomeView.chosenDate}"
-				style="font-weight:bold;" />
+			<h:outputLabel id="chosenDateLabel" value="#{welcomeView.chosenDate}" style="font-weight:bold;" />
 			<br></br>
-			<p:commandButton icon="fa fa-angle-left" type="submit"
-				action="#{welcomeView.changeFormatSelection('PREVIOUS')}"
-				style="height:29px;"
-				update="changeDateBtn barChart pieChart chosenDateLabel">
+			<p:commandButton icon="fa fa-angle-left" type="submit" action="#{welcomeView.changeFormatSelection('PREVIOUS')}" style="height:29px;"
+				update="changeDateBtn barChart chosenDateLabel">
 			</p:commandButton>
-			<p:selectOneMenu id="dates"
-				style="width:125px; margin-left:5px; margin-right:5px;"
-				value="#{welcomeView.selectedDateFormat}">
-				<p:ajax event="change"
-					listener="#{welcomeView.changeDateSelection(welcomeView.selectedDateFormat)}"
-					update="changeDateBtn barChart pieChart chosenDateLabel" />
-				<f:selectItems value="#{welcomeView.dateFormats}"
-					var="selectedFormat" itemValue="#{selectedFormat}"
+			<p:selectOneMenu id="dates" style="width:125px; margin-left:5px; margin-right:5px;" value="#{welcomeView.selectedDateFormat}">
+				<p:ajax event="change" listener="#{welcomeView.changeDateSelection(welcomeView.selectedDateFormat)}" update="changeDateBtn barChart chosenDateLabel" />
+				<f:selectItems value="#{welcomeView.dateFormats}" var="selectedFormat" itemValue="#{selectedFormat}"
 					itemLabel="#{CoreMsg['welcomeView.dashboard.'.concat(selectedFormat)]}" />
 			</p:selectOneMenu>
-			<p:commandButton icon="fa fa-angle-right" type="submit"
-				id="changeDateBtn"
-				action="#{welcomeView.changeFormatSelection('NEXT')}"
-				update="changeDateBtn barChart pieChart chosenDateLabel"
-				style="height:29px; ">
+			<p:commandButton icon="fa fa-angle-right" type="submit" id="changeDateBtn" action="#{welcomeView.changeFormatSelection('NEXT')}"
+				update="changeDateBtn barChart chosenDateLabel" style="height:29px; ">
 			</p:commandButton>
 			<br></br>
 		</div>
 
-		<p:chart type="bar" model="#{welcomeView.userActivityBarChart}"
-			responsive="true" id="barChart">
-			<p:ajax event="itemSelect" listener="#{welcomeView.itemSelect}"
-				update="viewPart" />
-		</p:chart>
-		<br></br>
-		<p:chart type="pie" model="#{welcomeView.authMethodsPieChart}"
-			style="width:400px;height:300px; margin-left:35px" id="pieChart" />
+		<p:barChart model="#{welcomeView.userActivityBarChart}" responsive="true" id="barChart" style="width: 100%; height: 400px">
+			<p:ajax event="itemSelect" listener="#{welcomeView.itemSelect}" update="viewPart" />
+		</p:barChart>
+
 	</h:panelGroup>
 
 </h:form>

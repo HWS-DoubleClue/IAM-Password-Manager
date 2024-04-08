@@ -42,6 +42,11 @@ body {
 	transform: translate(-50%, -50%); /* Center the div perfectly */
 }
 
+.containerCenter {
+  display: flex;
+  align-items: middle;
+}
+
 .flex-container div {
 	padding-left: 1em;
 }

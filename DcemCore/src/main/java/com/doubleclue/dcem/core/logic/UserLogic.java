@@ -103,8 +103,8 @@ public class UserLogic {
 	}
 
 	@DcemTransactional
-	public DcemUser addOrUpdateUser(DcemUser user, DcemAction dcemAction, boolean withAudit, boolean numericPassword,
-			int passwordLength, boolean savePassword) throws DcemException {
+	public DcemUser addOrUpdateUser(DcemUser user, DcemAction dcemAction, boolean withAudit, boolean numericPassword, int passwordLength, boolean savePassword)
+			throws DcemException {
 		if (StringUtils.isValidNameId(user.getLoginId()) == false) {
 			throw new DcemException(DcemErrorCodes.ID_WITH_SPECIAL_CHARACTERS, user.getLoginId());
 		}
@@ -143,8 +143,7 @@ public class UserLogic {
 			}
 			try {
 				user.setSalt(RandomUtils.getRandom(8));
-				user.setHashPassword(KaraUtils.getSha1WithSalt(user.getSalt(),
-						user.getInitialPassword().getBytes(DcemConstants.CHARSET_UTF8)));
+				user.setHashPassword(KaraUtils.getSha1WithSalt(user.getSalt(), user.getInitialPassword().getBytes(DcemConstants.CHARSET_UTF8)));
 			} catch (Exception e) {
 				throw new DcemException(DcemErrorCodes.EXCEPTION, "sha1 failed", e);
 			}
@@ -169,8 +168,7 @@ public class UserLogic {
 			if (initialPin != null && initialPin.isEmpty() == false) {
 				try {
 					user.setSalt(RandomUtils.getRandom(8));
-					user.setHashPassword(KaraUtils.getSha1WithSalt(user.getSalt(),
-							user.getInitialPassword().getBytes(DcemConstants.CHARSET_UTF8)));
+					user.setHashPassword(KaraUtils.getSha1WithSalt(user.getSalt(), user.getInitialPassword().getBytes(DcemConstants.CHARSET_UTF8)));
 				} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 					throw new DcemException(DcemErrorCodes.EXCEPTION, "sha1 failed", e);
 				}
@@ -270,8 +268,7 @@ public class UserLogic {
 
 		int ind = loginId.indexOf(DcemConstants.DOMAIN_SEPERATOR);
 		String loginIdFilter = null;
-		if (domainLogic.getDomains().isEmpty() == false
-				&& adminModule.getPreferences().isEnableUserDomainSearch() == true) {
+		if (domainLogic.getDomains().isEmpty() == false && adminModule.getPreferences().isEnableUserDomainSearch() == true) {
 			switch (ind) {
 			case -1:
 				loginIdFilter = "%" + DbFactoryProducer.getDbType().getDbBackslash() + loginId;
@@ -341,8 +338,7 @@ public class UserLogic {
 		if (initialPassword != null && !initialPassword.isEmpty()) {
 			try {
 				salt = RandomUtils.getRandom(8);
-				hashPassword = (KaraUtils.getSha1WithSalt(salt,
-						user.getInitialPassword().getBytes(DcemConstants.CHARSET_UTF8)));
+				hashPassword = (KaraUtils.getSha1WithSalt(salt, user.getInitialPassword().getBytes(DcemConstants.CHARSET_UTF8)));
 			} catch (Exception e) {
 				throw new DcemException(DcemErrorCodes.EXCEPTION, "sha1 failed", e);
 			}
@@ -369,8 +365,7 @@ public class UserLogic {
 	}
 
 	@DcemTransactional
-	public void updateExtention(DcemUser dcemUser, byte[] photo, DcemLdapAttributes dcemLdapAttributes)
-			throws DcemException {
+	public void updateExtention(DcemUser dcemUser, byte[] photo, DcemLdapAttributes dcemLdapAttributes) throws DcemException {
 
 		DcemUserExtension dcemUserExtension = em.find(DcemUserExtension.class, dcemUser.getId());
 		if (dcemUserExtension == null) {
@@ -389,8 +384,7 @@ public class UserLogic {
 		return;
 	}
 
-	private void updateUserExtensionAttributes(DcemUserExtension dcemUserExtension,
-			DcemLdapAttributes dcemLdapAttributes) throws DcemException {
+	private void updateUserExtensionAttributes(DcemUserExtension dcemUserExtension, DcemLdapAttributes dcemLdapAttributes) throws DcemException {
 		if (dcemLdapAttributes.country != null) {
 			dcemUserExtension.setCountry(dcemLdapAttributes.country);
 		}
@@ -456,6 +450,13 @@ public class UserLogic {
 	public DcemUser getUser(int id) {
 		DcemUser user = em.find(DcemUser.class, id);
 		return user;
+	}
+
+	public List<DcemUser> getCompleteDcemUser(String name, int max) {
+		TypedQuery<DcemUser> query = em.createNamedQuery(DcemUser.GET_FILTER_LIST, DcemUser.class);
+		query.setParameter(1, "%" + name + "%");
+		query.setMaxResults(max);
+		return query.getResultList();
 	}
 
 	public List<String> getCompleteUserList(String name, int max) {
@@ -745,8 +746,7 @@ public class UserLogic {
 	}
 
 	@DcemTransactional
-	public void setMailPasswordMobile(DcemUser dcemUser, String email, String newPassword, String mobileNumber)
-			throws DcemException {
+	public void setMailPasswordMobile(DcemUser dcemUser, String email, String newPassword, String mobileNumber) throws DcemException {
 		if (email != null) {
 			dcemUser.setEmail(email);
 		}
@@ -776,8 +776,7 @@ public class UserLogic {
 				domainLogic.resetUserPassword(dcemUser, newPassword);// still TODO
 			} else {
 				dcemUser.setSalt(RandomUtils.getRandom(8));
-				dcemUser.setHashPassword(KaraUtils.getSha1WithSalt(dcemUser.getSalt(),
-						newPassword.getBytes(DcemConstants.CHARSET_UTF8)));
+				dcemUser.setHashPassword(KaraUtils.getSha1WithSalt(dcemUser.getSalt(), newPassword.getBytes(DcemConstants.CHARSET_UTF8)));
 			}
 		} catch (Exception e) {
 			throw new DcemException(DcemErrorCodes.EXCEPTION, "sha1 failed", e);
@@ -805,7 +804,6 @@ public class UserLogic {
 		}
 		changePassword(dcemUser, currentPassword, newPassword);
 	}
-	
 
 	@DcemTransactional
 	public void changePassword(DcemUser dcemUser, String currentPassword, String newPassword) throws DcemException {
@@ -828,16 +826,15 @@ public class UserLogic {
 
 	@DcemTransactional
 	public String registerUser(DcemUser dcemUser, String url, int timeout) throws DcemException {
-		addOrUpdateUser(dcemUser, new DcemAction(userSubject, DcemConstants.ACTION_ADD), true, false,
-				adminModule.getPreferences().getUserPasswordLength(), false);
-		UrlTokenEntity urlTokenEntity = urlTokenLogic.addUrlTokenToDb(UrlTokenType.VerifyEmail, timeout, null,
-				dcemUser.getId().toString());
+		addOrUpdateUser(dcemUser, new DcemAction(userSubject, DcemConstants.ACTION_ADD), true, false, adminModule.getPreferences().getUserPasswordLength(),
+				false);
+		UrlTokenEntity urlTokenEntity = urlTokenLogic.addUrlTokenToDb(UrlTokenType.VerifyEmail, timeout, null, dcemUser.getId().toString());
 		urlTokenLogic.sendUrlTokenByEmail(dcemUser, url, urlTokenEntity);
 		String recoveryKey = null;
 		if (asModuleApi != null) {
 			recoveryKey = RandomUtils.generateRandomAlphaNumericString(20);
-			asModuleApi.setUserCloudSafe(DcemConstants.RECOVERY_KEY, CloudSafeOptions.ENC.name(), null, dcemUser, false,
-					null, recoveryKey.getBytes(DcemConstants.UTF_8));
+			asModuleApi.setUserCloudSafe(DcemConstants.RECOVERY_KEY, CloudSafeOptions.ENC.name(), null, dcemUser, false, null,
+					recoveryKey.getBytes(DcemConstants.UTF_8));
 		}
 		return recoveryKey;
 	}
@@ -926,8 +923,8 @@ public class UserLogic {
 		query.setParameter(1, azureDomainEntity);
 		return query.getResultList();
 	}
-	
-	public TimeZone getTimeZone (DcemUser dcemUser) {
+
+	public TimeZone getTimeZone(DcemUser dcemUser) {
 		TimeZone timeZone;
 		DcemUserExtension dcemUserExt = getDcemUserExtension(dcemUser);
 		if (dcemUserExt != null && dcemUserExt.getTimezone() != null) {
@@ -937,8 +934,8 @@ public class UserLogic {
 		}
 		return timeZone;
 	}
-	
-	public LocalDateTime getUserZonedTime (LocalDateTime localDateTime, DcemUser dcemUser) {
+
+	public LocalDateTime getUserZonedTime(LocalDateTime localDateTime, DcemUser dcemUser) {
 		TimeZone timeZone = getTimeZone(dcemUser);
 		if (TimeZone.getDefault().equals(timeZone)) {
 			return localDateTime;
@@ -946,7 +943,7 @@ public class UserLogic {
 		ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, TimeZone.getDefault().toZoneId());
 		return zonedDateTime.withZoneSameInstant(timeZone.toZoneId()).toLocalDateTime();
 	}
-	
+
 	public LocalDateTime getDefaultZonedTime(LocalDateTime localDateTime, DcemUser dcemUser) {
 		TimeZone timeZone = getTimeZone(dcemUser);
 		if (TimeZone.getDefault().equals(timeZone)) {
@@ -955,7 +952,7 @@ public class UserLogic {
 		ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, timeZone.toZoneId());
 		return zonedDateTime.withZoneSameInstant(TimeZone.getDefault().toZoneId()).toLocalDateTime();
 	}
-	
+
 	@DcemTransactional
 	public void updateUserProfile(DcemUser clonedUser, DcemUserExtension dcemUserExtension) throws Exception {
 		DcemUser dcemUser = getUser(clonedUser.getId());

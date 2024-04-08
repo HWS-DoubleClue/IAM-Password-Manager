@@ -151,3 +151,11 @@ function fallbackCopyTextToClipboard(text) {
 	}
 	document.body.removeChild(textArea);
 }
+
+function setCaretPosition(elemId, caretPos)
+{
+ var elem = document.getElementById(elemId);
+ if (elem) {
+  	elem.setSelectionRange(caretPos, caretPos);
+ }
+}
