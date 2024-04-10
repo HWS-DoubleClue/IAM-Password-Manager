@@ -65,7 +65,6 @@ public class TitleBarView extends DcemView {
 	@PostConstruct
 	private void init() {
 		subject = titleBarSubject;
-						
 		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
 		editProfilePermission = addAutoViewAction(DcemConstants.ACTION_USER_PROFILE, resourceBundle, userDialog, DcemConstants.USER_PROFILE_DIALOG);
 		changePasswordPermission = addAutoViewAction(DcemConstants.ACTION_CHANGE_PASSWORD, resourceBundle, userPasswordDialog, DcemConstants.CHANGE_PASSWORD_DIALOG);		
@@ -80,13 +79,13 @@ public class TitleBarView extends DcemView {
 		return operatorSessionBean.isPermission(new DcemAction(subject, DcemConstants.ACTION_DELETE));
 	}
 	
-	public void leavingView() {
-	}
+//	public void leavingView() {
+//	}
 
-	@Override
-	public void reload() {
-		super.reload();
-	}
+//	@Override
+//	public void reload() {
+//		//super.reload();
+//	}
 	
 	public void editProfile () {
 		userDialog.setParentView(viewNavigator.getActiveView());

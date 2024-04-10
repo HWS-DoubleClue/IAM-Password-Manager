@@ -420,7 +420,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	}
 
 	public String getDisplayName() {
-		if (displayName == null || displayName.isEmpty()) {
+		if ((displayName == null || displayName.isEmpty()) && loginId != null) {
 			displayName = getAccountName();
 		}
 		return displayName;

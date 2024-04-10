@@ -392,9 +392,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 
 	protected AutoViewAction createAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage,
 			ViewLink viewLink) {
-		if (dcemDialog != null) {
-			dcemDialog.setParentView(this);
-		}
+//		if (dcemDialog != null) {
+//			dcemDialog.setParentView(this);
+//		}
 		DcemAction dcemAction = new DcemAction(subject, actionName);
 		if (operatorSessionBean.isPermission(dcemAction) == true || subject.forceAction(operatorSessionBean.getDcemUser(), dcemAction)) {
 			return new AutoViewAction(dcemAction, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);

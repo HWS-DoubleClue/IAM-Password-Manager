@@ -42,7 +42,6 @@ public class UserViewBean extends DcemView {
 
 	@PostConstruct
 	private void init() {
-
 		userDialog.setParentView(this);
 		adminActivationDialog.setParentView(this);
 		subject = appUserSubject;
@@ -72,14 +71,12 @@ public class UserViewBean extends DcemView {
 		if (this.subject.getKlass() == null) {
 			return null;
 		}
-
 		String initialPassword;
 		if (adminModule.getPreferences().isNumericPassword()) {
 			initialPassword = RandomUtils.generateRandomNumberString(adminModule.getPreferences().getUserPasswordLength());
 		} else {
 			initialPassword = RandomUtils.generateRandomAlphaLowercaseNumericString(adminModule.getPreferences().getUserPasswordLength());
 		}
-
 		DcemUser user = new DcemUser();
 		user.setInitialPassword(initialPassword);
 		user.setLanguage(adminModule.getPreferences().getUserDefaultLanguage());

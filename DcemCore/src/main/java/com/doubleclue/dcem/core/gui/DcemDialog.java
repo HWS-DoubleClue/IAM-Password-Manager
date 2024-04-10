@@ -42,15 +42,9 @@ public class DcemDialog implements Serializable {
 	}
 
 	public void setParentView(DcemView sasView) {
+		System.out.println("DcemDialog.setParentView() " + sasView);
 		parentView = sasView;
 	}
-
-	// public String getAction() {
-	// if (JsfUtils.getMaximumSeverity() <= 0) {
-	// parentView.closeDialog();
-	// }
-	// return null;
-	// }
 
 	public Object getActionObject() {
 		return parentView.getActionObject();
