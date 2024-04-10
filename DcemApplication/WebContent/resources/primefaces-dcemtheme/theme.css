@@ -2012,3 +2012,9 @@ body .ui-input-icon-right > .ui-inputfield {
 	width: 16px !important;
 	padding: 0 11px;
 }
+
+.ui-contextmenu {
+	border-style: solid;
+  	border-color: grey;
+  	border-width: thin;
+}

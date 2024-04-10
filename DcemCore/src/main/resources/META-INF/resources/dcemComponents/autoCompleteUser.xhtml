@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+
+<composite:interface>
+	<composite:attribute name="userValue" />
+	<composite:attribute name="userListener" method-signature="void action()" />
+	<composite:attribute name="actionSetOperator"  method-signature="java.lang.String action()" />
+	<composite:attribute name="updateComponents" />
+</composite:interface>
+
+<composite:implementation>
+	<p:autoComplete id="autouser" minQueryLength="1" queryDelay="800" value="#{cc.attrs.userValue}" scrollHeight="400"
+		completeMethod="#{autoCompleteUser.completeUser}" effect="fade" size="20" required="true" forceSelection="true" dropdown="true" var="user"
+		itemLabel="#{user.accountName}" itemValue="#{user}" converter="DcemUserConvertor" style="margin-left: 0.5em"  >
+		<p:ajax event="itemSelect" oncomplete="setCaretPosition(':autouser_input', 0);" listener="#{cc.attrs.userListener}"
+			update="#{cc.attrs.updateComponents}" />
+		<f:facet name="footer"    >
+			<div class="ui-fluid" style="padding: 1em" >
+				<p:commandButton rendered="#{cc.attrs.actionSetOperator ne NULL}" immediate="true" update="#{cc.attrs.updateComponents}" value="#{autoCompleteUser.operator}" action="#{cc.attrs.actionSetOperator}" />
+			</div>
+		</f:facet>
+		<p:column style="border: none">
+			<div class="containerCenter">
+				<p:avatar dynamicColor="true" size="large" shape="circle">
+					<p:graphicImage value="#{autoCompleteUser.getUserPhoto(user)}" stream="false" />
+				</p:avatar>
+				<h:outputText style="margin-left: .5rem" value="#{user.accountName}" />
+			</div>
+		</p:column>
+	</p:autoComplete>
+</composite:implementation>
+</html>

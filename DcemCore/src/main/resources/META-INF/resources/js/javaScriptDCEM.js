@@ -152,10 +152,15 @@ function fallbackCopyTextToClipboard(text) {
 	document.body.removeChild(textArea);
 }
 
-function setCaretPosition(elemId, caretPos)
-{
- var elem = document.getElementById(elemId);
- if (elem) {
-  	elem.setSelectionRange(caretPos, caretPos);
- }
+function setCaretPosition(elemId, caretPos) {
+	var elems = document.getElementsByTagName("input");
+	for (var i = 0, m = elems.length; i < m; i++) {
+		if (elems[i].id && elems[i].id.indexOf(elemId) != -1) {
+			elem = elems[i];
+			break;
+		}
+	}
+	if (elem) {
+		elem.setSelectionRange(caretPos, caretPos);
+	}
 }
