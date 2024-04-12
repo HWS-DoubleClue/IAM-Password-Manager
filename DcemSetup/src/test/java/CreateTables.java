@@ -44,7 +44,7 @@ public class CreateTables {
 		defaulModules.add("dcem.oauth");
 		defaulModules.add("dcem.otp");
 		defaulModules.add("dcem.saml");
-		defaulModules.add("dcem.saml");
+		defaulModules.add("dcem.test");
 		
 		if (args.length < 1) {
 			System.err.println("Need Workspace Location as first parameter");
@@ -64,7 +64,6 @@ public class CreateTables {
 				e1.printStackTrace();
 			}
 			Map<String, String> settings = new HashMap<>();
-			// settings.put("connection.driver_class", "com.mysql.jdbc.Driver");
 			settings.put("hibernate.dialect", databaseType.getHibernateDialect());
 			settings.put("hibernate.connection.url", "jdbc:derby:memory:myDB;create=true");
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -184,7 +183,7 @@ public class CreateTables {
 		}
 		System.out.println("Tables created, now improving the sql scripts");
 		File inputDirectory = new File(outputDir);
-		File outputDirectory = new File(args[0] + File.separator + "DcemCore" + File.separator + "resources" + File.separator + "com/doubleclue/dcem/db");
+		File outputDirectory = new File(args[0] + File.separator + "DcemCore/src/main/resources" + File.separator + "com/doubleclue/dcem/db");
 		try {
 			System.out.println("						Input directory:		" + inputDirectory.getPath());
 			System.out.println("						Output directory:		" + outputDirectory.getPath());
