@@ -42,7 +42,6 @@ public class DcemDialog implements Serializable {
 	}
 
 	public void setParentView(DcemView sasView) {
-		System.out.println("DcemDialog.setParentView() " + sasView);
 		parentView = sasView;
 	}
 
