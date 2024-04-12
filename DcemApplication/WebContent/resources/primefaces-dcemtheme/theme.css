@@ -1749,7 +1749,10 @@ body .ui-password-panel {
 	background: #fff;
 	color: #333;
 	border-bottom-right-radius: 3px;
-	border-bottom-left-radius: 3px
+	border-bottom-left-radius: 3px;
+/* 	min-height: 200px; */
+	max-height: 250px;
+/* 	height: 200px; */
 }
 
 .ui-texteditor .ql-snow.ql-toolbar button:hover, .ui-texteditor .ql-snow.ql-toolbar button:focus
@@ -1942,7 +1945,8 @@ body .ui-input-icon-right>i:last-of-type {
 }
 
 body .ui-input-icon-right>.ui-inputfield {
-	padding-right: 1.858rem;
+	/*     padding-right: 1.858rem; */
+	
 }
 
 .ui-link, .ui-commandlink {
