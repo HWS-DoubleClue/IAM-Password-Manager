@@ -71,6 +71,7 @@ PasswordSafe the password management of DoubleClue. Your passwords are stored in
 # Modularity
 
 DoubleClue is a very modular architecture. You can add plugin modules to DoubleClue. The module will have its own menus and actions.
+For more information on how to create a new module see the document 'documentation/DevelopmentModule.odt'
 
 ## Menu and Action Privileges
 
@@ -78,7 +79,8 @@ Every module menu and action (button and links) will be managed by the administr
 
 ## Auto GUI
 
-AutoGUI is a utility which can list, display, edit and deletes objects with only some lines of code. See more information at : TODO
+AutoGUI is a utility which can list, display, edit and deletes objects with only some lines of code. 
+For more information on how to create a new GUI see the document 'documentation/DevelopmentModule.odt'.
 
 ## Auto Preferences
 
