@@ -98,6 +98,10 @@
 	background-color: #eee;
 }
 
+.ui-panel .ui-panel-title {
+	margin: 0 auto;
+}
+
 .ui-panel-title {
 	color: #0e4f77 !important;
 }
@@ -1907,34 +1911,38 @@ body .ui-state-highlight .ui-rating-star a {
 	font-weight: bold;
 }
 
-body .ui-input-icon-left,
-body .ui-input-icon-right {
-    position: relative;
-    display: inline-block;
+body .ui-input-icon-left, body .ui-input-icon-right {
+	position: relative;
+	display: inline-block;
 }
-body .ui-fluid .ui-input-icon-left,
-body .ui-fluid .ui-input-icon-right {
-    display: block;
+
+body .ui-fluid .ui-input-icon-left, body .ui-fluid .ui-input-icon-right
+	{
+	display: block;
 }
-body .ui-input-icon-left > i,
-body .ui-input-icon-right > i {
-    position: absolute;
-    top: 50%;
-    margin-top: -0.5rem;
+
+body .ui-input-icon-left>i, body .ui-input-icon-right>i {
+	position: absolute;
+	top: 50%;
+	margin-top: -0.5rem;
 }
-body .ui-input-icon-left > i:first-of-type {
-    left: 0.429rem;
-    color: #848484;
+
+body .ui-input-icon-left>i:first-of-type {
+	left: 0.429rem;
+	color: #848484;
 }
-body .ui-input-icon-left > .ui-inputfield {
-    padding-left: 1.858rem;
+
+body .ui-input-icon-left>.ui-inputfield {
+	padding-left: 1.858rem;
 }
-body .ui-input-icon-right > i:last-of-type {
-    right: 0.429rem;
-    color: #848484;
+
+body .ui-input-icon-right>i:last-of-type {
+	right: 0.429rem;
+	color: #848484;
 }
-body .ui-input-icon-right > .ui-inputfield {
-    padding-right: 1.858rem;
+
+body .ui-input-icon-right>.ui-inputfield {
+	padding-right: 1.858rem;
 }
 
 .ui-link, .ui-commandlink {
@@ -2015,6 +2023,6 @@ body .ui-input-icon-right > .ui-inputfield {
 
 .ui-contextmenu {
 	border-style: solid;
-  	border-color: grey;
-  	border-width: thin;
+	border-color: grey;
+	border-width: thin;
 }
