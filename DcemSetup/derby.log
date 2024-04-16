@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Thu Apr 11 13:57:25 CEST 2024:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-018e-cd05-1433-0000030288f8 
+on database directory memory:C:\Users\emanuel.galea\git\IAM-Password-Manager\DcemSetup\myDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@1ba9117e 
+Loaded from file:/C:/Users/emanuel.galea/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
+java.vendor=Eclipse Adoptium
+java.runtime.version=21.0.2+13-LTS
+user.dir=C:\Users\emanuel.galea\git\IAM-Password-Manager\DcemSetup
+os.name=Windows 11
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

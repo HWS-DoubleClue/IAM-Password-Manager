@@ -41,8 +41,8 @@ public class DepartmentDialog extends DcemDialog {
 	@Inject
 	JpaLogic jpaLogic;
 
-	String loginId;
-	String deputyLoginId;
+	DcemUser dcemUser;
+	DcemUser dcemUserDeputy;
 	String parentDepartment;
 
 	private OrganigramNode rootNode;
@@ -56,20 +56,7 @@ public class DepartmentDialog extends DcemDialog {
 	public boolean actionOk() throws Exception {
 
 		DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
-		DcemUser headOf = userLogic.getDistinctUser(loginId);
-		if (headOf == null) {
-			JsfUtils.addErrorMessage(departmentView.getResourceBundle(), "departmentDialog.invalidHeadOf");
-			return false;
-		}
-		DcemUser deputyUser = null;
-		if (deputyLoginId != null && deputyLoginId.isEmpty() == false) {
-			deputyUser = userLogic.getDistinctUser(deputyLoginId);
-			if (deputyUser == null) {
-				JsfUtils.addErrorMessage(departmentView.getResourceBundle(), "departmentDialog.invalidDeputy");
-				return false;
-			}
-		}
-
+		DcemUser headOf = dcemUser;
 		DepartmentEntity parentDepartmentEntity = null;
 		if (parentDepartment != null && parentDepartment.isEmpty() == false) {
 			parentDepartmentEntity = departmentLogic.getDepartmentByName(parentDepartment);
@@ -78,17 +65,11 @@ public class DepartmentDialog extends DcemDialog {
 				return false;
 			}
 		}
-		departmentEntity.setDeputy(deputyUser);
+		departmentEntity.setDeputy(dcemUserDeputy);
 		departmentEntity.setHeadOf(headOf);
 		departmentEntity.setParentDepartment(parentDepartmentEntity);
 		jpaLogic.addOrUpdateEntity(departmentEntity, this.getAutoViewAction().getDcemAction());
-
-		// JsfUtils.addInformationMessage(AsModule.RESOUCE_NAME, "activationDialog.success", activationCode.getActivationCode());
 		return true;
-	}
-
-	public List<String> completeUser(String name) {
-		return userLogic.getCompleteUserList(name, 50);
 	}
 
 	public List<String> completeDepartment(String name) {
@@ -100,7 +81,7 @@ public class DepartmentDialog extends DcemDialog {
 	}
 
 	public String getWidth() {
-		return "1000";
+		return "800";
 	}
 
 	/* (non-Javadoc)
@@ -110,18 +91,17 @@ public class DepartmentDialog extends DcemDialog {
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		String action = this.getAutoViewAction().getDcemAction().getAction();
 		DepartmentEntity departmentEntity = (DepartmentEntity) this.getActionObject();
-		deputyLoginId = null;
-		loginId = null;
+		dcemUserDeputy = null;
 		if (action.equals(DcemConstants.ACTION_EDIT)) {
-			loginId = departmentEntity.getHeadOf().getLoginId();
+			dcemUser = departmentEntity.getHeadOf();
 			if (departmentEntity.getDeputy() != null) {
-				deputyLoginId = departmentEntity.getDeputy().getLoginId();
+				dcemUserDeputy = departmentEntity.getDeputy();
 			}
 		}
 		if (action.equals(DcemConstants.ACTION_COPY)) {
-			loginId = departmentEntity.getHeadOf().getLoginId();
+			dcemUser = departmentEntity.getHeadOf();
 			if (departmentEntity.getDeputy() != null) {
-				deputyLoginId = departmentEntity.getDeputy().getLoginId();
+				dcemUserDeputy = departmentEntity.getDeputy();
 			}
 		}
 		if (departmentEntity.getParentDepartment() != null) {
@@ -135,28 +115,12 @@ public class DepartmentDialog extends DcemDialog {
 		rootNode = null;
 	}
 
-	public String getLoginId() {
-		return loginId;
-	}
-
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
-	}
-
 	public String getParentDepartment() {
 		return parentDepartment;
 	}
 
 	public void setParentDepartment(String parentDepartment) {
 		this.parentDepartment = parentDepartment;
-	}
-
-	public String getDeputyLoginId() {
-		return deputyLoginId;
-	}
-
-	public void setDeputyLoginId(String deputyLoginId) {
-		this.deputyLoginId = deputyLoginId;
 	}
 
 	public OrganigramNode getRootNode() {
@@ -205,5 +169,21 @@ public class DepartmentDialog extends DcemDialog {
 
 	public void setRootNode(OrganigramNode rootNode) {
 		this.rootNode = rootNode;
+	}
+
+	public DcemUser getDcemUser() {
+		return dcemUser;
+	}
+
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
+	}
+
+	public DcemUser getDcemUserDeputy() {
+		return dcemUserDeputy;
+	}
+
+	public void setDcemUserDeputy(DcemUser dcemUserDeputy) {
+		this.dcemUserDeputy = dcemUserDeputy;
 	}
 }

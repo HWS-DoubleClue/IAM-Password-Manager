@@ -44,8 +44,8 @@ public class OtpTokenDialog extends DcemDialog {
 
 	OtpTypes tokenType;
 
-	String domainName;
-	String loginId;
+
+	DcemUser dcemUser;
 	
 	boolean assignToken;
 	
@@ -63,11 +63,6 @@ public class OtpTokenDialog extends DcemDialog {
 		if (assignToken == false) {
 			otpTokenEntity.setUser(null);
 		} else {
-			DcemUser dcemUser = userLogic.getDistinctUser(loginId);
-			if (dcemUser == null) {
-				JsfUtils.addErrorMessage("Invalid User");
-				return false;
-			}
 			otpTokenEntity.setUser(dcemUser);
 		}
 		otpLogic.editToken(otpTokenEntity, this.getAutoViewAction().getDcemAction());
@@ -77,7 +72,6 @@ public class OtpTokenDialog extends DcemDialog {
 	public OtpTypes[] getTokenTypes() {
 		return OtpTypes.values();
 	}
-
 	/**
 	 * 
 	 */
@@ -113,50 +107,20 @@ public class OtpTokenDialog extends DcemDialog {
 		this.tokenType = tokenType;
 	}
 
-	public List<String> completeUser(String name) {
-		if (domainName == null || domainName.isEmpty()) {
-			return userLogic.getCompleteUserList(name, 50);
-		} else {
-			return userLogic.getCompleteUserList(domainName + DcemConstants.DOMAIN_SEPERATOR + name, 50);
-		}
-	}
-
+	
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		encryptionKey = null;
 		if (autoViewAction.getDcemAction().getAction().equals(DcemConstants.ACTION_IMPORT)) {
 			return;
 		}
 		OtpTokenEntity otpTokenEntity = (OtpTokenEntity) this.getActionObject();
-		DcemUser user = otpTokenEntity.getUser();
-		if (user != null) {
-			String[] domainUser = user.getLoginId().split(DcemConstants.DOMAIN_SEPERATOR_REGEX);
-			if (domainUser.length > 1) {
-				domainName = domainUser[0].toUpperCase();
-			} 
-			loginId = user.getLoginId();
+		dcemUser = otpTokenEntity.getUser();
+		if (dcemUser != null) {
 			assignToken = true;
 		} else {
-			loginId = null;
-			domainName = null;
 			assignToken = false;
 		}
 
-	}
-
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
-	}
-
-	public String getLoginId() {
-		return loginId;
-	}
-
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
 	}
 
 	public boolean isAssignToken() {
@@ -179,6 +143,15 @@ public class OtpTokenDialog extends DcemDialog {
 	public void leavingDialog() {
 		uploadedFile = null;
 		encryptionKey = null;
+		dcemUser = null;
+	}
+
+	public DcemUser getDcemUser() {
+		return dcemUser;
+	}
+
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
 	}
 
 }

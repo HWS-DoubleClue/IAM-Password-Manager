@@ -61,9 +61,7 @@ public class PolicyDialog extends DcemDialog {
 	Integer assignedGroup;
 	Integer assignedPolicy;
 
-	String domainName;
-
-	String testUser;
+	DcemUser dcemUser;
 
 	PolicyEntity testPolicyEntity;
 
@@ -78,29 +76,14 @@ public class PolicyDialog extends DcemDialog {
 	private void init() {
 	}
 
-	public List<String> completeUser(String name) {
-		if (domainName == null || domainName.isEmpty()) {
-			return userLogic.getCompleteUserList(name, 50);
-		} else {
-			return userLogic.getCompleteUserList(domainName + DcemConstants.DOMAIN_SEPERATOR + name, 50);
-		}
-	}
-
 	public void actionTestUserPolicy() {
 		testPolicyEntity = null;
-		if (testUser == null || testUser.isEmpty()) {
+		if (dcemUser == null) {
 			JsfUtils.addErrorMessage("Please select a user.");
 			return;
 		}
-		DcemUser dcemUser;
-		try {
-			dcemUser = userLogic.getDistinctUser(testUser);
-			if (dcemUser == null) {
-				JsfUtils.addErrorMessage("Invalid user name.");
-				return;
-			}
-		} catch (DcemException e1) {
-			JsfUtils.addErrorMessage(e1.toString());
+		if (dcemUser == null) {
+			JsfUtils.addErrorMessage("Invalid user name.");
 			return;
 		}
 		PolicyTreeItem pti = (PolicyTreeItem) policyView.getSelectedTreeNode().getData();
@@ -150,8 +133,7 @@ public class PolicyDialog extends DcemDialog {
 			JsfUtils.addErrorMessage("Please enter a positive value for 'Timeout'");
 			return false;
 		}
-		if (dcemPolicy.getRememberBrowserFingerPrint() == 0
-				&& (dcemPolicy.isEnableSessionAuthentication() || dcemPolicy.isRefrain2FaWithInTime())) {
+		if (dcemPolicy.getRememberBrowserFingerPrint() == 0 && (dcemPolicy.isEnableSessionAuthentication() || dcemPolicy.isRefrain2FaWithInTime())) {
 			JsfUtils.addErrorMessage("Please enter a value for 'Timeout'");
 			return false;
 		}
@@ -181,6 +163,7 @@ public class PolicyDialog extends DcemDialog {
 
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		testPolicyEntity = null;
+		dcemUser = null;
 		PolicyEntity policyEntity = (PolicyEntity) getActionObject();
 		if (autoViewAction.getDcemAction().getAction().equals(DcemConstants.ACTION_ASSIGN)
 				|| autoViewAction.getDcemAction().getAction().equals(DcemConstants.ACTION_TEST_USER_POLICY)) {
@@ -266,15 +249,7 @@ public class PolicyDialog extends DcemDialog {
 		if (pti.isGroup()) {
 			pti = (PolicyTreeItem) policyView.getSelectedTreeNode().getParent().getData();
 		}
-
 		return pti.getName();
-		// TreeNode parentNode = policyView.getSelectedTreeNode().getParent();
-		// String parentName = "";
-		// if (parentNode != null) {
-		// parentName = ((PolicyTreeItem)
-		// parentNode.getData()).getApplicationName() + "->";
-		// }
-		// return parentName + pti.getApplicationName();
 	}
 
 	public Integer getAssignedPolicy() {
@@ -304,25 +279,9 @@ public class PolicyDialog extends DcemDialog {
 	public String getWidth() {
 		return "800";
 	}
-	
+
 	public String getHeight() {
 		return "520";
-	}
-
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
-	}
-
-	public String getTestUser() {
-		return testUser;
-	}
-
-	public void setTestUser(String testUser) {
-		this.testUser = testUser;
 	}
 
 	public String getTestPolicyName() {
@@ -331,10 +290,6 @@ public class PolicyDialog extends DcemDialog {
 
 	public String getTestPolicyContent() {
 		return testPolicyEntity == null ? null : testPolicyEntity.getJsonPolicy();
-	}
-
-	public void changeDomain() {
-		testUser = null;
 	}
 
 	public boolean isDisableTimeout() {
@@ -354,6 +309,14 @@ public class PolicyDialog extends DcemDialog {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	public DcemUser getDcemUser() {
+		return dcemUser;
+	}
+
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
 	}
 
 }

@@ -3,7 +3,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:dc="http://java.sun.com/jsf/composite/dcemComponents">
 
 <h:head>
 	<f:facet name="first">
@@ -27,17 +28,9 @@
 			</p:messages>
 			<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 
-				<p:outputLabel for="domain" value="#{asMsg['asCloudSafeSetLimitsDialog.domain']}" rendered="#{viewNavigator.addAction}" />
-				<p:selectOneMenu id="domain" value="#{asCloudSafeSetLimitsDialog.domainName}" style="vertical-align: middle;" rendered="#{viewNavigator.addAction}">
-					<f:selectItem itemValue="" itemLabel="#{asMsg['asCloudSafeSetLimitsDialog.local']}" />
-					<f:selectItems value="#{domainLogic.domainNames}" />
-					<p:ajax process="@this" listener="#{asCloudSafeSetLimitsDialog.changeDomain}" update="user"></p:ajax>
-				</p:selectOneMenu>
 
-				<p:outputLabel for="user" value="#{asMsg['asCloudSafeSetLimitsDialog.user']}" rendered="#{asCloudSafeSetLimitsDialog.selection.size() le 1}" />
-				<p:autoComplete id="user" minQueryLength="1" disabled="#{viewNavigator.editAction}" value="#{asCloudSafeSetLimitsDialog.loginId}"
-					completeMethod="#{asCloudSafeSetLimitsDialog.completeUser}" effect="fade" size="30" rendered="#{asCloudSafeSetLimitsDialog.selection.size() le 1}"
-					required="true" />
+				<p:outputLabel for="autoUser" value="#{asMsg['asCloudSafeSetLimitsDialog.user']}" rendered="#{asCloudSafeSetLimitsDialog.selection.size() le 1}" />
+				<dc:autoCompleteUser id="autoUser" userValue="#{asCloudSafeSetLimitsDialog.dcemUser}" required="true"   />
 
 				<p:outputLabel for="limit" value="#{asMsg['asCloudSafeSetLimitsDialog.limit']}" />
 				<h:panelGroup>
@@ -49,8 +42,8 @@
 				</h:panelGroup>
 
 				<p:outputLabel for="expiryDate" value="#{asMsg['asCloudSafeSetLimitsDialog.expiryDate']}" />
-				<p:datePicker id="expiryDate" pattern="#{operatorSession.dateTimePattern}" value="#{asCloudSafeSetLimitsDialog.expiryDate}"
-					showOn="button" locale="#{operatorSession.locale}" title="Clear Date to remove usage expiration">
+				<p:datePicker id="expiryDate" pattern="#{operatorSession.dateTimePattern}" value="#{asCloudSafeSetLimitsDialog.expiryDate}" showOn="button"
+					locale="#{operatorSession.locale}" title="Clear Date to remove usage expiration">
 				</p:datePicker>
 
 				<p:outputLabel for="psEnabled" value="#{asMsg['asCloudSafeSetLimitsDialog.psEnabled']}" />
