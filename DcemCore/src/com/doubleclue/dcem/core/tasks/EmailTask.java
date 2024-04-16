@@ -57,6 +57,9 @@ public class EmailTask extends CoreTask {
     @Override
     public void runTask() {
         logger.debug("EmailTask started");
+        if (subjectParameter == null) {
+            subjectParameter = new ArrayList<>();
+        }
         long start = System.currentTimeMillis();
         DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
         TemplateLogic templateLogic = CdiUtils.getReference(TemplateLogic.class);
