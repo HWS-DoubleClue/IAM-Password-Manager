@@ -26,7 +26,7 @@ public class CreateModuleView extends DcemView {
 	private static String FREEMARKER_RESOURCES = "com/doubleclue/dcem/dev/resources/freemarker/";
 	private static String FREEMARKER_MODULE_TEMPLATE = FREEMARKER_RESOURCES + "Module.java.ftl";
 	private static String FREEMARKER_PREFERENCES_TEMPLATE = FREEMARKER_RESOURCES + "Preferences.java.ftl";
-	private static String FREEMARKER_CSS_TEMPLATE = FREEMARKER_RESOURCES + "Style.css.ftl";
+	private static String FREEMARKER_CSS_TEMPLATE = FREEMARKER_RESOURCES + "Styles.css.ftl";
 
 
 	private final String IAM_DIRECTORY = "IAM-Password-Manager";
@@ -125,7 +125,7 @@ public class CreateModuleView extends DcemView {
 			File metaInfResourcesFile = new File(metaInfFile, "resources");
 			File cssFile = new File(metaInfResourcesFile, "css");
 			cssFile.mkdirs();
-			writeToFile (metaInfFile, moduleId + "Style.css", FREEMARKER_CSS_TEMPLATE, map);
+			writeToFile (cssFile, moduleId + "Styles.css", FREEMARKER_CSS_TEMPLATE, map);
 
 			File htmlFile = new File(metaInfResourcesFile, "mgt/modules/" + moduleId);
 			htmlFile.mkdirs();
