@@ -7,12 +7,12 @@ import com.doubleclue.dcem.core.SubjectAbs;
 import com.doubleclue.dcem.core.logic.ActionSelection;
 import com.doubleclue.dcem.core.logic.RawAction;
 import com.doubleclue.dcem.dev.logic.DevModule;
+import com.doubleclue.dcem.dev.logic.DevelopmentConstants;
 
 @SuppressWarnings("serial")
 @ApplicationScoped
 public class CreateCrudSubject extends SubjectAbs {
 	
-	public final static String TEST_CREATE_CRUD_VIEW_PATH = "/modules/dev/createCrud.xhtml";
 
 	public CreateCrudSubject() {
 
@@ -42,7 +42,7 @@ public class CreateCrudSubject extends SubjectAbs {
 
 	@Override
 	public String getPath() {
-		return TEST_CREATE_CRUD_VIEW_PATH;
+		return DevelopmentConstants.TEST_CREATE_CRUD_VIEW_PATH;
 	}
 
 

@@ -303,7 +303,7 @@ public class CreateCrudView extends DcemView {
 		try {
 			InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(templateName);
 			if (inputStream == null) {
-				JsfUtils.addErrorMessage(templateName + " Nor found");
+				JsfUtils.addErrorMessage(templateName + " Not found");
 				return;
 			}
 			String templateContent = KaraUtils.readInputStreamText(inputStream);
