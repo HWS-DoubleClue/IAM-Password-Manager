@@ -10,17 +10,18 @@
 			<p:autoUpdate />
 		</p:growl>
 		<p:panel style="width: 80%; margin: 0 auto;">
-			<p:commandButton value="Save" action="#{userPortalConfigView.actionSave}" icon="fa fa-save" style="width: 8em; color: white;" />
+			<p:commandButton value="Save" action="#{userPortalConfigView.actionSave}" icon="fa fa-save" style="width: 8em;" />
+			<p></p>
 			<h:panelGrid columns="2" cellpadding="2" cellspacing="4">
 
 				<p:outputLabel value="#{DcupMsg['label.enableCaptcha']}" />
-				<p:inputSwitch value="#{userPortalConfigView.userPortalConfig.enableCaptcha}" style="width: 2em;" />
+				<p:toggleSwitch value="#{userPortalConfigView.userPortalConfig.enableCaptcha}"  />
 
 				<p:outputLabel value="#{DcupMsg['label.enableAutoComplete']}" />
-				<p:inputSwitch value="#{userPortalConfigView.userPortalConfig.enableAutoComplete}" style="width: 2em;" />
+				<p:toggleSwitch value="#{userPortalConfigView.userPortalConfig.enableAutoComplete}" />
 
 				<p:outputLabel value="#{DcupMsg['label.enableLocalUserRegistration']}" />
-				<p:inputSwitch value="#{userPortalConfigView.userPortalConfig.enableLocalUserRegistration}" style="width: 2em;" />
+				<p:toggleSwitch value="#{userPortalConfigView.userPortalConfig.enableLocalUserRegistration}"  />
 
 				<p:outputLabel value="#{DcupMsg['label.notificationType']}" />
 				<p:selectOneMenu id="notification" value="#{userPortalConfigView.selectedNotificationType}">
@@ -43,7 +44,7 @@
 				<p:panel id="visibleViews" header="#{DcupMsg['title.visibleViews']}">
 					<h:panelGrid columns="2" cellpadding="10">
 						<p:selectManyCheckbox id="grid2" value="#{userPortalConfigView.selectedVisibleViews}" layout="grid" columns="4">
-							<f:selectItems value="#{userPortalConfigView.viewItemList}" var="view" itemLabel="#{view}" itemValue="#{view}" />
+							<f:selectItems value="#{userPortalConfigView.viewItemList}" />
 						</p:selectManyCheckbox>
 					</h:panelGrid>
 				</p:panel>
@@ -51,7 +52,7 @@
 				<p:panel id="visibleActions" header="#{DcupMsg['title.visibleActions']}">
 					<h:panelGrid columns="2" cellpadding="10">
 						<p:selectManyCheckbox id="grid4" value="#{userPortalConfigView.selectedVisibleActions}" layout="grid" columns="4">
-							<f:selectItems value="#{userPortalConfigView.actionItemList}" var="view" itemLabel="#{view}" itemValue="#{view}" />
+							<f:selectItems value="#{userPortalConfigView.actionItemList}" />
 						</p:selectManyCheckbox>
 					</h:panelGrid>
 				</p:panel>

@@ -79,8 +79,6 @@ public class CreateModuleView extends DcemView {
 
 			File resourceDirectory = new File(moduleDirectoy, "/src/main/resources");
 			resourceDirectory.mkdirs();
-			// writing pom file
-			FileWriter writer;
 			
 			map.put("moduleId", Character.toLowerCase(moduleId.charAt(0)) + moduleId.substring(1));
 			map.put("ModuleId", Character.toUpperCase(moduleId.charAt(0)) + moduleId.substring(1));
