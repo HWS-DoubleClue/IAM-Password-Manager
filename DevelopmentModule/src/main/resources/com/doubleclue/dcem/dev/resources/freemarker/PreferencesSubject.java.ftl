@@ -5,7 +5,7 @@ import javax.enterprise.context.ApplicationScoped;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
 import com.doubleclue.dcem.core.logic.RawAction;
-import com.doubleclue.dcem.${moduleId}.logic.DevModule;
+import com.doubleclue.dcem.${moduleId}.logic.${ModuleFullName};
 
 @SuppressWarnings("serial")
 @ApplicationScoped

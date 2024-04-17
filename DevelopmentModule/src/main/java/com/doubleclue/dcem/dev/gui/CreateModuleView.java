@@ -131,7 +131,8 @@ public class CreateModuleView extends DcemView {
 			writeToFile (metaInfFile, "persistence.xml", null, map);
 			writeToFile (metaInfFile, "beans.xml", null, map);
 						
-			JsfUtils.addInfoMessage("READY See Module at: " + moduleDirectoy.getAbsolutePath() + ". Now import Project as 'Existing Maven Projects'");
+			JsfUtils.addInfoMessage("--- READY ---");
+			JsfUtils.addInfoMessage("-> See Module at: " + moduleDirectoy.getAbsolutePath() + ". Now import Project as 'Existing Maven Projects'");
 
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage(e.toString());
