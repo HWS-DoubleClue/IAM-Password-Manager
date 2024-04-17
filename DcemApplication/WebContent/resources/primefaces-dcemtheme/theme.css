@@ -1386,6 +1386,9 @@ body .ui-datatable tbody tr {
 .ui-datatable tbody tr:nth-child(even) {
 	background-color: #f7f7f7;
 }
+.ui-datatable tbody tr:nth-child(even):hover {
+	background-color: #D0EBF8;
+}
 /* .ui-datatable.borderless tbody tr:nth-child(even) { */
 /* 	background-color: #f7f7f7; */
 /* } */
