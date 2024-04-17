@@ -77,24 +77,11 @@
 				<p />
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 
-					<p:outputLabel for="user" value="Domain: " rendered="#{viewNavigator.addAction}" />
-					<p:selectOneMenu id="domain" value="#{asFidoAuthenticatorDialog.domainName}" style="vertical-align: middle;"
-						rendered="#{viewNavigator.addAction}">
-						<f:selectItem itemValue="" itemLabel="" />
-						<f:selectItems value="#{domainLogic.domainNames}" />
-						<p:ajax process="@this" listener="#{asFidoAuthenticatorDialog.changeDomain}" update="user"></p:ajax>
-					</p:selectOneMenu>
-
 					<p:outputLabel for="user" value="#{CoreMsg['user']} " />
-					<h:panelGroup>
-						<p:autoComplete id="user" minQueryLength="1" disabled="#{viewNavigator.editAction}" value="#{asFidoAuthenticatorDialog.username}"
-							completeMethod="#{asFidoAuthenticatorDialog.completeUser}" effect="fade" size="30" />
-					</h:panelGroup>
-
+					<dc:autoCompleteUser id="autoUser" userValue="#{asFidoAuthenticatorDialog.dcemUser}" required="true"   />	
 
 					<h:outputText for="displayName" style="white-space: normal;" value="#{asMsg['fidoView.displayName']}" />
 					<p:inputText id="displayName" value="#{asFidoAuthenticatorDialog.displayName}" size="30" />
-
 				</h:panelGrid>
 				<p />
 				<p:commandButton id="startRegister" icon="fa fa-check" value="#{asMsg['fidoView.register']}"

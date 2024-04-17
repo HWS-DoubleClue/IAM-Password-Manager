@@ -14,6 +14,7 @@ import org.primefaces.shaded.json.JSONObject;
 import com.doubleclue.dcem.as.logic.AsFidoLogic;
 import com.doubleclue.dcem.as.logic.AsModule;
 import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.JsfUtils;
@@ -32,25 +33,17 @@ public class AsFidoAuthenticatorDialog extends DcemDialog {
 	
 	private static final Logger logger = LogManager.getLogger(AsFidoAuthenticatorDialog.class);
 
-	private String username = null;
+	private DcemUser dcemUser = null;
 	private String displayName = null;
 	private String regResponse = null;
 	private String regError = null;
 	private String rpId = null;
-	private String domainName = null;
 
-	public List<String> completeUser(String name) {
-		if (domainName == null || domainName.isEmpty()) {
-			return userLogic.getCompleteUserList(name, 50);
-		} else {
-			return userLogic.getCompleteUserList(domainName + DcemConstants.DOMAIN_SEPERATOR + name, 50);
-		}
-	}
-
+	
 	public void actionStartRegistration() {
-		if (displayName != null && !displayName.isEmpty()) {
+		if (displayName != null && displayName.isEmpty() == false) {
 			try {
-				String regRequestJson = fidoLogic.startRegistration(username, rpId);
+				String regRequestJson = fidoLogic.startRegistration(dcemUser, rpId);
 				PrimeFaces.current().ajax().addCallbackParam(DcemConstants.FIDO_PARAM_JSON, regRequestJson);
 			} catch (DcemException e) {
 				JsfUtils.addErrorMessage(JsfUtils.getMessageFromBundle(AsModule.RESOURCE_NAME, "fidoView.error." + e.getErrorCode()));
@@ -74,9 +67,7 @@ public class AsFidoAuthenticatorDialog extends DcemDialog {
 
 				regResponse = null;
 				displayName = null;
-				username = null;
-				domainName = null;
-
+				dcemUser = null;
 				if (successful) {
 					dialogReturn(JsfUtils.getMessageFromBundle(AsModule.RESOURCE_NAME, "fidoView.message.registerSuccessful"));
 				} else {
@@ -114,18 +105,6 @@ public class AsFidoAuthenticatorDialog extends DcemDialog {
 		}
 	}
 
-	public void changeDomain() {
-		username = null;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	public String getRegResponse() {
 		return regResponse;
 	}
@@ -158,17 +137,18 @@ public class AsFidoAuthenticatorDialog extends DcemDialog {
 		this.displayName = displayName;
 	}
 
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
-	}
-	
+		
 	@Override
 	public String getHeight() {
 		return "350px";
+	}
+
+	public DcemUser getDcemUser() {
+		return dcemUser;
+	}
+
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
 	}
 	
 }

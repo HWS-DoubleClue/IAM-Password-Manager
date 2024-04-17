@@ -53,40 +53,23 @@ public class AsMessageDialog extends DcemDialog {
 
 	AsApiMessage apiMessage;
 	
-	String loginId;
+	DcemUser dcemUser;
 	
-	String domainName; 
-
 	// AppMessage appMessage;
 
 	List<AsMapEntry> dataTable;
 
-		
-	public List<String> completeUser(String name) {
-		if (domainName == null || domainName.isEmpty()) {
-			return userLogic.getCompleteUserList(name, 50);
-		} else {
-			return userLogic.getCompleteUserList(domainName  + DcemConstants.DOMAIN_SEPERATOR +  name, 50);
-		}
-	}
-	
-	public void changeDomain() {
-		loginId = null;
-	}
+
 
 	public boolean actionOk() throws Exception {
-		DcemUser user = userLogic.getDistinctUser(loginId);
-		if (user == null) {
-			throw new DcemException(DcemErrorCodes.INVALID_USERID, loginId);
-		}
-		
-		apiMessage.setUserLoginId(loginId);
+				
+		apiMessage.setUserLoginId(dcemUser.getLoginId());
 		apiMessage.setDataMap(dataTable);
 		if (apiMessage.getTemplateName() == null || apiMessage.getTemplateName().isEmpty()) {
 			JsfUtils.addErrorMessage("Please select a Template");
 			return false;
 		}
-		AddMessageResponse addMessageResponse =  messageHandler.sendMessage(apiMessage, user, operatorSessionBean.getDcemUser(), AuthApplication.DCEM, 0, null, null);
+		AddMessageResponse addMessageResponse =  messageHandler.sendMessage(apiMessage, dcemUser, operatorSessionBean.getDcemUser(), AuthApplication.DCEM, 0, null, null);
 		if (addMessageResponse.isWithPushNotification() == false) {
 			JsfUtils.addWarningMessage(AsModule.RESOURCE_NAME, "pushNotificationNotSent");
 			return false;
@@ -194,20 +177,12 @@ public class AsMessageDialog extends DcemDialog {
 		this.apiMessage = apiMessage;
 	}
 
-	public String getLoginId() {
-		return loginId;
+	public DcemUser getDcemUser() {
+		return dcemUser;
 	}
 
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
-	}
-
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
 	}
 
 	

@@ -175,9 +175,8 @@ public class DevicesView extends AbstractPortalView {
 	public void actionFidoStartRegistration() throws DcemException {
 		portalSessionBean.isActionEnable(ActionItem.FIDO_ADD_ACTION);
 		if (fidoDisplayName != null && !fidoDisplayName.isEmpty()) {
-			String username = portalSessionBean.getUserName();
 			try {
-				String regRequestJson = fidoLogic.startRegistration(username, rpId);
+				String regRequestJson = fidoLogic.startRegistration(portalSessionBean.getDcemUser(), rpId);
 				PrimeFaces.current().ajax().addCallbackParam(DcupConstants.FIDO_PARAM_JSON, regRequestJson);
 			} catch (DcemException exp) {
 				logger.warn(exp);

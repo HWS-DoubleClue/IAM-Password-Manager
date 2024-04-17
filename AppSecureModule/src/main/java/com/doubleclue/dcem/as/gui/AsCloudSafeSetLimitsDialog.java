@@ -38,27 +38,26 @@ public class AsCloudSafeSetLimitsDialog extends DcemDialog {
 
 	private double limitSize;
 	private DataUnit selectedDataUnit;
-	private String domainName;
-	private String loginId;
+
+	private DcemUser dcemUser;
 	private LocalDateTime expiryDate;
 	private boolean psEnabled;
 
 	@Override
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
 		super.show(dcemView, autoViewAction);
+		dcemUser = null;
 		String action = autoViewAction.getDcemAction().getAction();
 		if (action.equals(DcemConstants.ACTION_ADD)) {
 			DataTuple dt = DataUnit.getByteCountAsTuple(cloudSafeLogic.getDefaultUserLimit());
 			limitSize = Math.floor(dt.getSize() * 100) / 100; // truncate to 2 decimal places
 			selectedDataUnit = dt.getUnit();
-			domainName = null;
-			loginId = null;
 			expiryDate = null;
 			psEnabled = cloudSafeLogic.getDefaultPasswordSafeEnabled();
 		} else if (action.equals(DcemConstants.ACTION_EDIT)) {
 			List<Object> selection = getSelection();
 			CloudSafeLimitEntity firstEntity = (CloudSafeLimitEntity) selection.get(0);
-			loginId = firstEntity.getUser().getLoginId();
+			dcemUser = firstEntity.getUser();
 			psEnabled = firstEntity.isPasswordSafeEnabled();
 			long largestLimit = firstEntity.getLimit();
 			LocalDateTime latestExpiryDate = firstEntity.getExpiryDate();
@@ -89,13 +88,7 @@ public class AsCloudSafeSetLimitsDialog extends DcemDialog {
 		long limit = DataUnit.getByteCount(limitSize, selectedDataUnit);
 		List<Integer> userIds = new ArrayList<>();
 		if (viewNavigator.isAddAction()) {
-			DcemUser user = userLogic.getUser(loginId);
-			if (user == null) {
-				JsfUtils.addErrorMessage("User '" + loginId + "' does not exist.");
-				return false;
-			} else {
-				userIds.add(user.getId());
-			}
+				userIds.add(dcemUser.getId());
 		} else {
 			List<Object> selection = getSelection();
 			for (Object actionObject : selection) {
@@ -119,20 +112,8 @@ public class AsCloudSafeSetLimitsDialog extends DcemDialog {
 		return true;
 	}
 
-	public List<String> completeUser(String name) {
-		if (domainName == null || domainName.isEmpty()) {
-			return userLogic.getCompleteUserList(name, 50);
-		} else {
-			return userLogic.getCompleteUserList(domainName + DcemConstants.DOMAIN_SEPERATOR + name, 50);
-		}
-	}
-
 	public DataUnit[] getDataUnits() {
 		return DataUnit.values();
-	}
-
-	public void changeDomain() {
-		loginId = null;
 	}
 
 	public double getLimitSize() {
@@ -149,22 +130,6 @@ public class AsCloudSafeSetLimitsDialog extends DcemDialog {
 
 	public void setSelectedDataUnit(DataUnit selectedDataUnit) {
 		this.selectedDataUnit = selectedDataUnit;
-	}
-
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
-	}
-
-	public String getLoginId() {
-		return loginId;
-	}
-
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
 	}
 
 	public LocalDateTime getExpiryDate() {

@@ -25,12 +25,14 @@ import com.doubleclue.dcem.as.restapi.model.AsApiDevice.StateEnum;
 import com.doubleclue.dcem.as.restapi.model.AsApiFidoAuthenticator;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemAction;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jersey.DcemApiException;
 import com.doubleclue.dcem.core.jpa.ApiFilterItem;
 import com.doubleclue.dcem.core.jpa.JpaSelectProducer;
 import com.doubleclue.dcem.core.logic.JpaLogic;
+import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.subjects.AsDeviceSubject;
 
 public class DeviceApiServiceImpl {
@@ -39,6 +41,9 @@ public class DeviceApiServiceImpl {
 
 	@Inject
 	EntityManager entityManager;
+	
+	@Inject
+	UserLogic userLogic;
 
 	@Inject
 	JpaLogic jpaLogic;
@@ -133,9 +138,10 @@ public class DeviceApiServiceImpl {
 		return Response.ok().build();
 	}
 
-	public Response fidoStartRegistration(String username, String rpId, SecurityContext securityContext) {
+	public Response fidoStartRegistration(int userId, String rpId, SecurityContext securityContext) {
 		try {
-			String request = fidoLogic.startRegistration(username, rpId);
+			DcemUser dcemUser = userLogic.getUser(userId);
+			String request = fidoLogic.startRegistration(dcemUser, rpId);
 			return Response.ok().entity(request).build();
 		} catch (DcemException exp) {
 			logger.info(exp);

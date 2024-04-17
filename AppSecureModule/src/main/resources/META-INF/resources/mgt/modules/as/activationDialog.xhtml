@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:dc="http://java.sun.com/jsf/composite/dcemComponents" >
 
 <h:head>
 	<f:facet name="first">
@@ -32,27 +32,14 @@
 			<p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
 				onerror="PF('statusDialog').hide()" oncomplete="PF('statusDialog').hide()" />
 
-
 			<h:form id="activationForm">
-
 				<p:messages showSummary="true" showDetail="false" closable="true">
 				 	<p:autoUpdate />
 				</p:messages>
 
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
-
-					<p:outputLabel for="user" value="Domain: " rendered="#{viewNavigator.addAction}" />
-					<p:selectOneMenu id="domain" value="#{asActivationDialog.domainName}" style="vertical-align: middle;" rendered="#{viewNavigator.addAction}">
-						<f:selectItem itemValue="" itemLabel="" />
-						<f:selectItems value="#{domainLogic.domainNames}" />
-						<p:ajax process="@this" listener="#{asActivationDialog.changeDomain}" update="user"></p:ajax>
-					</p:selectOneMenu>
-
-					<p:outputLabel for="user" value="#{CoreMsg['user']}: " />
-					<h:panelGroup>
-						<p:autoComplete id="user" minQueryLength="1" disabled="#{viewNavigator.editAction}" value="#{asActivationDialog.loginId}"
-							completeMethod="#{asActivationDialog.completeUser}" effect="fade" size="30" />
-					</h:panelGroup>
+					<p:outputLabel for="autoUser" value="#{CoreMsg['user']}: " />
+					<dc:autoCompleteUser id="autoUser" userValue="#{asActivationDialog.dcemUser}" required="true"  />
 
 					<p:outputLabel value="#{asMsg['activationDialog.validTill']}: " />
 					<p:datePicker id="validTill" value="#{asActivationDialog.validTill}" locale="#{operatorSession.locale}"
@@ -76,12 +63,8 @@
 			
 				<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" style="width: 8em" icon="fa fa-close" immediate="true"
 					action="#{viewNavigator.actionCloseDialog}"></p:commandButton>
-
 				<p></p>
 				<br></br>
-
-
-
 			</h:form>
 
 		</h:panelGroup>

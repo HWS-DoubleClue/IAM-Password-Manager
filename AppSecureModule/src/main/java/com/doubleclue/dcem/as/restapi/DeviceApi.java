@@ -58,10 +58,10 @@ public class DeviceApi {
 	@Path("/fidoStartRegistration")
 	@Consumes({ "application/json" })
 	@Produces({ "application/json" })
-	public Response fidoStartRegistration(@QueryParam("username") String username, @QueryParam("rpId") String rpId,
+	public Response fidoStartRegistration(@QueryParam("userId") int userId, @QueryParam("rpId") String rpId,
 			@Context SecurityContext securityContext) throws DcemApiException {
 		DeviceApiServiceImpl apiServiceImpl = CdiUtils.getReference(DeviceApiServiceImpl.class);
-		return apiServiceImpl.fidoStartRegistration(username, rpId, securityContext);
+		return apiServiceImpl.fidoStartRegistration(userId, rpId, securityContext);
 	}
 
 	@POST

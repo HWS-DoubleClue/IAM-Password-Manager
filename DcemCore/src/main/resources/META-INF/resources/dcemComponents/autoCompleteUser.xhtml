@@ -7,6 +7,8 @@
 
 <composite:interface>
 	<composite:attribute name="userValue" />
+	<composite:attribute name="size" default="25" />
+	<composite:attribute name="required" default="false" />
 	<composite:attribute name="userListener" method-signature="void action()" />
 	<composite:attribute name="actionSetOperator"  method-signature="java.lang.String action()" />
 	<composite:attribute name="updateComponents" />
@@ -14,10 +16,10 @@
 
 <composite:implementation>
 	<p:autoComplete id="autouser" minQueryLength="1" queryDelay="800" value="#{cc.attrs.userValue}" scrollHeight="400"
-		completeMethod="#{autoCompleteUser.completeUser}" effect="fade" size="20" required="true" forceSelection="true" dropdown="true" var="user"
-		itemLabel="#{user.accountName}" itemValue="#{user}" converter="DcemUserConvertor" style="margin-left: 0.5em"  >
+		completeMethod="#{autoCompleteUser.completeUser}" effect="fade" required="#{cc.attrs.required}" forceSelection="true" dropdown="true" var="user"
+		itemLabel="#{user.accountName}" itemValue="#{user}" converter="DcemUserConvertor" size="#{cc.attrs.size}"   >
 		<p:ajax event="itemSelect" oncomplete="setCaretPosition(':autouser_input', 0);" listener="#{cc.attrs.userListener}"
-			update="#{cc.attrs.updateComponents}" />
+			update="#{cc.attrs.updateComponents}" disabled="#{cc.attrs.userListener eq NULL}"  />
 		<f:facet name="footer"    >
 			<div class="ui-fluid" style="padding: 1em" >
 				<p:commandButton rendered="#{cc.attrs.actionSetOperator ne NULL}" immediate="true" update="#{cc.attrs.updateComponents}" value="#{autoCompleteUser.operator}" action="#{cc.attrs.actionSetOperator}" />

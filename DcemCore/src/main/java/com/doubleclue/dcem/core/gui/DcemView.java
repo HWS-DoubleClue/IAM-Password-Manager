@@ -138,7 +138,6 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	}
 
 	public void triggerAction(AutoViewAction autoViewAction) {
-
 		if (autoViewAction == null) {
 			return;
 		}
@@ -226,6 +225,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 			}
 		}
 		autoViewAction.getDcemDialog().setAutoViewAction(autoViewAction);
+		autoViewAction.getDcemDialog().setParentView(this);
 		try {
 			autoViewAction.getDcemDialog().show(this, autoViewAction);
 		} catch (DcemException exp) {

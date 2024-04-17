@@ -43,9 +43,8 @@ public class GroupMembersDialogBean extends DcemDialog {
 	@Inject
 	JpaLogic jpaLogic;
 
-	private String domainName;
 	private String name;
-	private String userLoginId;
+	private DcemUser dcemUser;
 	private List<DcemUser> selectedUsers;
 	private List<DcemUser> members;
 	private static final long serialVersionUID = 1L;
@@ -54,15 +53,12 @@ public class GroupMembersDialogBean extends DcemDialog {
 	private void init() {
 	}
 
-	public void changeDomain() {
-		userLoginId = null;
-	}
 
 	public void actionAddMember() {
 		try {
-			groupLogic.addMember((DcemGroup) getActionObject(), userLoginId);
+			groupLogic.addMember((DcemGroup) getActionObject(), dcemUser);
 			members = null;
-			userLoginId = null;
+			dcemUser = null;
 		} catch (DcemException dcemExp) {
 			if (dcemExp.getErrorCode() == DcemErrorCodes.CONSTRAIN_VIOLATION_DB) {
 				JsfUtils.addErrorMessage("User is already member of this group");
@@ -86,33 +82,16 @@ public class GroupMembersDialogBean extends DcemDialog {
 		super.actionConfirm();
 	}
 
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
-	}
-
-	public List<SelectItem> getLdapDomainNames() {
-		return domainLogic.getDomainNames();
-	}
-
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
-		DcemGroup group = (DcemGroup) this.getActionObject();
+		DcemGroup group = (DcemGroup) dcemView.getActionObject();
 		if (group.getName() != null) {
-			String[] domainUser = group.getName().split(DcemConstants.DOMAIN_SEPERATOR_REGEX);
-			if (domainUser.length > 1) {
-				domainName = domainUser[0];
-			}
 			name = group.getName();
 		} else {
 			name = null;
-			domainName = null;
 		}
 		members = null;
 		selectedUsers = null;
-		userLoginId = null;
+		dcemUser = null;
 	}
 
 	public String getName() {
@@ -142,22 +121,6 @@ public class GroupMembersDialogBean extends DcemDialog {
 		return members;
 	}
 
-	public List<String> completeUser(String name) {
-		if (domainName == null || domainName.isEmpty()) {
-			return userLogic.getCompleteUserList(name, 50);
-		} else {
-			return userLogic.getCompleteUserList(domainName + DcemConstants.DOMAIN_SEPERATOR + name, 50);
-		}
-	}
-
-	public String getUserLoginId() {
-		return userLoginId;
-	}
-
-	public void setUserLoginId(String userLoginId) {
-		this.userLoginId = userLoginId;
-	}
-
 	public List<DcemUser> getSelectedUsers() {
 		return selectedUsers;
 	}
@@ -166,16 +129,26 @@ public class GroupMembersDialogBean extends DcemDialog {
 		this.selectedUsers = selectedUsers;
 	}
 
-	public String getHeight() {
-		return "650px";
-	}
-
-	public String getWidth() {
-		return "500px";
-	}
+//	public String getHeight() {
+//		return "650px";
+//	}
+//
+//	public String getWidth() {
+//		return "500px";
+//	}
 
 	public void leavingDialog() {
 		members = null;
 		selectedUsers = null;
+	}
+
+
+	public DcemUser getDcemUser() {
+		return dcemUser;
+	}
+
+
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
 	}
 }

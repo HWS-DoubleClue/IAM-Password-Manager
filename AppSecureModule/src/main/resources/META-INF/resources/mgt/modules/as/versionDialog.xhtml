@@ -37,14 +37,8 @@
 					<p:outputLabel for="name" value="#{asMsg['AsVersion.appName']}: " />
 					<p:inputText id="name" value="#{versionDialog.actionObject.name}" required="true" />
 
-
 					<p:outputLabel for="version" value="#{asMsg['AsVersion.versionNo']}: " />
 					<p:inputText id="version" value="#{versionDialog.actionObject.versionStr}" required="true" />
-
-
-					<!-- 	<p:outputLabel for="regUser" value="#{asMsg['AsVersion.regUser']}: " />
-					<p:autoComplete id="regUser" minQueryLength="1" value="#{versionDialog.loginId}" completeMethod="#{versionDialog.completeUser}"
-						effect="fade" size="30" /> -->
 
 					<p:outputLabel for="clientType" value="#{asMsg['AsVersion.clientType']}: " />
 					<p:selectOneMenu id="clientType" style="vertical-align: middle;" value="#{versionDialog.actionObject.clientType}">
@@ -56,7 +50,6 @@
 					<p:datePicker id="expiresOn" locale="#{operatorSession.locale}" value="#{versionDialog.actionObject.expiresOn}" 
 						pattern="#{operatorSession.dateTimePattern}" yearNavigator="true" />
 
-
 					<p:outputLabel for="info" value="#{asMsg['AsVersion.informationUrl']}: " />
 					<p:inputText id="info" value="#{versionDialog.actionObject.informationUrl}" />
 
@@ -65,11 +58,8 @@
 
 					<p:outputLabel for="testApp" value="#{asMsg['AsVersion.testApp']}: " />
 					<p:selectBooleanCheckbox id="testApp" value="#{versionDialog.actionObject.testApp}" />
-
 				</h:panelGrid>
-
 				<p></p>
-
 				<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}"></p:commandButton>
 				<p:spacer width="12" />
 
@@ -77,12 +67,7 @@
 					action="#{viewNavigator.actionCloseDialog}"></p:commandButton>
 
 				<p></p>
-
-
-
-
 				<p:dialog widgetVar="confirmTestApp" modal="true">
-
 					<f:facet name="header">
 						<h:graphicImage library="pictures" style="border: 0; vertical-align: middle" name="icons/32x32/sign_warning.png" />
 						Test-App Confirmation
@@ -101,17 +86,10 @@
 					<p:commandButton id="closeConfirm" value="Close" type="submit" ajax="true" style="width: 8em" icon="fa fa-close" immediate="true"
 						onclick="PF('confirm').close();" />
 					<p></p>
-
-
 					<p></p>
-
-
 				</p:dialog>
 			</h:form>
-
 		</h:panelGroup>
-
-
 	</h:body>
 </f:view>
 </html>

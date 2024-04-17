@@ -27,16 +27,9 @@
 				<p:messages id="msgs" showDetail="false" closable="true">
 					<p:autoUpdate />
 				</p:messages>
-				<p:outputLabel for="user" value="#{CoreMsg['domain']} " render="#{viewNavigator.addAction}" />
-				<p:selectOneMenu id="domain" value="#{asMessageDialog.domainName}" style="vertical-align: middle;" render="#{viewNavigator.addAction}">
-					<f:selectItem itemValue="" itemLabel="" />
-					<f:selectItems value="#{domainLogic.domainNames}" />
-					<p:ajax process="@this" listener="#{asMessageDialog.changeDomain}" update="user"></p:ajax>
-				</p:selectOneMenu>
-				<p:spacer width="20x" />
-				<p:outputLabel for="user" value="#{CoreMsg['user']} " />
-				<p:autoComplete id="user" minQueryLength="1" value="#{asMessageDialog.loginId}" completeMethod="#{asMessageDialog.completeUser}"
-					effect="fade" size="32" />
+
+				<p:outputLabel for="autoUser" value="#{CoreMsg['user']} " />
+					<dc:autoCompleteUser id="autoUser" userValue="#{asMessageDialog.dcemUser}" required="true"  />
 				<p></p>
 
 				<h:panelGrid columns="2" width="70%">

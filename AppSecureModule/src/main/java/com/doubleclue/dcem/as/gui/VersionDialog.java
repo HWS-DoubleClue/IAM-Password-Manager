@@ -15,7 +15,6 @@ import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
-import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.utils.ProductVersion;
 
 @SuppressWarnings("serial")
@@ -23,17 +22,12 @@ import com.doubleclue.utils.ProductVersion;
 @SessionScoped
 public class VersionDialog extends DcemDialog {
 
-	@Inject
-	private UserLogic userLogic;
 
 	@Inject
 	private AsVersionLogic versionLogic;
-
-	String loginId;
 	
 	AsVersionEntity orgVersionEntity;
 	
-
 	// private static final Logger logger =
 	// LogManager.getLogger(VersionDialog.class);
 
