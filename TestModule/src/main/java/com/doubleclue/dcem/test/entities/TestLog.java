@@ -32,7 +32,6 @@ public class TestLog extends EntityInterface {
 	@Column(name = "dc_id")
 	@TableGenerator( name = "coreSeqStoreTestLog", table = "core_seq", pkColumnName = "seq_name", pkColumnValue="TEST_LOG.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1 )
     @GeneratedValue( strategy = GenerationType.TABLE, generator = "coreSeqStoreTestLog" )
-//	@DcemGui (columnWidth="45px", displayMode=DisplayModes.INPUT_DISABLED)
     private Integer id;
 	
     @Column(name = "dc_time", nullable=false)

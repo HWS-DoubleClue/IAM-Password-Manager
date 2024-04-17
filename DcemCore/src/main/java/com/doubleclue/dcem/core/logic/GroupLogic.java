@@ -85,7 +85,11 @@ public class GroupLogic {
 		if (exists == false) {
 			group.getMembers().add(dcemUser);
 		} else {
+<<<<<<< HEAD
 			throw new DcemException(DcemErrorCodes.MEMBER_EXISTS_ALREADY, "User '" + dcemUser.getAccountName() + "' already exists in group '" + group.getName() + "'.");
+=======
+			throw new DcemException(DcemErrorCodes.MEMBER_EXISTS_ALREADY, "User '" + dcemUser.getLoginId() + "' already exists in group '" + group.getName() + "'.");
+>>>>>>> branch 'master' of https://github.com/HWS-DoubleClue/IAM-Password-Manager.git
 		}
 	}
 

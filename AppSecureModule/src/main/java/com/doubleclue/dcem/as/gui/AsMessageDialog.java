@@ -16,12 +16,9 @@ import com.doubleclue.dcem.as.policy.PolicyLogic;
 import com.doubleclue.dcem.as.restapi.model.AddMessageResponse;
 import com.doubleclue.dcem.as.restapi.model.AsApiMessage;
 import com.doubleclue.dcem.as.restapi.model.AsMapEntry;
-import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AuthApplication;
 import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.entities.DcemUser;
-import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
-import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.DcemView;
@@ -60,9 +57,7 @@ public class AsMessageDialog extends DcemDialog {
 	List<AsMapEntry> dataTable;
 
 
-
 	public boolean actionOk() throws Exception {
-				
 		apiMessage.setUserLoginId(dcemUser.getLoginId());
 		apiMessage.setDataMap(dataTable);
 		if (apiMessage.getTemplateName() == null || apiMessage.getTemplateName().isEmpty()) {
@@ -184,7 +179,4 @@ public class AsMessageDialog extends DcemDialog {
 	public void setDcemUser(DcemUser dcemUser) {
 		this.dcemUser = dcemUser;
 	}
-
-	
-
 }

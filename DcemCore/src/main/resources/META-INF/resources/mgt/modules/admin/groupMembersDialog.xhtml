@@ -65,15 +65,24 @@
 					<p:autoUpdate />
 				</p:messages>
 				<p></p>
+<<<<<<< HEAD
 				
 					<p:outputLabel for="autoUser" value="#{CoreMsg['user']}: " />
 					<dc:autoCompleteUser id="autoUser" userValue="#{groupMembersDialog.dcemUser}" size="35" required="true" />
 				
+=======
+					<p:outputLabel for="autoUser" value="#{CoreMsg['user']}: " />
+					<dc:autoCompleteUser id="autoUser" userValue="#{groupMembersDialog.dcemUser}" size="35" required="true" />
+>>>>>>> branch 'master' of https://github.com/HWS-DoubleClue/IAM-Password-Manager.git
 				<p />
 				<br></br>
 				<p:commandButton id="actionAddMember" value="#{AdminMsg['addMember']}" style="width: 12em" ajax="true" action="#{groupMembersDialog.actionAddMember}"
 					update="groupMemberForm:memberTable groupMemberForm:memberCount" />
+<<<<<<< HEAD
 				<p:spacer width="14" />
+=======
+				<p:spacer width="16" />
+>>>>>>> branch 'master' of https://github.com/HWS-DoubleClue/IAM-Password-Manager.git
 				<p:commandButton id="closeDialog2" value="#{CoreMsg['close']}" icon="fa fa-close" style="width: 8em" immediate="true"
 					onclick="PF('addMemberDialog').hide();" />
 				<p />

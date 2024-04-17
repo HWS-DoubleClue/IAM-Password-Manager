@@ -477,7 +477,11 @@ public class UserLogic {
 			return null;
 		}
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> branch 'master' of https://github.com/HWS-DoubleClue/IAM-Password-Manager.git
 	/**
 	 * @param user
 	 * @return

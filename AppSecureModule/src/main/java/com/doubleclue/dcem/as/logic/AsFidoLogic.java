@@ -68,12 +68,13 @@ public class AsFidoLogic {
 
 	private static Logger logger = LogManager.getLogger(AsFidoLogic.class);
 
-	public String startRegistration(DcemUser user, String rpId) throws DcemException {
+
+	public String startRegistration(DcemUser dcemUser, String rpId) throws DcemException {
 		try {
 			RelyingParty rp = createFidoRelyingParty(rpId);
-			PublicKeyCredentialCreationOptions request = FidoUtils.createRegisterRequest(rp, user.getLoginId(), user.getDisplayName(),
-					getUserHandleFromUser(user), false);
-			addRegRequestInfo(rp, request);
+			PublicKeyCredentialCreationOptions request = FidoUtils.createRegisterRequest(rp, dcemUser.getLoginId(), dcemUser.getDisplayName(),
+					getUserHandleFromUser(dcemUser), false);
+		addRegRequestInfo(rp, request);
 			return FidoUtils.getJson(request);
 		} catch (DcemException e) {
 			logger.log(Level.DEBUG, e);

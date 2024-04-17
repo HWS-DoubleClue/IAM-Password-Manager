@@ -11,10 +11,10 @@ import com.doubleclue.dcem.dev.logic.DevelopmentConstants;
 
 @SuppressWarnings("serial")
 @ApplicationScoped
-public class CreateCrudSubject extends SubjectAbs {
+public class CreateModuleSubject extends SubjectAbs {
 	
 
-	public CreateCrudSubject() {
+	public CreateModuleSubject() {
 
 		rawActions.add(new RawAction(DcemConstants.ACTION_ADD, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
 				ActionSelection.IGNORE));	
@@ -42,7 +42,7 @@ public class CreateCrudSubject extends SubjectAbs {
 
 	@Override
 	public String getPath() {
-		return DevelopmentConstants.TEST_CREATE_CRUD_VIEW_PATH;
+		return DevelopmentConstants.TEST_CREATE_MODULE_VIEW_PATH;
 	}
 
 

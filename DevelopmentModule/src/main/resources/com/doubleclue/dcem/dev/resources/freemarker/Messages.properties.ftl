@@ -1,0 +1,2 @@
+
+preferencesView = Preferences

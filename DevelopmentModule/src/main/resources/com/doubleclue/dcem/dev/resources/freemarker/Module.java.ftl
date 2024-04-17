@@ -1,4 +1,4 @@
-package com.doubleclue.dcem.test.logic;
+package com.doubleclue.dcem.${moduleId}.logic;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -7,25 +7,21 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.logic.module.ModulePreferences;
-import com.doubleclue.dcem.test.preferences.TestPreferences;
+import com.doubleclue.dcem.${moduleId}.preferences.${ModuleId}Preferences;
 
 @ApplicationScoped
-@Named("testModule")
-public class TestModule extends DcemModule {
+public class ${ModuleFullName} extends DcemModule {
 
-	public final static String MODULE_ID = "test";
-	public final static String RESOURCE_NAME = "com.doubleclue.dcem.test.resources.Messages";
+	public final static String MODULE_ID = "${moduleId}";
+	public final static String RESOURCE_NAME = "com.doubleclue.dcem.${moduleId}.resources.Messages";
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-//	HashMap<String, SubjectAbs> subjects = new HashMap<String, SubjectAbs>();
 
 	@Override
 	public void init() throws DcemException {
-//		ModuleDef moduleDef = new ModuleDef(MODULE_ID, "2.3", null);
-//		moduleManifest = new ModuleManifest(moduleDef, "Administration", "", 20, null, 1, true);
 	}
 
 	public String getResourceName() {
@@ -33,7 +29,7 @@ public class TestModule extends DcemModule {
 	}
 	
 	public String getName() {
-		return "Test-Module";
+		return "${ModuleName}";
 	}
 
 	@Override
@@ -42,7 +38,7 @@ public class TestModule extends DcemModule {
 	}
 	
 	public int getRank() {
-		return 120;
+		return 999;
 	}
 
 	@Override
@@ -52,10 +48,10 @@ public class TestModule extends DcemModule {
 
 	
 	public ModulePreferences getDefaultPreferences() {
-		return new TestPreferences();
+		return new ${ModuleId}Preferences();
 	}
 	
-	public TestPreferences getPreferences() {
-		return (TestPreferences) super.getModulePreferences();
+	public ${ModuleId}Preferences getPreferences() {
+		return (${ModuleId}Preferences) super.getModulePreferences();
 	}
 }

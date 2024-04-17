@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:include src="/mgt/modules/dialogHead.xhtml" />
+
+<f:view locale="#{operatorSession.locale}">
+	<h:body class="dialogBody">
+		<span id="customheader"> <h:outputLabel class="#{autoView.icon} dialogTitle" /> <h:outputLabel value="#{viewNavigator.dialogTitle}"
+				styleClass="dialogTitle" />
+		</span>
+		<h:panelGroup>
+			<h:form style="padding-top: 30px; padding-bottom: 50px">
+
+				<p:messages showSummary="true" showDetail="false" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+
+					<p:outputLabel for="@next" value="Module Name" />
+					<h:panelGroup>
+						<p:inputText id="moduleName" value="#{createModuleView.moduleName}" style="width: 10em" maxlength="32" required="true" />
+						<p:outputLabel value=" Module" />
+					</h:panelGroup>
+
+					<p:outputLabel for="@next" value="Module ID" />
+					<p:inputText id="moduleId" value="#{createModuleView.moduleId}" style="width: 10em" maxlength="16" required="true" />
+
+
+					<p:outputLabel value="! Overwrite All Existing Files !" />
+					<p:selectBooleanCheckbox value="#{createModuleView.overwriteAllFiles}" />
+
+				</h:panelGrid>
+				<p></p>
+				<br></br>
+				<p:commandButton id="ok" style="width: 20em" icon="fa fa-check" value="Create Module" ajax="true" action="#{createModuleView.actionOk}" />
+			</h:form>
+		</h:panelGroup>
+	</h:body>
+</f:view>
+</html>

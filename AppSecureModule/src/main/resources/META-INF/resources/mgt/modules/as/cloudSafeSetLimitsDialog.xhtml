@@ -28,8 +28,7 @@
 			</p:messages>
 			<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 
-
-				<p:outputLabel for="user" value="#{asMsg['asCloudSafeSetLimitsDialog.user']}" rendered="#{asCloudSafeSetLimitsDialog.selection.size() le 1}" />
+				<p:outputLabel for="autoUser" value="#{asMsg['asCloudSafeSetLimitsDialog.user']}" rendered="#{asCloudSafeSetLimitsDialog.selection.size() le 1}" />
 				<dc:autoCompleteUser id="autoUser" userValue="#{asCloudSafeSetLimitsDialog.dcemUser}" required="true"   />
 
 				<p:outputLabel for="limit" value="#{asMsg['asCloudSafeSetLimitsDialog.limit']}" />

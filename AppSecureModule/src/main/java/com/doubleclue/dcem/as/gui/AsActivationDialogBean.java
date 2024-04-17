@@ -41,9 +41,8 @@ public class AsActivationDialogBean extends DcemDialog {
 	@Inject
 	OperatorSessionBean operatorSessionBean;
 
-	SendByEnum sendBy;
-	
 	DcemUser dcemUser;
+	SendByEnum sendBy;
 
 	LocalDateTime validTill;
 
@@ -91,7 +90,6 @@ public class AsActivationDialogBean extends DcemDialog {
 		validTill = operatorSessionBean.getUserZonedTime(actionObject.getValidTill());
 	}
 
-
 	public String getActivationCode() {
 		ActivationCodeEntity activationCode = (ActivationCodeEntity) this.getActionObject();
 		return activationCode.getActivationCode();
@@ -129,5 +127,4 @@ public class AsActivationDialogBean extends DcemDialog {
 	public void setDcemUser(DcemUser dcemUser) {
 		this.dcemUser = dcemUser;
 	}
-
 }

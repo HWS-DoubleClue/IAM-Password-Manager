@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:dc="http://java.sun.com/jsf/composite/dcemComponents">
 
 <h:head>
 	<f:facet name="first">
@@ -34,11 +34,9 @@
 
 
 			<h:form id="otpForm" style="height:300px">
-
 				<p:messages showSummary="true" showDetail="false" closable="true" >
 					<p:autoUpdate />
 				</p:messages>
-
 
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 
@@ -47,18 +45,9 @@
 						<p:ajax event="change" process="@this" update="@form" />
 					</p:selectBooleanCheckbox>
 
-					<p:outputLabel for="user" value="#{otpMsg['domain']}: " />
-					<p:selectOneMenu id="domain" value="#{otpTokenDialog.domainName}" style="vertical-align: middle;"
-						disabled="#{otpTokenDialog.assignToken == false}">
-						<f:selectItem itemValue="" itemLabel="" />
-						<f:selectItems value="#{domainLogic.domainNames}" />
-						<p:ajax update="@form"></p:ajax>
-					</p:selectOneMenu>
-
 					<p:outputLabel for="user" value="#{otpMsg['user']}: " />
-					<p:autoComplete id="user" minQueryLength="1" value="#{otpTokenDialog.loginId}" completeMethod="#{otpTokenDialog.completeUser}"
-						effect="fade" size="30" disabled="#{otpTokenDialog.assignToken == false}" />
-
+					<dc:autoCompleteUser id="autoUser" userValue="#{otpTokenDialog.dcemUser}"  required="true"  />	
+						
 					<p:outputLabel for="tokenDisable" value="#{otpMsg['disabled']}: " />
 					<p:selectBooleanCheckbox id="tokenDisable" value="#{otpTokenDialog.actionObject.disabled}" />
 

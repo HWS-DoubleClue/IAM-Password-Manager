@@ -43,11 +43,8 @@ public class OtpTokenDialog extends DcemDialog {
 	UserLogic userLogic;
 
 	OtpTypes tokenType;
-
 	DcemUser dcemUser;
-	
 	boolean assignToken;
-	
 	String encryptionKey;
 
 	private UploadedFile uploadedFile;
@@ -62,10 +59,6 @@ public class OtpTokenDialog extends DcemDialog {
 		if (assignToken == false) {
 			otpTokenEntity.setUser(null);
 		} else {
-			if (dcemUser == null) {
-				JsfUtils.addErrorMessage("Invalid User");
-				return false;
-			}
 			otpTokenEntity.setUser(dcemUser);
 		}
 		otpLogic.editToken(otpTokenEntity, this.getAutoViewAction().getDcemAction());
@@ -75,7 +68,6 @@ public class OtpTokenDialog extends DcemDialog {
 	public OtpTypes[] getTokenTypes() {
 		return OtpTypes.values();
 	}
-
 	/**
 	 * 
 	 */
@@ -146,6 +138,15 @@ public class OtpTokenDialog extends DcemDialog {
 	public void leavingDialog() {
 		uploadedFile = null;
 		encryptionKey = null;
+		dcemUser = null;
+	}
+
+	public DcemUser getDcemUser() {
+		return dcemUser;
+	}
+
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
 	}
 
 }

@@ -138,6 +138,7 @@ public class DeviceApiServiceImpl {
 		return Response.ok().build();
 	}
 
+
 	public Response fidoStartRegistration(int userId, String rpId, SecurityContext securityContext) {
 		try {
 			DcemUser dcemUser = userLogic.getUser(userId);

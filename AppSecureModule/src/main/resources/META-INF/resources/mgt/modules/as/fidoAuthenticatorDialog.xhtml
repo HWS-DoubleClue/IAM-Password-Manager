@@ -76,9 +76,8 @@
 				<br />
 				<p />
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
-
 					<p:outputLabel for="user" value="#{CoreMsg['user']} " />
-					<dc:autoCompleteUser id="autoUser" userValue="#{asFidoAuthenticatorDialog.dcemUser}" required="true"   />	
+					<dc:autoCompleteUser id="autoUser" userValue="#{asFidoAuthenticatorDialog.dcemUser}"  required="true"  />	
 
 					<h:outputText for="displayName" style="white-space: normal;" value="#{asMsg['fidoView.displayName']}" />
 					<p:inputText id="displayName" value="#{asFidoAuthenticatorDialog.displayName}" size="30" />

@@ -147,4 +147,12 @@ public class AsCloudSafeSetLimitsDialog extends DcemDialog {
 	public void setPsEnabled(boolean psEnabled) {
 		this.psEnabled = psEnabled;
 	}
+
+	public DcemUser getDcemUser() {
+		return dcemUser;
+	}
+
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
+	}
 }

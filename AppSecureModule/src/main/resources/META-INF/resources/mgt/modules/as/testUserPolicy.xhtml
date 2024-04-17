@@ -35,7 +35,7 @@
 					<p:outputLabel value="#{asMsg['testUserPolicy.application']} " />
 					<p:outputLabel value="#{policyDialog.selectedApplication}" />
 
-					<p:outputLabel for="user" value="#{CoreMsg['user']} " />
+					<p:outputLabel for="autoUser" value="#{CoreMsg['user']} " />
 					<dc:autoCompleteUser id="autoUser" userValue="#{policyDialog.dcemUser}" size="30" required="true"   />
 					
 					<p:outputLabel value="#{asMsg['testUserPolicy.policy']} " />
@@ -44,17 +44,13 @@
 					<p:outputLabel value="#{asMsg['testUserPolicy.policyContent']} " />
 					<h:outputText style="font-size: xx-small" value="#{policyDialog.testPolicyContent}" />
 				</h:panelGrid>
-
 				<p></p>
 
 				<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" update="@form"
 					actionListener="#{policyDialog.actionTestUserPolicy}"></p:commandButton>
 				<p:spacer width="12" />
-
-
 				<p:commandButton id="closeDialog" value="#{CoreMsg['close']}" icon="fa fa-close" style="width: 8em" immediate="true"
 					action="#{viewNavigator.actionCloseDialog}"></p:commandButton>
-
 
 			</h:form>
 		</h:panelGroup>
