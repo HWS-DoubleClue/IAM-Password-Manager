@@ -14,7 +14,7 @@ import com.doubleclue.dcem.test.preferences.TestPreferences;
 public class TestModule extends DcemModule {
 
 	public final static String MODULE_ID = "test";
-	public final static String RESOUCE_NAME = "com.doubleclue.dcem.test.resources.Messages";
+	public final static String RESOURCE_NAME = "com.doubleclue.dcem.test.resources.Messages";
 	/**
 	 * 
 	 */
@@ -29,7 +29,7 @@ public class TestModule extends DcemModule {
 	}
 
 	public String getResourceName() {
-		return RESOUCE_NAME;
+		return RESOURCE_NAME;
 	}
 	
 	public String getName() {

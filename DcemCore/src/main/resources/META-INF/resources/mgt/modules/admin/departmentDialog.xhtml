@@ -3,7 +3,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:dc="http://java.sun.com/jsf/composite/dcemComponents">
 
 
 <ui:include src="../dialogHead.xhtml" />
@@ -26,7 +27,6 @@
 
 
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
-
 					<p:outputLabel for="@next" value="#{AdminMsg['departmentDialog.name']} " />
 					<p:inputText id="name" required="true" value="#{departmentDialog.actionObject.name}" maxlength="128" />
 
@@ -37,12 +37,10 @@
 					<p:inputTextarea id="desc" value="#{departmentDialog.actionObject.description}" style="width: 90%" maxlength="255"  />
 						
 					<p:outputLabel for="@next" value="#{AdminMsg['departmentDialog.headOf']} " />
-					<p:autoComplete id="user" minQueryLength="1" value="#{departmentDialog.loginId}" completeMethod="#{departmentDialog.completeUser}" effect="fade"
-						size="40" required="true" />
+					<dc:autoCompleteUser id="autoUser" userValue="#{departmentDialog.dcemUser}"   /> 		
 						
 					<p:outputLabel for="@next" value="#{AdminMsg['departmentDialog.deputy']} " />
-					<p:autoComplete id="deputy" minQueryLength="1" value="#{departmentDialog.deputyLoginId}" completeMethod="#{departmentDialog.completeUser}" effect="fade"
-						size="40" />
+					<dc:autoCompleteUser id="autoUserDeputy" userValue="#{departmentDialog.dcemUserDeputy}"   />
 						
 
 					<p:outputLabel for="@next" value="#{AdminMsg['departmentDialog.parentDepartment']} " />

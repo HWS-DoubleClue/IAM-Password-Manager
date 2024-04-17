@@ -1370,7 +1370,7 @@ body .ui-datatable tbody {
 
 body .ui-datatable th {
 	text-align: left !important;
-	padding: 10px 5px !important;
+	padding: 4px 2px 4px 2px !important;
 	background-color: #F7F7F7 !important;
 	border: none !important;
 }
@@ -1976,7 +1976,8 @@ body .ui-input-icon-right>.ui-inputfield {
 }
 
 .ui-datatable .ui-column-filter, .ui-datatable .ui-column-customfilter {
-	margin: .5rem auto .5rem auto;
+  	margin: 0.2rem; 
+	width: inherit;
 }
 
 .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {

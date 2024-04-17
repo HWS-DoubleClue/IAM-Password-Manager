@@ -41,14 +41,9 @@ public class AsActivationDialogBean extends DcemDialog {
 	@Inject
 	OperatorSessionBean operatorSessionBean;
 
-	@Inject
-	private UserLogic userLogic;
-
-	String loginId;
+	DcemUser dcemUser;
 
 	SendByEnum sendBy;
-
-	String domainName;
 
 	LocalDateTime validTill;
 
@@ -57,7 +52,6 @@ public class AsActivationDialogBean extends DcemDialog {
 
 		ActivationCodeEntity activationCodeEntity = (ActivationCodeEntity) this.getActionObject();
 		try {
-			DcemUser dcemUser = userLogic.getDistinctUser(loginId);
 			if (dcemUser == null) {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "activationDialog.invalidUser");
 				return false;
@@ -97,31 +91,6 @@ public class AsActivationDialogBean extends DcemDialog {
 		validTill = operatorSessionBean.getUserZonedTime(actionObject.getValidTill());
 	}
 
-	public void changeDomain() {
-		loginId = null;
-	}
-
-	public List<String> completeUser(String name) {
-		if (domainName == null || domainName.isEmpty()) {
-			return userLogic.getCompleteUserList(name, 50);
-		} else {
-			return userLogic.getCompleteUserList(domainName + DcemConstants.DOMAIN_SEPERATOR + name, 50);
-		}
-	}
-
-	public String getLoginId() {
-		ActivationCodeEntity activationCode = (ActivationCodeEntity) getActionObject();
-		if (activationCode.getUser() == null) {
-			return null;
-		}
-		loginId = activationCode.getUser().getLoginId();
-		return loginId;
-	}
-
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
-	}
-
 	public String getActivationCode() {
 		ActivationCodeEntity activationCode = (ActivationCodeEntity) this.getActionObject();
 		return activationCode.getActivationCode();
@@ -139,14 +108,6 @@ public class AsActivationDialogBean extends DcemDialog {
 		return SendByEnum.values();
 	}
 
-	public String getDomainName() {
-		return domainName;
-	}
-
-	public void setDomainName(String domainName) {
-		this.domainName = domainName;
-	}
-
 	@Override
 	public String getHeight() {
 		return "350px";
@@ -160,4 +121,11 @@ public class AsActivationDialogBean extends DcemDialog {
 		this.validTill = validTill;
 	}
 
+	public DcemUser getDcemUser() {
+		return dcemUser;
+	}
+
+	public void setDcemUser(DcemUser dcemUser) {
+		this.dcemUser = dcemUser;
+	}
 }

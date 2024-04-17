@@ -477,26 +477,7 @@ public class UserLogic {
 			return null;
 		}
 	}
-
-	public List<String> getCompleteUserListByDomain(String name, int max, DomainEntity domain) {
-		TypedQuery<DcemUser> query = em.createNamedQuery(DcemUser.GET_FILTERED_USERS_BY_DOMAIN, DcemUser.class);
-		query.setParameter(1, domain);
-		query.setParameter(2, name.toLowerCase() + "%");
-		query.setMaxResults(max);
-
-		try {
-			List<DcemUser> list = query.getResultList();
-			List<String> nameList = new ArrayList<>(list.size());
-			for (DcemUser user : list) {
-				nameList.add(user.getLoginId());
-			}
-			return nameList;
-		} catch (Throwable exp) {
-			logger.warn("Couldn't retrieve users.", exp);
-			return null;
-		}
-	}
-
+	
 	/**
 	 * @param user
 	 * @return

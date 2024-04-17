@@ -263,7 +263,6 @@ primary key (dc_id)
 create table sys_node (
 dc_id int4 not null,
 dc_name varchar(64) not null,
-startedOn timestamp,
 state int4 not null,
 wentDownOn timestamp,
 primary key (dc_id)

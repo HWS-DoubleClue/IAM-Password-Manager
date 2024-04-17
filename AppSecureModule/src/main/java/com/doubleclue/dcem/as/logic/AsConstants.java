@@ -15,7 +15,6 @@ public class AsConstants {
 	public static final String GENERATE_SDK_CONFIG_DIALOG = "/modules/as/generateSdkConfigDialog.xhtml";
 	public static final String ACTION_GOTO_CLOUDDATA = "gotoCloudData";
 
-	public static final String CLOUDDATA_DIALOG = "/modules/as/cloudDataDialog.xhtml";
 	public static final String ACTION_SEND_MESSAGE = "sendMessage";
 	public static final String MESSAGE_DIALOG = "/modules/as/messageDialog.xhtml";
 	public static final String PENDING_MSG_VIEW = "/modules/as/pendingMsgView.xhtml";

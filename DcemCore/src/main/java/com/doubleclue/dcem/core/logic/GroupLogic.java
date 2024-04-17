@@ -73,24 +73,19 @@ public class GroupLogic {
 	}
 
 	@DcemTransactional
-	public void addMember(DcemGroup group, String loginId) throws DcemException {
+	public void addMember(DcemGroup group, DcemUser dcemUser) throws DcemException {
 		group = em.find(DcemGroup.class, group.getId());
 		boolean exists = false;
 		for (DcemUser user : group.getMembers()) {
-			if (user.getLoginId().equals(loginId)) {
+			if (user.getId() == dcemUser.getId()) {
 				exists = true;
 				break;
 			}
 		}
-		if (!exists) {
-			DcemUser user = userLogic.getUser(loginId);
-			if (user != null) {
-				group.getMembers().add(user);
-			} else {
-				throw new DcemException(DcemErrorCodes.INVALID_USERID, "User '" + loginId + "' does not exist.");
-			}
+		if (exists == false) {
+			group.getMembers().add(dcemUser);
 		} else {
-			throw new DcemException(DcemErrorCodes.MEMBER_EXISTS_ALREADY, "User '" + loginId + "' already exists in group '" + group.getName() + "'.");
+			throw new DcemException(DcemErrorCodes.MEMBER_EXISTS_ALREADY, "User '" + dcemUser.getLoginId() + "' already exists in group '" + group.getName() + "'.");
 		}
 	}
 
