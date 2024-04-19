@@ -227,8 +227,9 @@ public class ViewVariable implements Serializable {
 			if (lastMethodProperty.getConverter() != null) {
 				return lastMethodProperty.getConverter().getAsString(FacesContext.getCurrentInstance(), null, klassObject);
 			}
-			return convertAsString(FacesContext.getCurrentInstance(), null, klassObject);
+			return convertAsString(klassObject);
 		} catch (Exception exp) {
+			exp.printStackTrace();
 			logger.warn(exp);
 			return null;
 		}
@@ -276,16 +277,12 @@ public class ViewVariable implements Serializable {
 		}
 	}
 
-	private String convertAsString(FacesContext context, UIComponent component, Object value) {
+	private String convertAsString(Object value) {
 		if (value == null) {
 			return "";
 		}
 		Locale locale;
-		if (context != null) {
-			locale = context.getViewRoot().getLocale();
-		} else {
-			locale = Locale.getDefault();
-		}
+		locale = getOperatorSessionBean().getLocale();
 		String resultValue;
 		DateTimeFormatter dateFormatter;
 		switch (variableType) {

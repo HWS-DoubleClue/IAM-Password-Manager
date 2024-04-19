@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.ToggleEvent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.Visibility;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
@@ -157,6 +158,15 @@ public class ViewNavigator implements Serializable {
 
 	public DcemView getActiveView() {
 		return activeView;
+	}
+	
+	public StreamedContent getDownloadFile () {
+		try {
+			return activeView.excelExportFile();
+		} catch (DcemException e) {
+			logger.error(e.getMessage());
+			return null;
+		}
 	}
 
 	public List<AutoViewAction> getViewActions() {

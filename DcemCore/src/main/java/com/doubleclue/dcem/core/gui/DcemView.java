@@ -1,6 +1,8 @@
 package com.doubleclue.dcem.core.gui;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -10,14 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,15 +31,18 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.primefaces.model.StreamedContent;
 
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.RoleRestriction;
+import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.jpa.JpaLazyModel;
@@ -113,9 +116,8 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	protected Object actionSubObject;
 	boolean dirty;
 	protected int maxExport = 1000;
-	
-	private String topComposition;
 
+	private String topComposition;
 
 	public List<AutoViewAction> getViewActions() {
 		return autoViewActions;
@@ -186,17 +188,16 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 			}
 			return;
 		}
-		if (actioType == ActionType.EXCEL_EXPORT_ALL) {
-			try {
-				setActionObject(selectedObject);
-				excelExport(lazyModel, displayViewVariables, actioType);
-				// DcemUtils.evalAsObject(autoViewAction.getRawAction().getElMethodExpression());
-			} catch (Exception exp) {
-				logger.warn("EL Method Failed", exp);
-				JsfUtils.addErrorMessage(exp.toString());
-			}
-			return;
-		}
+//		if (actioType == ActionType.EXCEL_EXPORT_ALL) {
+//			try {
+//				setActionObject(selectedObject);
+//				excelExportFile(lazyModel, displayViewVariables, actioType);
+//			} catch (Exception exp) {
+//				logger.warn("EL Method Failed", exp);
+//				JsfUtils.addErrorMessage(exp.toString());
+//			}
+//			return;
+//		}
 
 		Object subObject = null;
 		if (actioType == ActionType.CREATE_OBJECT) {
@@ -352,9 +353,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	}
 
 	public Object getActionObject() {
-		 if (selection == null) {
-		 selection = autoViewBean.getSelectedItems();
-		 }
+		if (selection == null) {
+			selection = autoViewBean.getSelectedItems();
+		}
 		if ((actionObject == null) && (selection != null) && (selection.isEmpty() == false)) {
 			return selection.get(0);
 		}
@@ -392,9 +393,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 
 	protected AutoViewAction createAutoViewAction(String actionName, ResourceBundle resourceBundle, DcemDialog dcemDialog, String xhtmlPage,
 			ViewLink viewLink) {
-//		if (dcemDialog != null) {
-//			dcemDialog.setParentView(this);
-//		}
+		// if (dcemDialog != null) {
+		// dcemDialog.setParentView(this);
+		// }
 		DcemAction dcemAction = new DcemAction(subject, actionName);
 		if (operatorSessionBean.isPermission(dcemAction) == true || subject.forceAction(operatorSessionBean.getDcemUser(), dcemAction)) {
 			return new AutoViewAction(dcemAction, dcemDialog, resourceBundle, subject.getRawAction(actionName), xhtmlPage, viewLink);
@@ -414,14 +415,12 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		if (subject.getKlass() == null) {
 			return null;
 		}
-
 		try {
 			actionObject = subject.getKlass().newInstance();
 		} catch (InstantiationException | IllegalAccessException exp) {
 			logger.warn("Couldn't create Subject Instance Class: " + subject.getKlass().getName(), exp);
 		}
 		return actionObject;
-
 	}
 
 	public LazyDataModel<?> getLazyModel() {
@@ -557,9 +556,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 
 	}
 
-	private void excelExport(LazyDataModel<?> lazyDataModel, List<ViewVariable> variables, ActionType actionType) {
+	public StreamedContent excelExportFile() throws DcemException {
 
-		List<?> data = ((JpaLazyModel) lazyDataModel).load(0, maxExport);
+		List<?> data = lazyModel.load(0, maxExport);
 		Workbook workbook = new XSSFWorkbook();
 		CreationHelper createHelper = workbook.getCreationHelper();
 
@@ -583,9 +582,9 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		// Create a Row
 		Row headerRow = sheet.createRow(0);
 		int ind = 0;
-		for (ind = 0; ind < variables.size(); ind++) {
+		for (ind = 0; ind < displayViewVariables.size(); ind++) {
 			Cell cell = headerRow.createCell(ind);
-			cell.setCellValue(variables.get(ind).displayName);
+			cell.setCellValue(displayViewVariables.get(ind).displayName);
 			cell.setCellStyle(headerCellStyle);
 		}
 		// Create Cell Style for formatting Date
@@ -597,7 +596,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 			Row row = sheet.createRow(rowNum++);
 			String value;
 			int colIndex = 0;
-			for (ViewVariable rawActions : variables) {
+			for (ViewVariable rawActions : displayViewVariables) {
 				value = rawActions.getRecordData(klassObject);
 				Cell cell = row.createCell(colIndex++);
 				if (value == "ERROR") {
@@ -606,34 +605,25 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 				cell.setCellValue(value);
 			}
 		}
-
 		// Resize all columns to fit the content size
-		for (ind = 0; ind < variables.size(); ind++) {
+		for (ind = 0; ind < displayViewVariables.size(); ind++) {
 			sheet.autoSizeColumn(ind);
 		}
-
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-		response.setHeader("Content-Disposition", "attachment;filename=" + this.getDisplayName() + ".xlsx");
-		// response.setContentLength(workbook.get);
-		response.setContentType("application/ms-excel");
+		File tempFile = null;
 		try {
-			workbook.write(response.getOutputStream());
-			response.getOutputStream().flush();
-			response.getOutputStream().close();
-			facesContext.responseComplete();
-		} catch (IOException ex) {
-			logger.warn("Couldn't export file", ex);
-		} finally {
-			// Closing the workbook
-			try {
-				workbook.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
+			tempFile = File.createTempFile("dcem-", "-export");
+			FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+			workbook.write(fileOutputStream);
+			fileOutputStream.close();
+			final FileInputStream fileInputStream = new FileInputStream(tempFile);
+			StreamedContent streamContent = DefaultStreamedContent.builder().name(this.getDisplayName() + ".xlsx").contentType("application/ms-excel")
+					.stream(() -> fileInputStream).build();
+	//		fileInputStream.close();
+	//		tempFile.delete();
+			return streamContent;			
+		} catch (Exception ex) {
+			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_MOVE_FILE, "Could not download file " + this.getDisplayName() + ".xlsx", ex);
+		} 
 	}
 
 	public List<SortMeta> getSortedBy() {

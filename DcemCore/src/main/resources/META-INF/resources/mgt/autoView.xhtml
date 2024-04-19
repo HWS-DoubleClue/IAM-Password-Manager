@@ -4,8 +4,19 @@
 
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<script>
+    //<![CDATA[
+    function start() {
+        PF('statusDialog').show();
+    }
 
+    function stop() {
+        PF('statusDialog').hide();
+    }
+    //]]>
+</script>
 	<div>
+	
 		<h:form id="autoForm">
 			<p:tooltip style="font-size: xx-small; white-space: normal" showEvent="focus" hideEvent="keyup" position="top" />
 
@@ -14,14 +25,18 @@
 					<i class="#{viewNavigator.getActionIcon(autoAction)}" />
 					<p:outputLabel value=" #{autoAction.actionText}" style="font-weight: bold" />
 				</p:commandLink>
-
-				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link == false}" action="#{viewNavigator.setActiveDialog(autoAction)}"
-					icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}">
+				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link == false and autoAction.export == false} "
+					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}">
 					<p:ajax event="dialogReturn" update="pTable" />
+				</p:commandButton>
+				<!--  download -->
+				<p:commandButton value="#{autoAction.actionText}" ajax="false" rendered="#{autoAction.export == true}"  icon="#{viewNavigator.getActionIcon(autoAction)}"
+				  onclick="PrimeFaces.monitorDownload(start, stop);">
+					<p:fileDownload value="#{viewNavigator.downloadFile}" />
 				</p:commandButton>
 				<p:spacer width="12" />
 			</c:forEach>
-			
+
 			<ui:include src="#{viewNavigator.topComposition}" />
 
 			<h:panelGroup id="predfinedFilters" rendered="#{viewNavigator.isPredefinedFilters()}"
@@ -48,18 +63,18 @@
 					</p:menuitem>
 				</c:forEach>
 			</p:contextMenu>
-			
- 			<p:tooltip for="infoTip" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
+
+			<p:tooltip for="infoTip" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
 			<div style="float: right; margin-top: -35px; display: inline-block;">
-				<h:outputText id="infoTip" value="" class="fa fa-circle-info"  style="font-size: x-large; color: #005078; vertical-align: -3px;"/> 
+				<h:outputText id="infoTip" value="" class="fa fa-circle-info" style="font-size: x-large; color: #005078; vertical-align: -3px;" />
 				<p:spacer width="20" />
-				<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}"  icon="fa fa-th" />
+				<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}" icon="fa fa-th" />
 			</div>
 			<p:columnToggler datasource="pTable" trigger="toggler">
 				<p:ajax event="toggle" listener="#{viewNavigator.onToggle}" />
 			</p:columnToggler>
 			<p:remoteCommand name="keyAction" update="autoForm:pTable" action="#{viewNavigator.actionSetDirty}" />
-			
+
 			<p:dataTable id="pTable" widgetVar="viewTable" paginator="true" rowsPerPageTemplate="20,30,50,100,500" rows="20" paginatorPosition="bottom"
 				value="#{autoView.lazyModel}" var="record" rowKey="#{record.id}" update="tableCount" resizableColumns="false"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" selectionMode="multiple"
@@ -109,7 +124,7 @@
 				</p:columns>
 
 			</p:dataTable>
-			
+
 			<p:outputPanel>
 				<p:autoUpdate />
 				<p:outputLabel id="tableCount" style="text-align: left;" value="#{CoreMsg['totalCount']} #{autoView.count}">

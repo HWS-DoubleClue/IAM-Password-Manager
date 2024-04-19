@@ -8,5 +8,4 @@ public enum ActionType {
 	CONFIRM,
 	PRE_DEFINED_FILTER, 
 	EXCEL_EXPORT_ALL,
-	EXCEL_EXPORT_PAGE;
 }
