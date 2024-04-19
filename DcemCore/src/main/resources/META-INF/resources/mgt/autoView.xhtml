@@ -25,12 +25,12 @@
 					<i class="#{viewNavigator.getActionIcon(autoAction)}" />
 					<p:outputLabel value=" #{autoAction.actionText}" style="font-weight: bold" />
 				</p:commandLink>
-				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link == false and autoAction.export == false} "
+				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link eq false and autoAction.export eq false}"
 					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}">
 					<p:ajax event="dialogReturn" update="pTable" />
 				</p:commandButton>
 				<!--  download -->
-				<p:commandButton value="#{autoAction.actionText}" ajax="false" rendered="#{autoAction.export == true}"  icon="#{viewNavigator.getActionIcon(autoAction)}"
+				<p:commandButton value="#{autoAction.actionText}" ajax="false" rendered="#{autoAction.export eq true}"  icon="#{viewNavigator.getActionIcon(autoAction)}"
 				  onclick="PrimeFaces.monitorDownload(start, stop);">
 					<p:fileDownload value="#{viewNavigator.downloadFile}" />
 				</p:commandButton>
@@ -131,22 +131,6 @@
 					<f:convertNumber pattern="### ### ###" />
 				</p:outputLabel>
 			</p:outputPanel>
-
-			<!-- 	<ui:include src="#{autoView.preselectionDialog}" /> -->
-
-			<!--  <p:commandButton id="hiddenCommand" styleClass="button" action="actionListener="#{viewNavigator.setActiveDialog(autoAction)}"  style="display:none">
-         			<p:ajax event="dialogReturn"  update = ":form:pTables"  />  
-         	</p:commandButton>
-
-			<h:outputScript>
-			      function triggerHiddenEvent() {
-			        document.getElementById("autoForm:hiddenCommand").click();
-			      }
-   			</h:outputScript> -->
-
-			<!-- <p:growl id="autoMessages" layout="table" globalOnly="false" showSummary="true" sticky="true">
-				<p:autoUpdate />
-			</p:growl> -->
 		</h:form>
 	</div>
 </ui:composition>

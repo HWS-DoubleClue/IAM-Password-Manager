@@ -72,6 +72,8 @@ public class DcemCluster {
 		} catch (Exception e) {
 			throw new DcemException(DcemErrorCodes.CLUSTER_CONFIG_FILE_NOT_FOUND, e.getMessage());
 		}
+		
+		
 				
 		String clusterGroupName = clusterConfig.getGivenName();
 		if (clusterGroupName == null || clusterGroupName.isEmpty()) {
@@ -86,6 +88,7 @@ public class DcemCluster {
 		// config.getCPSubsystemConfig().setCPMemberCount(3); // TODO not sure about the number
 		hazelcastInstance = Hazelcast.newHazelcastInstance(config);
 		Cluster cluster = hazelcastInstance.getCluster();
+		
 		cluster.addMembershipListener(new ClusterMembershipListener());
 
 		Member member = cluster.getLocalMember();
