@@ -36,12 +36,16 @@ import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.weld.CdiUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Named("viewNavigator")
 @SessionScoped
 public class ViewNavigator implements Serializable {
 
 	public static Logger logger = LogManager.getLogger(ViewNavigator.class);
+	
+	final String COLUMN_TOGGLER = "CT-";
 
 	@Inject
 	DcemApplicationBean applicationBean;
@@ -224,7 +228,21 @@ public class ViewNavigator implements Serializable {
 		activeModule = module;
 		activeView.closeDialog();
 		autoViewBean.switchView();
-		// activeView.setSelection(null);
+		List<Boolean> togglerList = new ArrayList<>();
+		String value = operatorSessionBean.getUserSettings().get(COLUMN_TOGGLER + activeView.getClassName());
+		if (value != null) {
+			ObjectMapper objectMapper = new ObjectMapper();
+			TypeReference<List<Boolean>> typeRef = new TypeReference<List<Boolean>>() {
+			};
+			try {
+				togglerList = objectMapper.readValue(value, typeRef);
+				for (int i = 0; i < activeView.getDisplayViewVariables().size(); i++) {
+					ViewVariable viewVariable = activeView.getDisplayViewVariables().get(i);
+					viewVariable.setVisible(togglerList.get(i));
+				}
+			} catch (Exception e) {
+			}
+		}
 		activeView.reload();
 		PrimeFaces.current().ajax().update("viewPart");
 		PrimeFaces.current().executeScript("localStorage.setItem('mgtActiveView', '" + moduleId + DcemConstants.MODULE_VIEW_SPLITTER + viewName + "')");
@@ -352,23 +370,6 @@ public class ViewNavigator implements Serializable {
 		return autoviewAction.getRawAction().getIcon();
 	}
 
-	/**
-	 * @return
-	 */
-	// public List<SelectItem> getModuleLocales() {
-	// DcemModule dcemModule = getActiveModule();
-	// List<SelectItem> list = new LinkedList<>();
-	// if (dcemModule.getTextResource() != null) {
-	// Locale[] locales = dcemModule.getTextResource().getLocales();
-	// if (locales != null) {
-	// for (Locale locale : dcemModule.getTextResource().getLocales()) {
-	// list.add(new SelectItem(locale.getLanguage(), locale.getDisplayLanguage()));
-	// }
-	// }
-	// }
-	// return list;
-	// }
-
 	public boolean isPredefinedFilters() {
 		return activeView.isPredefinedFilters();
 	}
@@ -397,7 +398,24 @@ public class ViewNavigator implements Serializable {
 
 	public void onToggle(ToggleEvent event) {
 		activeView.getDisplayViewVariables().get((Integer) event.getData()).setVisible(event.getVisibility() == Visibility.VISIBLE);
-		// activeView.setVisibleVariables(null);
+		activeView.getDisplayViewVariables().get(getPredefinedFilterId());
+		List<Boolean> togglerList = new ArrayList<>();
+		for (int i = 0; i <  activeView.getDisplayViewVariables().size(); i++) {
+			ViewVariable variable = activeView.getDisplayViewVariables().get(i);
+			togglerList.add(variable.isVisible());
+		}
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			operatorSessionBean.setLocalStorageUserSetting(COLUMN_TOGGLER + activeView.getClassName(), mapper.writeValueAsString(togglerList));
+		} catch (Exception e) {
+		}
+	}
+	
+	public void removeToggle () {
+		try {
+			operatorSessionBean.removeLocalStorageUserSetting(COLUMN_TOGGLER + activeView.getClassName());
+		} catch (Exception e) {
+		}
 	}
 
 	public LinkedList<SelectItem> getSupportedLanguages() {

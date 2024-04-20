@@ -34,7 +34,7 @@
 				  onclick="PrimeFaces.monitorDownload(start, stop);">
 					<p:fileDownload value="#{viewNavigator.downloadFile}" />
 				</p:commandButton>
-				<p:spacer width="12" />
+				<p:spacer width="10" />
 			</c:forEach>
 
 			<ui:include src="#{viewNavigator.topComposition}" />
@@ -69,8 +69,9 @@
 				<h:outputText id="infoTip" value="" class="fa fa-circle-info" style="font-size: x-large; color: #005078; vertical-align: -3px;" />
 				<p:spacer width="20" />
 				<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}" icon="fa fa-th" />
+				
 			</div>
-			<p:columnToggler datasource="pTable" trigger="toggler">
+			<p:columnToggler datasource="pTable" trigger="toggler" >
 				<p:ajax event="toggle" listener="#{viewNavigator.onToggle}" />
 			</p:columnToggler>
 			<p:remoteCommand name="keyAction" update="autoForm:pTable" action="#{viewNavigator.actionSetDirty}" />
@@ -79,7 +80,8 @@
 				value="#{autoView.lazyModel}" var="record" rowKey="#{record.id}" update="tableCount" resizableColumns="false"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" selectionMode="multiple"
 				selection="#{autoView.selectedItems}" lazy="true" sortMode="single" styleClass="borderless" emptyMessage="#{CoreMsg['emptyTable']}"
-				rowStyleClass="#{record.rowStyle}" sortBy="#{autoView.sortBy}" filterBy="#{autoView.filterBy}" filterDelay="1000">
+				rowStyleClass="#{record.rowStyle}" sortBy="#{autoView.sortBy}" filterBy="#{autoView.filterBy}" filterDelay="1000" 
+				 >
 
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
 
@@ -92,8 +94,6 @@
 						<h:panelGroup rendered="#{viewNavigator.predefinedFilterId != 0}">
 							<h:outputText value="#{item.displayName}" />
 						</h:panelGroup>
-
-
 					</f:facet>
 
 					<f:facet name="filter">
@@ -107,7 +107,6 @@
 							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()" yearNavigator="true">
 						</p:datePicker>
 						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
-
 					</f:facet>
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
 						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />

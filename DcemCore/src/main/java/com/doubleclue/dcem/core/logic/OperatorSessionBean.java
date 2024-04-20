@@ -447,6 +447,11 @@ public class OperatorSessionBean implements Serializable {
 		return userSettings.get(key);
 	}
 	
+	public void removeLocalStorageUserSetting (String key) throws Exception {
+		userSettings.remove(key);
+		PrimeFaces.current().executeScript("localStorage.setItem('userSettings', '" + getUserSettingsToString() + "')");
+	}
+	
 	public void setLocalStorageUserSetting (String key, String value) throws Exception {
 		userSettings.put(key, value);
 		PrimeFaces.current().executeScript("localStorage.setItem('userSettings', '" + getUserSettingsToString() + "')");
