@@ -298,6 +298,12 @@ public class ViewVariable implements Serializable {
 			LocalDateTime ldt = getOperatorSessionBean().getUserZonedTime((LocalDateTime) value);
 			resultValue = ldt.format(dateTimeFormatter);
 			break;
+		case BOOLEAN:
+			if ((Boolean)value == true) {
+				return "\u2705";
+			} else {
+				return "\u2718";
+			}
 		default:
 			resultValue = value.toString();
 		}
