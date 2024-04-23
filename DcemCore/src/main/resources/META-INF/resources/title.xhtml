@@ -2,12 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 
-	<link id="favicon" rel="icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
-	<link rel="shortcut icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
+	<link id="favicon" rel="icon"
+		href="#{request.contextPath}/resources/images/favicon.png"
+		type="image/x-icon" />
+	<link rel="shortcut icon"
+		href="#{request.contextPath}/resources/images/favicon.png"
+		type="image/x-icon" />
 	<h:outputStylesheet library="primefaces-dcemtheme" name="theme.css" />
+
 
 	<h:form id="titleForm">
 		<div style="#{adminModule.titleStyle};" class="parent-flex-container">
@@ -16,9 +24,13 @@
 					<span></span>
 				</div>
 				<h:commandLink action="#{viewNavigator.actionRedirectionToHome}">
-					<div style="float: left; border: none; width: auto; ">
-						<p:graphicImage cache="false" styleClass="companyLogoStyle" value="#{adminModule.logo}" rendered="#{!adminModule.defaultCompanyLogo}" />
-						<p:graphicImage library="pictures" cache="false" styleClass="companyLogoStyle" name="DC_white_bar_209x64center.png"
+					<div style="float: left; border: none; width: auto;">
+						<p:graphicImage cache="false" styleClass="companyLogoStyle"
+							value="#{adminModule.logo}"
+							rendered="#{!adminModule.defaultCompanyLogo}" />
+						<p:graphicImage library="pictures" cache="false"
+							styleClass="companyLogoStyle"
+							name="DC_white_bar_209x64center.png"
 							rendered="#{adminModule.defaultCompanyLogo}" />
 					</div>
 				</h:commandLink>
@@ -26,42 +38,63 @@
 			<div class="center">
 				<div>
 					<h:outputText value="#{adminModule.titleEnterpriseManagment} " />
-					<h:outputText class="fa fa-shuffle" style="color: white; font-size: 1.6em" rendered="#{operatorSession.masterAdminGuest}" />
+					<h:outputText class="fa fa-shuffle"
+						style="color: white; font-size: 1.6em"
+						rendered="#{operatorSession.masterAdminGuest}" />
 				</div>
 			</div>
 			<div style="display: flex; align-items: center;">
 				<div>
 					<p:ajaxStatus id="ajaxStatus">
 						<f:facet name="start">
-							<h:graphicImage library="pictures" name="waiting-icon.gif" style="border: 0; height: 32px;" />
+							<h:graphicImage library="pictures" name="waiting-icon.gif"
+								style="border: 0; height: 32px;" />
 						</f:facet>
 						<f:facet name="complete">
 						</f:facet>
 					</p:ajaxStatus>
 				</div>
 				<div style="display: flex; align-items: center; padding: 1em;">
-					<h:outputText id="sessionTimeout" style="font-size: small; margin-right: 1em;" value="" />
-					<p:commandLink action="#{adminModule.actionRedirectionToUserPortal}" title="#{DcupMsg['title.switchToUserportal']}"
+					<input type="checkbox" id="theme-switcher"></input>
+
+					<h:outputText id="sessionTimeout"
+						style="font-size: small; margin-right: 1em;" value="" />
+					<p:commandLink
+						action="#{adminModule.actionRedirectionToUserPortal}"
+						title="#{DcupMsg['title.switchToUserportal']}"
 						rendered="#{adminModule.switchUserPortal}">
-						<i class="fa fa-exchange" style="color: white; font-size: 1.2em; margin-left: 1em;"></i>
+						<i class="fa fa-exchange"
+							style="color: white; font-size: 1.2em; margin-left: 1em;"></i>
 					</p:commandLink>
 					<p:spacer width="10" />
-					<p:commandLink action="#{viewNavigator.reload}" update="viewPart" style="text-decoration: none;">
-						<i class="fa fa-refresh" style="color: white; font-size: 1.2em; margin-right: 0.5em"></i>
+					<p:commandLink action="#{viewNavigator.reload}" update="viewPart"
+						style="text-decoration: none;">
+						<i class="fa fa-refresh"
+							style="color: white; font-size: 1.2em; margin-right: 0.5em"></i>
 					</p:commandLink>
 					<p:spacer width="10" />
-					<p:avatar id="userAvatar" dynamicColor="true" styleClass="p-mr-2" size="xlarge" shape="circle" style="margin-right: 0em; cursor: pointer;">
-						<p:graphicImage value="#{operatorSession.getFotoProfileUser()}" stream="false" title="#{titleBarView.welcomeText}" />
+					<p:avatar id="userAvatar" dynamicColor="true" styleClass="p-mr-2"
+						size="xlarge" shape="circle"
+						style="margin-right: 0em; cursor: pointer;">
+						<p:graphicImage value="#{operatorSession.getFotoProfileUser()}"
+							stream="false" title="#{titleBarView.welcomeText}" />
 					</p:avatar>
-					<p:menu id="titleMenu" overlay="true" trigger="userAvatar" my="left top" at="left bottom">
-						<p:menuitem value="#{CoreMsg['titleMenu.profile']}" rendered="#{titleBarView.editProfilePermission}" action="#{titleBarView.editProfile}" ajax="true"
+					<p:menu id="titleMenu" overlay="true" trigger="userAvatar"
+						my="left top" at="left bottom">
+						<p:menuitem value="#{CoreMsg['titleMenu.profile']}"
+							rendered="#{titleBarView.editProfilePermission}"
+							action="#{titleBarView.editProfile}" ajax="true"
 							icon="fa fa-user-pen">
-							<p:ajax event="dialogReturn" update="menuForm titleForm:titleMenu titleForm:userAvatar viewPart" />
+							<p:ajax event="dialogReturn"
+								update="menuForm titleForm:titleMenu titleForm:userAvatar viewPart" />
 						</p:menuitem>
-						<p:menuitem value="#{DcupMsg['title.changePasswordView']}" action="#{titleBarView.updatePassword}" icon="fa fa-key"
+						<p:menuitem value="#{DcupMsg['title.changePasswordView']}"
+							action="#{titleBarView.updatePassword}" icon="fa fa-key"
 							rendered="#{titleBarView.changePasswordPermission}" />
-						<p:menuitem value="#{CoreMsg['titleMenu.logoff']}" action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" />
+						<p:menuitem value="#{CoreMsg['titleMenu.logoff']}"
+							action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" />
 					</p:menu>
+
 				</div>
 			</div>
 
@@ -69,5 +102,5 @@
 
 
 	</h:form>
-
+	<script type="text/javascript" src="#{resource['js/theme.js']}"></script>
 </ui:composition>

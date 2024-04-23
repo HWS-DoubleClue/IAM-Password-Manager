@@ -16,6 +16,7 @@
 		<h:outputStylesheet name="css/#{item.id}Styles.css" />
 	</c:forEach>
 	<script defer="defer" type="text/javascript" src="#{resource['js/javaScriptDCEM.js']}"></script>
+	<script defer="defer" type="text/javascript" src="#{resource['js/theme.js']}"></script>
 
 	<style>
 #helpBtn>.fa-book {
@@ -53,7 +54,9 @@
 				</h:form>
 			</div>
 			<div class="info-bottom">
-				<a target="_blank" href="https://hws-gruppe.de/"> <img src="#{resource['pictures/HWS_Logo_schwarz_hor_web.png']}" class="poweredByImage"> </img>
+			<div class="poweredByImage" />
+				<a target="_blank" href="https://hws-gruppe.de/"> 
+<!-- 				<img src="#{resource['pictures/HWS_Logo_schwarz_hor_web.png']}" class="poweredByImage"> </img> -->
 				</a>
 				<h:outputLabel value="Version: #{dcemApplication.version}" styleClass="versionInfo" />
 			</div>
