@@ -164,3 +164,13 @@ function setCaretPosition(elemId, caretPos) {
 		elem.setSelectionRange(caretPos, caretPos);
 	}
 }
+
+function getThemeFromLocalStorage() {
+	if (localStorage.getItem("theme") === "dark") {
+		document.documentElement.classList.add("dark-theme");
+		themeSwitcher.checked = true;
+	}
+}
+
+document.addEventListener('DOMContentLoaded', getThemeFromLocalStorage());
+window.onload = getThemeFromLocalStorage();

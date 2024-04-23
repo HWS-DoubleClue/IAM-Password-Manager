@@ -1,11 +1,13 @@
 @CHARSET "ISO-8859-1";
 
 body {
-	background: #fff;
+	background: var(--primary-background-color);
+	color: var(--primary-text-color);
 	font-family: "Segoe UI", sans-serif;
 	font-size: 14px;
 	margin: 0;
 	overflow: hidden;
+	font-family: "Segoe UI", sans-serif;
 }
 
 .parent-flex-container {
@@ -15,15 +17,6 @@ body {
 	height: 3.5em;
 	width: 100%;
 	position: sticky;
-}
-
-.flex-container-center {
-	flex: 1;
-	text-align: center;
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%); /* Center the div perfectly */
 }
 
 .flex-container {
@@ -69,7 +62,7 @@ body {
 .toggle span {
 	width: 100%;
 	height: 4px;
-	background: #fff;
+	background: #ffffff;
 	display: block;
 	position: relative;
 	coursor: pointer;
@@ -82,8 +75,7 @@ body {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: #fff;
-	transition: all 0.3s ease-out;
+	background: #ffffff;
 	border-radius: 4px;
 }
 
@@ -102,13 +94,13 @@ body {
 .toggle span.toggle:before {
 	top: 0;
 	transform: rotate(-45deg);
-	background: #fff;
+	background: var(--primary-background-color);
 }
 
 .toggle span.toggle:after {
 	top: 0;
 	transform: rotate(45deg);
-	background: #fff;
+	background: var(--primary-background-color);
 }
 
 .toggleSideBar {
@@ -125,7 +117,7 @@ body {
 #toggleSideBar span {
 	width: 100%;
 	height: 4px;
-	background: #fff;
+	background: var(--primary-background-color);
 	display: block;
 	position: relative;
 	coursor: pointer;
@@ -138,7 +130,7 @@ body {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: #fff;
+	background: var(--primary-background-color);
 	transition: all 0.3s ease-out;
 	border-radius: 4px;
 }
@@ -158,43 +150,43 @@ body {
 #toggleSideBar span.toggle:before {
 	top: 0;
 	transform: rotate(-45deg);
-	background: #fff;
+	background: var(--primary-background-color);
 }
 
 #toggleSideBar span.toggle:after {
 	top: 0;
 	transform: rotate(45deg);
-	background: #fff;
+	background: var(--primary-background-color);
 }
 
 .header1 {
 	font-size: x-large;
-	color: #0e4f77;
+	color: var(--header-link-text-color);
 	padding: 10px !important;
 }
 
 .header3 {
 	font-size: large;
-	color: #0e4f77;
+	color: var(--header-link-text-color);
 	padding: 10px;
 }
 
 .header6 {
 	font-size: x-small;
-	color: #000;
+	color: var(--header-link-text-color);
 	padding: 10px;
 }
 
 .viewTitle {
 	font-size: 1.6em;
-	color: #0e4f77;
+	color: var(--header-link-text-color);
 	vertical-align: middle;
 	margin-left: 5px;
 	text-decoration: none;
 }
 
 .dialogTitle {
-	color: #0e4f77 !important;
+	color: var(--header-link-text-color) !important;
 	vertical-align: middle;
 	margin-left: 8px;
 	font-size: large;
@@ -211,13 +203,13 @@ body {
 }
 
 .tenantBrandingTitle {
-	color: #0e4f77 !important;
+	color: var(--header-link-text-color) !important;
 	margin-left: 0;
 	font-size: 1.4em;
 }
 
 .ui-accordion-header {
-	color: #0e4f77 !important;
+	color: var(--header-link-text-color) !important;
 }
 
 .ui-accordion-content.ui-helper-reset.ui-widget-content {
@@ -270,7 +262,7 @@ body {
 }
 
 .dialogBody {
-	background: #ffffff;
+	background: var(--primary-background-color);
 }
 
 /* Header Bar */
@@ -284,19 +276,19 @@ body {
 
 .headTitle {
 	font-size: large;
-	color: #ffffff;
+	color: var(--primary-background-color);
 	vertical-align: middle !important;
 	margin: 10px !important;
 }
 
 .headLoginTitle {
 	font-size: large;
-	color: #ffffff;
+	color: var(--primary-background-color);
 	vertical-align: middle !important;
 }
 
 #headerbutton {
-	background-color: #ffffff !important;
+	background-color: var(--primary-background-color) !important;
 }
 
 /* Menu */
@@ -372,17 +364,17 @@ body {
 }
 
 .menuCaption {
-	background-color: white;
+	background-color: var(--primary-background-color);
 }
 
 .activeMenuCaption {
 	color: #eeee00;
 }
 
-.ui-paginator {
-	background-color: #F7F7F7 !important;
-	color: #F7F7F7 !important;
-}
+/* .ui-paginator { */
+/* 	background-color: #F7F7F7 !important; */
+/* 	color: #F7F7F7 !important; */
+/* } */
 
 .columnLabel {
 	white-space: nowrap;
@@ -460,13 +452,13 @@ ul.ui-menu-child {
 }
 
 .sideBarDcem {
-	background-color: #f7f7f7;
+	background-color: var(--side-bar-background-color);
 	display: flex;
 	flex-flow: column;
 	float: left;
 	height: calc(100vh - 3.5em);
 	width: 15.75em;
-	box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2), 0 0 20px 0 rgba(0, 0, 0, 0.19);
+	box-shadow: var(--side-bar-box-shadow);
 	/* 	transition: all 0.5s ease 0s; */
 }
 
@@ -486,9 +478,10 @@ ul.ui-menu-child {
 .info-bottom {
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0px -5px 8px -4px #c6c6c6;
+	box-shadow: var(--side-bar-info-bottom-box-shadow);
 	z-index: 1000;
 	flex-shrink: 0;
+	margin-top: .5em;
 }
 
 .info-bottom a {
@@ -510,8 +503,13 @@ ul.ui-menu-child {
 }
 
 .poweredByImage {
-	width: 50%;
+	width: 100%;
 	margin: 0.4em;
+	background-image: var(--powered-by-logo);
+	height: 45px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
 	/* 	display: block; */
 	/* margin: 0 auto 10%;  */
 }
