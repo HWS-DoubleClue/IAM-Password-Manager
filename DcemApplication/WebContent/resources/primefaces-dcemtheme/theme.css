@@ -357,7 +357,6 @@ body {
 	color: var(--primary-text-color);
 }
 
-}
 .ui-state-highlight a, .ui-widget-content .ui-state-highlight a,
 	.ui-widget-header .ui-state-highlight a {
 	color: #212121;
