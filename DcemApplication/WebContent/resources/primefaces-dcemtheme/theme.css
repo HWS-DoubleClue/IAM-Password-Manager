@@ -67,12 +67,6 @@
 	--tab-hover-background-color: #303030;
 }
 
-* {
-	margin: 0;
-	padding;
-	0;
-}
-
 body {
 	background: var(--primary-background-color);
 	color: var(--primary-text-color);
@@ -343,7 +337,7 @@ body {
 	/* 	/* 	color: #212121; #8bb6d1 */ * /
 	/* 	/* 	color: var(--state-active-text-color); */ * /
 	/* 	color: var(--button-hover-text-color); */
-	/* } */  
+	/* } */    
 
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited
 	{
@@ -1352,7 +1346,7 @@ body {
 	background-color: var(--inputfield-background-color);
 }
 
-.ui-chkbox-box.ui-state-hover,.ui-radiobutton-box.ui-state-hover {
+.ui-chkbox-box.ui-state-hover, .ui-radiobutton-box.ui-state-hover {
 	background-color: transparent !important;
 	border-color: #777777;
 }
@@ -2185,6 +2179,7 @@ ul.ui-menu-child {
 	font-size: 2em;
 }
 
-.ui-chkbox .ui-chkbox-box.ui-state-active, .ui-radiobutton-box.ui-state-active {
+.ui-chkbox .ui-chkbox-box.ui-state-active, .ui-radiobutton-box.ui-state-active
+	{
 	background: var(--inputfield-background-color);
 }
