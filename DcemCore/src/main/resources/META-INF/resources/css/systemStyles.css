@@ -1,15 +1,5 @@
 @CHARSET "ISO-8859-1";
 
-body {
-	background: var(--primary-background-color);
-	color: var(--primary-text-color);
-	font-family: "Segoe UI", sans-serif;
-	font-size: 14px;
-	margin: 0;
-	overflow: hidden;
-	font-family: "Segoe UI", sans-serif;
-}
-
 .parent-flex-container {
 	display: flex;
 	justify-content: space-between;
@@ -208,15 +198,6 @@ body {
 	font-size: 1.4em;
 }
 
-.ui-accordion-header {
-	color: var(--header-link-text-color) !important;
-}
-
-.ui-accordion-content.ui-helper-reset.ui-widget-content {
-	border: 1px solid lightgrey;
-	font-size: 2em;
-}
-
 .companyLogoStyle {
 	width: 100%;
 	height: 100%;
@@ -228,27 +209,6 @@ body {
 	color: #C0C0C0;
 	mix-blend-mode: difference !Important;
 	font-size: 1.2em;
-}
-
-.ui-fileupload {
-	border: none;
-	display: inline;
-}
-
-.ui-fileupload-buttonbar {
-	background: transparent none;
-	border: none;
-	display: inline-flex;
-}
-
-.ui-fileupload-content {
-	border: none;
-	display: inline-flex;
-}
-
-.ui-fileupload-buttonbar .ui-fileupload-choose {
-	background-color: rgba(142, 103, 64, 0.98);
-	display: inline-flex;
 }
 
 .titleFrame {
@@ -375,7 +335,6 @@ body {
 /* 	background-color: #F7F7F7 !important; */
 /* 	color: #F7F7F7 !important; */
 /* } */
-
 .columnLabel {
 	white-space: nowrap;
 	vertical-align: top;
@@ -387,11 +346,6 @@ body {
 
 .autoTableStyle {
 	word-wrap: break-word;
-}
-
-ul.ui-menu-child {
-	white-space: nowrap;
-	width: 200px !important;
 }
 
 .labelLogin {
@@ -415,29 +369,6 @@ ul.ui-menu-child {
 
 .rowFailureClass {
 	color: #8f0000 !important;
-}
-
-.ui-datagrid.applicationGridAdmin .ui-datagrid-header {
-	background: none !important;
-}
-
-.ui-password.ui-password-masked .ui-password-icon, .ui-password.ui-password-unmasked .ui-password-icon:before
-	{
-	margin-left: 0.2em;
-}
-
-.ui-icon-azure {
-	background: url("#{resource['pictures/azure.png']}") no-repeat
-		!important;
-	margin-top: -12px !important;
-	width: 32px !important;
-	height: 32px !important;
-}
-
-.ui-tooltip-bottom .ui-tooltip-arrow {
-	left: 80% !important;
-	margin-left: 1px !important;
-	margin-top: 2px !important;
 }
 
 .roleViewTableStyle {
@@ -478,7 +409,7 @@ ul.ui-menu-child {
 .info-bottom {
 	display: flex;
 	flex-direction: column;
-	box-shadow: var(--side-bar-info-bottom-box-shadow);
+	box-shadow: 0px -5px 8px -4px var(--side-bar-info-bottom-box-shadow-color);
 	z-index: 1000;
 	flex-shrink: 0;
 	margin-top: .5em;
