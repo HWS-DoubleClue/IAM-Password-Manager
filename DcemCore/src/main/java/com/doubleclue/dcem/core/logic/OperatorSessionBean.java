@@ -163,7 +163,7 @@ public class OperatorSessionBean implements Serializable {
 		return false;
 	}
 
-	@Deprecated
+	
 	public DcemAction getPermission(DcemAction dcemAction) {
 		if (dcemUser == null || dcemAction == null) {
 			return null;

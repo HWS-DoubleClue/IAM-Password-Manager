@@ -30,7 +30,6 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
-import com.doubleclue.dcem.core.entities.DcemUserExtension;
 import com.doubleclue.dcem.core.entities.DomainEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -40,7 +39,7 @@ import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.tasks.ChangeUserDomanNameTask;
 import com.doubleclue.dcem.core.tasks.ReloadClassInterface;
 import com.doubleclue.dcem.core.tasks.TaskExecutor;
-import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 
 @ApplicationScoped
 @Named("domainLogic")
@@ -174,28 +173,31 @@ public class DomainLogic implements ReloadClassInterface {
 
 	@DcemTransactional
 	public void addOrUpdateDcemLdap(DomainEntity ldapEntity, DcemAction dcemAction) {
-		String changeInfo = ldapEntity.getName();
+		String changeInfo = null;
 		ldapEntity.setName(ldapEntity.getName().toLowerCase());
 		if (dcemAction.getAction().equals(DcemConstants.ACTION_ADD) || dcemAction.getAction().equals(DcemConstants.ACTION_COPY)) {
 			ldapEntity.setId(null);
 			ldapEntity.serializeDomainConfig();
 			em.persist(ldapEntity);
+			changeInfo = ldapEntity.getName();
 		} else {
 			DomainEntity oldEntity = getDomainEntityById(ldapEntity.getId());
-			try {
-				changeInfo = DcemUtils.compareObjects(oldEntity, ldapEntity);
-			} catch (Exception exp) {
-				logger.warn("Couldn't compare operator", exp);
-				changeInfo = "ERROR: " + exp.getMessage();
-			}
+			ldapEntity.serializeDomainConfig();
 			String newName = ldapEntity.getName();
 			if (!newName.equals(oldEntity.getName())) {
 				updateDomainName(oldEntity, newName);
 			}
-			ldapEntity.serializeDomainConfig();
+			try {
+				changeInfo = CompareUtils.compareObjects(oldEntity, ldapEntity);
+			} catch (Exception exp) {
+				logger.warn("Couldn't compare operator", exp);
+				changeInfo = "ERROR: " + exp.getMessage();
+			}
 			ldapEntity = em.merge(ldapEntity);
 		}
-		auditingLogic.addAudit(dcemAction, changeInfo);
+		if (changeInfo.isEmpty() == false) {
+			auditingLogic.addAudit(dcemAction, changeInfo);
+		}
 	}
 
 	private void updateDomainName(DomainEntity ldap, String newName) {
@@ -497,7 +499,7 @@ public class DomainLogic implements ReloadClassInterface {
 		List<MigrationUserStatus> list = new ArrayList<MigrationUserStatus>();
 		for (DcemUser dcemUser : adUsers) {
 			try {
-				
+
 				azureUser = domainAzure.getUser(dcemUser.getUserPrincipalName());
 				if (azureUser.getLoginId().indexOf("glenn") > 0) {
 					System.out.println("DomainLogic.migrateAdToAzure()");
@@ -524,8 +526,8 @@ public class DomainLogic implements ReloadClassInterface {
 				throw e;
 			}
 		}
-		list.add(new MigrationUserStatus("USERS REPORT", String.format("Migrated Users: %s. Users not found in Azure: %d. Users already exists in Azure: %d", migratedUsers, notExistsInAzure,
-				 existsUsers)));
+		list.add(new MigrationUserStatus("USERS REPORT", String.format("Migrated Users: %s. Users not found in Azure: %d. Users already exists in Azure: %d",
+				migratedUsers, notExistsInAzure, existsUsers)));
 		// reports.add();
 		migrateGroupsAdToAzure(adDomainEntity, azureDomainEntity, list);
 		return list;
@@ -564,8 +566,8 @@ public class DomainLogic implements ReloadClassInterface {
 				throw e;
 			}
 		}
-		list.add(new MigrationUserStatus("GROUP _REPORT", String.format("Migrated Groups: %s. Groups not found in Azure: %d. Groups already exists in Azure: %d", migratedGroups, notExistsInAzure,
-				existsGroups)));
+		list.add(new MigrationUserStatus("GROUP _REPORT", String.format(
+				"Migrated Groups: %s. Groups not found in Azure: %d. Groups already exists in Azure: %d", migratedGroups, notExistsInAzure, existsGroups)));
 		return;
 	}
 

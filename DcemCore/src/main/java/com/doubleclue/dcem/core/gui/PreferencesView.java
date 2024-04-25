@@ -28,6 +28,7 @@ import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.logic.module.ModulePreferences;
 import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 
 @Named("preferencesView")
 @SessionScoped
@@ -173,11 +174,11 @@ public class PreferencesView extends DcemView {
 			configLogic.setModulePreferencesInCluster(viewNavigator.getActiveModule().getId(), modulePreferencesPrevious, modulePreferencesClone);
 			String changeInfo;
 			try {
-				changeInfo = DcemUtils.compareObjects(modulePreferencesPrevious, modulePreferencesClone);
+				changeInfo = CompareUtils.compareObjects(modulePreferencesPrevious, modulePreferencesClone);
 				DcemAction action = new DcemAction (viewNavigator.getActiveModule().getId(), "Preferences", DcemConstants.ACTION_SAVE);
 				auditingLogic.addAudit(action, changeInfo);
-			} catch (DcemException e) {
-				logger.warn("Couldn't compare operator", e);
+			} catch (Exception e) {
+				logger.warn("Couldn't compare operator " + modulePreferencesPrevious.getClass().getName(), e);
 			}
 		} catch (Exception exp) {
 			JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "preferencesView.save.error", exp.getMessage());

@@ -100,7 +100,6 @@ public class TenantLogic implements ReloadClassInterface {
 		} else {
 			TenantEntity tenantEntityDb = em.find(TenantEntity.class, tenantEntity.getId());
 			try {
-				auditInfo = DcemUtils.compareObjects(tenantEntityDb, tenantEntity);
 				tenantEntityDb.setFullName(tenantEntity.getFullName());
 				tenantEntityDb.setName(tenantEntity.getName());
 				tenantEntityDb.setDisabled(tenantEntity.isDisabled());
@@ -111,7 +110,7 @@ public class TenantLogic implements ReloadClassInterface {
 			}
 		}
 		if (audit) {
-			auditingLogic.addAudit(dcemAction, auditInfo);
+			auditingLogic.addAudit(dcemAction, tenantEntity);
 		}
 		return;
 	}

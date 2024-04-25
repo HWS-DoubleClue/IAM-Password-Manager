@@ -30,19 +30,10 @@ public class RoleViewBean extends DcemView {
 	@PostConstruct
 	protected void init() {
 		roleDialogBean.setParentView(this);
-
 		subject = roleSubject;
-
 		ResourceBundle resourceBundle = JsfUtils.getBundle(DcemConstants.CORE_RESOURCE);
-			
 		addAutoViewAction( DcemConstants.ACTION_ADD,  resourceBundle, roleDialogBean, null);
 		addAutoViewAction( DcemConstants.ACTION_EDIT,  resourceBundle, roleDialogBean, null);
 		addAutoViewAction( DcemConstants.ACTION_DELETE,  resourceBundle, roleDialogBean, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);
-		
-		
 	}
-
-
-	
-
 }

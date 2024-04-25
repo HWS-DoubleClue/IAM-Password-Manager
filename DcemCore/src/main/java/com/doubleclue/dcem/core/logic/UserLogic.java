@@ -49,6 +49,8 @@ import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.doubleclue.dcem.core.utils.compare.CompareException;
+import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.RandomUtils;
@@ -155,6 +157,9 @@ public class UserLogic {
 				user.setDcemRole(dcemRole);
 			}
 			em.persist(user);
+			if (withAudit) {
+				auditingLogic.addAudit(dcemAction, user.toString());
+			}
 		} else { // EDITING
 			if (withAudit) {
 				try {
@@ -179,10 +184,10 @@ public class UserLogic {
 					user.setSaveit(null);
 				}
 			}
+			if (withAudit) {
+				auditingLogic.addAudit(dcemAction, user);
+			}
 			user = em.merge(user);
-		}
-		if (withAudit) {
-			auditingLogic.addAudit(dcemAction, user.toString());
 		}
 		return user;
 	}
@@ -477,6 +482,7 @@ public class UserLogic {
 			return null;
 		}
 	}
+
 	/**
 	 * @param user
 	 * @return
@@ -553,11 +559,13 @@ public class UserLogic {
 			asModuleApi.modifiedUser(preUser, newUser);
 			String changeInfo = "";
 			try {
-				changeInfo = DcemUtils.compareObjects(preUser, newUser);
-			} catch (DcemException e) {
+				changeInfo = CompareUtils.compareObjects(preUser, newUser);
+			} catch (Exception e) {
 				logger.warn("Couldn't compare operator", e);
 			}
-			auditingLogic.addAudit(dcemAction, changeInfo);
+			if (changeInfo.isEmpty() == false) {
+				auditingLogic.addAudit(dcemAction, changeInfo);
+			}
 		}
 	}
 
@@ -876,8 +884,9 @@ public class UserLogic {
 	}
 
 	@DcemTransactional
-	public void updateDcemUserExtension(DcemUser dcemUser, DcemUserExtension dcemUserExtension) {
+	public void updateDcemUserExtension(DcemAction dcemAction, DcemUser dcemUser, DcemUserExtension dcemUserExtension) {
 		DcemUserExtension dcemUserExtensionDb = em.find(DcemUserExtension.class, dcemUser.getId());
+		String changeInfo = "";
 		if (dcemUserExtensionDb == null) {
 			dcemUserExtension.setId(dcemUser.getId());
 			em.persist(dcemUserExtension);
@@ -886,6 +895,11 @@ public class UserLogic {
 		} else {
 			if (dcemUserExtension.getPhoto() != null) {
 				dcemUserExtensionDb.setPhoto(dcemUserExtension.getPhoto());
+			}
+			try {
+				changeInfo = CompareUtils.compareObjects(dcemUserExtensionDb, dcemUserExtension);
+			} catch (CompareException e) {
+				changeInfo = e.toString();
 			}
 			dcemUserExtensionDb.setCountry(dcemUserExtension.getCountry());
 			dcemUserExtensionDb.setTimezone(dcemUserExtension.getTimezone());
@@ -896,6 +910,7 @@ public class UserLogic {
 				dcemUser.setDcemUserExt(dcemUserExtensionDb);
 			}
 		}
+		auditingLogic.addAudit(dcemAction, changeInfo);
 	}
 
 	public List<DcemUser> getAllDomainUsers(DomainEntity azureDomainEntity) {
@@ -938,8 +953,8 @@ public class UserLogic {
 		DcemUser dcemUser = getUser(clonedUser.getId());
 		String changeInfo;
 		try {
-			changeInfo = DcemUtils.compareObjects(clonedUser, dcemUser);
-		} catch (DcemException e) {
+			changeInfo = CompareUtils.compareObjects(clonedUser, dcemUser);
+		} catch (Exception e) {
 			changeInfo = e.toString();
 		}
 		dcemUser.setLoginId(clonedUser.getLoginId());
@@ -963,7 +978,7 @@ public class UserLogic {
 			dcemUserExtensionDb.setTimezone(dcemUserExtension.getTimezone());
 		}
 		// userLogic.updateDcemUserExtension(dcemUser, dcemUserExtension);
-		if (changeInfo != null || changeInfo.isEmpty() == false) {
+		if (changeInfo != null && changeInfo.isEmpty() == false) {
 			auditingLogic.addAudit(new DcemAction(userSubject, DcemConstants.ACTION_EDIT), dcemUser, changeInfo);
 		}
 	}

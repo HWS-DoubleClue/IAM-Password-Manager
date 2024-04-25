@@ -6,12 +6,14 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.hibernate.Hibernate;
+
 import com.doubleclue.dcem.core.entities.Auditing;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
-import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 
 @ApplicationScoped
 @Named("auditingLogic")
@@ -28,11 +30,13 @@ public class AuditingLogic {
 
 	@DcemTransactional
 	public void addAudit(DcemAction dcemAction, String information) {
-		if (dcemAction.getId() == null) {
-			dcemAction = actionLogic.getDcemAction(dcemAction);
+		if (information.isEmpty() == false) {
+			if (dcemAction.getId() == null) {
+				dcemAction = actionLogic.getDcemAction(dcemAction);
+			}
+			Auditing auditing = new Auditing(dcemAction, information, operatorSessionBean.getDcemUser());
+			em.persist(auditing);
 		}
-		Auditing auditing = new Auditing(dcemAction, information, operatorSessionBean.getDcemUser());
-		em.persist(auditing);
 	}
 
 	@DcemTransactional
@@ -42,26 +46,22 @@ public class AuditingLogic {
 		}
 		String changeInfo;
 		if (newEntity.getId() == null) {
-			try {
-				EntityInterface oldEntity = newEntity.getClass().newInstance();
-				changeInfo = DcemUtils.compareObjects(oldEntity, newEntity, true);
-			} catch (Exception exp) {
-				changeInfo = newEntity.toString();
-			}
+			changeInfo = newEntity.toString();
 		} else {
 			try {
-				
-				EntityInterface oldEntity = em.find(newEntity.getClass(), newEntity.getId());
-				changeInfo = DcemUtils.compareObjects(oldEntity, newEntity);
+				EntityInterface oldEntity = (EntityInterface) em.find(Hibernate.unproxy(newEntity).getClass(), newEntity.getId());
+				changeInfo = CompareUtils.compareObjects(oldEntity, newEntity);
 			} catch (Exception exp) {
 				// logger.warn("Couldn't compare operator", exp);
 				changeInfo = "ERROR: " + exp.getMessage();
 			}
 		}
-		Auditing auditing = new Auditing(dcemAction, changeInfo, operatorSessionBean.getDcemUser());
-		em.persist(auditing);
+		if (changeInfo.isEmpty() == false) {
+			Auditing auditing = new Auditing(dcemAction, changeInfo, operatorSessionBean.getDcemUser());
+			em.persist(auditing);
+		}
 	}
-	
+
 	@DcemTransactional
 	public void addAudit(DcemAction dcemAction, DcemUser dcemUser, String information) {
 		if (dcemAction.getId() == null) {
@@ -70,7 +70,6 @@ public class AuditingLogic {
 		Auditing auditing = new Auditing(dcemAction, information, dcemUser);
 		em.persist(auditing);
 	}
-
 
 	@DcemTransactional
 	public void deleteAllAuditsForUser(DcemUser dcemUser) {

@@ -24,6 +24,7 @@ import com.doubleclue.dcem.core.logic.AuditingLogic;
 import com.doubleclue.dcem.core.logic.ConfigLogic;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 import com.doubleclue.dcem.userportal.logic.UserPortalModule;
 import com.doubleclue.dcem.userportal.preferences.UserPortalPreferences;
 import com.doubleclue.dcem.userportal.subjects.UserPortalConfigSubject;
@@ -61,6 +62,8 @@ public class UserPortalConfigView extends DcemView {
 	private List<SelectItem> viewItemList;
 	private List<SelectItem> actionItemList;
 	private List<SelectItem> notificationTypeList;
+	
+	
 
 	@PostConstruct
 	public void init() {
@@ -80,6 +83,10 @@ public class UserPortalConfigView extends DcemView {
 			JsfUtils.addErrorMessage(e.getMessage());
 		}
 	}
+	
+	public boolean isSavePermission() {
+		return operatorSessionBean.isPermission(new DcemAction(subject, DcemConstants.ACTION_SAVE));
+	}
 
 	public void actionSave() {
 		try {
@@ -87,10 +94,10 @@ public class UserPortalConfigView extends DcemView {
 			try {
 				String changeInfo;
 				try {
-					changeInfo = DcemUtils.compareObjects(modulePreferencesPrevious, modulePreferencesClone);
-					DcemAction action = new DcemAction(viewNavigator.getActiveModule().getId(), "Preferences", DcemConstants.ACTION_SAVE);
+					changeInfo = CompareUtils.compareObjects(modulePreferencesPrevious, modulePreferencesClone);
+					DcemAction action = operatorSessionBean.getPermission(new DcemAction(subject, DcemConstants.ACTION_SAVE));
 					auditingLogic.addAudit(action, changeInfo);
-				} catch (DcemException e) {
+				} catch (Exception e) {
 					logger.warn("Couldn't compare operator", e);
 				}
 				configLogic.setModulePreferencesInCluster(viewNavigator.getActiveModule().getId(), modulePreferencesPrevious, modulePreferencesClone);

@@ -95,15 +95,9 @@ public class TextResourceLogic {
 			em.persist(textMessage);
 			auditInfo = textMessage.toString();
 		} else {
-			try {
-				auditInfo = DcemUtils.compareObjects(getEntityById(textMessage.getId()), textMessage);
-			} catch (Exception exp) {
-				logger.warn("Couldn't compare TextMessage", exp);
-				auditInfo = "ERROR: " + exp.getMessage();
-			}
 			em.merge(textMessage);
 		}
-		auditingLogic.addAudit(dcemAction, auditInfo);
+		auditingLogic.addAudit(dcemAction, textMessage);
 
 	}
 

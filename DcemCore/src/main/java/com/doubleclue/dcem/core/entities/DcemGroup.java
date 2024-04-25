@@ -253,10 +253,7 @@ public class DcemGroup extends EntityAbstract {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
 		DcemGroup other = (DcemGroup) obj;
-	
 		if (getId() == null) {
 			if (other.getId() != null)
 				return false;

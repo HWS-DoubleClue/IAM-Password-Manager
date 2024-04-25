@@ -32,6 +32,9 @@ public class RoleLogic {
 	
 	@Inject
 	OperatorSessionBean operatorSessionBean;
+	
+	@Inject
+	AuditingLogic auditingLogic;
 
 	public List<String> dcemRoleNames() {
 		return getDcemRoleNames();
@@ -108,12 +111,16 @@ public class RoleLogic {
 	}
 
 	@DcemTransactional
-	public void deleteRoles(List<Object> actionObjects) {
+	public void deleteRoles(DcemAction dcemAction, List<Object> actionObjects) {
 		DcemRole dcemRole;
+		StringBuffer sb = new StringBuffer();
 		for (Object obj : actionObjects) {
 			dcemRole = (DcemRole) em.merge(obj);
 			em.remove(dcemRole);
+			sb.append(dcemRole.toString());
+			sb.append(", ");
 		}
+		auditingLogic.addAudit(dcemAction, sb.toString());
 	}
 
 	@DcemTransactional
