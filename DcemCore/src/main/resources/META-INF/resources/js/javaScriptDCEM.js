@@ -168,9 +168,12 @@ function setCaretPosition(elemId, caretPos) {
 function getThemeFromLocalStorage() {
 	if (localStorage.getItem("theme") === "dark") {
 		document.documentElement.classList.add("dark-theme");
-		themeSwitcher.checked = true;
+		if (document.getElementById("theme-switcher") != null) {
+			document.getElementById("theme-switcher").checked = true;
+		}
 	}
 }
+
 
 document.addEventListener('DOMContentLoaded', getThemeFromLocalStorage());
 window.onload = getThemeFromLocalStorage();

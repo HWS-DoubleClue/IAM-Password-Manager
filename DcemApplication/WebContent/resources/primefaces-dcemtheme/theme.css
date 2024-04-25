@@ -32,6 +32,9 @@
 	--tab-header-text-color: #555555;
 	--tab-inactive-border-color: #00000021;
 	--tab-hover-background-color: #00000008;
+	--preferences-seperator-background-color: #d3d3d3;
+	--inputfield-border-color: #C3C3C3;
+	--inputfield-hover-border-color: #777777;
 }
 
 :root.dark-theme {
@@ -59,12 +62,15 @@
 		url("#{resource['primefaces-dcemtheme:images/angle-right-solid-white.svg']}");
 	--state-default-text-color: #fcfcfc;
 	--state-active-text-color: #bbbbbb;
-	--state-hover-background-color: transparent;
+	--state-hover-background-color: #1f1f1f;
 	--widget-header-icon:
 		url("#{resource['primefaces-dcemtheme:images/ui-icons_888888_256x240.png']}");
 	--tab-header-text-color: #8bb6d1;
 	--tab-inactive-border-color: #303030;
 	--tab-hover-background-color: #303030;
+	--preferences-seperator-background-color: #545454;
+	--inputfield-border-color: #C3C3C3;
+	--inputfield-hover-border-color: #777777;
 }
 
 body {
@@ -295,7 +301,7 @@ body {
 /* Interaction states----------------------------------*/
 .ui-state-default, .ui-widget-content .ui-state-default,
 	.ui-widget-header .ui-state-default {
-	border: 1px solid #C3C3C3;
+	border: 1px solid var(--inputfield-border-color);
 	font-weight: normal !important;
 	color: var(--state-default-text-color);
 	background-color: var(--inputfield-background-color);
@@ -337,7 +343,7 @@ body {
 	/* 	/* 	color: #212121; #8bb6d1 */ * /
 	/* 	/* 	color: var(--state-active-text-color); */ * /
 	/* 	color: var(--button-hover-text-color); */
-	/* } */    
+	/* } */       
 
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited
 	{
@@ -508,7 +514,7 @@ body {
 
 .ui-menu.ui-menu-dynamic {
 	/* 	width: 8em; */
-	
+	border: 1px solid var(--inputfield-border-color);
 }
 
 .ui-panelmenu-header .ui-icon-triangle-1-s {
@@ -1245,7 +1251,7 @@ body {
 .ui-inputfield.ui-state-focus, .ui-widget-content .ui-inputfield.ui-state-focus,
 	.ui-widget-header .ui-inputfield.ui-state-focus, .ui-inputfield.ui-state-hover
 	{
-	border-color: #777777;
+	border-color: --inputfield-hover-border-color;
 }
 
 /* .ui-inputfield.ui-state-hover { */
@@ -2181,4 +2187,8 @@ ul.ui-menu-child {
 .ui-chkbox .ui-chkbox-box.ui-state-active, .ui-radiobutton-box.ui-state-active
 	{
 	background: var(--inputfield-background-color);
+}
+
+.ui-overlaypanel {
+	border: 1px solid var(--inputfield-border-color);
 }
