@@ -156,8 +156,7 @@ public class DcemUtils {
 	 * @param dcemGui
 	 * @return
 	 */
-	static public ViewVariable convertFieldToViewVariable(Field field, ResourceBundle resourceBundle, String viewName,
-			Object objectKlass) {
+	static public ViewVariable convertFieldToViewVariable(Field field, ResourceBundle resourceBundle, String viewName, Object objectKlass) {
 		return convertFieldToViewVariable(field, resourceBundle, viewName, objectKlass, null);
 	}
 
@@ -169,8 +168,8 @@ public class DcemUtils {
 	 * @param viewVariable   Parent ViewVariable
 	 * @return
 	 */
-	static public ViewVariable convertFieldToViewVariable(Field field, ResourceBundle resourceBundle, String viewName,
-			Object objectKlass, ArrayList<Attribute<?, ?>> attributes) {
+	static public ViewVariable convertFieldToViewVariable(Field field, ResourceBundle resourceBundle, String viewName, Object objectKlass,
+			ArrayList<Attribute<?, ?>> attributes) {
 		Class<?> cls;
 		String displayName = null;
 		String helpText = null;
@@ -200,8 +199,7 @@ public class DcemUtils {
 			} catch (MissingResourceException mrex) {
 			}
 			try {
-				helpText = resourceBundle
-						.getString(viewName + "." + DcemConstants.PREF_HELP_RESOURCE + "." + fieldName);
+				helpText = resourceBundle.getString(viewName + "." + DcemConstants.PREF_HELP_RESOURCE + "." + fieldName);
 			} catch (MissingResourceException e) {
 				helpText = dcemGui.help();
 			}
@@ -318,30 +316,28 @@ public class DcemUtils {
 					try {
 						Class<?> listClass = Class.forName(types[0].getTypeName());
 						Field subField = listClass.getDeclaredField(dcemGui.subClass());
-						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass,
-								attributes);
+						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass, attributes);
 						if (subViewVariable == null) {
 							return null;
 						}
 						if (subViewVariable.getDcemGui().subClass().isEmpty()) {
 							variableType = subViewVariable.getVariableType();
-							ViewVariable retViewVariable = new ViewVariable(
-									field.getName() + "." + subViewVariable.getId(), displayName, helpText,
+							ViewVariable retViewVariable = new ViewVariable(field.getName() + "." + subViewVariable.getId(), displayName, helpText,
 									variableType, dcemGui, value, attributes);
 							retViewVariable.setKlass(subViewVariable.getKlass());
 							if (objectKlass == null) {
-								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue,
-										filterToValue, dcemGui.filterOperator(), 0, dcemGui.sortOrder());
+								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
+										dcemGui.sortOrder());
 								retViewVariable.setFilterItem(filterItem);
 							}
 							retViewVariable.setListClass(listClass);
 							return retViewVariable;
 						} else {
 							variableType = subViewVariable.getVariableType();
-							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue,
-									dcemGui.filterOperator(), 0, dcemGui.sortOrder());
-							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText,
-									variableType, dcemGui, value, attributes, filterItem);
+							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
+									dcemGui.sortOrder());
+							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui, value, attributes,
+									filterItem);
 							retViewVariable.setKlass(subViewVariable.getKlass());
 							retViewVariable.setListClass(listClass);
 							return retViewVariable;
@@ -357,29 +353,27 @@ public class DcemUtils {
 					Field subField;
 					try {
 						subField = cls.getDeclaredField(subClass);
-						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass,
-								attributes);
+						ViewVariable subViewVariable = convertFieldToViewVariable(subField, null, null, objectKlass, attributes);
 						if (subViewVariable == null) {
 							return null;
 						}
 						if (subViewVariable.getDcemGui().subClass().isEmpty()) {
 							variableType = subViewVariable.getVariableType();
-							ViewVariable retViewVariable = new ViewVariable(
-									field.getName() + "." + subViewVariable.getId(), displayName, helpText,
+							ViewVariable retViewVariable = new ViewVariable(field.getName() + "." + subViewVariable.getId(), displayName, helpText,
 									variableType, dcemGui, value, attributes);
 							retViewVariable.setKlass(subViewVariable.getKlass());
 							if (objectKlass == null) {
-								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue,
-										filterToValue, dcemGui.filterOperator(), 0, dcemGui.sortOrder());
+								FilterItem filterItem = new FilterItem(retViewVariable.getId(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
+										dcemGui.sortOrder());
 								retViewVariable.setFilterItem(filterItem);
 							}
 							return retViewVariable;
 						} else {
 							variableType = subViewVariable.getVariableType();
-							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue,
-									dcemGui.filterOperator(), 0, dcemGui.sortOrder());
-							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText,
-									variableType, dcemGui, value, attributes, filterItem);
+							FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0,
+									dcemGui.sortOrder());
+							ViewVariable retViewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui, value, attributes,
+									filterItem);
 							retViewVariable.setKlass(subViewVariable.getKlass());
 							return retViewVariable;
 						}
@@ -400,11 +394,9 @@ public class DcemUtils {
 		}
 
 		attributes.trimToSize();
-		ViewVariable viewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui,
-				value, attributes);
+		ViewVariable viewVariable = new ViewVariable(field.getName(), displayName, helpText, variableType, dcemGui, value, attributes);
 		if (objectKlass == null) {
-			FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue,
-					dcemGui.filterOperator(), 0, dcemGui.sortOrder());
+			FilterItem filterItem = new FilterItem(field.getName(), filterValue, filterToValue, dcemGui.filterOperator(), 0, dcemGui.sortOrder());
 			viewVariable.setFilterItem(filterItem);
 		}
 		viewVariable.setKlass((Class<Object>) cls);
@@ -423,9 +415,8 @@ public class DcemUtils {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static HtmlPanelGrid populateTable(List<ViewVariable> viewVariables, HtmlPanelGrid htmlPanelGrid,
-			Object object, String bindObject, boolean withHelp, DcemDialog dcemDialog)
-			throws IllegalArgumentException, IllegalAccessException {
+	public static HtmlPanelGrid populateTable(List<ViewVariable> viewVariables, HtmlPanelGrid htmlPanelGrid, Object object, String bindObject, boolean withHelp,
+			DcemDialog dcemDialog) throws IllegalArgumentException, IllegalAccessException {
 
 		htmlPanelGrid.getChildren().clear();
 		ViewVariable viewVariable;
@@ -441,11 +432,11 @@ public class DcemUtils {
 			if (viewVariable.getDcemGui().separator().isEmpty() == false) {
 				HtmlOutputText sep = new HtmlOutputText();
 				sep.setValue("-");
-				sep.setStyle("display:block; width: 100%; background-color: lightgrey");
+				sep.setStyleClass("preferences-seperator");
 				htmlPanelGrid.getChildren().add(sep);
 				HtmlOutputText sep2 = new HtmlOutputText();
 				sep2.setValue(viewVariable.getDcemGui().separator());
-				sep2.setStyle("display:block; width: 100%; background-color: lightgrey");
+				sep2.setStyleClass("preferences-seperator");
 				htmlPanelGrid.getChildren().add(sep2);
 			}
 			HtmlOutputText out = new HtmlOutputText();
@@ -453,8 +444,7 @@ public class DcemUtils {
 			htmlPanelGrid.getChildren().add(out);
 			try {
 				HtmlPanelGroup htmlPanelGroup = new HtmlPanelGroup();
-				UIComponent input = getHtmlInput(eFactory, "#{" + bindObject + "." + viewVariable.getId() + "}",
-						viewVariable, object, dcemDialog);
+				UIComponent input = getHtmlInput(eFactory, "#{" + bindObject + "." + viewVariable.getId() + "}", viewVariable, object, dcemDialog);
 				input.setId(viewVariable.getId().replace('.', '_'));
 				htmlPanelGroup.getChildren().add(input);
 				if (withHelp && viewVariable.getHelpText() != null && viewVariable.getHelpText().isEmpty() == false) {
@@ -462,8 +452,8 @@ public class DcemUtils {
 					helpButton.setEscape(false);
 					helpButton.setValue("<i class=\"fa fa-question-circle\" aria-hidden=\"true\"></i>");
 					helpButton.setId("helpButton" + input.getId());
-					helpButton
-							.setStyle("padding:2px;color:#005078;cursor:pointer;font-size: 1.2em;margin-left: 0.5em;");
+					// helpButton.setStyle("padding:2px;color:#005078;cursor:pointer;font-size: 1.2em;margin-left: 0.5em;");
+					helpButton.setStyleClass("preferences-help-button");
 					OverlayPanel op = new OverlayPanel();
 					op.setDismissable(false);
 					op.setShowCloseIcon(true);
@@ -493,8 +483,8 @@ public class DcemUtils {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	static UIComponent getHtmlInput(ExpressionFactory eFactory, String binding, ViewVariable viewVariable,
-			Object object, DcemDialog dcemDialog) throws IllegalArgumentException, IllegalAccessException {
+	static UIComponent getHtmlInput(ExpressionFactory eFactory, String binding, ViewVariable viewVariable, Object object, DcemDialog dcemDialog)
+			throws IllegalArgumentException, IllegalAccessException {
 
 		// FIXME: add validations of input parameter
 		DcemGui dcemGui = viewVariable.getDcemGui();
@@ -526,8 +516,7 @@ public class DcemUtils {
 			if (viewVariable.getStyleClass() != null) {
 				input.setStyleClass(viewVariable.getStyleClass());
 			}
-			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
-					|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 				input.setDisabled(true);
 			}
 			return input;
@@ -536,10 +525,8 @@ public class DcemUtils {
 			if (dcemGui != null && dcemGui.choose().length > 0) {
 				HtmlSelectOneMenu select = new HtmlSelectOneMenu();
 				select.setLabel(viewVariable.getDisplayName());
-				select.setValueExpression("value",
-						eFactory.createValueExpression(fc.getELContext(), binding, String.class));
-				select.setValueExpression("appendTo",
-						eFactory.createValueExpression(fc.getELContext(), "@this", String.class));
+				select.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, String.class));
+				select.setValueExpression("appendTo", eFactory.createValueExpression(fc.getELContext(), "@this", String.class));
 				// populate the drop down list
 				UISelectItems items = new UISelectItems();
 				ArrayList<SelectItem> arr = new ArrayList<SelectItem>(dcemGui.choose().length);
@@ -583,8 +570,7 @@ public class DcemUtils {
 				if (viewVariable.getStyleClass() != null) {
 					((Password) inputStr).setStyleClass(viewVariable.getStyleClass());
 				}
-				if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
-						|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+				if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 					((Password) inputStr).setDisabled(true);
 				}
 				((Password) inputStr).setRedisplay(true);
@@ -594,11 +580,9 @@ public class DcemUtils {
 					inputStr = new AutoComplete();
 					((HtmlInputText) inputStr).setLabel(viewVariable.getDisplayName());
 					((AutoComplete) inputStr).setMinQueryLength(1);
-					String expression = "#{" + getOriginalClassName(dcemDialog.getClass().getSimpleName()) + "."
-							+ viewVariable.getId() + "s}";
+					String expression = "#{" + getOriginalClassName(dcemDialog.getClass().getSimpleName()) + "." + viewVariable.getId() + "s}";
 
-					MethodExpression methodExpression = createMethodExpression(expression, List.class,
-							new Class<?>[] { String.class });
+					MethodExpression methodExpression = createMethodExpression(expression, List.class, new Class<?>[] { String.class });
 					((AutoComplete) inputStr).setCompleteMethod(methodExpression);
 
 				} else {
@@ -612,11 +596,9 @@ public class DcemUtils {
 				if (viewVariable.getStyleClass() != null) {
 					((HtmlInputText) inputStr).setStyleClass(viewVariable.getStyleClass());
 				}
-				if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
-						|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+				if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 					HtmlOutputText uiComponent = new HtmlOutputText();
-					uiComponent.setValueExpression("value",
-							eFactory.createValueExpression(fc.getELContext(), binding, String.class));
+					uiComponent.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, String.class));
 					uiComponent.setRendered(true);
 					if (viewVariable.getValue() == null) {
 						uiComponent.setValue("");
@@ -626,8 +608,7 @@ public class DcemUtils {
 					return uiComponent;
 				}
 			}
-			inputStr.setValueExpression("value",
-					eFactory.createValueExpression(fc.getELContext(), binding, String.class));
+			inputStr.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, String.class));
 			inputStr.setRendered(true);
 			if (viewVariable.getValue() == null) {
 				inputStr.setValue("");
@@ -638,12 +619,10 @@ public class DcemUtils {
 
 		case BOOLEAN:
 			SelectBooleanCheckbox selectBooleanCheckbox = new SelectBooleanCheckbox();
-			selectBooleanCheckbox.setValueExpression("value",
-					eFactory.createValueExpression(fc.getELContext(), binding, Boolean.class));
+			selectBooleanCheckbox.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, Boolean.class));
 			selectBooleanCheckbox.setValue(viewVariable.getValue());
 			selectBooleanCheckbox.setLabel(viewVariable.getDisplayName());
-			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
-					|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 				((HtmlSelectBooleanCheckbox) selectBooleanCheckbox).setDisabled(true);
 			}
 
@@ -653,22 +632,18 @@ public class DcemUtils {
 		case EPOCH_DATE:
 
 			org.primefaces.component.calendar.Calendar uiCalendar = new org.primefaces.component.calendar.Calendar();
-			uiCalendar.setValueExpression("value",
-					eFactory.createValueExpression(fc.getELContext(), binding, Date.class));
+			uiCalendar.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, Date.class));
 			uiCalendar.setValue(viewVariable.getValue());
 			uiCalendar.setStyle("width: 40px");
-			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED
-					|| dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
+			if (dcemGui.displayMode() == DisplayModes.INPUT_DISABLED || dcemGui.displayMode() == DisplayModes.INPUT_ONLY_DISABLED) {
 				uiCalendar.setDisabled(true);
 			}
 			return uiCalendar;
 		case ENUM:
 			HtmlSelectOneMenu select = new SelectOneMenu();
 			select.setLabel(viewVariable.getDisplayName());
-			select.setValueExpression("value",
-					eFactory.createValueExpression(fc.getELContext(), binding, String.class));
-			select.setValueExpression("appendTo",
-					eFactory.createValueExpression(fc.getELContext(), "@this", String.class));
+			select.setValueExpression("value", eFactory.createValueExpression(fc.getELContext(), binding, String.class));
+			select.setValueExpression("appendTo", eFactory.createValueExpression(fc.getELContext(), "@this", String.class));
 			// populate the drop down list
 
 			Object[] enumItems = viewVariable.getKlass().getEnumConstants();
@@ -758,14 +733,304 @@ public class DcemUtils {
 	 *                           parameter is ignored.
 	 * @return The parsed expression.
 	 */
-	static MethodExpression createMethodExpression(String methodExpression, Class<?> expectedReturnType,
-			Class<?>[] expectedParamTypes) {
+	static MethodExpression createMethodExpression(String methodExpression, Class<?> expectedReturnType, Class<?>[] expectedParamTypes) {
 		FacesContext context = FacesContext.getCurrentInstance();
-		return context.getApplication().getExpressionFactory().createMethodExpression(context.getELContext(),
-				methodExpression, expectedReturnType, expectedParamTypes);
+		return context.getApplication().getExpressionFactory().createMethodExpression(context.getELContext(), methodExpression, expectedReturnType,
+				expectedParamTypes);
 	}
 
 	/**
+<<<<<<< Upstream, based on master
+=======
+	 * @param oldObject Object
+	 * @param newObject Object
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 * @throws DcemException
+	 */
+
+	public static String compareObjects(final Object oldObject, final Object newObject) throws DcemException {
+		return compareObjects(oldObject, newObject, false);
+	}
+
+	/**
+	 * @param oldObject   Object
+	 * @param newObject   Object
+	 * @param isNewObject boolean
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 * @throws DcemException
+	 */
+	public static String compareObjects(final Object oldObject, final Object newObject, boolean isNewObject) throws DcemException {
+		String nullString = isNewObject ? "" : "null";
+		String unicodeRightArrow = isNewObject ? "" : " > ";
+		try {
+			String fin = ";  ";
+			StringBuilder stringBuilder = new StringBuilder();
+			Class<?> oldObjectClass = oldObject.getClass();
+			Class<?> newObjectClass = newObject.getClass();
+			boolean isEntity = newObjectClass.getSuperclass().equals(EntityInterface.class);
+			Field newField;
+			int modifiers;
+			for (Field oldField : oldObjectClass.getDeclaredFields()) {
+				modifiers = oldField.getModifiers();
+				if (Modifier.isStatic(modifiers) || (Modifier.isFinal(modifiers)) || (Modifier.isTransient(modifiers))) {
+					continue;
+				}
+				if (oldField.isAnnotationPresent(javax.persistence.Version.class)) {
+					continue;
+				}
+				if (oldField.isAnnotationPresent(DcemGui.class)) {
+					if (oldField.getAnnotation(DcemGui.class).ignoreCompare() == true) {
+						continue;
+					}
+				}
+
+				newField = newObjectClass.getDeclaredField(oldField.getName());
+				newField.setAccessible(true);
+				oldField.setAccessible(true);
+				// System.out.println("DcemUtils.compareObjects() " + oldField.getName());
+				if (isEntity && Persistence.getPersistenceUtil().isLoaded(newObject, oldField.getName()) == false) {
+					continue;
+				}
+
+				if (oldField.isAnnotationPresent(DcemGui.class)) {
+					if (oldField.getAnnotation(DcemGui.class).variableType() == VariableType.IMAGE) {
+						Method oldMethod = getGetterMethodForField(oldField, oldObjectClass);
+						byte[] oldImage = (byte[]) oldMethod.invoke(oldObject);
+						Method newMethod = getGetterMethodForField(oldField, oldObjectClass);
+						byte[] newImage = (byte[]) newMethod.invoke(newObject);
+						if (Objects.deepEquals(oldImage, newImage) == false) {
+							stringBuilder.append(oldField.getName());
+							stringBuilder.append(": ");
+							stringBuilder.append(Objects.isNull(oldImage) ? nullString : ":IMAGE AVAILABLE:");
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append(Objects.isNull(newImage) ? nullString : (Objects.isNull(oldImage) ? ":IMAGE INSERTED:" : ":IMAGE UPDATED:"));
+							stringBuilder.append(fin);
+						}
+						continue;
+					}
+					if (oldField.getAnnotation(DcemGui.class).variableType() == VariableType.OTHER) {
+						continue;
+					}
+				}
+
+				Class<?> cls = oldField.getType();
+				if (cls.equals(String.class)) {
+					String oldString = (((String) oldField.get(oldObject)) != null) ? (String) oldField.get(oldObject) : nullString;
+					String newString = (((String) newField.get(newObject)) != null) ? (String) newField.get(newObject) : nullString;
+					if (oldString.equals(newString) == false) {
+						stringBuilder.append(oldField.getName());
+						stringBuilder.append(": ");
+						DcemGui dcemGui = oldField.getAnnotation(DcemGui.class);
+						if (dcemGui != null && dcemGui.password()) {
+							stringBuilder.append(newString.equals("null") ? newString : ":PASSWORD:");
+						} else if (dcemGui != null && dcemGui.variableType() == VariableType.STRING) {
+							stringBuilder.append(oldString.equals("null") ? oldString : ":LONG TEXT AVAILABLE:");
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder
+									.append(newString.equals("null") ? newString : (oldString.equals("null") ? ":LONG TEXT INSERTED:" : ":LONG TEXT UPDATED:"));
+						} else {
+							stringBuilder.append(oldString);
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append(newString);
+						}
+						stringBuilder.append(fin);
+					}
+				} else if ((cls.equals(Integer.class)) || (cls.equals(int.class))) {
+					Integer oldInteger = (Integer) oldField.get(oldObject);
+					Integer newInteger = (Integer) newField.get(newObject);
+					if ((oldInteger == null && newInteger != null) || (oldInteger != null && newInteger == null)
+							|| (oldInteger != null && newInteger != null && oldInteger.intValue() != newInteger.intValue())) {
+						stringBuilder.append(oldField.getName());
+						stringBuilder.append(": ");
+						stringBuilder.append((oldInteger != null ? oldInteger : nullString));
+						stringBuilder.append(unicodeRightArrow);
+						stringBuilder.append((newInteger != null ? newInteger : "null"));
+						stringBuilder.append(fin);
+					}
+				} else if ((cls.equals(Long.class)) || (cls.equals(long.class))) {
+					if (!oldField.getName().equals("jpaVersion")) {
+						Long oldInteger = (Long) oldField.get(oldObject);
+						Long newInteger = (Long) newField.get(newObject);
+						if ((oldInteger == null && newInteger != null) || (oldInteger != null && newInteger == null)
+								|| (oldInteger != null && newInteger != null && oldInteger.longValue() != newInteger.longValue())) {
+							stringBuilder.append(oldField.getName());
+							stringBuilder.append(": ");
+							stringBuilder.append((oldInteger != null ? oldInteger : nullString));
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append((newInteger != null ? newInteger : "null"));
+							stringBuilder.append(fin);
+						}
+					}
+				} else if ((cls.equals(Byte.class)) || (cls.equals(byte.class))) {
+					Byte oldByte = (Byte) oldField.get(oldObject);
+					Byte newByte = (Byte) newField.get(newObject);
+					if ((oldByte == null && newByte != null) || (oldByte != null && newByte == null)
+							|| (oldByte != null && newByte != null && oldByte.byteValue() != newByte.byteValue())) {
+						stringBuilder.append(oldField.getName());
+						stringBuilder.append(": ");
+						stringBuilder.append((oldByte != null ? oldByte : nullString));
+						stringBuilder.append(unicodeRightArrow);
+						stringBuilder.append((newByte != null ? newByte : "null"));
+						stringBuilder.append(fin);
+					}
+				} else if (cls.equals(boolean.class)) {
+					Boolean oldBoolean = (Boolean) oldField.get(oldObject);
+					Boolean newBoolean = (Boolean) newField.get(newObject);
+					if ((oldBoolean == null && newBoolean != null) || (oldBoolean != null && newBoolean == null)
+							|| (oldBoolean != null && newBoolean != null && oldBoolean.booleanValue() != newBoolean.booleanValue())) {
+						stringBuilder.append(oldField.getName());
+						stringBuilder.append(": ");
+						stringBuilder.append((oldBoolean != null ? oldBoolean : nullString));
+						stringBuilder.append(unicodeRightArrow);
+						stringBuilder.append((newBoolean != null ? newBoolean : "null"));
+						stringBuilder.append(fin);
+					}
+				} else if (cls.equals(Date.class)) {
+					Date oldDate = (Date) oldField.get(oldObject);
+					Date newDate = (Date) oldField.get(newObject);
+					if ((oldDate == null && newDate != null) || (oldDate != null && newDate == null)
+							|| (oldDate != null && newDate != null && oldDate.compareTo(newDate) != 0)) {
+						stringBuilder.append(oldField.getName());
+						stringBuilder.append(": ");
+						stringBuilder.append((oldDate != null ? DateUtils.formatDateTime(oldDate) : nullString));
+						stringBuilder.append(unicodeRightArrow);
+						stringBuilder.append((newDate != null ? DateUtils.formatDateTime(newDate) : "null"));
+						stringBuilder.append(fin);
+					}
+				} else if (cls.equals(Map.class)) {
+					Map<Object, Object> oldMap = (Map) oldField.get(oldObject);
+					Map<Object, Object> newMap = (Map) oldField.get(newObject);
+					List<Object> oldMapKeys = new ArrayList<Object>(oldMap.keySet());
+					for (Object object : oldMapKeys) {
+						if (oldMap.get(object).equals(newMap.get(object)) == false) {
+							stringBuilder.append(object.toString());
+							stringBuilder.append(": ");
+							stringBuilder.append(oldMap.get(object).toString());
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append(newMap.get(object).toString());
+							stringBuilder.append(fin);
+						}
+					}
+				} else if (cls.equals(List.class)) {
+					List<?> oldList = Objects.isNull(oldField.get(oldObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(oldObject);
+					List<?> newList = Objects.isNull(oldField.get(newObject)) == true ? new ArrayList<>() : (List<?>) oldField.get(newObject);
+					if (oldList.size() != 0 || newList.size() != 0) {
+						Class<?> klass = oldList.size() == 0 ? newList.get(0).getClass().getSuperclass() : oldList.get(0).getClass().getSuperclass();
+						if (klass == EntityInterface.class) {
+							List<? extends EntityInterface> oldEntityList = (List<? extends EntityInterface>) oldList;
+							List<? extends EntityInterface> newEntityList = (List<? extends EntityInterface>) newList;
+							if (CollectionUtils.isEqualCollection(oldEntityList, newEntityList) == false) {
+								stringBuilder.append(oldField.getName());
+								stringBuilder.append(": ");
+								stringBuilder.append(oldEntityList.size() == 0 ? nullString : ":LIST AVAILABLE:");
+								stringBuilder.append(unicodeRightArrow);
+								stringBuilder.append(newEntityList.size() == 0 ? "null" : (oldEntityList.size() == 0 ? ":LIST INSERTED:" : ":LIST UPDATED:"));
+								stringBuilder.append(fin);
+							}
+						} else {
+							if (CollectionUtils.isEqualCollection(oldList, newList) == false) {
+								stringBuilder.append(oldField.getName());
+								stringBuilder.append(": ");
+								stringBuilder.append(oldList.size() == 0 ? nullString : ":LIST AVAILABLE:");
+								stringBuilder.append(unicodeRightArrow);
+								stringBuilder.append(newList.size() == 0 ? "null" : (oldList.size() == 0 ? ":LIST INSERTED:" : ":LIST UPDATED:"));
+								stringBuilder.append(fin);
+							}
+						}
+					}
+				} else if (cls.getSuperclass() == EntityInterface.class) {
+					EntityInterface oldEntity = Objects.isNull(oldField.get(oldObject)) ? new EntityInterface() {
+						@Override
+						public Number getId() {
+							return null;
+						}
+
+						@Override
+						public void setId(Number id) {
+						}
+					} : (EntityInterface) oldField.get(oldObject);
+					EntityInterface newEntity = Objects.isNull(oldField.get(newObject)) ? new EntityInterface() {
+						@Override
+						public Number getId() {
+							return null;
+						}
+
+						@Override
+						public void setId(Number id) {
+						}
+					} : (EntityInterface) oldField.get(newObject);
+					if (oldEntity.getId() != null || newEntity.getId() != null) {
+						if (oldEntity.equals(newEntity) == false) {
+							stringBuilder.append(oldField.getName());
+							stringBuilder.append(": ");
+							stringBuilder.append((Objects.isNull(oldEntity.getId()) == false ? oldEntity : nullString));
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append((Objects.isNull(newEntity.getId()) == false ? newEntity : nullString));
+							stringBuilder.append(fin);
+						}
+					}
+				} else if (cls.isEnum() == true) {
+					Enum<?> oldEnum = Objects.isNull(oldField.get(oldObject)) ? null : (Enum<?>) oldField.get(oldObject);
+					Enum<?> newEnum = Objects.isNull(oldField.get(newObject)) ? null : (Enum<?>) oldField.get(newObject);
+					if (Objects.isNull(oldEnum) == false || Objects.isNull(newEnum) == false) {
+						if (oldEnum != newEnum) {
+							stringBuilder.append(oldField.getName());
+							stringBuilder.append(": ");
+							stringBuilder.append((Objects.isNull(oldEnum) == false ? oldEnum : nullString));
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append((Objects.isNull(newEnum) == false ? newEnum : nullString));
+							stringBuilder.append(fin);
+						}
+					}
+				} else {
+					if (oldField.getAnnotation(DcemGui.class) != null || oldField.getName().equals(DcemConstants.USERPORTAL_PREFERNCESES_TYPE_COMPARE)) {
+						Object oldFieldValue = oldField.get(oldObject);
+						Object newFieldValue = oldField.get(newObject);
+						if (oldFieldValue == null && newFieldValue == null) {
+							continue;
+						}
+						if (oldFieldValue == null && newFieldValue != null) {
+							stringBuilder.append(oldField.getName());
+							stringBuilder.append(": ");
+							stringBuilder.append(nullString);
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append(newFieldValue.toString());
+							stringBuilder.append(fin);
+						} else if (oldFieldValue != null && newFieldValue == null) {
+							stringBuilder.append(oldField.getName());
+							stringBuilder.append(": ");
+							stringBuilder.append(oldFieldValue.toString());
+							stringBuilder.append(unicodeRightArrow);
+							stringBuilder.append("null");
+							stringBuilder.append(fin);
+						} else {
+							if (oldFieldValue.equals(newFieldValue) == false) {
+								stringBuilder.append(oldField.getName());
+								stringBuilder.append(": ");
+								stringBuilder.append(oldFieldValue.toString());
+								stringBuilder.append(unicodeRightArrow);
+								stringBuilder.append(newFieldValue.toString());
+								stringBuilder.append(fin);
+							}
+						}
+					}
+				}
+			}
+			return stringBuilder.toString();
+		} catch (Exception exp) {
+			logger.info("Compare-Objects", exp);
+			throw new DcemException(DcemErrorCodes.COMPARE_OBJECTS, oldObject.getClass().getName(), exp);
+		}
+	}
+
+	/**
+>>>>>>> 5a1fbb4 optimize dark mode
 	 * @param request
 	 * @return null if the http basic authentication header is missing
 	 * @throws Exception
@@ -969,8 +1234,8 @@ public class DcemUtils {
 	 * @return
 	 * @throws DcemException
 	 */
-	public static List<ViewVariable> getViewVariables(Class<?> clazz, ResourceBundle resourceBundle, String viewName,
-			List<RoleRestriction> restrictions) throws DcemException {
+	public static List<ViewVariable> getViewVariables(Class<?> clazz, ResourceBundle resourceBundle, String viewName, List<RoleRestriction> restrictions)
+			throws DcemException {
 
 		List<ViewVariable> viewVariables = new LinkedList<>();
 		LinkedList<Class<?>> list = DcemUtils.getHierarchyList(clazz);
@@ -991,8 +1256,7 @@ public class DcemUtils {
 						if (viewVariable.getId().equals(roleRestriction.getVariableName())) {
 							viewVariable.setRestricted(true);
 							if (roleRestriction.getFilterItem() == null) {
-								throw new DcemException(DcemErrorCodes.ROLE_RESTRICTIOIN_EMPTY_FILTER,
-										"Role Restriction: Filter is null");
+								throw new DcemException(DcemErrorCodes.ROLE_RESTRICTIOIN_EMPTY_FILTER, "Role Restriction: Filter is null");
 							}
 							viewVariable.setFilterItem(roleRestriction.getFilterItem());
 							break;
@@ -1000,9 +1264,9 @@ public class DcemUtils {
 					}
 				}
 				viewVariables.add(viewVariable);
-				if (viewVariable.isRestricted() == false && (viewVariable.getDcemGui().displayMode() == DisplayModes.ALL
-						|| viewVariable.getDcemGui().displayMode() == DisplayModes.TABLE_ONLY
-						|| viewVariable.getDcemGui().displayMode() == DisplayModes.INPUT_DISABLED)) {
+				if (viewVariable.isRestricted() == false
+						&& (viewVariable.getDcemGui().displayMode() == DisplayModes.ALL || viewVariable.getDcemGui().displayMode() == DisplayModes.TABLE_ONLY
+								|| viewVariable.getDcemGui().displayMode() == DisplayModes.INPUT_DISABLED)) {
 					viewVariable.setVisible(true);
 				} else {
 					viewVariable.setVisible(false);
@@ -1012,8 +1276,8 @@ public class DcemUtils {
 		return viewVariables;
 	}
 
-	public static void setRestricedVariables(EntityInterface entity, OperatorSessionBean operatorSessionBean,
-			DcemAction reveal, DcemAction manage) throws Exception {
+	public static void setRestricedVariables(EntityInterface entity, OperatorSessionBean operatorSessionBean, DcemAction reveal, DcemAction manage)
+			throws Exception {
 		if (entity.isRestricted() == true) {
 			LinkedList<Class<?>> list = DcemUtils.getHierarchyList(entity.getClass());
 			Field[] fields;
@@ -1049,8 +1313,7 @@ public class DcemUtils {
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
 	 */
-	public static Method getGetterMethodForField(Field field, Class<?> clazz)
-			throws NoSuchMethodException, SecurityException {
+	public static Method getGetterMethodForField(Field field, Class<?> clazz) throws NoSuchMethodException, SecurityException {
 		String fieldName = field.getName();
 		String getterMethodName = "get" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
 		try {
@@ -1069,8 +1332,7 @@ public class DcemUtils {
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
 	 */
-	public static Method getGetterMethodFromString(String fieldName, Class<?> clazz)
-			throws NoSuchMethodException, SecurityException {
+	public static Method getGetterMethodFromString(String fieldName, Class<?> clazz) throws NoSuchMethodException, SecurityException {
 		String getterMethodName = "get" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
 		try {
 			return clazz.getMethod(getterMethodName);
@@ -1129,13 +1391,11 @@ public class DcemUtils {
 			String methodName = gettersAndSetters[i].getName();
 			try {
 				if (methodName.startsWith("get")) {
-					destObject.getClass()
-							.getMethod(methodName.replaceFirst("get", "set"), gettersAndSetters[i].getReturnType())
-							.invoke(destObject, gettersAndSetters[i].invoke(sourceObject));
+					destObject.getClass().getMethod(methodName.replaceFirst("get", "set"), gettersAndSetters[i].getReturnType()).invoke(destObject,
+							gettersAndSetters[i].invoke(sourceObject));
 				} else if (methodName.startsWith("is")) {
-					destObject.getClass()
-							.getMethod(methodName.replaceFirst("is", "set"), gettersAndSetters[i].getReturnType())
-							.invoke(destObject, gettersAndSetters[i].invoke(sourceObject));
+					destObject.getClass().getMethod(methodName.replaceFirst("is", "set"), gettersAndSetters[i].getReturnType()).invoke(destObject,
+							gettersAndSetters[i].invoke(sourceObject));
 				}
 
 			} catch (NoSuchMethodException exp) {
@@ -1180,8 +1440,8 @@ public class DcemUtils {
 		return SupportedLanguage.English; // English is the default language
 	}
 
-	public static void zipFile(final ZipOutputStream zipOutputStream, ByteArrayOutputStream baos, final File file,
-			String entryName, long maxFileSize) throws Exception {
+	public static void zipFile(final ZipOutputStream zipOutputStream, ByteArrayOutputStream baos, final File file, String entryName, long maxFileSize)
+			throws Exception {
 		ZipEntry zipEntry = new ZipEntry(entryName);
 		zipOutputStream.putNextEntry(zipEntry);
 		RandomAccessFile randomAccessFile = null;
@@ -1200,8 +1460,8 @@ public class DcemUtils {
 			while ((read = randomAccessFile.read(buffer)) != -1) {
 				zipOutputStream.write(buffer, 0, read);
 				if (baos.size() > maxFileSize) {
-					String msg = "\r\n*****\r\n***** File truncated. FileSize=" + file.length() + ", FileTruncTo="
-							+ maxFileSize + ", FileName=" + file.getAbsolutePath() + " ***** \r\n";
+					String msg = "\r\n*****\r\n***** File truncated. FileSize=" + file.length() + ", FileTruncTo=" + maxFileSize + ", FileName="
+							+ file.getAbsolutePath() + " ***** \r\n";
 					logger.warn(msg);
 					zipOutputStream.write(msg.getBytes("UTF-8"));
 					break;
@@ -1287,12 +1547,10 @@ public class DcemUtils {
 		}
 	}
 
-	public static byte[] createQRCode(String qrCodeData, int qrCodeheight, int qrCodewidth)
-			throws WriterException, IOException {
+	public static byte[] createQRCode(String qrCodeData, int qrCodeheight, int qrCodewidth) throws WriterException, IOException {
 		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
 		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-		BitMatrix matrix = new MultiFormatWriter().encode(qrCodeData, BarcodeFormat.QR_CODE, qrCodewidth, qrCodeheight,
-				hintMap);
+		BitMatrix matrix = new MultiFormatWriter().encode(qrCodeData, BarcodeFormat.QR_CODE, qrCodewidth, qrCodeheight, hintMap);
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		MatrixToImageWriter.writeToStream(matrix, "PNG", os);
 		return os.toByteArray();
@@ -1316,8 +1574,7 @@ public class DcemUtils {
 		Set<Member> members = DcemCluster.getDcemCluster().getMembers();
 		Exception exception = null;
 		for (Member member : members) {
-			Future<Exception> future = executorService.submitToMember(new ReloadTask(className, tenantName, info),
-					member);
+			Future<Exception> future = executorService.submitToMember(new ReloadTask(className, tenantName, info), member);
 			try {
 				exception = future.get();
 			} catch (Exception e) {
@@ -1325,28 +1582,27 @@ public class DcemUtils {
 				return e;
 			}
 			if (exception != null) {
-				logger.warn(
-						"Member: " + member.getAddress() + "  Reloading: " + className + ", " + exception.toString());
+				logger.warn("Member: " + member.getAddress() + "  Reloading: " + className + ", " + exception.toString());
 				return exception;
 			}
 		}
 		return null;
 	}
-	
+
 	public static Exception reloadTaskNode(Class<?> klass, String tenantName, String info, Member member) {
 		IExecutorService executorService = DcemCluster.getDcemCluster().getExecutorService();
 		Future<Exception> future = executorService.submitToMember(new ReloadTask(klass.getAnnotation(Named.class).value(), tenantName, info), member);
 		Exception exception = null;
-			try {
-				exception = future.get();
-			} catch (Exception e) {
-				logger.warn("Member: " + member.getAddress() + "  Reloading: " + klass.getName() + ", " + e.toString());
-				return e;
-			}
-			if (exception != null) {
-				logger.warn("Member: " + member.getAddress() + "  Reloading: " + klass.getName() + ", " + exception.toString());
-				return exception;
-			}
+		try {
+			exception = future.get();
+		} catch (Exception e) {
+			logger.warn("Member: " + member.getAddress() + "  Reloading: " + klass.getName() + ", " + e.toString());
+			return e;
+		}
+		if (exception != null) {
+			logger.warn("Member: " + member.getAddress() + "  Reloading: " + klass.getName() + ", " + exception.toString());
+			return exception;
+		}
 		return null;
 	}
 
@@ -1396,8 +1652,7 @@ public class DcemUtils {
 		return date;
 	}
 
-	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLenght, boolean force)
-			throws DcemException {
+	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLenght, boolean force) throws DcemException {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(image.length);
 		BufferedImage inputImage;
@@ -1437,12 +1692,10 @@ public class DcemUtils {
 
 	public static byte[] resizeImage(byte[] image, int maxLength) throws Exception {
 		try {
-			return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT,
-					DcemConstants.PHOTO_MAX, false);
+			return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, DcemConstants.PHOTO_MAX, false);
 		} catch (DcemException exp) {
 			if (exp.getErrorCode() == DcemErrorCodes.IMAGE_TOO_BIG) {
-				return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH_MIN, DcemConstants.PHOTO_HEIGHT_MIN,
-						DcemConstants.PHOTO_MAX, true);
+				return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH_MIN, DcemConstants.PHOTO_HEIGHT_MIN, DcemConstants.PHOTO_MAX, true);
 			}
 			throw exp;
 		}
@@ -1492,8 +1745,7 @@ public class DcemUtils {
 		Instant instant = Instant.ofEpochMilli(epoch);
 		return instant.atZone(ZoneId.of("UTC")).toLocalDateTime();
 	}
-	
-		
+
 	public static String getContinentFromTimezone(TimeZone timezone) {
 		return getContinentFromTimezone(timezone.getID());
 	}
@@ -1513,8 +1765,7 @@ public class DcemUtils {
 		HashSet<String> continents = new HashSet<String>();
 		for (String id : timezones) {
 			String continent = getContinentFromTimezone(id);
-			if (continents.contains(continent) == false
-					&& continent.equals(DcemConstants.TIME_ZONE_OTHER) == false) {
+			if (continents.contains(continent) == false && continent.equals(DcemConstants.TIME_ZONE_OTHER) == false) {
 				continents.add(continent);
 				list.add(new SelectItem(continent, continent));
 			}
