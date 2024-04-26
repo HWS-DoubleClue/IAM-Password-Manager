@@ -13,6 +13,7 @@
 	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
 		<h:outputStylesheet name="css/#{item.id}Styles.css" />
 	</c:forEach>
+	<script defer="defer" type="text/javascript" src="#{resource['js/javaScriptDCEM.js']}"></script>
 	<title>#{viewNavigator.dialogTitle}</title>
 </h:head>
 

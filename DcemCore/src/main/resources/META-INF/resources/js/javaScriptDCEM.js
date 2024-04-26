@@ -165,15 +165,20 @@ function setCaretPosition(elemId, caretPos) {
 	}
 }
 
-function getThemeFromLocalStorage() {
-	if (localStorage.getItem("theme") === "dark") {
+(function getTheme() {
+	if (localStorage.getItem("theme") === "dark" || window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		document.documentElement.classList.add("dark-theme");
 		if (document.getElementById("theme-switcher") != null) {
 			document.getElementById("theme-switcher").checked = true;
 		}
 	}
-}
+	if (localStorage.getItem("theme") === "light") {
+		document.documentElement.classList.remove("dark-theme");
+		if (document.getElementById("theme-switcher") != null) {
+			document.getElementById("theme-switcher").checked = false;
+		}
+	}
+})();
 
-
-document.addEventListener('DOMContentLoaded', getThemeFromLocalStorage());
-window.onload = getThemeFromLocalStorage();
+//document.addEventListener('DOMContentLoaded', getThemeFromLocalStorage());
+//window.onload = getThemeFromLocalStorage();
