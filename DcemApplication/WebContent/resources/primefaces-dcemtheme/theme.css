@@ -343,7 +343,7 @@ body {
 	/* 	/* 	color: #212121; #8bb6d1 */ * /
 	/* 	/* 	color: var(--state-active-text-color); */ * /
 	/* 	color: var(--button-hover-text-color); */
-	/* } */       
+	/* } */         
 
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited
 	{
@@ -412,8 +412,8 @@ body {
 }
 
 .ui-widget-content .ui-icon {
-	background-image:
-		url("#{resource['primefaces-dcemtheme:images/ui-icons_222222_256x240.png']}");
+	/* 	background-image: url("#{resource['primefaces-dcemtheme:images/ui-icons_222222_256x240.png']}"); */
+	background-image: var(--widget-header-icon);
 }
 
 .ui-widget-header .ui-icon {
@@ -1445,38 +1445,42 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 }
 
 /* Data Table */
-body .ui-datatable tbody, body .ui-datatable tbody td {
+body .ui-datatable tbody, body .ui-datatable tbody td, body .ui-treetable tbody,
+	body .ui-treetable tbody td {
 	border-style: none;
 	word-wrap: break-word;
 	padding: 4px 2px 4px 2px;
 	word-wrap: break-word;
 }
 
-body .ui-datatable tbody {
+body .ui-datatable tbody, body .ui-treetable tbody {
 	/* 	border-top: 1px solid #C5C5C5; */
 	border-bottom: 1px solid #C5C5C5;
 }
 
-body .ui-datatable th {
+body .ui-datatable th, body .ui-treetable th {
 	text-align: left !important;
 	padding: 4px 2px 4px 2px !important;
 	background-color: var(--table-head-background-color) !important;
 	border: none !important;
 }
 
-body .ui-datatable tbody tr {
+body .ui-datatable tbody tr, body .ui-treetable tbody tr {
 	border: none;
 }
 
-.ui-datatable-scrollable-theadclone {
+.ui-datatable-scrollable-theadclone, .ui-treetable-scrollable-theadclone
+	{
 	display: none;
 }
 
-.ui-datatable tbody tr:nth-child(even) {
+.ui-datatable tbody tr:nth-child(even), .ui-treetable tbody tr:nth-child(even)
+	{
 	background-color: var(--table-head-background-color);
 }
 
-.ui-datatable tbody tr:nth-child(even):hover, .ui-datatable tbody tr:nth-child(odd):hover
+.ui-datatable tbody tr:nth-child(even):hover, .ui-datatable tbody tr:nth-child(odd):hover,
+	.ui-treetable tbody tr:nth-child(even):hover, .ui-treetable tbody tr:nth-child(odd):hover
 	{
 	background-color: var(--table-hover-background-color);
 }
