@@ -51,6 +51,7 @@ public class AuditingLogic {
 			try {
 				EntityInterface oldEntity = (EntityInterface) em.find(Hibernate.unproxy(newEntity).getClass(), newEntity.getId());
 				changeInfo = CompareUtils.compareObjects(oldEntity, newEntity);
+				em.detach(oldEntity);
 			} catch (Exception exp) {
 				// logger.warn("Couldn't compare operator", exp);
 				changeInfo = "ERROR: " + exp.getMessage();
