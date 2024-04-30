@@ -35,10 +35,10 @@
 				<p:column selectionMode="single" style="width:16px; text-align:center" />
 				<p:ajax event="rowSelect" update="tableServices" />
 				<p:column headerText="#{CoreMsg['clusterConfig.serviceName']}" sortBy="#{item.name}">
-					<h:outputText value="#{item.name}" style="color: #{item.portInUse ? 'red' : 'black'}"/>
+					<h:outputText value="#{item.name}" style="color: #{item.portInUse ? 'red' : 'var(--primary-text-color)'}"/>
 				</p:column>
 				<p:column headerText="Port" sortBy="#{item.port}">
-					<h:outputText value="#{item.portText}" style="color: #{item.portInUse ? 'red' : 'black'}" />
+					<h:outputText value="#{item.portText}" style="color: #{item.portInUse ? 'red' : 'var(--primary-text-color)'}" />
 				</p:column>
 				<p:column headerText="#{CoreMsg['clusterConfig.secureSSL']}" sortBy="#{item.secureInherit}">
 					<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{item.secureInherit}" />
