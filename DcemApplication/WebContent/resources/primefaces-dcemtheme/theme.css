@@ -2106,11 +2106,12 @@ body .ui-input-icon-right>.ui-inputfield {
 	border-top-left-radius: 0;
 	border-bottom-right-radius: 3px;
 	border-top-right-radius: 3px;
+	background: var(--inputfield-background-color);
 }
 
 .ui-autocomplete.ui-inputfield.ui-state-focus .ui-state-default.ui-button,
 	.ui-autocomplete .ui-state-default.ui-button.ui-state-hover {
-	background: #fff;
+/* 	background: var(--state-hover-background-color); */
 	border-color: #777777;
 }
 
