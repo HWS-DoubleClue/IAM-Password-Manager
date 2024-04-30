@@ -5,12 +5,10 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
-import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -52,7 +50,6 @@ public class GroupMembersDialogBean extends DcemDialog {
 	@PostConstruct
 	private void init() {
 	}
-
 
 	public void actionAddMember() {
 		try {
@@ -129,24 +126,22 @@ public class GroupMembersDialogBean extends DcemDialog {
 		this.selectedUsers = selectedUsers;
 	}
 
-//	public String getHeight() {
-//		return "650px";
-//	}
-//
-//	public String getWidth() {
-//		return "500px";
-//	}
+	public String getHeight() {
+		return "650px";
+	}
+
+	public String getWidth() {
+		return "500px";
+	}
 
 	public void leavingDialog() {
 		members = null;
 		selectedUsers = null;
 	}
 
-
 	public DcemUser getDcemUser() {
 		return dcemUser;
 	}
-
 
 	public void setDcemUser(DcemUser dcemUser) {
 		this.dcemUser = dcemUser;
