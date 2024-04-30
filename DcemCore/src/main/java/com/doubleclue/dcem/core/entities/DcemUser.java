@@ -55,6 +55,7 @@ import com.doubleclue.dcem.core.jpa.VariableType;
 import com.doubleclue.dcem.core.logic.DcemLdapAttributes;
 import com.doubleclue.dcem.core.utils.DisplayModes;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
+import com.doubleclue.dcem.core.utils.compare.DcemCompare;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.core.weld.WeldContextUtils;
 import com.doubleclue.dcem.core.weld.WeldRequestContext;
@@ -133,6 +134,7 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	@JoinColumn(referencedColumnName = "dc_userext_id", foreignKey = @ForeignKey(name = "FK_USER_EXTENSION"), name = "userext", nullable = true, insertable = true, updatable = true)
+	@DcemCompare (ignore = true)  // comapred seperatly
 	private DcemUserExtension dcemUserExt;
 
 	@Column(length = 255, nullable = true)
@@ -198,32 +200,40 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 
 	@Column(length = 255, nullable = true)
 	@DcemGui(visible = false, name = "Distinguish Name/ID")
+	@DcemCompare (ignore = true)
 	private String userDn;
 	
 	@DcemGui (name= "Country", subClass = "country", dbMetaAttributeName = "dcemUserExt")
 	@Transient
+	@DcemCompare (ignore = true)
 	private DcemUserExtension dcemUserExtCountry;
 	
 	@DcemGui (name= "Department", subClass = "department", dbMetaAttributeName = "dcemUserExt", style = "white-space: nowrap")
 	@Transient
+	@DcemCompare (ignore = true)
 	private DcemUserExtension dcemUserExtDepartment;
 	
 	@DcemGui (name= "JobTitle", subClass = "jobTitle", dbMetaAttributeName = "dcemUserExt")
 	@Transient
+	@DcemCompare (ignore = true)
 	private DcemUserExtension dcemUserExtJobtitle;
 
 	@Version
+	@DcemCompare (ignore = true)
 	private int jpaVersion;
 
 	@Column(length = 128, nullable = true)
 	@Convert(converter = DbEncryptConverterBinary.class)
+	@DcemCompare (ignore = true)
 	private byte[] hashPassword;
 
 	@Column(length = 128, nullable = true)
 	@Convert(converter = DbEncryptConverter.class)
+	@DcemCompare (ignore = true)
 	private String saveit;
 
-	@DcemGui(displayMode = DisplayModes.TABLE_ONLY, styleClass = "mediumInput", visible = false, ignoreCompare = true)
+	@DcemGui(displayMode = DisplayModes.TABLE_ONLY, styleClass = "mediumInput", visible = false)
+	@DcemCompare (ignore = true)
 	LocalDateTime lastLogin;
 
 	@Size(max = 32)
@@ -231,31 +241,37 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 	private String privateMobileNumber;
 
 	@Column(length = 32, nullable = false)
-	@DcemGui(displayMode = DisplayModes.NONE, ignoreCompare = true)
+	@DcemGui(displayMode = DisplayModes.NONE)
+	@DcemCompare (ignore = true)
 	byte[] hmac;
 
 	@Column(length = 32, nullable = true, name = "dc_salt")
-	@DcemGui(displayMode = DisplayModes.NONE, ignoreCompare = true)
+	@DcemGui(displayMode = DisplayModes.NONE)
+	@DcemCompare (ignore = true)
 	byte[] salt;
 
 	@DcemGui(visible = false)
 	private int passCounter = 0;
 
 	@Column(length = 255, nullable = true)
-	@DcemGui(displayMode = DisplayModes.NONE, ignoreCompare = true)
+	@DcemGui(displayMode = DisplayModes.NONE)
+	@DcemCompare (ignore = true)
 	byte[] objectGuid;
 
 	@Transient
 	private String tenantName;
 
 	@Transient
+	@DcemCompare (ignore = true)
 	private String initialPassword;
 
 	@Transient
 	@DcemGui(visible = false)
+	@DcemCompare (ignore = true)
 	String immutableId;
 	
 	@Transient
+	@DcemCompare (ignore = true)
 	DcemLdapAttributes dcemLdapAttributes;
 
 	private static final Logger logger = LogManager.getLogger(DcemUser.class);

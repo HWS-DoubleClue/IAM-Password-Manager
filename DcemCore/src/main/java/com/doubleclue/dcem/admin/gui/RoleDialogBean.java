@@ -31,6 +31,6 @@ public class RoleDialogBean extends DcemDialog {
 
 	@Override
 	public void actionConfirm() {
-		roleLogic.deleteRoles(autoViewBean.getSelectedItems());
+		roleLogic.deleteRoles(this.getAutoViewAction().getDcemAction(), autoViewBean.getSelectedItems());
 	}
 }

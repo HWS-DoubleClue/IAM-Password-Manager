@@ -102,6 +102,10 @@ public class AutoViewAction implements Serializable {
 	public boolean isLink () {
 		return (rawAction != null && rawAction.getActionType() == ActionType.VIEW_LINK);
 	}
+	
+	public boolean isExport () {
+		return (rawAction != null && rawAction.getActionType() == ActionType.EXCEL_EXPORT_ALL);
+	}
 
 
 }

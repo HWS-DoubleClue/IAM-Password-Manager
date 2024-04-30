@@ -30,6 +30,7 @@ import com.doubleclue.dcem.core.gui.validators.NotNullOrEmptyString;
 import com.doubleclue.dcem.core.jpa.DbEncryptConverter;
 import com.doubleclue.dcem.core.logic.DomainType;
 import com.doubleclue.dcem.core.utils.DisplayModes;
+import com.doubleclue.dcem.core.utils.compare.DcemCompare;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -67,6 +68,7 @@ public class DomainEntity extends EntityInterface implements Serializable {
 	@Enumerated(EnumType.ORDINAL)
 	@Column(nullable = false)
 	@DcemGui
+	@DcemCompare (ignore = true)
 	private DomainType domainType = DomainType.Active_Directory;
 
 	@Column(length = 255, nullable = false)
@@ -77,7 +79,6 @@ public class DomainEntity extends EntityInterface implements Serializable {
 
 
 	@Column(length = 255, nullable = false)
-	// @DcemGui(styleClass= "xlongInput")
 	private String baseDN;
 
 	@Column(length = 255, nullable = false)
@@ -88,6 +89,7 @@ public class DomainEntity extends EntityInterface implements Serializable {
 	@Size(min = 2, max = 255)
 	@Convert(converter = DbEncryptConverter.class)
 	@DcemGui(displayMode = DisplayModes.INPUT_ONLY, password = true, name = "Search-Account Password")
+	@DcemCompare (password = true)
 	private String password;
 
 	@Column(length = 255, nullable = false)
@@ -132,18 +134,12 @@ public class DomainEntity extends EntityInterface implements Serializable {
 	private String mapEmailDomains = "";
 	
 	@Column(length = 4096, nullable = true)
+	@DcemCompare (ignore = true)
 	private String configJson;
 	
 	@Transient
+	@DcemCompare (deepCompare = true)
 	private DomainConfig domainConfig;
-
-
-	/*
-	 * @Column(length = 4096, nullable = true, name = "azureAdConfig")
-	 * 
-	 * @Convert(converter = DbJsonConverterClass.class) private AzureAdConfig
-	 * azureAdConfig;
-	 */
 
 	@DcemGui
 	private boolean enable = true;
@@ -156,6 +152,7 @@ public class DomainEntity extends EntityInterface implements Serializable {
 	}
 	
 	@Transient
+	@DcemCompare (ignore = true)
 	Set<String> setOfEmailDomains;
 
 	public Integer getId() {
@@ -404,95 +401,13 @@ public class DomainEntity extends EntityInterface implements Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
 		DomainEntity other = (DomainEntity) obj;
-		if (baseDN == null) {
-			if (other.baseDN != null)
-				return false;
-		} else if (!baseDN.equals(other.baseDN))
-			return false;
-		if (configJson == null) {
-			if (other.configJson != null)
-				return false;
-		} else if (!configJson.equals(other.configJson))
-			return false;
-		if (domainType != other.domainType)
-			return false;
-		if (enable != other.enable)
-			return false;
-		if (filter == null) {
-			if (other.filter != null)
-				return false;
-		} else if (!filter.equals(other.filter))
-			return false;
-		if (firstNameAttribute == null) {
-			if (other.firstNameAttribute != null)
-				return false;
-		} else if (!firstNameAttribute.equals(other.firstNameAttribute))
-			return false;
-		if (host == null) {
-			if (other.host != null)
-				return false;
-		} else if (!host.equals(other.host))
-			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (id.equals(other.getId()) == false) {
 			return false;
-		if (lastNameAttribute == null) {
-			if (other.lastNameAttribute != null)
-				return false;
-		} else if (!lastNameAttribute.equals(other.lastNameAttribute))
-			return false;
-		if (loginAttribute == null) {
-			if (other.loginAttribute != null)
-				return false;
-		} else if (!loginAttribute.equals(other.loginAttribute))
-			return false;
-		if (mailAttribute == null) {
-			if (other.mailAttribute != null)
-				return false;
-		} else if (!mailAttribute.equals(other.mailAttribute))
-			return false;
-		if (mapEmailDomains == null) {
-			if (other.mapEmailDomains != null)
-				return false;
-		} else if (!mapEmailDomains.equals(other.mapEmailDomains))
-			return false;
-		if (mobileAttribute == null) {
-			if (other.mobileAttribute != null)
-				return false;
-		} else if (!mobileAttribute.equals(other.mobileAttribute))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.equals(other.password))
-			return false;
-		if (rank != other.rank)
-			return false;
-		if (searchAccount == null) {
-			if (other.searchAccount != null)
-				return false;
-		} else if (!searchAccount.equals(other.searchAccount))
-			return false;
-		if (setOfEmailDomains == null) {
-			if (other.setOfEmailDomains != null)
-				return false;
-		} else if (!setOfEmailDomains.equals(other.setOfEmailDomains))
-			return false;
-		if (telephoneAttribute == null) {
-			if (other.telephoneAttribute != null)
-				return false;
-		} else if (!telephoneAttribute.equals(other.telephoneAttribute))
-			return false;
+		}
 		return true;
 	}
 }

@@ -14,14 +14,18 @@
 					<i class="#{viewNavigator.getActionIcon(autoAction)}" />
 					<p:outputLabel value=" #{autoAction.actionText}" style="font-weight: bold" />
 				</p:commandLink>
-
-				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link == false}" action="#{viewNavigator.setActiveDialog(autoAction)}"
-					icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}">
+				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link eq false and autoAction.export eq false}"
+					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}">
 					<p:ajax event="dialogReturn" update="pTable" />
 				</p:commandButton>
-				<p:spacer width="12" />
+				<!--  download -->
+				<p:commandButton value="#{autoAction.actionText}" ajax="false" rendered="#{autoAction.export eq true}"  icon="#{viewNavigator.getActionIcon(autoAction)}"
+				  onclick="PrimeFaces.monitorDownload(start, stop);">
+					<p:fileDownload value="#{viewNavigator.downloadFile}" />
+				</p:commandButton>
+				<p:spacer width="10" />
 			</c:forEach>
-			
+
 			<ui:include src="#{viewNavigator.topComposition}" />
 
 			<h:panelGroup id="predfinedFilters" rendered="#{viewNavigator.isPredefinedFilters()}"
@@ -48,23 +52,25 @@
 					</p:menuitem>
 				</c:forEach>
 			</p:contextMenu>
-			
- 			<p:tooltip for="infoTip" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
+
+			<p:tooltip for="infoTip" value="#{CoreMsg['filterInfo']}" position="top" escape="false" />
 			<div style="float: right; margin-top: -35px; display: inline-block;">
 				<h:outputText id="infoTip" value="" class="fa fa-circle-info"  style="font-size: x-large; color: var(--header-link-text-color); vertical-align: -3px;"/> 
 				<p:spacer width="20" />
-				<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}"  icon="fa fa-th" />
+				<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}" icon="fa fa-th" />
+				
 			</div>
-			<p:columnToggler datasource="pTable" trigger="toggler">
+			<p:columnToggler datasource="pTable" trigger="toggler" >
 				<p:ajax event="toggle" listener="#{viewNavigator.onToggle}" />
 			</p:columnToggler>
 			<p:remoteCommand name="keyAction" update="autoForm:pTable" action="#{viewNavigator.actionSetDirty}" />
-			
+
 			<p:dataTable id="pTable" widgetVar="viewTable" paginator="true" rowsPerPageTemplate="20,30,50,100,500" rows="20" paginatorPosition="bottom"
 				value="#{autoView.lazyModel}" var="record" rowKey="#{record.id}" update="tableCount" resizableColumns="false"
 				paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" selectionMode="multiple"
 				selection="#{autoView.selectedItems}" lazy="true" sortMode="single" styleClass="borderless" emptyMessage="#{CoreMsg['emptyTable']}"
-				rowStyleClass="#{record.rowStyle}" sortBy="#{autoView.sortBy}" filterBy="#{autoView.filterBy}" filterDelay="1000">
+				rowStyleClass="#{record.rowStyle}" sortBy="#{autoView.sortBy}" filterBy="#{autoView.filterBy}" filterDelay="1000" 
+				 >
 
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
 
@@ -77,8 +83,6 @@
 						<h:panelGroup rendered="#{viewNavigator.predefinedFilterId != 0}">
 							<h:outputText value="#{item.displayName}" />
 						</h:panelGroup>
-
-
 					</f:facet>
 
 					<f:facet name="filter">
@@ -92,7 +96,6 @@
 							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()" yearNavigator="true">
 						</p:datePicker>
 						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
-
 					</f:facet>
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
 						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />
@@ -109,7 +112,7 @@
 				</p:columns>
 
 			</p:dataTable>
-			
+
 			<p:outputPanel>
 				<p:autoUpdate />
 				<p:outputLabel id="tableCount" style="text-align: left;" value="#{CoreMsg['totalCount']} #{autoView.count}">

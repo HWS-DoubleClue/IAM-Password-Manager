@@ -163,7 +163,7 @@ public class OperatorSessionBean implements Serializable {
 		return false;
 	}
 
-	@Deprecated
+	
 	public DcemAction getPermission(DcemAction dcemAction) {
 		if (dcemUser == null || dcemAction == null) {
 			return null;
@@ -445,6 +445,11 @@ public class OperatorSessionBean implements Serializable {
 	
 	public String getLocalStorageUserSetting(String key) {
 		return userSettings.get(key);
+	}
+	
+	public void removeLocalStorageUserSetting (String key) throws Exception {
+		userSettings.remove(key);
+		PrimeFaces.current().executeScript("localStorage.setItem('userSettings', '" + getUserSettingsToString() + "')");
 	}
 	
 	public void setLocalStorageUserSetting (String key, String value) throws Exception {

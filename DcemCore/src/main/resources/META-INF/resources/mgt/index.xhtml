@@ -49,8 +49,6 @@
 <f:view locale="#{operatorSession.locale}">
 	<h:body>
 
-		<!-- <p:ajaxStatus id="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="PF('statusDialog').hide()"
-			oncomplete="PF('statusDialog').hide()" /> -->
 		<ui:include src="../title.xhtml" />
 
 		<div id="sidemenu" class="sideBarDcem">
@@ -103,13 +101,11 @@
 			</div>
 		</div>
 
-		<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
-			closable="true" resizable="false" showHeader="false"
-			style="border: 4; border-style: solid; border-color: #980808;">
+		<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="true" resizable="false" showHeader="false"
+			style="border: 4; border-style: solid;">
 			<p></p>
-			<h:outputText style="font-size: medium" value="Please wait...." />
-			<h:graphicImage library="pictures" name="icons/24x24/test.gif"
-				style="border: 0; padding-left: 8px" />
+			<h:outputText style="font-size: medium" value="#{CoreMsg['pleaseWait']}" />
+			<h:graphicImage library="pictures" name="icons/24x24/test.gif" style="border: 0; padding-left: 8px" />
 			<p></p>
 		</p:dialog>
 	</h:body>

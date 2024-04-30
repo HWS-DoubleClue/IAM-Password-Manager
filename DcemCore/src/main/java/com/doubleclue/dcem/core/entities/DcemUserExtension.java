@@ -19,6 +19,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.doubleclue.dcem.core.gui.DcemGui;
+import com.doubleclue.dcem.core.utils.compare.DcemCompare;
 
 /**
  * The persistent class for user
@@ -37,6 +38,7 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 
 	@Id
 	@Column(name = "dc_userext_id")
+	@DcemCompare (ignore = true)
 	private Integer id;
 
 	@DcemGui(name = "Country")
@@ -50,8 +52,9 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 	@Column(length = 255, name = "dc_timezone", nullable = true, updatable = true, insertable = true)
 	private String timezoneString;
 
-	@DcemGui(name = "Photo", ignoreCompare = true)
+	@DcemGui(name = "Photo")
 	@Column(length = 8096 * 2, nullable = true)
+	@DcemCompare (ignore = true)
 	private byte[] photo;
 
 	@DcemGui(name = "Department", subClass = "name")
@@ -61,6 +64,7 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 
 	// @DcemGui(name = "Country")
 	@Transient
+	@DcemCompare (ignore = true)
 	String countryDisplayName;
 
 	@Override
@@ -114,7 +118,7 @@ public class DcemUserExtension extends EntityInterface implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User-Id=" + id + ", country=" + country + ", timezone=" + timezoneString;
+		return "User-Id=" + id + ", country=" + getCountry() + ", timezone=" + timezoneString;
 	}
 
 	public String getJobTitle() {

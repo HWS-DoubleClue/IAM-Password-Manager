@@ -270,7 +270,7 @@ public class GroupLogic {
 			}
 			dcemGroup.getMembers().clear();
 			em.remove(dcemGroup);
-			sb.append(dcemGroup.getId());
+			sb.append(dcemGroup.getName());
 			sb.append(" ");
 		}
 		auditingLogic.addAudit(dcemAction, sb.toString());

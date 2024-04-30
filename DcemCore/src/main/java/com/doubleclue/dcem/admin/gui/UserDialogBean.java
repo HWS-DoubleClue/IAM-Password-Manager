@@ -200,7 +200,7 @@ public class UserDialogBean extends DcemDialog {
 				dcemUserExtension.setTimezoneString(countryTimezone);
 			}
 			dcemUserExtension.setDepartment(departmentEntity);
-			userLogic.updateDcemUserExtension(dcemUser, dcemUserExtension);
+			userLogic.updateDcemUserExtension(dcemAction, dcemUser, dcemUserExtension);
 			if (dcemUser.getId() == operatorSessionBean.getDcemUser().getId()) {
 				FacesContext.getCurrentInstance().getViewRoot().setLocale(dcemUser.getLanguage().getLocale());
 				operatorSessionBean.setDcemUser(dcemUser);

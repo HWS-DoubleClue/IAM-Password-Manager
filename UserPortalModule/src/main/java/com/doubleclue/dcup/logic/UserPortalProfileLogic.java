@@ -9,12 +9,10 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.DcemUserExtension;
-import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.logic.AuditingLogic;
-import com.doubleclue.dcem.core.logic.DomainLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
-import com.doubleclue.dcem.core.utils.DcemUtils;
+import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 
 @ApplicationScoped
 public class UserPortalProfileLogic {
@@ -36,8 +34,8 @@ public class UserPortalProfileLogic {
 		DcemUser dcemUser = userLogic.getUser(clonedUser.getId());
 		String changeInfo;
 		try {
-			changeInfo = DcemUtils.compareObjects(clonedUser, dcemUser);
-		} catch (DcemException e) {
+			changeInfo = CompareUtils.compareObjects(clonedUser, dcemUser);
+		} catch (Exception e) {
 			changeInfo = e.toString();
 		}
 		dcemUser.setLoginId(clonedUser.getLoginId());
