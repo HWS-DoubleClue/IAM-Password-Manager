@@ -1,10 +1,8 @@
-const themeSwitcher = document.getElementById("theme-switcher");
-themeSwitcher.addEventListener("change", function() {
-	if (themeSwitcher.checked) {
-		document.documentElement.classList.add("dark-theme");
+$("#theme-switcher").on("change", function() {
+	$("html").toggleClass("dark-theme");
+	if ($("#theme-switcher").prop("checked") === true) {
 		localStorage.setItem("theme", "dark");
 	} else {
-		document.documentElement.classList.remove("dark-theme");
 		localStorage.setItem("theme", "light");
 	}
 });

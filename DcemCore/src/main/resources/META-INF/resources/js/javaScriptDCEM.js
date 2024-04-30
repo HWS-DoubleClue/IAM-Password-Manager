@@ -165,20 +165,13 @@ function setCaretPosition(elemId, caretPos) {
 	}
 }
 
-(function getTheme() {
+(function() {
 	if (localStorage.getItem("theme") === "dark" || window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-		document.documentElement.classList.add("dark-theme");
-		if (document.getElementById("theme-switcher") != null) {
-			document.getElementById("theme-switcher").checked = true;
-		}
+		$("html").addClass("dark-theme");
+		$("#theme-switcher").prop("checked", true);
 	}
 	if (localStorage.getItem("theme") === "light") {
-		document.documentElement.classList.remove("dark-theme");
-		if (document.getElementById("theme-switcher") != null) {
-			document.getElementById("theme-switcher").checked = false;
-		}
+		$("html").removeClass("dark-theme");
+		$("#theme-switcher").prop("checked", false);
 	}
 })();
-
-//document.addEventListener('DOMContentLoaded', getThemeFromLocalStorage());
-//window.onload = getThemeFromLocalStorage();
