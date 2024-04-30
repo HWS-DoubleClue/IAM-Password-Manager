@@ -4,19 +4,8 @@
 
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
-<script>
-    //<![CDATA[
-    function start() {
-        PF('statusDialog').show();
-    }
 
-    function stop() {
-        PF('statusDialog').hide();
-    }
-    //]]>
-</script>
 	<div>
-	
 		<h:form id="autoForm">
 			<p:tooltip style="font-size: xx-small; white-space: normal" showEvent="focus" hideEvent="keyup" position="top" />
 
@@ -130,6 +119,22 @@
 					<f:convertNumber pattern="### ### ###" />
 				</p:outputLabel>
 			</p:outputPanel>
+
+			<!-- 	<ui:include src="#{autoView.preselectionDialog}" /> -->
+
+			<!--  <p:commandButton id="hiddenCommand" styleClass="button" action="actionListener="#{viewNavigator.setActiveDialog(autoAction)}"  style="display:none">
+         			<p:ajax event="dialogReturn"  update = ":form:pTables"  />  
+         	</p:commandButton>
+
+			<h:outputScript>
+			      function triggerHiddenEvent() {
+			        document.getElementById("autoForm:hiddenCommand").click();
+			      }
+   			</h:outputScript> -->
+
+			<!-- <p:growl id="autoMessages" layout="table" globalOnly="false" showSummary="true" sticky="true">
+				<p:autoUpdate />
+			</p:growl> -->
 		</h:form>
 	</div>
 </ui:composition>
