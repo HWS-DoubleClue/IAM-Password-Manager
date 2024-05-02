@@ -409,11 +409,12 @@
 .info-bottom {
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0px -5px 8px -4px
-		var(--side-bar-info-bottom-box-shadow-color);
+	box-shadow: var(--side-bar-info-bottom-box-shadow);
 	z-index: 1000;
 	flex-shrink: 0;
 	margin-top: .5em;
+	background: var(--side-bar-info-bottom-background-color);
+	padding: 0.5em 0;
 }
 
 .info-bottom a {
