@@ -41,7 +41,6 @@
 	--primary-background-color: #1f1f1f;
 	--primary-text-color: #ffffff;
 	--highlight-background-color: #265574;
-	/* 	--highlight-background-color: #bae2f5; */
 	--header-link-text-color: #8bb6d1;
 	--table-hover-background-color: #19394d;
 	--button-hover-background-color: #8bb6d1; /* #19394d */
@@ -69,7 +68,7 @@
 	--tab-inactive-border-color: #303030;
 	--tab-hover-background-color: #303030;
 	--preferences-seperator-background-color: #545454;
-	--inputfield-border-color: #C3C3C3;
+	--inputfield-border-color: #c3c3c3;
 	--inputfield-hover-border-color: #777777;
 }
 
@@ -198,13 +197,13 @@ body {
 }
 
 .ui-widget-content {
-	/* 	border: 1px solid #c3c3c3; */
+	/* 		border: 1px solid #c3c3c3; */
 	background: var(--primary-background-color);
 	color: var(--primary-text-color);
 }
 
 .ui-widget-content a {
-	color: var(--primary-text-color);
+	color: var(--header-link-text-color);
 }
 
 .ui-widget-header {
@@ -229,7 +228,7 @@ body {
 }
 
 .ui-widget-header a {
-	color: #222222;
+	color: var(--header-link-text-color);
 }
 
 .ui-icon-32 {
@@ -343,7 +342,7 @@ body {
 	/* 	/* 	color: #212121; #8bb6d1 */ * /
 	/* 	/* 	color: var(--state-active-text-color); */ * /
 	/* 	color: var(--button-hover-text-color); */
-	/* } */         
+	/* } */                    
 
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited
 	{
@@ -438,9 +437,16 @@ body {
 
 .ui-state-highlight .ui-icon {
 	background-image:
-		url("#{resource['primefaces-dcemtheme:images/ui-icons_2e83ff_256x240.png']}");
+		/* 		url("#{resource['primefaces-dcemtheme:images/ui-icons_2e83ff_256x240.png']}"); */
+	url ("#{resource['primefaces-dcemtheme: images/ui-icons_888888_256x240.png']
 }
 
+"
+)
+;
+
+
+}
 .ui-state-error .ui-icon, .ui-state-error-text .ui-icon {
 	background-image:
 		url("#{resource['primefaces-dcemtheme:images/ui-icons_cd0a0a_256x240.png']}");
@@ -1513,7 +1519,8 @@ body .ui-datatable tbody tr, body .ui-treetable tbody tr {
 }
 
 body .ui-datatable.borderless tr.ui-datatable-even:hover, body .ui-datatable.borderless tr.ui-datatable-odd:hover,
-	body .ui-datatable tbody tr:nth-child(even).ui-state-highlight:hover {
+	body .ui-datatable tbody tr:nth-child(even).ui-state-highlight:hover,
+	body .ui-datatable tbody tr:hover {
 	background: var(--table-hover-background-color);
 	color: var(--primary-text-color);
 	cursor: pointer;
@@ -1573,7 +1580,7 @@ body .ui-datatable.borderlessMFALogin tr.ui-datatable-even:hover, body .ui-datat
 }
 
 .ui-fileupload-buttonbar .ui-fileupload-choose {
-	background-color: rgba(142, 103, 64, 0.98);
+	/* 	background-color: rgba(142, 103, 64, 0.98); */
 	display: inline-flex;
 }
 
@@ -1846,13 +1853,19 @@ body .ui-password-panel {
 }
 
 .ui-texteditor .ql-container .ql-editor {
-	background: #fff;
-	color: #333;
+	/* 	background: #fff; */
+	/* 	color: #333; */
+	background: var(--inputfield-background-color);
+	color: var(--inputfield-text-color);
 	border-bottom-right-radius: 3px;
 	border-bottom-left-radius: 3px;
 	/* 	min-height: 200px; */
 	max-height: 250px;
 	/* 	height: 200px; */
+}
+
+.ql-editor.ql-blank::before {
+	color: var(--inputfield-text-color) !important;
 }
 
 .ui-texteditor .ql-snow.ql-toolbar button:hover, .ui-texteditor .ql-snow.ql-toolbar button:focus
@@ -2111,7 +2124,7 @@ body .ui-input-icon-right>.ui-inputfield {
 
 .ui-autocomplete.ui-inputfield.ui-state-focus .ui-state-default.ui-button,
 	.ui-autocomplete .ui-state-default.ui-button.ui-state-hover {
-/* 	background: var(--state-hover-background-color); */
+	/* 	background: var(--state-hover-background-color); */
 	border-color: #777777;
 }
 
@@ -2175,11 +2188,6 @@ ul.ui-menu-child {
 	display: inline-flex;
 }
 
-.ui-fileupload-buttonbar .ui-fileupload-choose {
-	background-color: rgba(142, 103, 64, 0.98);
-	display: inline-flex;
-}
-
 .ui-accordion-header {
 	color: var(--header-link-text-color) !important;
 }
@@ -2196,4 +2204,25 @@ ul.ui-menu-child {
 
 .ui-overlaypanel {
 	border: 1px solid var(--inputfield-border-color);
+}
+
+.ui-inputswitch {
+	border: 1px solid var(--inputfield-border-color);
+}
+
+.ui-inputswitch .ui-inputswitch-on {
+	background: var(--highlight-background-color);
+	color: var(--primary-text-color);
+}
+
+textarea, select {
+	background: var(--inputfield-background-color);
+	color: var(--inputfield-text-color);
+	border: 1px solid var(--inputfield-border-color);
+	border-radius: 3px;
+}
+
+textarea:hover, textarea:active, textarea:focus, select:hover, select:active,
+	select:focus {
+	border-color: #777777;
 }
