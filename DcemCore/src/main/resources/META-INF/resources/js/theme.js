@@ -1,6 +1,6 @@
-$("#theme-switcher").on("change", function() {
+$("#theme-switcher").on("click", function() {
 	$("html").toggleClass("dark-theme");
-	if ($("#theme-switcher").prop("checked") === true) {
+	if ($("html").hasClass("dark-theme")) {
 		localStorage.setItem("theme", "dark");
 	} else {
 		localStorage.setItem("theme", "light");

@@ -55,28 +55,31 @@
 					</p:ajaxStatus>
 				</div>
 				<div style="display: flex; align-items: center; padding: 1em;">
-					<label for="theme-switcher">Dark Mode</label>
-					<input type="checkbox" id="theme-switcher"></input>
+					<div id="theme-switcher" title="#{DcupMsg['title.toggleLightDarkMode']}" class="header-button">
+						<!-- <span class="theme-switch-day"><i class="fa fa-solid fa-moon"></i></span> -->
+						<!-- <span class="theme-switch-night"><i class="fa fa-solid fa-sun"></i></span> -->
+						<span class="theme-switch-day"><i class="pi pi-moon"></i></span>
+						<span class="theme-switch-night"><i class="pi pi-sun"></i></span>
+					</div>
 
 					<h:outputText id="sessionTimeout"
 						style="font-size: small; margin-right: 1em;" value="" />
 					<p:commandLink
 						action="#{adminModule.actionRedirectionToUserPortal}"
 						title="#{DcupMsg['title.switchToUserportal']}"
-						rendered="#{adminModule.switchUserPortal}">
-						<i class="fa fa-exchange"
-							style="color: white; font-size: 1.2em; margin-left: 1em;"></i>
+						rendered="#{adminModule.switchUserPortal}" styleClass="header-button">
+						<i class="fa fa-exchange" style="color: white; font-size: 1.1em;"></i>
 					</p:commandLink>
 					<p:spacer width="10" />
 					<p:commandLink action="#{viewNavigator.reload}" update="viewPart"
-						style="text-decoration: none;">
+						style="text-decoration: none;" styleClass="header-button">
 						<i class="fa fa-refresh"
-							style="color: white; font-size: 1.2em; margin-right: 0.5em"></i>
+							style="color: white; font-size: 1.1em;"></i>
 					</p:commandLink>
 					<p:spacer width="10" />
 					<p:avatar id="userAvatar" dynamicColor="true" styleClass="p-mr-2"
 						size="xlarge" shape="circle"
-						style="margin-right: 0em; cursor: pointer;">
+						style="margin-right: 0em; cursor: pointer;  margin-left: 0.5em">
 						<p:graphicImage value="#{operatorSession.getFotoProfileUser()}"
 							stream="false" title="#{titleBarView.welcomeText}" />
 					</p:avatar>

@@ -1,5 +1,15 @@
 @CHARSET "ISO-8859-1";
 
+:root {
+	--day: inherit;
+	--night: none;
+}
+
+:root.dark-theme {
+	--day: none;
+	--night: inherit;
+}
+
 .parent-flex-container {
 	display: flex;
 	justify-content: space-between;
@@ -476,6 +486,15 @@
 	margin-left: 0.5em;
 }
 
-label[for="theme-switcher"] {
-	font-size: .9em;
+#theme-switcher {
+	cursor: pointer;
+	font-size: 1.1em;
+}
+
+.theme-switch-day {
+	display: var(--day);
+}
+
+.theme-switch-night {
+	display: var(--night);
 }

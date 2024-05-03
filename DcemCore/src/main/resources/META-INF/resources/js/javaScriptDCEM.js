@@ -168,10 +168,8 @@ function setCaretPosition(elemId, caretPos) {
 (function() {
 	if (localStorage.getItem("theme") === "dark" || window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		$("html").addClass("dark-theme");
-		$("#theme-switcher").prop("checked", true);
 	}
 	if (localStorage.getItem("theme") === "light") {
 		$("html").removeClass("dark-theme");
-		$("#theme-switcher").prop("checked", false);
 	}
 })();
