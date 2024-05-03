@@ -144,6 +144,9 @@ public class JpaLazyModel<T> extends LazyDataModel<T> {
 				if (sortBy != null) {
 					for (SortMeta sortMeta : sortBy.values()) {
 						ViewVariable viewVariable = getViewVariable(sortMeta.getField());
+						if (viewVariable.getDcemGui() != null && VariableType.LIST.equals(viewVariable.getDcemGui().variableType())) {
+							continue;
+						}
 						boolean descending;
 						switch (sortMeta.getOrder()) {
 						case ASCENDING:
