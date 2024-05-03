@@ -41,11 +41,11 @@
 	--primary-background-color: #1f1f1f;
 	--primary-text-color: #ffffff;
 	--highlight-background-color: #265574;
-	--header-link-text-color: #8bb6d1;
+	--header-link-text-color: #7ec4f0; /* #8bb6d1 */
 	--table-hover-background-color: #19394d;
-	--button-hover-background-color: #8bb6d1;
+	--button-hover-background-color: #7ec4f0; /* #8bb6d1 */
 	--button-hover-text-color: #1f1f1f;
-	--button-border-color: #8bb6d1;
+	--button-border-color: #7ec4f0; /* #8bb6d1 */
 	--side-bar-background-color: #303030;
 	--side-bar-link-hover-background-color: #424243;
 	--side-bar-info-bottom-background-color: #2b2b2b;
@@ -1395,7 +1395,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
 
 body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 	{
-	background: lightgrey;
+	background: white; /* lightgrey */
 }
 
 /* Data Table */
