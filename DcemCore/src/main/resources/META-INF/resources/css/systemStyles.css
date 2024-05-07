@@ -21,6 +21,7 @@
 
 .flex-container {
 	display: flex;
+	color: inherit;
 	/* 	height: 6vh; */
 }
 
@@ -33,6 +34,7 @@
 	top: 50%;
 	/* Position the top edge of the centered div at 50% of the container's height */
 	transform: translate(-50%, -50%); /* Center the div perfectly */
+	color: inherit;
 }
 
 .containerCenter {
@@ -205,7 +207,7 @@
 .tenantBrandingTitle {
 	color: var(--header-link-text-color) !important;
 	margin-left: 0;
-/* 	font-size: 1.4em; */
+	/* 	font-size: 1.4em; */
 }
 
 .companyLogoStyle {
@@ -498,3 +500,17 @@
 .theme-switch-night {
 	display: var(--night);
 }
+
+.ui-commandlink.header-button, .header-button {
+	/* 	background: var(--side-bar-background-color); */
+	color: inherit;
+	/* 	color: var(--primary-text-color); */
+	/* 	border-radius: 50%; */
+	/* 	width: 1.1em; */
+	/* 	height: 1.1em; */
+	/* 	padding: 6px; */
+	/* 	line-height: 1px; */
+}
+/* .ui-commandlink.header-button:hover, .header-button:hover { */
+/* 	background: var(--side-bar-link-hover-background-color); */
+/* } */

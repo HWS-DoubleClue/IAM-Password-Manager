@@ -36,11 +36,11 @@
 				<div>
 					<h:outputText value="#{adminModule.titleEnterpriseManagment} " />
 					<h:outputText class="fa fa-shuffle"
-						style="color: white; font-size: 1.6em"
+						style="font-size: 1.6em"
 						rendered="#{operatorSession.masterAdminGuest}" />
 				</div>
 			</div>
-			<div style="display: flex; align-items: center;">
+			<div style="display: flex; align-items: center; color: inherit">
 				<div>
 					<p:ajaxStatus id="ajaxStatus">
 						<f:facet name="start">
@@ -51,12 +51,14 @@
 						</f:facet>
 					</p:ajaxStatus>
 				</div>
-				<div style="display: flex; align-items: center; padding: 1em;">
-					<div id="theme-switcher" title="#{DcupMsg['title.toggleLightDarkMode']}" class="header-button">
+				<div style="display: flex; align-items: center; padding: 1em; color: inherit">
+					<div id="theme-switcher"
+						title="#{DcupMsg['title.toggleLightDarkMode']}"
+						class="header-button">
 						<!-- <span class="theme-switch-day"><i class="fa fa-solid fa-moon"></i></span> -->
 						<!-- <span class="theme-switch-night"><i class="fa fa-solid fa-sun"></i></span> -->
-						<span class="theme-switch-day"><i class="pi pi-moon"></i></span>
-						<span class="theme-switch-night"><i class="pi pi-sun"></i></span>
+						<span class="theme-switch-day"><i class="pi pi-moon"></i></span> <span
+							class="theme-switch-night"><i class="pi pi-sun"></i></span>
 					</div>
 
 					<h:outputText id="sessionTimeout"
@@ -64,14 +66,15 @@
 					<p:commandLink
 						action="#{adminModule.actionRedirectionToUserPortal}"
 						title="#{DcupMsg['title.switchToUserportal']}"
-						rendered="#{adminModule.switchUserPortal}" styleClass="header-button">
-						<i class="fa fa-exchange" style="color: white; font-size: 1.1em;"></i>
+						rendered="#{adminModule.switchUserPortal}"
+						styleClass="header-button">
+						<i class="fa fa-exchange"
+							style="font-size: 1.1em;"></i>
 					</p:commandLink>
 					<p:spacer width="10" />
 					<p:commandLink action="#{viewNavigator.reload}" update="viewPart"
 						style="text-decoration: none;" styleClass="header-button">
-						<i class="fa fa-refresh"
-							style="color: white; font-size: 1.1em;"></i>
+						<i class="fa fa-refresh" style="font-size: 1.1em;"></i>
 					</p:commandLink>
 					<p:spacer width="10" />
 					<p:avatar id="userAvatar" dynamicColor="true" styleClass="p-mr-2"

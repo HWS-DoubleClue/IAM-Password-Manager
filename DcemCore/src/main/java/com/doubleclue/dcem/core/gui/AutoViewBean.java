@@ -20,13 +20,11 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
-import org.primefaces.model.SortOrder;
 
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.SubjectAbs;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.module.ModulePreferences;
-import com.doubleclue.dcem.core.utils.DcemUtils;
 
 @Named("autoView")
 @SessionScoped
@@ -80,7 +78,7 @@ public class AutoViewBean implements Serializable {
 		if (viewNavigator.getActiveView() == null) {
 			return null;
 		}
-		return viewNavigator.getActiveView().getDisplayName();
+		return viewNavigator.getActiveModule().getName() + " - " + viewNavigator.getActiveView().getDisplayName();
 	}
 
 	public String getIcon() {
