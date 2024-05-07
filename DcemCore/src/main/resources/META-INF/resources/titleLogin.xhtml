@@ -2,19 +2,50 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
-	
-	<link id="favicon" rel="icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
-    <link rel="shortcut icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 
-		<div style="#{adminModule.titleStyle}; height:3.5em" >
-			<div style="float: left; border: none; width: 10%; height:100%;">
-				<p:graphicImage cache="false" styleClass="companyLogoStyle" value="#{adminModule.logo}" rendered="#{!adminModule.defaultCompanyLogo}" />
-				<p:graphicImage library="pictures" cache="false" styleClass="companyLogoStyle" name="DC_white_bar_209x64center.png" rendered="#{adminModule.defaultCompanyLogo}"/>
-			</div>
-			<div style="line-height: 6vh;  vertical-align: middle; text-align: center; border: none">
-				<h:outputText style="margin-left: -10%;" value="#{adminModule.titleEnterpriseManagment}"  />
+	<link id="favicon" rel="icon"
+		href="#{request.contextPath}/resources/images/favicon.png"
+		type="image/x-icon" />
+	<link rel="shortcut icon"
+		href="#{request.contextPath}/resources/images/favicon.png"
+		type="image/x-icon" />
+
+	<div style="#{adminModule.titleStyle};" class="parent-flex-container">
+		<div class="flex-container">
+			<div class="parent-flex-container">
+				<p:graphicImage cache="false" styleClass="companyLogoStyle"
+					value="#{adminModule.logo}"
+					rendered="#{!adminModule.defaultCompanyLogo}" />
+				<p:graphicImage library="pictures" cache="false"
+					styleClass="companyLogoStyle" name="DC_white_bar_209x64center.png"
+					rendered="#{adminModule.defaultCompanyLogo}" />
 			</div>
 		</div>
+		<div class="center">
+			<div>
+				<h:outputText value="#{adminModule.titleEnterpriseManagment} " />
+				<h:outputText class="fa fa-shuffle"
+					style="color: white; font-size: 1.6em"
+					rendered="#{operatorSession.masterAdminGuest}" />
+			</div>
+		</div>
+		<div style="display: flex; align-items: center;">
+			<div style="display: flex; align-items: center; padding: 1em;">
+				<div id="theme-switcher"
+					title="#{DcupMsg['title.toggleLightDarkMode']}"
+					class="header-button">
+					<!-- <span class="theme-switch-day"><i class="fa fa-solid fa-moon"></i></span> -->
+					<!-- <span class="theme-switch-night"><i class="fa fa-solid fa-sun"></i></span> -->
+					<span class="theme-switch-day"><i class="pi pi-moon"></i></span> <span
+						class="theme-switch-night"><i class="pi pi-sun"></i></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="#{resource['js/theme.js']}"></script>
 </ui:composition>

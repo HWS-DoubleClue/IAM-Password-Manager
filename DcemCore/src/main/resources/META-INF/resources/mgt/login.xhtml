@@ -73,7 +73,7 @@
 				<p:panel id="basic" style="width: 35em; margin: 0 auto; border: 0px;">
 					<p />
 					<h:panelGroup id="customheader" style="vertical-align: middle; position: relative; vertical-align: center">
-						<p:graphicImage library="pictures" name="support.svg" width="32" height="32" style="vertical-align: middle;" />
+						<p:graphicImage library="pictures" name="support.svg" width="32" height="32" style="vertical-align: middle; filter: var(--filter)" />
 						<p:outputLabel value="Enterprise Management" class="dialogTitle" />
 					</h:panelGroup>
 					<p:commandLink id="register" action="#{logoffView.actionRequestRegister}" rendered="#{adminModule.modulePreferences.enableCreateAccount}"

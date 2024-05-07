@@ -22,7 +22,8 @@
 	--preferences-seperator-background-color: #d3d3d3;
 	--inputfield-border-color: #c3c3c3;
 	--inputfield-hover-border-color: #777777;
-	--toggleswitch-background-color: #d3d3d3;
+	--toggleswitch-background-color: #c3c3c3;
+	--filter: none;
 	--powered-by-logo:
 		url("#{resource['pictures/HWS_Logo_schwarz_hor_web.png']}");
 	/* --side-bar-box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2), 0 0 20px 0 rgba(0, 0, 0, 0.19); */
@@ -60,7 +61,8 @@
 	--preferences-seperator-background-color: #545454;
 	--inputfield-border-color: #c3c3c3;
 	--inputfield-hover-border-color: #777777;
-	--toggleswitch-background-color: #5b5b5b;
+	--toggleswitch-background-color: #7b7b7b;
+	--filter: invert(100%);
 	--powered-by-logo:
 		url("#{resource['pictures/HWS_Logo_weiss_hor_web.png']}");
 	--side-bar-box-shadow: none;
@@ -1358,7 +1360,6 @@ body .ui-toggleswitch .ui-toggleswitch-slider {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: #d3d3d3; /* #333333 */
 	background: var(--toggleswitch-background-color);
 	transition: background-color 0.2s, color 0.2s, border-color 0.2s,
 		box-shadow 0.2s;
@@ -1386,7 +1387,6 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 body .ui-toggleswitch.ui-toggleswitch-focus .ui-toggleswitch-slider {
 	outline: 0 none;
 	outline-offset: 0;
-	box-shadow: 0 0 0 0.1rem white;
 }
 
 body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
@@ -1395,7 +1395,7 @@ body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
 
 body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider:before
 	{
-	background: white; /* lightgrey */
+	background: #ffffff;
 }
 
 /* Data Table */
@@ -1807,9 +1807,9 @@ body .ui-password-panel {
 	color: var(--inputfield-text-color);
 	border-bottom-right-radius: 3px;
 	border-bottom-left-radius: 3px;
-	/* 	min-height: 200px; */
-	max-height: 250px;
-	/* 	height: 200px; */
+/* 		min-height: 150px; */
+	height: 170px;
+/* 	max-height: 170px; */
 }
 
 .ql-editor.ql-blank::before {
@@ -2173,4 +2173,8 @@ textarea, select {
 textarea:hover, textarea:active, textarea:focus, select:hover, select:active,
 	select:focus {
 	border-color: #777777;
+}
+
+.ui-organigram .control {
+	filter: var(--filter);
 }
