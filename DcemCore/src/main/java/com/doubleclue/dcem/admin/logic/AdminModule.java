@@ -328,6 +328,9 @@ public class AdminModule extends DcemModule {
 	public String getLoginBackgroundColor() {
 		if (getTenantData().getTenantBrandingEntity().isBackgroundTypeColor() == true) {
 			String backgroundColor = getTenantData().getTenantBrandingEntity().getBackgroundColor();
+			if (backgroundColor == null) {
+				return null;
+			}
 			String color = backgroundColor.startsWith("#") ? "background:" + backgroundColor : "background:#" + backgroundColor;
 			return color;
 		}
