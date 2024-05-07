@@ -161,8 +161,8 @@ public class UserLogic {
 				auditingLogic.addAudit(dcemAction, user.toString());
 			}
 		} else { // EDITING
-			if (withAudit) {
-				try {
+			if (withAudit) { // also audits the userchanges
+				try { 
 					DcemUser preUser = getUser(user.getId());
 					modifiedUser(preUser, user, dcemAction);
 				} catch (Exception exp) {
@@ -183,9 +183,6 @@ public class UserLogic {
 				} else {
 					user.setSaveit(null);
 				}
-			}
-			if (withAudit) {
-				auditingLogic.addAudit(dcemAction, user);
 			}
 			user = em.merge(user);
 		}
@@ -896,11 +893,13 @@ public class UserLogic {
 			if (dcemUserExtension.getPhoto() != null) {
 				dcemUserExtensionDb.setPhoto(dcemUserExtension.getPhoto());
 			}
+			dcemUserExtension.setId(dcemUserExtensionDb.getId());
 			try {
 				changeInfo = CompareUtils.compareObjects(dcemUserExtensionDb, dcemUserExtension);
 			} catch (CompareException e) {
 				changeInfo = e.toString();
 			}
+			changeInfo = "[User=" + dcemUser.getLoginId() + ", " + changeInfo.substring(1); // additional user details for auditing
 			dcemUserExtensionDb.setCountry(dcemUserExtension.getCountry());
 			dcemUserExtensionDb.setTimezone(dcemUserExtension.getTimezone());
 			dcemUserExtensionDb.setDepartment(dcemUserExtension.getDepartment());
