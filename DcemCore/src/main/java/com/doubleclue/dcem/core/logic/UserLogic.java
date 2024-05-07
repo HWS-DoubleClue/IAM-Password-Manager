@@ -162,7 +162,7 @@ public class UserLogic {
 			}
 		} else { // EDITING
 			if (withAudit) { // also audits the userchanges
-				try { 
+				try {
 					DcemUser preUser = getUser(user.getId());
 					modifiedUser(preUser, user, dcemAction);
 				} catch (Exception exp) {
@@ -899,7 +899,9 @@ public class UserLogic {
 			} catch (CompareException e) {
 				changeInfo = e.toString();
 			}
-			changeInfo = "[User=" + dcemUser.getLoginId() + ", " + changeInfo.substring(1); // additional user details for auditing
+			if (changeInfo.isBlank() != true) {
+				changeInfo = "[User=" + dcemUser.getLoginId() + ", " + changeInfo.substring(1); // additional user details for auditing
+			}
 			dcemUserExtensionDb.setCountry(dcemUserExtension.getCountry());
 			dcemUserExtensionDb.setTimezone(dcemUserExtension.getTimezone());
 			dcemUserExtensionDb.setDepartment(dcemUserExtension.getDepartment());
