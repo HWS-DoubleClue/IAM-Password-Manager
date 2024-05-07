@@ -1807,9 +1807,9 @@ body .ui-password-panel {
 	color: var(--inputfield-text-color);
 	border-bottom-right-radius: 3px;
 	border-bottom-left-radius: 3px;
-/* 		min-height: 150px; */
+	/* 		min-height: 150px; */
 	height: 170px;
-/* 	max-height: 170px; */
+	/* 	max-height: 170px; */
 }
 
 .ql-editor.ql-blank::before {
@@ -2142,7 +2142,7 @@ ul.ui-menu-child {
 
 .ui-accordion-content.ui-helper-reset.ui-widget-content {
 	border: 1px solid lightgrey;
-	font-size: 2em;
+	/* 	font-size: 2em; */
 }
 
 .ui-chkbox .ui-chkbox-box.ui-state-active, .ui-radiobutton-box.ui-state-active

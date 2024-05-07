@@ -205,7 +205,7 @@
 .tenantBrandingTitle {
 	color: var(--header-link-text-color) !important;
 	margin-left: 0;
-	font-size: 1.4em;
+/* 	font-size: 1.4em; */
 }
 
 .companyLogoStyle {

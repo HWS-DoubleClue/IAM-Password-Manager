@@ -49,7 +49,6 @@ import com.doubleclue.dcem.core.logic.module.ModulePreferences;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.system.logic.SystemModule;
-import com.doubleclue.utils.StringUtils;
 import com.hazelcast.flakeidgen.FlakeIdGenerator;
 
 @ApplicationScoped
@@ -100,7 +99,7 @@ public class AdminModule extends DcemModule {
 
 	@Inject
 	WelcomeSubject welcomeSubject;
-	
+
 	@Inject
 	private ActionLogic actionLogic;
 
@@ -157,7 +156,7 @@ public class AdminModule extends DcemModule {
 
 	public boolean isSwitchUserPortal() {
 		if (getPreferences().isDisableUserPortal() == true) {
-			return false;			
+			return false;
 		}
 		try {
 			AdminTenantData adminTenantData = getTenantData();
@@ -168,7 +167,8 @@ public class AdminModule extends DcemModule {
 					}
 				}
 			}
-			if (operatorSessionBean.isLoggedIn() == true && operatorSessionBean.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR ,DcemConstants.ACTION_SWITCH_USER_PORTAL)) == false) {
+			if (operatorSessionBean.isLoggedIn() == true && operatorSessionBean
+					.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_SWITCH_USER_PORTAL)) == false) {
 				return false;
 			}
 			return true;
@@ -328,7 +328,7 @@ public class AdminModule extends DcemModule {
 	public String getLoginBackgroundColor() {
 		if (getTenantData().getTenantBrandingEntity().isBackgroundTypeColor() == true) {
 			String backgroundColor = getTenantData().getTenantBrandingEntity().getBackgroundColor();
-			String color = "background:#" + backgroundColor;
+			String color = backgroundColor.startsWith("#") ? "background:" + backgroundColor : "background:#" + backgroundColor;
 			return color;
 		}
 		return null;
@@ -411,12 +411,12 @@ public class AdminModule extends DcemModule {
 		} catch (Exception e) {
 			logger.error("Could initialize Tenant Branding for " + tenantEntity.getName(), e);
 		}
-//		DcemAction action = new DcemAction(MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE);
-//		actionLogic.addDcemActionIfNotExists(action);
-//		action = new DcemAction(MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD);
-//		actionLogic.addDcemActionIfNotExists(action);
-//		action = new DcemAction(MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_SWITCH_USER_PORTAL);
-//		actionLogic.addDcemActionIfNotExists(action);
+		// DcemAction action = new DcemAction(MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_USER_PROFILE);
+		// actionLogic.addDcemActionIfNotExists(action);
+		// action = new DcemAction(MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_CHANGE_PASSWORD);
+		// actionLogic.addDcemActionIfNotExists(action);
+		// action = new DcemAction(MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_SWITCH_USER_PORTAL);
+		// actionLogic.addDcemActionIfNotExists(action);
 		try {
 			licenceLogic.loadLicenceKeyContent();
 		} catch (Exception e) {
