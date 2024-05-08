@@ -505,12 +505,13 @@
 	/* 	background: var(--side-bar-background-color); */
 	color: inherit;
 	/* 	color: var(--primary-text-color); */
-	/* 	border-radius: 50%; */
-	/* 	width: 1.1em; */
-	/* 	height: 1.1em; */
-	/* 	padding: 6px; */
-	/* 	line-height: 1px; */
+		border-radius: 50%;
+		width: 1.1em;
+		height: 1.1em;
+		padding: 6px;
+		line-height: 1px;
 }
-/* .ui-commandlink.header-button:hover, .header-button:hover { */
-/* 	background: var(--side-bar-link-hover-background-color); */
-/* } */
+.ui-commandlink.header-button:hover, .header-button:hover {
+	background: #303030;
+/* 	color: yellow; */
+}
