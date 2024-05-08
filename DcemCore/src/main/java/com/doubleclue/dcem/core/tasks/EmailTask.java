@@ -26,11 +26,13 @@ public class EmailTask extends CoreTask {
 
 	private static final Logger logger = LogManager.getLogger(EmailTask.class);
 
-	List<DcemUser> users;
+	List<DcemUser> users = null;
+	Set<String> emailAdresses = null;
 	Map<String, Object> map;
 	String templateName;
 	String subjectResource;
 	byte[] attachment;
+	SupportedLanguage language;
 
 	public EmailTask(List<DcemUser> users, Map<String, Object> map, String templateName, String subjectResource, byte[] attachment) {
 		super(EmailTask.class.getSimpleName(), null);
@@ -41,6 +43,17 @@ public class EmailTask extends CoreTask {
 		this.attachment = attachment;
 	}
 
+	public EmailTask(Set<String> emailAdresses, SupportedLanguage language, Map<String, Object> map, String templateName, String subjectResource,
+			byte[] attachment) {
+		super(EmailTask.class.getSimpleName(), null);
+		this.emailAdresses = emailAdresses;
+		this.map = map;
+		this.templateName = templateName;
+		this.subjectResource = subjectResource;
+		this.attachment = attachment;
+		this.language = language;
+	}
+
 	@Override
 	public void runTask() {
 		logger.debug("EmailTask started");
@@ -48,18 +61,24 @@ public class EmailTask extends CoreTask {
 		DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
 		TemplateLogic templateLogic = CdiUtils.getReference(TemplateLogic.class);
 		HashMap<SupportedLanguage, Set<String>> mapSortEmailsByLanguage = new HashMap<SupportedLanguage, Set<String>>();
-		for (DcemUser dcemUser : users) {
-			Set<String> emails = mapSortEmailsByLanguage.get(dcemUser.getLanguage());
-			if (emails == null) {
-				emails = new HashSet<String>();
-				mapSortEmailsByLanguage.put(dcemUser.getLanguage(), emails);
+		if (users != null) {
+			for (DcemUser dcemUser : users) {
+				Set<String> emails = mapSortEmailsByLanguage.get(dcemUser.getLanguage());
+				if (emails == null) {
+					emails = new HashSet<String>();
+					mapSortEmailsByLanguage.put(dcemUser.getLanguage(), emails);
+				}
+				if (dcemUser.getEmail() == null || dcemUser.getEmail().isEmpty() == true) {
+					logger.info("Could not send email to '" + dcemUser.getLoginId() + "'. User has no Email!");
+					continue;
+				}
+				emails.add(dcemUser.getEmail());
 			}
-			if (dcemUser.getEmail() == null || dcemUser.getEmail().isEmpty() == true) {
-				logger.info("Could not send email to '" + dcemUser.getLoginId() + "'. User has no Email!");
-				continue;
-			}
-			emails.add(dcemUser.getEmail());
 		}
+		if (emailAdresses != null && language != null) {
+			mapSortEmailsByLanguage.put(language, emailAdresses);
+		}
+
 		DcemTemplate dcemTemplateEmail = null;
 		for (SupportedLanguage language : mapSortEmailsByLanguage.keySet()) {
 			try {
@@ -72,7 +91,8 @@ public class EmailTask extends CoreTask {
 				StringWriter stringWriter = new StringWriter();
 				Template tempalte = applicationBean.getTemplateFromConfig(dcemTemplateEmail);
 				tempalte.process(map, stringWriter);
-				SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), stringWriter.toString(), dbResourceBundle.getString(subjectResource), attachment);
+				SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), stringWriter.toString(),
+						dbResourceBundle.getString(subjectResource), attachment);
 			} catch (Exception e) {
 				logger.error("E-Mail Task FAILED", e);
 				continue;

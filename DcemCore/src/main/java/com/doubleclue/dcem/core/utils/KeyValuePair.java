@@ -1,4 +1,4 @@
-package com.doubleclue.dcem.as.logic;
+package com.doubleclue.dcem.core.utils;
 
 public class KeyValuePair {
 	String key;
