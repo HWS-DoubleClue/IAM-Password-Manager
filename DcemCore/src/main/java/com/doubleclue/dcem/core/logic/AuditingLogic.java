@@ -6,6 +6,8 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 
 import com.doubleclue.dcem.core.entities.Auditing;
@@ -18,6 +20,8 @@ import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 @ApplicationScoped
 @Named("auditingLogic")
 public class AuditingLogic {
+	
+	private static final Logger logger = LogManager.getLogger(AuditingLogic.class);
 
 	@Inject
 	EntityManager em;
@@ -48,13 +52,17 @@ public class AuditingLogic {
 		if (newEntity.getId() == null) {
 			changeInfo = newEntity.toString();
 		} else {
+			EntityInterface oldEntity = null;
 			try {
-				EntityInterface oldEntity = (EntityInterface) em.find(Hibernate.unproxy(newEntity).getClass(), newEntity.getId());
+				oldEntity = (EntityInterface) em.find(Hibernate.unproxy(newEntity).getClass(), newEntity.getId());
 				changeInfo = CompareUtils.compareObjects(oldEntity, newEntity);
-				em.detach(oldEntity);
 			} catch (Exception exp) {
-				// logger.warn("Couldn't compare operator", exp);
+				logger.warn("Couldn't compare operator", exp);
 				changeInfo = "ERROR: " + exp.getMessage();
+			} finally {
+				if (oldEntity != null) {
+					em.detach(oldEntity);
+				}
 			}
 		}
 		if (changeInfo.isEmpty() == false) {

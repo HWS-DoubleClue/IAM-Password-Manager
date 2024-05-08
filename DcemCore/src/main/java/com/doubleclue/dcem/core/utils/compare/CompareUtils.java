@@ -239,7 +239,7 @@ public class CompareUtils {
 		Iterator<EntityInterface> iterator = collection.iterator();
 		while (iterator.hasNext()) {
 			EntityInterface entityA = iterator.next();
-			if (entityA.getId().equals(entity.getId())) {
+			if (Objects.equals(entityA.getId(), entity.getId())) {
 				return entityA;
 			}
 		}
