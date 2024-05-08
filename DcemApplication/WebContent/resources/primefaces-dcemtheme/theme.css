@@ -230,6 +230,7 @@ body {
 
 .ui-widget-header a {
 	color: var(--header-link-text-color);
+	text-decoration: none;
 }
 
 .ui-icon-32 {
