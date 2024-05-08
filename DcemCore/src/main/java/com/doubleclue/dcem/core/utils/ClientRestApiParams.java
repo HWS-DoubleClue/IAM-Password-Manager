@@ -11,7 +11,7 @@ public class ClientRestApiParams {
 
 	String url;
 	HttpVerb httpVerb;
-	UsernamePasswordCredentials credentials;
+	UsernamePasswordCredentials credentials; // in case authHeader is null
 	String authHeader = null;
 	String body;
 	String contentType = "application/json";
