@@ -1,7 +1,7 @@
 package com.doubleclue.dcem.core.utils;
 
 import java.io.IOException;
-import java.util.Base64;
+import java.util.ArrayList;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -9,8 +9,10 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
+
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -26,15 +28,16 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import com.doubleclue.dcem.core.DcemConstants;
 
 @ApplicationScoped
 @Named("clientRestApi")
 public class ClientRestApi {
-	
-	boolean traceRestApi; 
-	
-	enum HttpVerb {
+
+	boolean traceRestApi;
+
+	public enum HttpVerb {
 		HTTP_GET, HTTP_PUT, HTTP_PATCH, HTTP_DELETE, HTTP_POST;
 	}
 
@@ -47,30 +50,59 @@ public class ClientRestApi {
 		return getResponse(url, false, HttpVerb.HTTP_POST, credentials, body, contentType, unseruce, timeoutSeconds);
 	}
 
-	public CloseableHttpResponse postRequest(String url, String authHeader, String body, String contentType, String accept, boolean unseruce,
+	public CloseableHttpResponse postRequest(String url, String authHeader, String body, String contentType, String accept, boolean unsecure,
 			int timeoutSeconds) throws Exception {
-		return getResponse(url, false, HttpVerb.HTTP_POST, authHeader, true, body, contentType, accept, unseruce, timeoutSeconds);
+		ClientRestApiParams apiParams = new ClientRestApiParams(url, HttpVerb.HTTP_POST, null, body, contentType);
+		apiParams.authHeader = authHeader;
+		apiParams.unsecure = unsecure;
+		apiParams.setTimeoutSeconds(timeoutSeconds);
+		if (accept != null) {
+			apiParams.headers = new ArrayList<KeyValuePair>();
+			apiParams.headers.add(new KeyValuePair(HttpHeaders.ACCEPT, accept));
+		}
+		return getResponse(apiParams);
 	}
 
-	public CloseableHttpResponse patchRequest(String url, String authHeader, boolean userAgentHeader, String body, String contentType, String accept,
-			boolean unseruce, int timeoutSeconds) throws Exception {
-		return getResponse(url, false, HttpVerb.HTTP_PATCH, authHeader, userAgentHeader, body, contentType, accept, unseruce, timeoutSeconds);
-	}
-
-	public CloseableHttpResponse patchRequest(String url, String authHeader, String body, String contentType, String accept, boolean unseruce,
+	@Deprecated
+	public CloseableHttpResponse patchRequest(String url, String authHeader, String body, String contentType, String accept, boolean unsecure,
 			int timeoutSeconds) throws Exception {
-		return getResponse(url, false, HttpVerb.HTTP_PATCH, authHeader, true, body, contentType, accept, unseruce, timeoutSeconds);
+		ClientRestApiParams apiParams = new ClientRestApiParams(url, HttpVerb.HTTP_PATCH, null, body, contentType);
+		apiParams.setTimeoutSeconds(timeoutSeconds);
+		apiParams.unsecure = unsecure;
+		apiParams.authHeader = authHeader;
+		if (accept != null) {
+			apiParams.headers = new ArrayList<KeyValuePair>();
+			apiParams.headers.add(new KeyValuePair(HttpHeaders.ACCEPT, accept));
+		}
+		return getResponse(apiParams);
 	}
 
+	@Deprecated
 	public CloseableHttpResponse deleteRequest(String url, String authHeader, boolean unsecure, int timeoutSeconds) throws Exception {
-		return getResponse(url, false, HttpVerb.HTTP_DELETE, authHeader, true, null, null, null, unsecure, timeoutSeconds);
+		ClientRestApiParams apiParams = new ClientRestApiParams(url, HttpVerb.HTTP_DELETE, null, null, null);
+		apiParams.setTimeoutSeconds(timeoutSeconds);
+		apiParams.unsecure = unsecure;
+		apiParams.authHeader = authHeader;
+		return getResponse(apiParams);
+	}
+	
+	public void deleteRequest(String url, String authHeader, String body, boolean unsecure, int timeoutSeconds, String accept, String contentType) throws Exception {
+		ClientRestApiParams apiParams = new ClientRestApiParams(url, HttpVerb.HTTP_DELETE, null, body, contentType);
+		apiParams.setTimeoutSeconds(timeoutSeconds);
+		apiParams.unsecure = unsecure;
+		apiParams.authHeader = authHeader;
+		if (accept != null) {
+			apiParams.headers = new ArrayList<KeyValuePair>();
+			apiParams.headers.add(new KeyValuePair(HttpHeaders.ACCEPT, accept));
+		}
+		getResponse(apiParams);		
 	}
 
-	
 	public CloseableHttpResponse deleteRequest(String url, UsernamePasswordCredentials credentials, boolean unsecure, int timeoutSeconds) throws Exception {
 		return getResponse(url, false, HttpVerb.HTTP_DELETE, credentials, null, null, unsecure, timeoutSeconds);
 	}
 
+	@Deprecated 
 	public CloseableHttpResponse putRequest(String url, UsernamePasswordCredentials credentials, String body, String contentType, boolean unsecure,
 			int timeoutSeconds) throws Exception {
 		return getResponse(url, false, HttpVerb.HTTP_PUT, credentials, body, contentType, unsecure, timeoutSeconds);
@@ -78,69 +110,86 @@ public class ClientRestApi {
 
 	private CloseableHttpResponse getResponse(String url, boolean closeConnection, HttpVerb httpVerb, UsernamePasswordCredentials credentials, String body,
 			String contentType, boolean unsecure, int timeoutSeconds) throws Exception {
-
-		String encodedAuth = Base64.getEncoder().encodeToString((credentials.getUserName() + ":" + credentials.getPassword()).getBytes());
-		String authHeader = "Basic " + new String(encodedAuth);
-		return getResponse(url, closeConnection, httpVerb, authHeader, true, body, contentType, null, unsecure, timeoutSeconds);
+		ClientRestApiParams apiParams = new ClientRestApiParams(url, httpVerb, credentials, body, contentType);
+		apiParams.setTimeoutSeconds(timeoutSeconds);
+		apiParams.unsecure = unsecure;
+		return getResponse(apiParams);
 	}
 
+	@Deprecated
 	public CloseableHttpResponse simplePostRequest(String url, String body, String contentType, boolean unsecure, int timeoutSeconds) throws Exception {
-		return getResponse(url, false, HttpVerb.HTTP_POST, "", false, body, contentType, null, unsecure, timeoutSeconds);
+		ClientRestApiParams apiParams = new ClientRestApiParams(url, HttpVerb.HTTP_POST, null, body, contentType);
+		apiParams.setTimeoutSeconds(timeoutSeconds);
+		apiParams.unsecure = unsecure;
+		return getResponse(apiParams);
 	}
 
-	private CloseableHttpResponse getResponse(String url, boolean closeConnection, HttpVerb httpVerb, String authHeader, boolean userAgentHeader, String body,
-			String contentType, String accept, boolean unsecure, int timeoutSeconds) throws Exception {
+	// private CloseableHttpResponse getResponse(String url, boolean closeConnection, HttpVerb httpVerb, String authHeader, boolean userAgentHeader, String
+	// body,
+	// String contentType, String accept, boolean unsecure, int timeoutSeconds) throws Exception {
+	// long start = System.currentTimeMillis();
+	// CloseableHttpResponse response = null;
+
+	public CloseableHttpResponse getResponse(ClientRestApiParams clientRestApiParams) throws Exception {
 		long start = System.currentTimeMillis();
 		CloseableHttpResponse response = null;
 
 		HttpUriRequest request = null;
-		StringEntity entity;
-		switch (httpVerb) {
+		StringEntity entity = null;
+		if (clientRestApiParams.body != null) {
+			entity = new StringEntity(clientRestApiParams.body, "UTF-8");
+		}
+		switch (clientRestApiParams.httpVerb) {
 		case HTTP_DELETE:
-			request = new HttpDelete(url);
+			request = new HttpDelete(clientRestApiParams.url);
 			break;
 		case HTTP_GET:
-			request = new HttpGet(url);
+			request = new HttpGet(clientRestApiParams.url);
 			break;
 		case HTTP_POST:
-			request = new HttpPost(url);
-			entity = new StringEntity(body);
+			request = new HttpPost(clientRestApiParams.url);
 			((HttpPost) request).setEntity(entity);
 			break;
 		case HTTP_PUT:
-			request = new HttpPut(url);
-			entity = new StringEntity(body);
+			request = new HttpPut(clientRestApiParams.url);
 			((HttpPut) request).setEntity(entity);
 			break;
 		case HTTP_PATCH:
-			request = new HttpPatch(url);
-			entity = new StringEntity(body, "UTF-8");
+			request = new HttpPatch(clientRestApiParams.url);
 			((HttpPatch) request).setEntity(entity);
 		default:
 			break;
 		}
-
-		if (authHeader != "") {
+		String authHeader = clientRestApiParams.getAuthHeader();
+		if (authHeader != null) {
 			request.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
 		}
-		if (userAgentHeader) {
+		if (clientRestApiParams.withoutUserAgent == false) {
 			request.addHeader(DcemConstants.USER_AGENT, DcemConstants.CHROME_AGENT);
 		}
-		if (contentType != null) {
-			request.addHeader(HttpHeaders.CONTENT_TYPE, contentType);
+		if (clientRestApiParams.contentType != null) {
+			request.addHeader(HttpHeaders.CONTENT_TYPE, clientRestApiParams.contentType);
 		}
-		if (accept != null) {
-			request.addHeader(HttpHeaders.ACCEPT, accept);
+//		if (accept != null) {
+//			request.addHeader(HttpHeaders.ACCEPT, accept);
+//		}
+		if (clientRestApiParams.headers != null) {
+			for (KeyValuePair keyValuePair : clientRestApiParams.headers) {
+				if (keyValuePair.value == null) {
+					request.removeHeaders(keyValuePair.key);
+				} else {
+					request.addHeader(keyValuePair.key, keyValuePair.value);
+				}
+			}
 		}
-
 		// adding our own TrustManager
-		DcemTrustManager trustManager = new DcemTrustManager(unsecure, true);
+		DcemTrustManager trustManager = new DcemTrustManager(clientRestApiParams.unsecure, true);
 		trustManager.addDefaultTrustManager();
 		SSLContext context = SSLContext.getInstance("TLSv1.2");
 		context.init(null, new TrustManager[] { trustManager }, null);
 
 		HostnameVerifier hostnameVerifier = null;
-		if (unsecure == true) {
+		if (clientRestApiParams.unsecure == true) {
 			hostnameVerifier = new HostnameVerifier() {
 				@Override
 				public boolean verify(String arg0, SSLSession arg1) {
@@ -148,21 +197,18 @@ public class ClientRestApi {
 				}
 			};
 		}
-		if (timeoutSeconds == 0) {
-			timeoutSeconds = 10;
-		}
-		RequestConfig config = RequestConfig.custom().setConnectTimeout(timeoutSeconds * 1000).setConnectionRequestTimeout((timeoutSeconds + 4) * 1000)
-				.setSocketTimeout(timeoutSeconds * 1000).build();
+		RequestConfig config = RequestConfig.custom().setConnectTimeout(clientRestApiParams.getTimeoutMilli()).setConnectionRequestTimeout(clientRestApiParams.getRequestTimeout())
+				.setSocketTimeout(clientRestApiParams.getTimeoutMilli()).build();
 
 		CloseableHttpClient client = null;
 		if (hostnameVerifier == null) {
-			client = HttpClientBuilder.create().setSslcontext(context).setDefaultRequestConfig(config).build();
+			client = HttpClientBuilder.create().setSSLContext(context).setDefaultRequestConfig(config).build();
 		} else {
-			client = HttpClientBuilder.create().setSslcontext(context).setSSLHostnameVerifier(hostnameVerifier).setDefaultRequestConfig(config).build();
+			client = HttpClientBuilder.create().setSSLContext(context).setSSLHostnameVerifier(hostnameVerifier).setDefaultRequestConfig(config).build();
 		}
 
 		response = client.execute(request);
-		if (response != null && closeConnection) {
+		if (response != null && clientRestApiParams.closeConnection) {
 			try {
 				response.close();
 			} catch (IOException e) {
@@ -173,10 +219,10 @@ public class ClientRestApi {
 			StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
 			StringBuffer sb = new StringBuffer();
 			sb.append(" URL=");
-			sb.append(url);
+			sb.append(clientRestApiParams.url);
 			sb.append(System.lineSeparator());
 			sb.append("Response-Time (msec): ");
-			sb.append(System.currentTimeMillis()- start);
+			sb.append(System.currentTimeMillis() - start);
 			sb.append(System.lineSeparator());
 			for (StackTraceElement element : stacktrace) {
 				String className = element.getClassName();
@@ -188,23 +234,35 @@ public class ClientRestApi {
 				}
 				if (className.startsWith("com.doubleclue")) {
 					sb.append(className);
-					sb.append (":");
+					sb.append(":");
 					sb.append(element.getMethodName());
 					sb.append(System.lineSeparator());
 				} else {
 					break;
 				}
 			}
-			sb.append(System.lineSeparator());
 			logger.debug("REST API, " + sb.toString());
 		}
+		clientRestApiParams.responseTime = System.currentTimeMillis() - start;
 		return response;
 	}
 
+	public String getResponseHeader(ClientRestApiParams apiParams, String headerName)
+			throws Exception {
+		CloseableHttpResponse response = getResponse(apiParams);
+		if (response != null) {
+			Header header = response.getFirstHeader(headerName);
+			return (header != null) ? header.getValue() : null;
+		}
+		return null;
+	}
+	
+	@Deprecated
 	public String getResponseHeader(String url, String headerName, UsernamePasswordCredentials credentials, int timeoutSeconds) throws Exception {
 		return getResponseHeader(url, headerName, credentials, false, timeoutSeconds);
 	}
 
+	@Deprecated
 	public String getResponseHeader(String url, String headerName, UsernamePasswordCredentials credentials, boolean unsecure, int timeoutSeconds)
 			throws Exception {
 		CloseableHttpResponse response = getResponse(url, true, HttpVerb.HTTP_GET, credentials, null, null, unsecure, timeoutSeconds);
@@ -215,13 +273,42 @@ public class ClientRestApi {
 		return null;
 	}
 
+	@Deprecated
 	public String getResponseBody(String url, UsernamePasswordCredentials credentials, int timeoutSeconds) throws Exception {
 		return getResponseBody(url, credentials, false, timeoutSeconds);
 	}
 
+	@Deprecated
 	public String getResponseBody(String url, String authHeader, boolean unsecure, int timeoutSeconds) throws Exception {
-
-		CloseableHttpResponse response = getResponse(url, false, HttpVerb.HTTP_GET, authHeader, true, null, null, "*/*", unsecure, timeoutSeconds);
+		ClientRestApiParams apiParams = new ClientRestApiParams(url, HttpVerb.HTTP_GET, null, null, null);
+		apiParams.setTimeoutSeconds(timeoutSeconds);
+		apiParams.unsecure = unsecure;
+		apiParams.setAuthHeader(authHeader);
+		apiParams.setTimeoutSeconds(timeoutSeconds);
+		apiParams.headers = new ArrayList<KeyValuePair>();
+		apiParams.headers.add(new KeyValuePair(HttpHeaders.ACCEPT, "*/*"));
+		CloseableHttpResponse response = getResponse(apiParams);
+		if (response != null) {
+			try {
+				return EntityUtils.toString(response.getEntity());
+			} catch (Exception exp) {
+				throw exp;
+			} finally {
+				try {
+					response.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+	public String getResponseBody(ClientRestApiParams apiParams) throws Exception {
+		CloseableHttpResponse response = getResponse(apiParams);
+		if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+			throw new Exception ("Invalid HTTP STATUS: " + response.getStatusLine());
+		}
 		if (response != null) {
 			try {
 				return EntityUtils.toString(response.getEntity());
@@ -261,4 +348,6 @@ public class ClientRestApi {
 	public void setTraceRestApi(boolean traceRestApi) {
 		this.traceRestApi = traceRestApi;
 	}
+
+	
 }

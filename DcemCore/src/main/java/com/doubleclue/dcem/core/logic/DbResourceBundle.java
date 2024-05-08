@@ -80,10 +80,10 @@ public class DbResourceBundle extends ResourceBundle implements ReloadClassInter
 				try {
 					object = resourceBundleEnglisch.getString(key);
 				} catch (Exception e) {
-					return key + "???";
+					return key;
 				}
 			} else {
-				return key + "???";
+				return key;
 			}
 		}
 		return object;
