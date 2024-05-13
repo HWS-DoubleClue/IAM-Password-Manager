@@ -13,6 +13,7 @@ popd
 rem default java home
 set wrapper_home=%~dp0%
 echo wrapper_home-- %wrapper_home%
+echo 
 
 rem default java exe for running the wrapper
 rem note this is not the java exe for running the application. the exe for running the application is defined in the wrapper configuration file
