@@ -54,10 +54,12 @@ public class PrivilegeViewBean extends DcemView {
 	List<DcemRole> dcemRoles;
 	Map<Integer, ActionRoleAssignment> assignmentMap; // key is the ActionId
 	String moduleFilter;
+	DcemAction save;
 
 	@PostConstruct
 	private void init() {
 		subject = privilegeSubject;
+		save = new DcemAction(subject, DcemConstants.ACTION_SAVE);
 	}
 
 	@Override
@@ -135,7 +137,7 @@ public class PrivilegeViewBean extends DcemView {
 
 	public String actionSave() {
 		try {
-			roleLogic.saveAssignments(assignmentMap);
+			roleLogic.saveAssignments(assignmentMap, save);
 		} catch (Exception exp) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "privilege.view.save.error", exp.getMessage());
 			return null;
@@ -145,7 +147,7 @@ public class PrivilegeViewBean extends DcemView {
 	}
 
 	public boolean isPermissionSave() {
-		return operatorSessionBean.isPermission(new DcemAction(subject, DcemConstants.ACTION_SAVE));
+		return operatorSessionBean.isPermission(save);
 	}
 
 	public void leavingView() {
