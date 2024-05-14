@@ -108,13 +108,10 @@ public class RoleLogic {
 					actions.add(actionLogic.getDcemAction(entry.getKey()));
 				}
 			}
-			DcemRole updatedRole = new DcemRole();
-			CompareUtils.copyObject(role, updatedRole);
-			updatedRole.setActions(actions);
-			auditingLogic.addAudit(dcemAction,updatedRole);
-			
-			
 			role.updateActions(actions);
+			em.detach(role);
+			auditingLogic.addAudit(dcemAction,role);
+			em.merge(role);
 		}
 	}
 

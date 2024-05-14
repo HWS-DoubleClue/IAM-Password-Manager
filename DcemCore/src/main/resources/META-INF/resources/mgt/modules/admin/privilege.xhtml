@@ -25,8 +25,8 @@
 		<p:dataTable id="pTable" value="#{privilegeView.dcemActions}" var="dcemAction" widgetVar="actionsTable" paginator="true" rows="20"
 			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 			paginatorPosition="bottom" rowKey="#{dcemAction.id}" rowsPerPageTemplate="20, 50,100" emptyMessage="#{CoreMsg['emptyTable']}" stickyHeader="false"
-			 styleClass="priviledgeTable">
-
+			styleClass="priviledgeTable">
+			
 			<p:column filterBy="#{dcemAction.moduleId}" filterMatchMode="exact" style="width: 8em;">
 				<f:facet name="header">
 					<h:outputText value="#{CoreMsg['module']}" />
@@ -45,26 +45,24 @@
 				</f:facet>
 				<h:outputText value="#{dcemApplication.getSubjectName(dcemAction.moduleId, dcemAction.subject)}" />
 			</p:column>
-			<p:column style="width: 8em" >
-				<f:facet name="header" >
+			<p:column style="width: 8em">
+				<f:facet name="header">
 					<h:outputText value="#{CoreMsg['action']}" />
 				</f:facet>
 				<h:outputText value="#{dcemAction.action}" />
 			</p:column>
 
-			<p:columns value="#{privilegeView.dcemRoles}" var="item" columnIndexVar="colIndex" style=" text-align: center;" >
+			<p:columns value="#{privilegeView.dcemRoles}" var="item" columnIndexVar="colIndex" style=" text-align: center;">
 				<f:facet name="header">
 					<h:outputText value="#{item.name}" />
 				</f:facet>
-				<h:selectBooleanCheckbox id="assigned" value="#{privilegeView.assignment[dcemAction.id].roleAssigned[item.id]}" />
+				<h:selectBooleanCheckbox id="assigned" value="#{privilegeView.assignment[dcemAction.id].roleAssigned[item.id]}" >
+					<p:ajax event="change"/>
+				</h:selectBooleanCheckbox>
 			</p:columns>
 
 		</p:dataTable>
 	</h:form>
-
-
-
-
 
 
 </ui:composition>
