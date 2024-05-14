@@ -31,5 +31,5 @@ if [ ! -x "$PRGDIR"/"$EXECUTABLE" ]; then
   exit 1
 fi
 
-exec "$PRGDIR"/"$EXECUTABLE" -r "conf/DcemApplication.conf"
+exec "$PRGDIR"/"$EXECUTABLE" -r "$dcem_installation_path"/"conf/DcemApplication.conf"
  

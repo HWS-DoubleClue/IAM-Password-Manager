@@ -22,6 +22,9 @@ cd ".."
 wrapper_home=$(pwd)
 export wrapper_home
 
+dcem_installation_path=$(pwd)
+export dcem_installation_path
+
 # path to dcem home
 DCEM_HOME=$(pwd)/DCEM_HOME
 export DCEM_HOME
@@ -55,6 +58,7 @@ export conf_default_file
 echo "wrapper home : $wrapper_home"
 echo "configuration: $conf_file"
 echo "DCEM_HOME : $DCEM_HOME" 
+echo "dcem_installation_path : $dcem_installation_path" 
 
 # show java version
 "$java_exe" -version

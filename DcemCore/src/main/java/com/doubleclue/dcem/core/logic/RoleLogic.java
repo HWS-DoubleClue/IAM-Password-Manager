@@ -19,6 +19,8 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemRole;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
+import com.doubleclue.dcem.core.utils.compare.CompareException;
+import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 
 @ApplicationScoped
 @Named("roleLogic")
@@ -97,7 +99,7 @@ public class RoleLogic {
 	}
 	
 	@DcemTransactional
-	public void saveAssignments(Map<Integer, ActionRoleAssignment> assignmentMap) {
+	public void saveAssignments(Map<Integer, ActionRoleAssignment> assignmentMap, DcemAction dcemAction) throws CompareException {
 		List <DcemRole> dcemRoles = getDcemRolesBelowRank(operatorSessionBean.getDcemUser().getDcemRole().getRank());
 		for (DcemRole role : dcemRoles) {
 			Set<DcemAction> actions = new HashSet<>();
@@ -106,6 +108,12 @@ public class RoleLogic {
 					actions.add(actionLogic.getDcemAction(entry.getKey()));
 				}
 			}
+			DcemRole updatedRole = new DcemRole();
+			CompareUtils.copyObject(role, updatedRole);
+			updatedRole.setActions(actions);
+			auditingLogic.addAudit(dcemAction,updatedRole);
+			
+			
 			role.updateActions(actions);
 		}
 	}
