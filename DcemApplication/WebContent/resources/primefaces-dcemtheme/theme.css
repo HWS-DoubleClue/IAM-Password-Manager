@@ -315,11 +315,11 @@ body {
 	border-color: #777777;
 }
 
-.ui-state-hover a, .ui-state-hover a:hover {
-	color: #222222;
-	text-decoration: none;
-	background-color: #D0EBF8;
-}
+/* .ui-state-hover a, .ui-state-hover a:hover { */
+/* 	color: #222222; */
+/* 	text-decoration: none; */
+/* 	background-color: #D0EBF8; */
+/* } */
 
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited
 	{
@@ -1223,6 +1223,10 @@ body {
 	border-color: var(--inputfield-hover-border-color);
 }
 
+.ui-inputfield.ui-state-error {
+	color: #000000;
+}
+
 .ui-growl {
 	width: 450px !Important;
 	top: 55px !Important;
@@ -1434,10 +1438,14 @@ body .ui-datatable tbody tr, body .ui-treetable tbody tr {
 	background-color: var(--table-head-background-color);
 }
 
+.ui-datatable tbody tr:nth-child(even).ui-state-highlight, .ui-treetable tbody tr:nth-child(even).ui-state-highlight {
+	background: var(--highlight-background-color);
+}
+
 .ui-datatable tbody tr:nth-child(even):hover, .ui-datatable tbody tr:nth-child(odd):hover,
 	.ui-treetable tbody tr:nth-child(even):hover, .ui-treetable tbody tr:nth-child(odd):hover
 	{
-	background-color: var(--table-hover-background-color);
+	background: var(--table-hover-background-color);
 }
 /* .ui-datatable.borderless tbody tr:nth-child(even) { */
 /* 	background-color: #f7f7f7; */
