@@ -361,8 +361,8 @@ body {
 
 .ui-priority-secondary, .ui-widget-content .ui-priority-secondary,
 	.ui-widget-header .ui-priority-secondary {
-	opacity: .7;
-	filter: Alpha(Opacity = 70);
+/* 	opacity: .7; */
+/* 	filter: Alpha(Opacity = 70); */
 	font-weight: normal;
 }
 
@@ -1328,7 +1328,7 @@ body {
 	padding: 0;
 }
 
-.ui-button.ui-state-hover, .ui-button.ui-state-active, .ui-button.ui-state-focus
+.ui-button.ui-state-hover, .ui-button.ui-state-active, .ui-button.ui-state-focus, .ui-button:hover, .ui-button:active, .ui-button:focus
 	{
 	/* 	border: none !important; */
 	background-color: var(--button-hover-background-color);
