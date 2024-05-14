@@ -2,140 +2,223 @@
 <!DOCTYPE html
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
 	<h:outputScript library="js" name="userPortalJavaScript.js" />
 	<h:outputStylesheet library="css" name="applicationStyle.css" />
 
-	<h:panelGroup id="applicationHubGroup" rendered="#{portalSessionBean.isViewVisible('PASSWORD_MANAGER')}">
+	<h:panelGroup id="applicationHubGroup"
+		rendered="#{portalSessionBean.isViewVisible('PASSWORD_MANAGER')}">
 		<h:form id="applicationHubForm">
 
 
 			<h:panelGroup style="float:left;padding-top: 3px;">
-				<p:commandButton value="#{DcupMsg['appHubAdmin.add']}" style="margin-right:5px;" action="#{applicationHubAdminView.addApplication}" icon="fa fa-plus" />
+				<p:commandButton value="#{DcupMsg['appHubAdmin.add']}"
+					style="margin-right:5px;"
+					action="#{applicationHubAdminView.addApplication}"
+					icon="fa fa-plus" />
 				<p:spacer width="12" />
-				<p:commandButton value="#{DcupMsg['appHubAdmin.import']}" action="#{applicationHubAdminView.importApplication}" icon="fa fa-upload" update="importAppsForm" />
+				<p:commandButton value="#{DcupMsg['appHubAdmin.import']}"
+					action="#{applicationHubAdminView.importApplication}"
+					icon="fa fa-upload" update="importAppsForm" />
 
 			</h:panelGroup>
-			<button id="pluginCallbackBtn" value="" onclick="pluginCallback(this.value); return false;" style="display: none"></button>
+			<button id="pluginCallbackBtn" value=""
+				onclick="pluginCallback(this.value); return false;"
+				style="display: none"></button>
 			<h:panelGroup style="float:right;padding-top: 3px;">
-				<i style="vertical-align: inherit; margin-right: 5px; color: #005078;" class="fa fa-search fa-lg"></i>
-				<p:inputText id="SeachField" placeholder="#{DcupMsg['searchPlaceHolder']}" value="#{applicationHubAdminView.searchValue}" size="20"
-					ondblclick="onchange(); return false;" onkeypress="if (event.keyCode == 13) {onchange(); return false; }" title="#{CoreMsg['filterTooltip']}">
-					<p:ajax event="keyup" listener="#{applicationHubAdminView.filterApplications}" update="applications" />
+				<i
+					style="vertical-align: inherit; margin-right: 5px; color: var(--header-link-text-color);"
+					class="fa fa-search fa-lg"></i>
+				<p:inputText id="SeachField"
+					placeholder="#{DcupMsg['searchPlaceHolder']}"
+					value="#{applicationHubAdminView.searchValue}" size="20"
+					ondblclick="onchange(); return false;"
+					onkeypress="if (event.keyCode == 13) {onchange(); return false; }"
+					title="#{CoreMsg['filterTooltip']}">
+					<p:ajax event="keyup"
+						listener="#{applicationHubAdminView.filterApplications}"
+						update="applications" />
 				</p:inputText>
 			</h:panelGroup>
 			<p></p>
 			<p:spacer height="40" />
 
-			<p:dataGrid var="app" value="#{applicationHubAdminView.applications}" columns="6" layout="grid" rows="24" paginator="true" id="applications"
+			<p:dataGrid var="app" value="#{applicationHubAdminView.applications}"
+				columns="6" layout="grid" rows="24" paginator="true"
+				id="applications"
 				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-				rowsPerPageTemplate="12,18,24, 48" paginatorPosition="bottom" styleClass="applicationGridAdmin" emptyMessage="#{DcupMsg['message.emptyTable']}">
+				rowsPerPageTemplate="12,18,24, 48" paginatorPosition="bottom"
+				styleClass="applicationGridAdmin"
+				emptyMessage="#{DcupMsg['message.emptyTable']}">
 
 				<p:panel style="text-align:center;">
-					<p:commandButton action="#{applicationHubAdminView.deleteApplication(app)}" style="float:right;" icon="fa fa-trash">
-						<p:confirm icon="fa fa-warning confirmIcon" header="#{DcupMsg['appHubAdmin.deleteConfirmHeader']}" message="#{DcupMsg['appHubAdmin.deleteSelectedApp']}" />
+					<p:commandButton
+						action="#{applicationHubAdminView.deleteApplication(app)}"
+						style="float:right;" icon="fa fa-trash">
+						<p:confirm icon="fa fa-warning confirmIcon"
+							header="#{DcupMsg['appHubAdmin.deleteConfirmHeader']}"
+							message="#{DcupMsg['appHubAdmin.deleteSelectedApp']}" />
 					</p:commandButton>
 					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-						<p:commandButton value="#{DcupMsg['button.yes']}" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+						<p:commandButton value="#{DcupMsg['button.yes']}" type="button"
+							styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
 						<p:spacer width="12" />
-						<p:commandButton value="#{DcupMsg['button.no']}" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-close" />
+						<p:commandButton value="#{DcupMsg['button.no']}" type="button"
+							styleClass="ui-confirmdialog-no" icon="fa fa-close" />
 					</p:confirmDialog>
-					<p:commandButton action="#{applicationHubAdminView.exportApplication(app)}" style="float:right;" icon="fa fa-download" ajax="false">
+					<p:commandButton
+						action="#{applicationHubAdminView.exportApplication(app)}"
+						style="float:right;" icon="fa fa-download" ajax="false">
 					</p:commandButton>
-					<p:commandButton action="#{applicationHubAdminView.editApplication(app)}" style="float:right;" icon="fa fa-cog">
+					<p:commandButton
+						action="#{applicationHubAdminView.editApplication(app)}"
+						style="float:right;" icon="fa fa-cog">
 					</p:commandButton>
 					<p></p>
 					<br></br>
 
-					<b><h:outputText style="vertical-align: middle;" class="appName" value="#{app.name}" /></b>
+					<b><h:outputText style="vertical-align: middle;"
+							class="appName" value="#{app.name}" /></b>
 
 					<h:panelGrid columns="1" style="width:100%">
-						<p:graphicImage stream="false" value="#{applicationHubAdminView.getAppImage(app)}" height="100px" style="max-width:80%" />
+						<p:graphicImage stream="false"
+							value="#{applicationHubAdminView.getAppImage(app)}"
+							height="100px" style="max-width:80%" />
 					</h:panelGrid>
 				</p:panel>
 			</p:dataGrid>
 		</h:form>
 
 		<h:form id="addAppsForm">
-			<p:dialog id="addAppDlg" widgetVar="addAppDlg" modal="true" style="border:none;">
+			<p:dialog id="addAppDlg" widgetVar="addAppDlg" modal="true"
+				style="border:none;">
 				<f:facet name="header" class="header1">
 					<span class="fa fa-square-o" style="vertical-align: bottom"></span>
-					<h:outputLabel value="#{DcupMsg['appHubAdmin.addApp']}" class="dialogTitle" rendered="#{applicationHubAdminView.editingApplication == false}" />
-					<h:outputLabel value="#{DcupMsg['appHubAdmin.editApp']}" class="dialogTitle" rendered="#{applicationHubAdminView.editingApplication == true}" />
+					<h:outputLabel value="#{DcupMsg['appHubAdmin.addApp']}"
+						class="dialogTitle"
+						rendered="#{applicationHubAdminView.editingApplication == false}" />
+					<h:outputLabel value="#{DcupMsg['appHubAdmin.editApp']}"
+						class="dialogTitle"
+						rendered="#{applicationHubAdminView.editingApplication == true}" />
 				</f:facet>
 				<p:tabView id="tabView" activeIndex="0">
 					<p:tab title="#{DcupMsg['appHubAdmin.addAppApplication']}">
-					<a style="font-size: 1.5em; position: absolute; top: 0.5em; right: 1.5em; color: #005078" title="#{DcupMsg['appHub.linkToRecordGuide']}" href="#{DcupMsg['appHub.linkToHelp']}" target="_blank"><i class="fa fa-book"></i></a>
+						<a
+							style="font-size: 1.5em; position: absolute; top: 0.5em; right: 1.5em;"
+							title="#{DcupMsg['appHub.linkToRecordGuide']}"
+							href="#{DcupMsg['appHub.linkToHelp']}" target="_blank"><i
+							class="fa fa-book"></i></a>
 						<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 							<p:outputLabel value="#{DcupMsg['appHubAdmin.addAppName']}" />
 							<h:panelGroup style="display: inherit;">
-								<p:inputText id="addAppNameField" value="#{applicationHubAdminView.appNameValue}" style="width:200px;">
+								<p:inputText id="addAppNameField"
+									value="#{applicationHubAdminView.appNameValue}"
+									style="width:200px;">
 								</p:inputText>
 							</h:panelGroup>
 							<p:outputLabel value="#{DcupMsg['appHubAdmin.addAppUrl']}" />
 							<h:panelGroup style="display: inherit;">
-								<p:inputText id="addAppUrlField" value="#{applicationHubAdminView.appUrlValue}" style="width:350px;">
+								<p:inputText id="addAppUrlField"
+									value="#{applicationHubAdminView.appUrlValue}"
+									style="width:350px;">
 								</p:inputText>
-								<p:commandButton id="actionOkBtn" value="Validate URL" style="margin-left:5px;" action="#{applicationHubAdminView.appUrlValueValidate}" async="true" />
+								<p:commandButton id="actionOkBtn" value="Validate URL"
+									style="margin-left:5px;"
+									action="#{applicationHubAdminView.appUrlValueValidate}"
+									async="true" />
 							</h:panelGroup>
 							<p:outputLabel value="#{DcupMsg['appHubAdmin.addAppLogo']}" />
 							<h:panelGroup id="fileLogo">
-								<p:graphicImage id="fileLogoImg" cache="false" style="border: 1px solid #111;height: 100px;width: 100px; margin-left:0.5em;"
+								<p:graphicImage id="fileLogoImg" cache="false"
+									style="border: 1px solid #111;height: 100px;width: 100px; margin-left:0.5em;"
 									value="#{applicationHubAdminView.fileLogoImg}" />
 								<br></br>
-								<p:fileUpload listener="#{applicationHubAdminView.fileLogoListener}" label="#{CoreMsg['choose']}" value="#{applicationHubAdminView.fileLogo}"
-									mode="advanced" skinSimple="true" auto="true" multiple="false" update="fileLogo" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" fileLimit="1"
-									sizeLimit="40240" invalidSizeMessage="#{DcupMsg['appHubAdmin.invalidFileSizeLogoMsg']}" />
-								<h:outputText value="#{applicationHubAdminView.logoName}" style="margin-left: 1em;" />
+								<p:fileUpload
+									listener="#{applicationHubAdminView.fileLogoListener}"
+									label="#{CoreMsg['choose']}"
+									value="#{applicationHubAdminView.fileLogo}" mode="advanced"
+									skinSimple="true" auto="true" multiple="false"
+									update="fileLogo" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/"
+									fileLimit="1" sizeLimit="40240"
+									invalidSizeMessage="#{DcupMsg['appHubAdmin.invalidFileSizeLogoMsg']}" />
+								<h:outputText value="#{applicationHubAdminView.logoName}"
+									style="margin-left: 1em;" />
 							</h:panelGroup>
 						</h:panelGrid>
 					</p:tab>
 					<p:tab title="#{DcupMsg['appHubAdmin.addAppActions']}">
-					<a style="font-size: 1.5em; position: absolute; top: 0.5em; right: 1.5em; color: #005078" title="#{DcupMsg['appHub.linkToRecordGuide']}" href="#{DcupMsg['appHub.linkToHelp']}" target="_blank"><i class="fa fa-book"></i></a>
+						<a
+							style="font-size: 1.5em; position: absolute; top: 0.5em; right: 1.5em;"
+							title="#{DcupMsg['appHub.linkToRecordGuide']}"
+							href="#{DcupMsg['appHub.linkToHelp']}" target="_blank"><i
+							class="fa fa-book"></i></a>
 						<p />
 						<!-- Remote Commands Start-->
-						<p:remoteCommand name="finishExecutePlugin" update="actionsTable" action="#{applicationHubAdminView.actionFinishExecutePlugin}" />
-						<h:inputHidden id="pluginResponse" value="#{applicationHubAdminView.pluginResponse}" />
+						<p:remoteCommand name="finishExecutePlugin" update="actionsTable"
+							action="#{applicationHubAdminView.actionFinishExecutePlugin}" />
+						<h:inputHidden id="pluginResponse"
+							value="#{applicationHubAdminView.pluginResponse}" />
 
-						<p:remoteCommand name="pluginChromeUnavailableAlert" action="#{applicationHubAdminView.showPluginChromeUnavailableAlert}" />
-						<p:remoteCommand name="pluginFirefoxUnavailableAlert" action="#{applicationHubAdminView.showPluginFirefoxUnavailableAlert}" />
-						<p:remoteCommand name="pluginSafariUnavailableAlert" action="#{applicationHubAdminView.showPluginSafariUnavailableAlert}" />
-						<p:remoteCommand name="pluginUnavailableAlert" action="#{applicationHubAdminView.showPluginUnavailableAlert}" />
+						<p:remoteCommand name="pluginChromeUnavailableAlert"
+							action="#{applicationHubAdminView.showPluginChromeUnavailableAlert}" />
+						<p:remoteCommand name="pluginFirefoxUnavailableAlert"
+							action="#{applicationHubAdminView.showPluginFirefoxUnavailableAlert}" />
+						<p:remoteCommand name="pluginSafariUnavailableAlert"
+							action="#{applicationHubAdminView.showPluginSafariUnavailableAlert}" />
+						<p:remoteCommand name="pluginUnavailableAlert"
+							action="#{applicationHubAdminView.showPluginUnavailableAlert}" />
 
 						<!-- Remote Commands End-->
-						<p:commandButton value="#{DcupMsg['appHubAdmin.executePlugin']}" actionListener="#{applicationHubAdminView.executePlugin}" icon="fa fa-external-link"
-							style="color: white !important;" />
+						<p:commandButton value="#{DcupMsg['appHubAdmin.executePlugin']}"
+							actionListener="#{applicationHubAdminView.executePlugin}"
+							icon="fa fa-external-link" />
 						<br></br>
 						<br></br>
-						<p:commandButton value="#{DcupMsg['appHubAdmin.addStep']}" action="#{applicationHubAdminView.onAddNewAction}" icon="fa fa-plus"
-							style="color: white !important;" update="actionForm" />
+						<p:commandButton value="#{DcupMsg['appHubAdmin.addStep']}"
+							action="#{applicationHubAdminView.onAddNewAction}"
+							icon="fa fa-plus" update="actionForm" />
 						<p:spacer width="12" />
-						<p:commandButton value="#{DcupMsg['appHubAdmin.editStep']}" actionListener="#{applicationHubAdminView.onEditAction}" icon="fa fa-edit"
-							style="color: white !important;" />
+						<p:commandButton value="#{DcupMsg['appHubAdmin.editStep']}"
+							actionListener="#{applicationHubAdminView.onEditAction}"
+							icon="fa fa-edit" />
 						<p:spacer width="12" />
-						<p:commandButton value="#{DcupMsg['appHubAdmin.deleteStep']}" actionListener="#{applicationHubAdminView.clearAction}" icon="fa fa-minus"
-							style="color: white !important;">
-							<p:confirm header="#{DcupMsg['appHubAdmin.deleteConfirmHeader']}" message="#{DcupMsg['appHubAdmin.deleteSelectedAction']}"
+						<p:commandButton value="#{DcupMsg['appHubAdmin.deleteStep']}"
+							actionListener="#{applicationHubAdminView.clearAction}"
+							icon="fa fa-minus">
+							<p:confirm header="#{DcupMsg['appHubAdmin.deleteConfirmHeader']}"
+								message="#{DcupMsg['appHubAdmin.deleteSelectedAction']}"
 								icon="fa fa-warning confirmIcon" />
 						</p:commandButton>
 						<p />
 
-						<p:dataTable id="actionsTable" var="appStep" scrollHeight="260" scrollable="true" value="#{applicationHubAdminView.currentAppActions}" widgetVar="actionsTable"
-							selection="#{applicationHubAdminView.selectedActions}" rowKey="#{appStep.index}" draggableRows="true" styleClass="borderless"
+						<p:dataTable id="actionsTable" var="appStep" scrollHeight="260"
+							scrollable="true"
+							value="#{applicationHubAdminView.currentAppActions}"
+							widgetVar="actionsTable"
+							selection="#{applicationHubAdminView.selectedActions}"
+							rowKey="#{appStep.index}" draggableRows="true"
+							styleClass="borderless"
 							emptyMessage="#{DcupMsg['message.emptyTable']}">
-							<p:column selectionMode="multiple" style="width:16px; text-align:center" />
+							<p:column selectionMode="multiple"
+								style="width:16px; text-align:center" />
 							<p:ajax event="rowSelect" update="actionsTable" />
 							<p:column headerText="#{DcupMsg['appHubAdmin.type']}">
 								<h:outputText value="#{appStep.type}" />
 							</p:column>
-							<p:column headerText="#{DcupMsg['appHubAdmin.selector']}" style="max-width: 20em">
+							<p:column headerText="#{DcupMsg['appHubAdmin.selector']}"
+								style="max-width: 20em">
 								<h:outputText value="#{appStep.selector}" />
 							</p:column>
 							<p:column headerText="#{DcupMsg['appHubAdmin.valueType']}">
-								<h:outputText value="#{applicationHubAdminView.getActionValueSource(appStep)}" />
+								<h:outputText
+									value="#{applicationHubAdminView.getActionValueSource(appStep)}" />
 							</p:column>
 							<p:column headerText="#{DcupMsg['appHubAdmin.value']}">
 								<h:outputText value="#{appStep.valueParameter}" />
@@ -145,11 +228,14 @@
 					</p:tab>
 				</p:tabView>
 				<p />
-				<p:commandButton id="addAppOK" value="OK" icon="fa fa-check" style="width: 8em" action="#{applicationHubAdminView.actionAddApplication}" ajax="true"
-					upadate="viewPart" />
+				<p:commandButton id="addAppOK" value="OK" icon="fa fa-check"
+					style="width: 8em"
+					action="#{applicationHubAdminView.actionAddApplication}"
+					ajax="true" upadate="viewPart" />
 				<p:spacer width="12" />
 
-				<p:commandButton id="closeDialog" value="#{DcupMsg['close']}" style="width: 8em" icon="fa fa-close" immediate="true"
+				<p:commandButton id="closeDialog" value="#{DcupMsg['close']}"
+					style="width: 8em" icon="fa fa-close" immediate="true"
 					action="#{applicationHubAdminView.actionCloseAddDialog}"></p:commandButton>
 				<p></p>
 				<br />
@@ -159,10 +245,15 @@
 		</h:form>
 
 		<h:form id="actionForm">
-			<p:dialog id="actionDialog" widgetVar="actionDialog" modal="true" resizable="false" width="60em">
+			<p:dialog id="actionDialog" widgetVar="actionDialog" modal="true"
+				resizable="false" width="60em">
 				<f:facet name="header">
-					<h:outputLabel value="#{DcupMsg['appHubAdmin.addAction']}" style="font-size: 1.2em;" rendered="#{applicationHubAdminView.editingAction eq false}" />
-					<h:outputLabel value="#{DcupMsg['appHubAdmin.editAction']}" style="font-size: 1.2em;" rendered="#{applicationHubAdminView.editingAction eq true}" />
+					<h:outputLabel value="#{DcupMsg['appHubAdmin.addAction']}"
+						style="font-size: 1.2em;"
+						rendered="#{applicationHubAdminView.editingAction eq false}" />
+					<h:outputLabel value="#{DcupMsg['appHubAdmin.editAction']}"
+						style="font-size: 1.2em;"
+						rendered="#{applicationHubAdminView.editingAction eq true}" />
 				</f:facet>
 				<p />
 				<p:messages showDetail="false">
@@ -170,42 +261,70 @@
 				</p:messages>
 				<p />
 				<p:focus context="actionDialog" />
-				<h:panelGrid id="editPanel" columns="2" cellspacing="4" cellpadding="4">
-					<h:outputLabel for="attrType" value="#{DcupMsg['appHubAdmin.type']}" />
-					<p:selectOneMenu id="attrType" value="#{applicationHubAdminView.selectedActionType}">
+				<h:panelGrid id="editPanel" columns="2" cellspacing="4"
+					cellpadding="4">
+					<h:outputLabel for="attrType"
+						value="#{DcupMsg['appHubAdmin.type']}" />
+					<p:selectOneMenu id="attrType"
+						value="#{applicationHubAdminView.selectedActionType}">
 						<f:selectItems value="#{applicationHubAdminView.actionTypes}" />
 						<p:ajax event="change" update="editPanel" process="@form" />
 					</p:selectOneMenu>
 
-					<h:outputLabel for="attrSelector" value="#{DcupMsg['appHubAdmin.selector']}" rendered="#{applicationHubAdminView.actionWithSelector}" />
-					<p:inputTextarea id="attrSelector" rows="4" value="#{applicationHubAdminView.selectedAction.selector}" style="width: 40em"
+					<h:outputLabel for="attrSelector"
+						value="#{DcupMsg['appHubAdmin.selector']}"
+						rendered="#{applicationHubAdminView.actionWithSelector}" />
+					<p:inputTextarea id="attrSelector" rows="4"
+						value="#{applicationHubAdminView.selectedAction.selector}"
+						style="width: 40em"
 						rendered="#{applicationHubAdminView.actionWithSelector}" />
 
-					<h:outputLabel for="attrSource" value="#{DcupMsg['appHubAdmin.valueType']}" rendered="#{applicationHubAdminView.isActionWithSourceValue()}" />
-					<p:selectOneMenu id="attrSource" value="#{applicationHubAdminView.selectedActionSourceType}"
+					<h:outputLabel for="attrSource"
+						value="#{DcupMsg['appHubAdmin.valueType']}"
+						rendered="#{applicationHubAdminView.isActionWithSourceValue()}" />
+					<p:selectOneMenu id="attrSource"
+						value="#{applicationHubAdminView.selectedActionSourceType}"
 						rendered="#{applicationHubAdminView.isActionWithSourceValue()}">
-						<f:selectItems value="#{applicationHubAdminView.actionSourceTypes}" />
-						<p:ajax event="change" update="editPanel" process="@this" listener="#{applicationHubAdminView.listenerChangeActionSourceType}" />
+						<f:selectItems
+							value="#{applicationHubAdminView.actionSourceTypes}" />
+						<p:ajax event="change" update="editPanel" process="@this"
+							listener="#{applicationHubAdminView.listenerChangeActionSourceType}" />
 					</p:selectOneMenu>
 
-					<h:outputLabel for="attrDelayName" value="#{DcupMsg['appHubAdmin.valueInSeconds']}" rendered="#{applicationHubAdminView.actionWithDelay}" />
-					<p:inputText id="attrDelayName" value="#{applicationHubAdminView.selectedAction.valueParameter}" style="width: 4em"
+					<h:outputLabel for="attrDelayName"
+						value="#{DcupMsg['appHubAdmin.valueInSeconds']}"
+						rendered="#{applicationHubAdminView.actionWithDelay}" />
+					<p:inputText id="attrDelayName"
+						value="#{applicationHubAdminView.selectedAction.valueParameter}"
+						style="width: 4em"
 						rendered="#{applicationHubAdminView.actionWithDelay}" />
 
-					<h:outputLabel for="attrFiledName" value="#{DcupMsg['appHubAdmin.value']}" rendered="#{applicationHubAdminView.actionWithParameter}" />
-					<h:panelGroup rendered="#{applicationHubAdminView.actionWithParameter}">
-						<p:inputText id="attrFiledName" value="#{applicationHubAdminView.selectedAction.valueParameter}" style="width: 20em" />
+					<h:outputLabel for="attrFiledName"
+						value="#{DcupMsg['appHubAdmin.value']}"
+						rendered="#{applicationHubAdminView.actionWithParameter}" />
+					<h:panelGroup
+						rendered="#{applicationHubAdminView.actionWithParameter}">
+						<p:inputText id="attrFiledName"
+							value="#{applicationHubAdminView.selectedAction.valueParameter}"
+							style="width: 20em" />
 						<p:spacer width="10" />
-						<h:outputText id="displayNameInfo" style="font-size: 1.2em;cursor: pointer;" class="fa fa-question-circle" />
-						<p:tooltip for="displayNameInfo" showEvent="click" position="bottom" value="#{DcupMsg['appHubAdmin.actionNameInfo']}" />
+						<h:outputText id="displayNameInfo"
+							style="font-size: 1.2em;cursor: pointer;"
+							class="fa fa-question-circle" />
+						<p:tooltip for="displayNameInfo" showEvent="click"
+							position="bottom"
+							value="#{DcupMsg['appHubAdmin.actionNameInfo']}" />
 					</h:panelGroup>
 
 				</h:panelGrid>
 				<br />
-				<p:commandButton id="actionOkBtn" style="width: 8em; margin-left:auto; margin-right:auto; margin-top:10px; margin-bottom:5px; display:table;" value="OK"
-					action="#{applicationHubAdminView.actionAddEditAction}" />
+				<p:commandButton id="actionOkBtn"
+					style="width: 8em; margin-left:auto; margin-right:auto; margin-top:10px; margin-bottom:5px; display:table;"
+					value="OK" action="#{applicationHubAdminView.actionAddEditAction}" />
 				<p></p>
-				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}" onclick="PF('actionDialog').hide();" style="float: right; margin-right: 1em; display: block "
+				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}"
+					onclick="PF('actionDialog').hide();"
+					style="float: right; margin-right: 1em; display: block "
 					immediate="true" />
 				<p />
 				<br></br>
@@ -216,14 +335,17 @@
 		</h:form>
 
 		<h:form id="importAppsForm">
-			<p:dialog id="importAppDlg" widgetVar="importAppDlg" modal="true" resizable="false" draggable="false" style="border:none;" width="200">
+			<p:dialog id="importAppDlg" widgetVar="importAppDlg" modal="true"
+				resizable="false" draggable="false" style="border:none;" width="200">
 				<f:facet name="header">
 					<i class="fa fa-upload"></i>
 					<p:spacer width="8"></p:spacer>
-					<h:outputLabel value="#{DcupMsg['appHubAdmin.importApp']}" class="dialogTitle" />
+					<h:outputLabel value="#{DcupMsg['appHubAdmin.importApp']}"
+						class="dialogTitle" />
 				</f:facet>
 
-				<p:messages id="mainMessages" layout="table" globalOnly="false" showSummary="true" closable="true">
+				<p:messages id="mainMessages" layout="table" globalOnly="false"
+					showSummary="true" closable="true">
 					<p:autoUpdate />
 				</p:messages>
 				<br />
@@ -231,11 +353,15 @@
 				<p />
 				<p:panel>
 					<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
-						<p:fileUpload label="#{CoreMsg['upload']}" auto="true" listener="#{applicationHubAdminView.handleFilesUpload}" fileLimit="50" multiple="true"
+						<p:fileUpload label="#{CoreMsg['upload']}" auto="true"
+							listener="#{applicationHubAdminView.handleFilesUpload}"
+							fileLimit="50" multiple="true"
 							update="importAppsForm:uploadedFiles" style="margin-left:-1em;" />
 						<br />
-						<p:outputLabel value="#{DcupMsg['label.uploadedFiles']}: " style="margin-left:-0.5em;" />
-						<p:outputLabel id="uploadedFiles" value="#{applicationHubAdminView.uploadedFiles}" />
+						<p:outputLabel value="#{DcupMsg['label.uploadedFiles']}: "
+							style="margin-left:-0.5em;" />
+						<p:outputLabel id="uploadedFiles"
+							value="#{applicationHubAdminView.uploadedFiles}" />
 						<span class="fa fa-info" style="font-size: 1.5em" />
 						<h:panelGroup>
 							<p:outputLabel value="#{DcupMsg['appHubAdmin.importAppInfo']}" />
@@ -248,14 +374,18 @@
 				</p:panel>
 				<br />
 				<h:outputText value="#{DcupMsg['appHubAdmin.replaceExisting']} " />
-				<p:selectBooleanCheckbox value="#{applicationHubAdminView.replaceExisting}" />
+				<p:selectBooleanCheckbox
+					value="#{applicationHubAdminView.replaceExisting}" />
 				<br />
 				<p />
-				<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{DcupMsg['button.ok']}" actionListener="#{applicationHubAdminView.actionImportApps}"
+				<p:commandButton id="ok" style="width: 8em" icon="fa fa-check"
+					value="#{DcupMsg['button.ok']}"
+					actionListener="#{applicationHubAdminView.actionImportApps}"
 					update="" />
 				<p:spacer width="12" />
 
-				<p:commandButton id="closeDialog" value="#{DcupMsg['close']}" style="width: 8em" icon="fa fa-close" immediate="true"
+				<p:commandButton id="closeDialog" value="#{DcupMsg['close']}"
+					style="width: 8em" icon="fa fa-close" immediate="true"
 					action="#{applicationHubAdminView.actionCloseImportDialog}"></p:commandButton>
 				<p></p>
 				<br />
@@ -265,19 +395,25 @@
 		</h:form>
 
 		<h:form id="pluginChromeUnavailableForm">
-			<p:dialog id="pluginChromeUnavailableDlg" modal="true" widgetVar="pluginChromeUnavailableDlg" resizable="false" width="100">
+			<p:dialog id="pluginChromeUnavailableDlg" modal="true"
+				widgetVar="pluginChromeUnavailableDlg" resizable="false" width="100">
 				<f:facet name="header">
-					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['appHub.error.pluginUnavailableHeader']}" />
+					<h:outputText style="vertical-align: middle;" class="dialogTitle"
+						value="#{DcupMsg['appHub.error.pluginUnavailableHeader']}" />
 				</f:facet>
 				<p />
 				<p:panel style="text-align:center; padding:2em">
-					<p:outputLabel value="#{DcupMsg['appHubAdmin.error.pluginChromeUnavailable']}"></p:outputLabel>
+					<p:outputLabel
+						value="#{DcupMsg['appHubAdmin.error.pluginChromeUnavailable']}"></p:outputLabel>
 					<p></p>
-					<p:button href="https://chrome.google.com/webstore/detail/doubleclue-myapplications/klfnhdgbkpajadkokakemnbipikkjifj?hl=en" target="_blank"
-						value="Install Plugin" style="margin: 0 auto;width: 15em;"></p:button>
+					<p:button
+						href="https://chrome.google.com/webstore/detail/doubleclue-myapplications/klfnhdgbkpajadkokakemnbipikkjifj?hl=en"
+						target="_blank" value="Install Plugin"
+						style="margin: 0 auto;width: 15em;"></p:button>
 				</p:panel>
 				<p></p>
-				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}" onclick="PF('pluginChromeUnavailableDlg').hide(); return false;"
+				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}"
+					onclick="PF('pluginChromeUnavailableDlg').hide(); return false;"
 					style="float: right; margin-right: 1em; display: block " />
 				<p />
 				<br></br>
@@ -286,19 +422,26 @@
 		</h:form>
 
 		<h:form id="pluginFirefoxUnavailableForm">
-			<p:dialog id="pluginFirefoxUnavailableDlg" styleClass="PluginDlg" modal="true" widgetVar="pluginFirefoxUnavailableDlg" resizable="false" width="100">
+			<p:dialog id="pluginFirefoxUnavailableDlg" styleClass="PluginDlg"
+				modal="true" widgetVar="pluginFirefoxUnavailableDlg"
+				resizable="false" width="100">
 				<f:facet name="header">
-					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['appHub.error.pluginUnavailableHeader']}" />
+					<h:outputText style="vertical-align: middle;" class="dialogTitle"
+						value="#{DcupMsg['appHub.error.pluginUnavailableHeader']}" />
 				</f:facet>
 				<p />
 				<p:panel style="text-align:center; padding:2em">
-					<p:outputLabel value="#{DcupMsg['appHubAdmin.error.pluginFirefoxUnavailable']}"></p:outputLabel>
+					<p:outputLabel
+						value="#{DcupMsg['appHubAdmin.error.pluginFirefoxUnavailable']}"></p:outputLabel>
 					<p></p>
-					<p:button href="https://addons.mozilla.org/en-US/firefox/addon/doubleclue/" target="_blank" value="#{DcupMsg['appHub.installPlugin']}"
+					<p:button
+						href="https://addons.mozilla.org/en-US/firefox/addon/doubleclue/"
+						target="_blank" value="#{DcupMsg['appHub.installPlugin']}"
 						style="margin: 0 auto;width: 15em;"></p:button>
 				</p:panel>
 				<p></p>
-				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}" onclick="PF('pluginFirefoxUnavailableDlg').hide(); return false;"
+				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}"
+					onclick="PF('pluginFirefoxUnavailableDlg').hide(); return false;"
 					style="float: right; margin-right: 1em; display: block " />
 				<p />
 				<br></br>
@@ -308,19 +451,25 @@
 		</h:form>
 
 		<h:form id="pluginSafariUnavailableForm">
-			<p:dialog id="pluginSafariUnavailableDlg" styleClass="PluginDlg" modal="true" widgetVar="pluginSafariUnavailableDlg" resizable="false" width="100">
+			<p:dialog id="pluginSafariUnavailableDlg" styleClass="PluginDlg"
+				modal="true" widgetVar="pluginSafariUnavailableDlg"
+				resizable="false" width="100">
 				<f:facet name="header">
-					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['appHub.error.pluginUnavailableHeader']}" />
+					<h:outputText style="vertical-align: middle;" class="dialogTitle"
+						value="#{DcupMsg['appHub.error.pluginUnavailableHeader']}" />
 				</f:facet>
 				<p />
 				<p:panel style="text-align:center; padding:2em">
-					<p:outputLabel value="#{DcupMsg['appHubAdmin.error.pluginSafariUnavailable']}"></p:outputLabel>
+					<p:outputLabel
+						value="#{DcupMsg['appHubAdmin.error.pluginSafariUnavailable']}"></p:outputLabel>
 					<p></p>
-					<p:button href="https://apps.apple.com/us/story/id1377753262" target="_blank" value="#{DcupMsg['appHub.installPlugin']}"
+					<p:button href="https://apps.apple.com/us/story/id1377753262"
+						target="_blank" value="#{DcupMsg['appHub.installPlugin']}"
 						style="margin: 0 auto;width: 15em;"></p:button>
 				</p:panel>
 				<p></p>
-				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}" onclick="PF('pluginFirefoxUnavailableDlg').hide(); return false;"
+				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}"
+					onclick="PF('pluginFirefoxUnavailableDlg').hide(); return false;"
 					style="float: right; margin-right: 1em; display: block " />
 				<p />
 				<br></br>
@@ -330,17 +479,21 @@
 		</h:form>
 
 		<h:form id="pluginUnavailableForm">
-			<p:dialog id="pluginUnavailableDlg" modal="true" resizable="false" widgetVar="pluginUnavailableDlg" width="100">
+			<p:dialog id="pluginUnavailableDlg" modal="true" resizable="false"
+				widgetVar="pluginUnavailableDlg" width="100">
 				<f:facet name="header">
-					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DcupMsg['appHub.error.pluginUnavailableHeader']}" />
+					<h:outputText style="vertical-align: middle;" class="dialogTitle"
+						value="#{DcupMsg['appHub.error.pluginUnavailableHeader']}" />
 				</f:facet>
 				<p />
 				<p:panel style="text-align:center; padding:2em">
-					<p:outputLabel value="#{DcupMsg['appHubAdmin.error.pluginUnavailable']}"></p:outputLabel>
+					<p:outputLabel
+						value="#{DcupMsg['appHubAdmin.error.pluginUnavailable']}"></p:outputLabel>
 					<p></p>
 				</p:panel>
 				<p></p>
-				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}" onclick="PF('pluginUnavailableDlg').hide(); return false;"
+				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}"
+					onclick="PF('pluginUnavailableDlg').hide(); return false;"
 					style="float: right; margin-right: 1em; display: block " />
 				<p />
 				<br></br>

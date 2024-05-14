@@ -2,36 +2,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-<h:head>
-	<title>#{viewNavigator.dialogTitle}</title>
-	<f:facet name="first">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	</f:facet>
-	<h:outputStylesheet library="webjars" name="font-awesome/6.5.1/css/all-jsf.css" />
-	<c:forEach items="#{dcemApplication.sortedModules}" var="item">
-		<h:outputStylesheet name="css/#{item.id}Styles.css" />
-	</c:forEach>
-</h:head>
+<ui:include src="/mgt/modules/dialogHead.xhtml" />
+<!-- <h:head> -->
+<!-- 	<title>#{viewNavigator.dialogTitle}</title> -->
+<!-- 	<f:facet name="first"> -->
+<!-- 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /> -->
+<!-- 	</f:facet> -->
+<!-- 	<h:outputStylesheet library="webjars" name="font-awesome/6.5.1/css/all-jsf.css" /> -->
+<!-- 	<c:forEach items="#{dcemApplication.sortedModules}" var="item"> -->
+<!-- 		<h:outputStylesheet name="css/#{item.id}Styles.css" /> -->
+<!-- 	</c:forEach> -->
+<!-- </h:head> -->
 
 <f:view locale="#{operatorSession.locale}">
 	<h:body class="dialogBody">
-		<span id="customheader" >
-			<h:outputLabel class="#{autoView.icon} dialogTitle"></h:outputLabel>
-			<h:outputLabel value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle"></h:outputLabel>
+		<span id="customheader"> <h:outputLabel
+				class="#{autoView.icon} dialogTitle"></h:outputLabel> <h:outputLabel
+				value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle"></h:outputLabel>
 		</span>
-		<h:form id="regForm" enctype="multipart/form-data" style="padding-left:10px;height:30em">
+		<h:form id="regForm" enctype="multipart/form-data"
+			style="padding-left:10px;height:30em">
 			<p:messages showDetail="false" closable="true">
 				<p:autoUpdate />
 			</p:messages>
 			<p />
 			<h:panelGrid columns="2">
-				<p:outputLabel value="#{oauthMsg['clientMetadataDialog.displayName']}: " />
-				<p:inputText value="#{clientMetadataDialog.actionObject.displayName}" style="width:300px" required="true" requiredMessage="#{AdminMsg['error.displayNameCheck']}"/>
-				<p:outputLabel value="#{oauthMsg['clientMetadataDialog.disabled']}: " />
-				<p:selectBooleanCheckbox value="#{clientMetadataDialog.actionObject.disabled}" />
+				<p:outputLabel
+					value="#{oauthMsg['clientMetadataDialog.displayName']}: " />
+				<p:inputText
+					value="#{clientMetadataDialog.actionObject.displayName}"
+					style="width:300px" required="true"
+					requiredMessage="#{AdminMsg['error.displayNameCheck']}" />
+				<p:outputLabel
+					value="#{oauthMsg['clientMetadataDialog.disabled']}: " />
+				<p:selectBooleanCheckbox
+					value="#{clientMetadataDialog.actionObject.disabled}" />
 				<p />
 			</h:panelGrid>
 			<hr />
@@ -40,81 +52,132 @@
 				<p:tab title="#{oauthMsg['clientMetadataDialog.tab.details.title']}">
 					<h:panelGrid>
 						<h:panelGroup>
-							<p:outputLabel for="clientId" value="#{oauthMsg['clientMetadataDialog.tab.details.clientId']}" />
-							<p:commandButton value="#{oauthMsg['clientMetadataDialog.button.generate']}" action="#{clientMetadataDialog.actionCreateClientId}"
+							<p:outputLabel for="clientId"
+								value="#{oauthMsg['clientMetadataDialog.tab.details.clientId']}" />
+							<p:commandButton
+								value="#{oauthMsg['clientMetadataDialog.button.generate']}"
+								action="#{clientMetadataDialog.actionCreateClientId}"
 								update="clientId" style="float:right;" />
 						</h:panelGroup>
-						<p:inputText id="clientId" value="#{clientMetadataDialog.actionObject.clientId}" style="width:550px" required="true" requiredMessage="#{AdminMsg['error.clientIdCheck']}"/>
+						<p:inputText id="clientId"
+							value="#{clientMetadataDialog.actionObject.clientId}"
+							style="width:550px" required="true"
+							requiredMessage="#{AdminMsg['error.clientIdCheck']}" />
 						<p />
 						<h:panelGroup>
-							<p:outputLabel for="clientSecret" value="#{oauthMsg['clientMetadataDialog.tab.details.clientSecret']}" />
-							<p:commandButton value="#{oauthMsg['clientMetadataDialog.button.generate']}" action="#{clientMetadataDialog.actionCreateClientSecret}"
+							<p:outputLabel for="clientSecret"
+								value="#{oauthMsg['clientMetadataDialog.tab.details.clientSecret']}" />
+							<p:commandButton
+								value="#{oauthMsg['clientMetadataDialog.button.generate']}"
+								action="#{clientMetadataDialog.actionCreateClientSecret}"
 								update="clientSecret" style="float:right;" />
 						</h:panelGroup>
-						<p:inputText id="clientSecret" value="#{clientMetadataDialog.actionObject.clientSecret}" style="width:550px; color:lightgrey;" required="true" requiredMessage="#{AdminMsg['error.clientSecretCheck']}"/>
+						<p:inputText id="clientSecret"
+							value="#{clientMetadataDialog.actionObject.clientSecret}"
+							style="width:550px; color:lightgrey;" required="true"
+							requiredMessage="#{AdminMsg['error.clientSecretCheck']}" />
 						<p />
-						<p:outputLabel for="redirectUris" value="#{oauthMsg['clientMetadataDialog.tab.details.redirectUris']}" />
-						<p:inputText id="redirectUris" value="#{clientMetadataDialog.actionObject.redirectUris}" style="width:550px;" />
-						<p:tooltip for="redirectUris" value="#{oauthMsg['clientMetadataDialog.tab.details.redirectUris.tooltip']}" position="top" />
+						<p:outputLabel for="redirectUris"
+							value="#{oauthMsg['clientMetadataDialog.tab.details.redirectUris']}" />
+						<p:inputText id="redirectUris"
+							value="#{clientMetadataDialog.actionObject.redirectUris}"
+							style="width:550px;" />
+						<p:tooltip for="redirectUris"
+							value="#{oauthMsg['clientMetadataDialog.tab.details.redirectUris.tooltip']}"
+							position="top" />
 					</h:panelGrid>
 				</p:tab>
-				<p:tab id="claimTab" title="#{oauthMsg['clientMetadataDialog.tab.claims.title']}" style="height:20em">
+				<p:tab id="claimTab"
+					title="#{oauthMsg['clientMetadataDialog.tab.claims.title']}"
+					style="height:20em">
 					<p />
-					<p:commandButton value="#{oauthMsg['clientMetadataDialog.tab.claims.add']}" action="#{clientMetadataDialog.addNewClaim}" icon="fa fa-plus"
-						style="color: white !important;" />
+					<p:commandButton
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.add']}"
+						action="#{clientMetadataDialog.addNewClaim}" icon="fa fa-plus" />
 						&nbsp;
-						<p:commandButton value="#{oauthMsg['clientMetadataDialog.tab.claims.edit']}" actionListener="#{clientMetadataDialog.editClaim}" update=""
-						icon="fa fa-edit" style="color: white !important;" />
+						<p:commandButton
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.edit']}"
+						actionListener="#{clientMetadataDialog.editClaim}" update=""
+						icon="fa fa-edit" />
 						&nbsp;
-						<p:commandButton value="#{oauthMsg['clientMetadataDialog.tab.claims.delete']}" actionListener="#{clientMetadataDialog.deleteClaim}"
-						update="claimsTable" icon="fa fa-minus" style="color: white !important;">
-						<p:confirm header="#{DcupMsg['dialog.title.confirm']}" message="#{oauthMsg['dialog.message.deleteSelectedClaim']}" />
+						<p:commandButton
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.delete']}"
+						actionListener="#{clientMetadataDialog.deleteClaim}"
+						update="claimsTable" icon="fa fa-minus">
+						<p:confirm header="#{DcupMsg['dialog.title.confirm']}"
+							message="#{oauthMsg['dialog.message.deleteSelectedClaim']}" />
 					</p:commandButton>
 					<p />
-					<p:dataTable id="claimsTable" var="oauthClaim" value="#{clientMetadataDialog.idpSettings.claims}" widgetVar="claimsTable" selectionMode="single"
-						selection="#{clientMetadataDialog.selectedClaim}" rowKey="#{oauthClaim.name}" emptyMessage="#{CoreMsg['emptyTable']}">
-						<p:column selectionMode="single" style="width:16px; text-align:center" />
+					<p:dataTable id="claimsTable" var="oauthClaim"
+						value="#{clientMetadataDialog.idpSettings.claims}"
+						widgetVar="claimsTable" selectionMode="single"
+						selection="#{clientMetadataDialog.selectedClaim}"
+						rowKey="#{oauthClaim.name}"
+						emptyMessage="#{CoreMsg['emptyTable']}">
+						<p:column selectionMode="single"
+							style="width:16px; text-align:center" />
 						<p:ajax event="rowSelect" update="claimsTable" />
-						<p:column headerText="#{oauthMsg['clientMetadataDialog.tab.claims.name']}" sortBy="#{oauthClaim.name}">
+						<p:column
+							headerText="#{oauthMsg['clientMetadataDialog.tab.claims.name']}"
+							sortBy="#{oauthClaim.name}">
 							<h:outputText value="#{oauthClaim.name}" />
 						</p:column>
-						<p:column headerText="#{oauthMsg['clientMetadataDialog.tab.claims.type']}" sortBy="#{oauthClaim.type}">
+						<p:column
+							headerText="#{oauthMsg['clientMetadataDialog.tab.claims.type']}"
+							sortBy="#{oauthClaim.type}">
 							<h:outputText value="#{oauthClaim.attributeTypeEnum}" />
 						</p:column>
-						<p:column headerText="#{oauthMsg['clientMetadataDialog.tab.claims.value']}" sortBy="#{oauthClaim.value}">
+						<p:column
+							headerText="#{oauthMsg['clientMetadataDialog.tab.claims.value']}"
+							sortBy="#{oauthClaim.value}">
 							<h:outputText value="#{oauthClaim.value}" />
 						</p:column>
 					</p:dataTable>
-					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
-						<p:commandButton type="button" value="#{DcupMsg['button.yes']}" style="width: 6em" icon="fa fa-check" styleClass="ui-confirmdialog-yes" />
-						<p:commandButton type="button" value="#{DcupMsg['button.no']}" style="margin-left: 2em; width: 6em" icon="fa fa-close" styleClass="ui-confirmdialog-no" />
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+						styleClass="confirmDialog">
+						<p:commandButton type="button" value="#{DcupMsg['button.yes']}"
+							style="width: 6em" icon="fa fa-check"
+							styleClass="ui-confirmdialog-yes" />
+						<p:commandButton type="button" value="#{DcupMsg['button.no']}"
+							style="margin-left: 2em; width: 6em" icon="fa fa-close"
+							styleClass="ui-confirmdialog-no" />
 					</p:confirmDialog>
 				</p:tab>
 				<p:tab title="#{oauthMsg['clientMetadataDialog.tab.idp.title']}">
 					<h:panelGrid>
 						<h:panelGroup>
-							<p:outputLabel id="traceRequests" value="#{oauthMsg['clientMetadataDialog.tab.idp.traceRequests']}: " />
-							<p:selectBooleanCheckbox value="#{clientMetadataDialog.idpSettings.traceRequests}" />
-							<p:tooltip for="traceRequests" value="#{oauthMsg['clientMetadataDialog.tab.idp.traceRequests.tooltip']}" position="top" />
+							<p:outputLabel id="traceRequests"
+								value="#{oauthMsg['clientMetadataDialog.tab.idp.traceRequests']}: " />
+							<p:selectBooleanCheckbox
+								value="#{clientMetadataDialog.idpSettings.traceRequests}" />
+							<p:tooltip for="traceRequests"
+								value="#{oauthMsg['clientMetadataDialog.tab.idp.traceRequests.tooltip']}"
+								position="top" />
 						</h:panelGroup>
 					</h:panelGrid>
 				</p:tab>
 			</p:tabView>
 			<p />
-			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}" />
+			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check"
+				value="#{CoreMsg['OK']}" ajax="true"
+				actionListener="#{autoDialog.actionOk}" />
 			<p:spacer width="12" />
-			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" immediate="true" action="#{viewNavigator.actionCloseDialog}" style="width: 8em"
-				icon="fa fa-close" />
+			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}"
+				immediate="true" action="#{viewNavigator.actionCloseDialog}"
+				style="width: 8em" icon="fa fa-close" />
 			<p style="height: 20px;" />
 		</h:form>
 
 		<h:form id="claimForm" style="height:11em">
 			<!-- Passcode Dialog -->
-			<p:dialog id="claimDialog" widgetVar="claimDialog" modal="true" resizable="false">
-				<span id="customheader" >
-					<h:outputLabel value="#{oauthMsg['clientMetadataDialog.tab.claims.add']}" class="dialogTitle" style="font-size: 1.4em;"
-						rendered="#{clientMetadataDialog.editingClaim eq false}" />
-					<h:outputLabel value="#{oauthMsg['clientMetadataDialog.tab.claims.edit']}" class="dialogTitle" style="font-size: 1.4em;"
+			<p:dialog id="claimDialog" widgetVar="claimDialog" modal="true"
+				resizable="false">
+				<span id="customheader"> <h:outputLabel
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.add']}"
+						class="dialogTitle" style="font-size: 1.4em;"
+						rendered="#{clientMetadataDialog.editingClaim eq false}" /> <h:outputLabel
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.edit']}"
+						class="dialogTitle" style="font-size: 1.4em;"
 						rendered="#{clientMetadataDialog.editingClaim eq true}" />
 				</span>
 				<p />
@@ -123,30 +186,45 @@
 				</p:messages>
 				<p />
 				<p:focus context="claimDialog" />
-				<h:panelGrid id="editPanel" columns="2" cellspacing="4" cellpadding="4">
+				<h:panelGrid id="editPanel" columns="2" cellspacing="4"
+					cellpadding="4">
 
-					<h:outputLabel for="name" value="#{oauthMsg['clientMetadataDialog.tab.claims.name']}" />
-					<p:selectOneMenu id="name" value="#{clientMetadataDialog.selectedClaim.name}" required="true"
-						disabled="#{clientMetadataDialog.editingClaim eq true}" editable="true">
+					<h:outputLabel for="name"
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.name']}" />
+					<p:selectOneMenu id="name"
+						value="#{clientMetadataDialog.selectedClaim.name}" required="true"
+						disabled="#{clientMetadataDialog.editingClaim eq true}"
+						editable="true">
 						<f:selectItems value="#{clientMetadataDialog.selectableClaims}" />
 					</p:selectOneMenu>
 
-					<h:outputLabel for="attrType" value="#{oauthMsg['clientMetadataDialog.tab.claims.type']}" />
-					<p:selectOneMenu id="attrType" value="#{clientMetadataDialog.selectedClaimUserProperty}">
+					<h:outputLabel for="attrType"
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.type']}" />
+					<p:selectOneMenu id="attrType"
+						value="#{clientMetadataDialog.selectedClaimUserProperty}">
 						<f:selectItems value="#{clientMetadataDialog.userPropertyTypes}" />
-						<p:ajax event="change" update="editPanel" process="@form" listener="#{clientMetadataDialog.listenerChangeUserPropertyType}" />
+						<p:ajax event="change" update="editPanel" process="@form"
+							listener="#{clientMetadataDialog.listenerChangeUserPropertyType}" />
 					</p:selectOneMenu>
 
-					<h:outputLabel for="attrValue" value="#{oauthMsg['clientMetadataDialog.tab.claims.value']}" rendered="#{clientMetadataDialog.isClaimWithValue()}" />
-					<p:inputText id="attrValue" value="#{clientMetadataDialog.selectedClaim.value}" style="width: 24em"
+					<h:outputLabel for="attrValue"
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.value']}"
+						rendered="#{clientMetadataDialog.isClaimWithValue()}" />
+					<p:inputText id="attrValue"
+						value="#{clientMetadataDialog.selectedClaim.value}"
+						style="width: 24em"
 						rendered="#{clientMetadataDialog.isClaimWithValue()}" />
 				</h:panelGrid>
 				<br />
-				<p:commandButton id="claimOkBtn" style="width: 8em; margin-left:auto; margin-right:auto; margin-top:10px; margin-bottom:5px; display:table;"
-					ajax="true" value="OK" action="#{clientMetadataDialog.saveClaim}" async="true" />
+				<p:commandButton id="claimOkBtn"
+					style="width: 8em; margin-left:auto; margin-right:auto; margin-top:10px; margin-bottom:5px; display:table;"
+					ajax="true" value="OK" action="#{clientMetadataDialog.saveClaim}"
+					async="true" />
 				<p></p>
-				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}" onclick="PF('claimDialog').hide();"
-					style="float: right; margin-right: 1em; display: block " immediate="true" />
+				<p:commandLink id="closeDialog" value="#{DcupMsg['close']}"
+					onclick="PF('claimDialog').hide();"
+					style="float: right; margin-right: 1em; display: block "
+					immediate="true" />
 				<p />
 				<br></br>
 				<p:spacer height="2" />
