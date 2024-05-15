@@ -1,11 +1,12 @@
-package com.doubleclue.dcem.core.utils;
+package com.doubleclue.dcem.core.utils.rest;
 
 import java.util.ArrayList;
 import java.util.Base64;
 
 import org.apache.http.auth.UsernamePasswordCredentials;
 
-import com.doubleclue.dcem.core.utils.ClientRestApi.HttpVerb;
+import com.doubleclue.dcem.core.utils.KeyValuePair;
+import com.doubleclue.dcem.core.utils.rest.ClientRestApi.HttpVerb;
 
 public class ClientRestApiParams {
 
@@ -13,7 +14,7 @@ public class ClientRestApiParams {
 	HttpVerb httpVerb;
 	UsernamePasswordCredentials credentials; // in case authHeader is null
 	String authHeader = null;
-	String body;
+	String requestBody;
 	String contentType = "application/json";
 	boolean unsecure = false;
 	private int timeoutSeconds = 10;
@@ -23,13 +24,16 @@ public class ClientRestApiParams {
 	boolean closeConnection = false;
 	long responseTime;
 	
+	String responseBody;
+	int responseCode;
+	
 		
-	public ClientRestApiParams(String url, HttpVerb httpVerb, UsernamePasswordCredentials credentials, String body, String contentType) {
+	public ClientRestApiParams(String url, HttpVerb httpVerb, UsernamePasswordCredentials credentials, String requestBodyv, String contentType) {
 		super();
 		this.url = url;
 		this.httpVerb = httpVerb;
 		this.credentials = credentials;
-		this.body = body;
+		this.requestBody = requestBody;
 		this.contentType = contentType;
 	}
 
@@ -92,17 +96,6 @@ public class ClientRestApiParams {
 		this.credentials = credentials;
 	}
 
-
-	public String getBody() {
-		return body;
-	}
-
-
-	public void setBody(String body) {
-		this.body = body;
-	}
-
-
 	public String getContentType() {
 		return contentType;
 	}
@@ -112,26 +105,21 @@ public class ClientRestApiParams {
 		this.contentType = contentType;
 	}
 
-
 	public boolean isUnsecure() {
 		return unsecure;
 	}
-
 
 	public void setUnsecure(boolean unsecure) {
 		this.unsecure = unsecure;
 	}
 
-
 	public int getRequestTimeoutSeconds() {
 		return requestTimeoutSeconds;
 	}
 
-
 	public void setRequestTimeoutSeconds(int requestTimeoutSeconds) {
 		this.requestTimeoutSeconds = requestTimeoutSeconds;
 	}
-
 
 	public ArrayList<KeyValuePair> getHeaders() {
 		return headers;
@@ -142,11 +130,9 @@ public class ClientRestApiParams {
 		this.headers = headers;
 	}
 
-
 	public boolean isWithoutUserAgent() {
 		return withoutUserAgent;
 	}
-
 
 	public void setWithoutUserAgent(boolean withoutUserAgent) {
 		this.withoutUserAgent = withoutUserAgent;
@@ -156,22 +142,38 @@ public class ClientRestApiParams {
 	public boolean isCloseConnection() {
 		return closeConnection;
 	}
-
-
 	public void setCloseConnection(boolean closeConnection) {
 		this.closeConnection = closeConnection;
 	}
-
-
 	public int getTimeoutSeconds() {
 		return timeoutSeconds;
 	}
-
-
 	public void setAuthHeader(String authHeader) {
 		this.authHeader = authHeader;
 	}
-	
-	
+	public long getResponseTime() {
+		return responseTime;
+	}
+	public void setResponseTime(long responseTime) {
+		this.responseTime = responseTime;
+	}
+	public String getResponseBody() {
+		return responseBody;
+	}
+	public void setResponseBody(String responseBody) {
+		this.responseBody = responseBody;
+	}
+	public int getResponseCode() {
+		return responseCode;
+	}
+	public void setResponseCode(int responseCode) {
+		this.responseCode = responseCode;
+	}
+	public String getRequestBody() {
+		return requestBody;
+	}
+	public void setRequestBody(String requestBody) {
+		this.requestBody = requestBody;
+	}
 	
 }
