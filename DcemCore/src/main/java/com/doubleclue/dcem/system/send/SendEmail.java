@@ -39,12 +39,13 @@ public class SendEmail {
 
 	static public void setProperties(SystemPreferences systemPreferences) {
 
-		if (systemPreferences.geteMailHostPort() == 0 || systemPreferences.geteMailHostAddress() == null || systemPreferences.geteMailHostAddress().isEmpty()) {
+		if (systemPreferences.geteMailHostPort() == 0 || systemPreferences.geteMailHostAddress() == null
+				|| systemPreferences.geteMailHostAddress().isEmpty()) {
 			prop = null;
 			return;
 		}
 		prop = new Properties();
-		prop.setProperty("mail.smtp.auth", "true");
+		
 		prop.setProperty("mail.smtp.host", systemPreferences.geteMailHostAddress());
 		prop.setProperty("mail.smtp.socketFactory.fallback", "false");
 		prop.put("mail.smtp.port", Integer.toString(systemPreferences.geteMailHostPort()));
@@ -56,8 +57,13 @@ public class SendEmail {
 		prop.put("mail.smtp.timeout", "5000");
 		prop.put("mail.smtp.connectiontimeout", "5000");
 		prop.put("mail.smtp.ssl.protocols", systemPreferences.geteMailProtocol());
-
-		auth = new SmtpAuthenticator(systemPreferences.geteMailUser(), systemPreferences.geteMailPassword());
+		if (systemPreferences.geteMailPassword() == null || systemPreferences.geteMailPassword().isBlank()) {
+			auth = null;
+			prop.setProperty("mail.smtp.auth", "false");
+		} else {
+			prop.setProperty("mail.smtp.auth", "true");
+			auth = new SmtpAuthenticator(systemPreferences.geteMailUser(), systemPreferences.geteMailPassword());
+		}
 		fromEmail = systemPreferences.geteMailFromEmail();
 		fromPerson = systemPreferences.geteMailFromPerson();
 
@@ -73,7 +79,8 @@ public class SendEmail {
 	 * @param subject
 	 * @throws Exception
 	 */
-	public static void sendMessage(String toReceiver, String body, String subject, byte[] attachment) throws DcemException {
+	public static void sendMessage(String toReceiver, String body, String subject, byte[] attachment)
+			throws DcemException {
 		List<String> recipients = new ArrayList<String>();
 		if (toReceiver != null) {
 			recipients.add(toReceiver);

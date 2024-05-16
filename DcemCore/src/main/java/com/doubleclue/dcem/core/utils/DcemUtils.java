@@ -1047,7 +1047,12 @@ public class DcemUtils {
 			return clazz.getMethod(getterMethodName);
 		} catch (NoSuchMethodException e) {
 			getterMethodName = "is" + fieldName.toUpperCase().charAt(0) + fieldName.substring(1);
-			return clazz.getMethod(getterMethodName);
+			try {
+				return clazz.getMethod(getterMethodName);
+			} catch (NoSuchMethodException e2) {
+				getterMethodName = "get" + fieldName;
+				return clazz.getMethod(getterMethodName);
+			}
 		}
 	}
 
