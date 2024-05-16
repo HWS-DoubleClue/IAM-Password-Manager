@@ -180,7 +180,7 @@ body {
 
 .ui-panel-titlebar {
 	font-size: 20px !important;
-	height: 1.2em;
+/* 	height: 1.2em; */
 	background-color: #eee;
 }
 
