@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -15,6 +16,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 
 import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
@@ -169,8 +171,13 @@ public class SendEmail {
 					messageBodyPart = new MimeBodyPart();
 					messageBodyPart.setFileName("activation.png");
 					messageBodyPart.setHeader("Content-ID", "<activation>");
+					messageBodyPart.setDisposition(MimeBodyPart.INLINE);
 
-					messageBodyPart.setContent(attachment, "image/png");
+					ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(attachment, "image/png");
+					messageBodyPart.setDataHandler(new DataHandler(byteArrayDataSource));
+
+					
+					messageBodyPart.setDisposition(MimeBodyPart.INLINE);
 					multipart.addBodyPart(messageBodyPart);
 					// Send the complete message parts
 					msg.setContent(multipart);
