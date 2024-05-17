@@ -1952,9 +1952,10 @@ public class PasswordSafeView extends AbstractPortalView {
 				appUrlValue = applicationHubEntity.getApplication().getUrl();
 				currentKeepassEntryEntity = new KeepassEntryEntity(currentEntry.getUuid().toString(), applicationHubEntity);
 				uploadedImage = applicationHubEntity.getLogo();
-				PrimeFaces.current().ajax().update("addAppsForm");
+				
 				hideDialog("setPredefinedAppDialog");
 				showDialog("addAppDlg");
+				PrimeFaces.current().ajax().update("addAppsForm");
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
