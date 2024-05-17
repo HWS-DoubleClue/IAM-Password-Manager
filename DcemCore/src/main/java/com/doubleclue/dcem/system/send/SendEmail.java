@@ -176,8 +176,6 @@ public class SendEmail {
 					ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(attachment, "image/png");
 					messageBodyPart.setDataHandler(new DataHandler(byteArrayDataSource));
 
-					
-					messageBodyPart.setDisposition(MimeBodyPart.INLINE);
 					multipart.addBodyPart(messageBodyPart);
 					// Send the complete message parts
 					msg.setContent(multipart);
