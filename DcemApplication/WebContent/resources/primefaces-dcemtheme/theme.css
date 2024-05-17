@@ -376,7 +376,7 @@ body {
 /* Icons----------------------------------*/ /* states and images */
 .ui-icon {
 	font-size: .9rem;
-	width: 16px;
+	width: 18px;
 	height: 16px;
 	background-image:
 		url("#{resource['primefaces-dcemtheme:images/ui-icons_222222_256x240.png']}");

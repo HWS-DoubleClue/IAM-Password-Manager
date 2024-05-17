@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.doubleclue</groupId>
 		<artifactId>DcemParent</artifactId>
-		<version>2.11.0-SNAPSHOT</version>
+		<version>3.1.0-SNAPSHOT</version>
 		<relativePath>../DcemParent</relativePath>
 	</parent>
 	<artifactId>PetshopModule</artifactId>
