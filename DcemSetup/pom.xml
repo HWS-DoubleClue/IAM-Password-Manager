@@ -52,12 +52,12 @@
 		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
 			</dependency> -->
 
-		<dependency>
+		<!--<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>DcemCore</artifactId>
 			<classifier>tests</classifier>
 			<scope>test</scope>
-		</dependency>
+		</dependency>-->
 <!--		<dependency>
 			<groupId>com.doubleclue.dcem.lib</groupId>
 			<artifactId>JarLoader</artifactId>
