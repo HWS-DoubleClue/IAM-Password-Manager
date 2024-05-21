@@ -41,13 +41,12 @@ public class SendEmail {
 
 	static public void setProperties(SystemPreferences systemPreferences) {
 
-		if (systemPreferences.geteMailHostPort() == 0 || systemPreferences.geteMailHostAddress() == null
-				|| systemPreferences.geteMailHostAddress().isEmpty()) {
+		if (systemPreferences.geteMailHostPort() == 0 || systemPreferences.geteMailHostAddress() == null || systemPreferences.geteMailHostAddress().isEmpty()) {
 			prop = null;
 			return;
 		}
 		prop = new Properties();
-		
+
 		prop.setProperty("mail.smtp.host", systemPreferences.geteMailHostAddress());
 		prop.setProperty("mail.smtp.socketFactory.fallback", "false");
 		prop.put("mail.smtp.port", Integer.toString(systemPreferences.geteMailHostPort()));
@@ -72,31 +71,44 @@ public class SendEmail {
 	}
 
 	public static void sendMessage(String toReceiver, String body, String subject) throws DcemException {
-		sendMessage(toReceiver, body, subject, null);
+		sendMessage(toReceiver, body, subject, (EmailAttachment) null);
 	}
-
-	/**
-	 * @param toReceiver
-	 * @param body
-	 * @param subject
-	 * @throws Exception
-	 */
-	public static void sendMessage(String toReceiver, String body, String subject, byte[] attachment)
-			throws DcemException {
+	
+	public static void sendMessage(String toReceiver, String body, String subject, EmailAttachment attachment) throws DcemException {
 		List<String> recipients = new ArrayList<String>();
 		if (toReceiver != null) {
 			recipients.add(toReceiver);
 		}
-		sendMessage(recipients, body, subject, attachment);
+		List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
+		if (attachment != null) {
+			attachments.add(attachment);
+		}
+		sendMessage(recipients, body, subject, attachments);
+	}
+	
+	public static void sendMessage(List<String> recipients, String body, String subject, EmailAttachment attachment) throws DcemException {
+		List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
+		if (attachment != null) {
+			attachments.add(attachment);
+		}
+		sendMessage(recipients, body, subject, attachments);
+	}
+	
+	public static void sendMessage(String toReceiver, String body, String subject, List<EmailAttachment> attachments) throws DcemException {
+		List<String> recipients = new ArrayList<String>();
+		if (toReceiver != null) {
+			recipients.add(toReceiver);
+		}
+		sendMessage(recipients, body, subject, attachments);
 	}
 
-	/**
-	 * @param toReceiver
-	 * @param body
-	 * @param subject
-	 * @throws Exception
-	 */
-	public static void sendMessage(List<String> toReceiver, String body, String subject, byte[] attachment) throws DcemException {
+	public static void sendMessage(List<String> toReceiver, String body, String subject, List<EmailAttachment> attachments) throws DcemException {
+		if (toReceiver == null || toReceiver.isEmpty()) {
+			return;
+		}
+		if (attachments == null) {
+			attachments = new ArrayList<EmailAttachment>();
+		}
 
 		Session session;
 		boolean isMasterTenant = TenantIdResolver.isCurrentTenantMaster();
@@ -146,55 +158,54 @@ public class SendEmail {
 		}
 
 		// session.setDebug(true);
-		if (toReceiver.size() > 0) {
-			MimeMessage msg = new MimeMessage(session);
-			try {
-				if (fromPerson != null && fromPerson.length() > 0) {
-					msg.setFrom(new InternetAddress(fromEmail, fromPerson));
-				} else {
-					msg.setFrom(new InternetAddress(fromEmail));
-				}
-				for (String reciever : toReceiver) {
-					msg.addRecipient(Message.RecipientType.TO, new InternetAddress(reciever));
-				}
-				msg.setSubject(subject);
-				msg.setHeader("Content-Type", "text/html;  charset=utf-8");
-				if (attachment == null) {
-					msg.setContent(body, "text/html;  charset=utf-8");
-				} else {
-					BodyPart messageBodyPart = new MimeBodyPart();
-					messageBodyPart.setContent(body, "text/html;  charset=utf-8");
+		MimeMessage msg = new MimeMessage(session);
+		try {
+			if (fromPerson != null && fromPerson.length() > 0) {
+				msg.setFrom(new InternetAddress(fromEmail, fromPerson));
+			} else {
+				msg.setFrom(new InternetAddress(fromEmail));
+			}
+			for (String reciever : toReceiver) {
+				msg.addRecipient(Message.RecipientType.TO, new InternetAddress(reciever));
+			}
+			msg.setSubject(subject);
 
-					Multipart multipart = new MimeMultipart();
-					multipart.addBodyPart(messageBodyPart);
+			BodyPart messageBodyPart = new MimeBodyPart();
+			messageBodyPart.setContent(body, "text/html; charset=utf-8");
 
-					messageBodyPart = new MimeBodyPart();
-					messageBodyPart.setFileName("activation.png");
-					messageBodyPart.setHeader("Content-ID", "<activation>");
+			Multipart multipart = new MimeMultipart("related");
+			multipart.addBodyPart(messageBodyPart);
+
+			for (EmailAttachment attachment : attachments) {
+				messageBodyPart = new MimeBodyPart();
+				ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(attachment.getAttachment(), attachment.getMimeType());
+				messageBodyPart.setDataHandler(new DataHandler(byteArrayDataSource));
+				messageBodyPart.setFileName(attachment.getFileName());
+				messageBodyPart.setHeader("Content-ID", String.format("<%s>", attachment.getContentId()));
+				if (attachment.isDispositionInline()) {
 					messageBodyPart.setDisposition(MimeBodyPart.INLINE);
-
-					ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(attachment, "image/png");
-					messageBodyPart.setDataHandler(new DataHandler(byteArrayDataSource));
-
-					multipart.addBodyPart(messageBodyPart);
-					// Send the complete message parts
-					msg.setContent(multipart);
+				} else {
+					messageBodyPart.setDisposition(MimeBodyPart.ATTACHMENT);
 				}
-				msg.saveChanges();
-			} catch (Exception e) {
-				throw new DcemException(DcemErrorCodes.EMAIL_MESSAGE_FAILED, e.getMessage(), e);
-			}
-			try {
-				tx.sendMessage(msg, msg.getAllRecipients());
-			} catch (SMTPSendFailedException exp) {
-				if (exp.getMessage().indexOf("421 4.4.2") != -1) {
-					throw new DcemException(DcemErrorCodes.EMAIL_SEND_MSG_LIMIT, null, exp);
-				}
-				throw new DcemException(DcemErrorCodes.EMAIL_SEND_MSG_FAILED, exp.getMessage(), exp);
-			} catch (Exception e) {
-				throw new DcemException(DcemErrorCodes.EMAIL_SEND_MSG_FAILED, e.getMessage(), e);
+				multipart.addBodyPart(messageBodyPart);
 			}
 
+			// Send the complete message parts
+			msg.setContent(multipart);
+
+			msg.saveChanges();
+		} catch (Exception e) {
+			throw new DcemException(DcemErrorCodes.EMAIL_MESSAGE_FAILED, e.getMessage(), e);
+		}
+		try {
+			tx.sendMessage(msg, msg.getAllRecipients());
+		} catch (SMTPSendFailedException exp) {
+			if (exp.getMessage().indexOf("421 4.4.2") != -1) {
+				throw new DcemException(DcemErrorCodes.EMAIL_SEND_MSG_LIMIT, null, exp);
+			}
+			throw new DcemException(DcemErrorCodes.EMAIL_SEND_MSG_FAILED, exp.getMessage(), exp);
+		} catch (Exception e) {
+			throw new DcemException(DcemErrorCodes.EMAIL_SEND_MSG_FAILED, e.getMessage(), e);
 		}
 
 		try {
