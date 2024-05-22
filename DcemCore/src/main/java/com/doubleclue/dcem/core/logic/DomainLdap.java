@@ -292,12 +292,14 @@ public class DomainLdap implements DomainApi {
 		}
 
 	}
-
+	
 	private Attributes getAttributes(String dn, String[] attributes) throws DcemException {
-
-		String searchFilter = "(objectclass=person)";
+		return getAttributes(dn, attributes, "(objectclass=person)", SearchControls.OBJECT_SCOPE);
+	}
+	
+	public Attributes getAttributes(String dn, String[] attributes, String searchFilter, int scope) throws DcemException {
 		SearchControls searchControls = new SearchControls();
-		searchControls.setSearchScope(SearchControls.OBJECT_SCOPE);
+		searchControls.setSearchScope(scope);
 		searchControls.setReturningAttributes(attributes);
 		NamingEnumeration<SearchResult> results = null;
 		SearchResult searchResult = null;

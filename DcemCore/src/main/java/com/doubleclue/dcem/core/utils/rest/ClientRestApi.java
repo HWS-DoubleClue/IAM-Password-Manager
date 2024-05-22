@@ -116,7 +116,6 @@ public class ClientRestApi {
 		} else {
 			client = HttpClientBuilder.create().setSSLContext(context).setSSLHostnameVerifier(hostnameVerifier).setDefaultRequestConfig(config).build();
 		}
-
 		response = client.execute(request);
 		if (response != null && clientRestApiParams.closeConnection) {
 			try {
