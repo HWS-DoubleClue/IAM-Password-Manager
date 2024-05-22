@@ -18,6 +18,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -34,6 +37,8 @@ import com.sun.mail.smtp.SMTPTransport;
 
 public class SendEmail {
 
+	private static Logger logger = LogManager.getLogger(SendEmail.class);
+	
 	static Properties prop = null;
 	static SmtpAuthenticator auth;
 	static String fromEmail;
@@ -67,8 +72,20 @@ public class SendEmail {
 		}
 		fromEmail = systemPreferences.geteMailFromEmail();
 		fromPerson = systemPreferences.geteMailFromPerson();
-
 	}
+	
+	private static void reloadProperties() {
+		try {
+			WeldContextUtils.activateRequestContext();
+			SystemModule systemModule = CdiUtils.getReference(SystemModule.class);
+			SystemPreferences preferences = systemModule.getPreferences();
+			setProperties(preferences);
+		} catch (Exception e) {
+			logger.error("Could not load eMail configs", e);
+		}
+	}
+	
+	
 
 	public static void sendMessage(String toReceiver, String body, String subject) throws DcemException {
 		sendMessage(toReceiver, body, subject, (EmailAttachment) null);
@@ -110,23 +127,17 @@ public class SendEmail {
 			attachments = new ArrayList<EmailAttachment>();
 		}
 
-		Session session;
-		boolean isMasterTenant = TenantIdResolver.isCurrentTenantMaster();
 		if (prop == null) {
-			try {
-				WeldContextUtils.activateRequestContext();
-				SystemModule systemModule = CdiUtils.getReference(SystemModule.class);
-				SystemPreferences preferences = systemModule.getPreferences();
-				setProperties(preferences);
-			} catch (Exception e) {
-			}
+			reloadProperties();
 		}
 		if (prop == null) {
 			DcemErrorCodes errorCode = DcemErrorCodes.EMAIL_INVALID_CONFIGURATION;
 			throw new DcemException(errorCode, "Email configuration is not set up in preferences section.");
 		}
+		Session session;
 		session = Session.getInstance(prop, auth);
 		SMTPTransport tx = null;
+		boolean isMasterTenant = TenantIdResolver.isCurrentTenantMaster();
 		try {
 			tx = (SMTPTransport) session.getTransport("smtp");
 			tx.connect();
@@ -172,7 +183,7 @@ public class SendEmail {
 
 			BodyPart messageBodyPart = new MimeBodyPart();
 			messageBodyPart.setContent(body, "text/html; charset=utf-8");
-
+			
 			Multipart multipart = new MimeMultipart("related");
 			multipart.addBodyPart(messageBodyPart);
 
@@ -211,8 +222,7 @@ public class SendEmail {
 		try {
 			tx.close();
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.warn("Could not close SMTP connection", e);
 		}
 	}
 
