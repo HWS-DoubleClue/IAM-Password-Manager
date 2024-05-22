@@ -68,6 +68,8 @@ public class GroupDialogBean extends DcemDialog {
 	private static final long serialVersionUID = 1L;
 	
 	String selectedRole;
+	
+	DcemGroup group;
 
 
 	@PostConstruct
@@ -86,7 +88,6 @@ public class GroupDialogBean extends DcemDialog {
 		if (selectedRole.equals(NO_ROLE) == false) {
 			dcemRole = roleLogic.getDcemRole(selectedRole);
 		}
-		DcemGroup group = (DcemGroup) getActionObject();
 		if (this.getAutoViewAction().getDcemAction().getAction().equals(DcemConstants.ACTION_ADD)) {
 			if (groupType.equals(DcemConstants.TYPE_DOMAIN)) {
 				try {
@@ -114,6 +115,14 @@ public class GroupDialogBean extends DcemDialog {
 		return true;
 	}
 	
+	@Override
+	public void leavingDialog() {
+		domainName = null;
+		name = null;
+		groupType = null;
+		selectedRole = null;
+		group = null;
+	}
 	
 	public boolean userOutranksOperator() {
 		DcemUser user = operatorSessionBean.getDcemUser();
@@ -182,7 +191,11 @@ public class GroupDialogBean extends DcemDialog {
 	}
 
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
-		DcemGroup group = (DcemGroup) this.getActionObject();
+		group = (DcemGroup) this.getActionObject();
+		if (group.getId() != null) {
+			group = groupLogic.getGroup(group.getId());
+			
+		}
 		groupType = group.isDomainGroup() == true ? DcemConstants.TYPE_DOMAIN : DcemConstants.TYPE_LOCAL;
 
 		if (group.getName() != null) {
