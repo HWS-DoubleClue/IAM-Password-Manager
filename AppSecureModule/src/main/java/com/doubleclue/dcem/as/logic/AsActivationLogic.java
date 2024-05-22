@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +38,7 @@ import com.doubleclue.dcem.core.logic.TemplateLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.subjects.AsActivationSubject;
+import com.doubleclue.dcem.system.send.EmailAttachment;
 import com.doubleclue.dcem.system.send.MessageBird;
 import com.doubleclue.dcem.system.send.SendEmail;
 import com.doubleclue.utils.ActivationParameters;
@@ -167,7 +169,7 @@ public class AsActivationLogic {
 
 	private AsPreferences getPreferences() {
 		try {
-			AsPreferences asPreferences =  asModule.getPreferences();
+			AsPreferences asPreferences = asModule.getPreferences();
 			if (asPreferences == null) {
 				return new AsPreferences();
 			}
@@ -262,9 +264,13 @@ public class AsActivationLogic {
 		} catch (Throwable e) {
 			new DcemException(DcemErrorCodes.CANNOT_CREATE_QRCODE, "Couldn't Create QrCode", e);
 		}
-		map.put(AsConstants.EMAIL_ACTIVATION_IMAGE, "<img src=\"cid:activation\">");
+		String contentId = "activation";
+		map.put(AsConstants.EMAIL_ACTIVATION_IMAGE, String.format("<img src=\"cid:%s\">", contentId));
 		String body = StringUtils.substituteTemplate(dcemTemplate.getContent(), map);
-		SendEmail.sendMessage(emailAddress, body, subject, pngImage);
+		
+		EmailAttachment attachment = new EmailAttachment(pngImage, "activation.png", "image/png", true, contentId);
+		
+		SendEmail.sendMessage(emailAddress, body, subject, attachment);
 	}
 
 	@DcemTransactional

@@ -18,6 +18,7 @@ import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.logic.DbResourceBundle;
 import com.doubleclue.dcem.core.logic.TemplateLogic;
 import com.doubleclue.dcem.core.weld.CdiUtils;
+import com.doubleclue.dcem.system.send.EmailAttachment;
 import com.doubleclue.dcem.system.send.SendEmail;
 
 import freemarker.template.Template;
@@ -31,26 +32,26 @@ public class EmailTask extends CoreTask {
 	Map<String, Object> map;
 	String templateName;
 	String subjectResource;
-	byte[] attachment;
+	List<EmailAttachment> attachments;
 	SupportedLanguage language;
 
-	public EmailTask(List<DcemUser> users, Map<String, Object> map, String templateName, String subjectResource, byte[] attachment) {
+	public EmailTask(List<DcemUser> users, Map<String, Object> map, String templateName, String subjectResource, List<EmailAttachment> attachments) {
 		super(EmailTask.class.getSimpleName(), null);
 		this.users = users;
 		this.map = map;
 		this.templateName = templateName;
 		this.subjectResource = subjectResource;
-		this.attachment = attachment;
+		this.attachments = attachments;
 	}
 
 	public EmailTask(Set<String> emailAdresses, SupportedLanguage language, Map<String, Object> map, String templateName, String subjectResource,
-			byte[] attachment) {
+			List<EmailAttachment> attachments) {
 		super(EmailTask.class.getSimpleName(), null);
 		this.emailAdresses = emailAdresses;
 		this.map = map;
 		this.templateName = templateName;
 		this.subjectResource = subjectResource;
-		this.attachment = attachment;
+		this.attachments = attachments;
 		this.language = language;
 	}
 
@@ -92,7 +93,7 @@ public class EmailTask extends CoreTask {
 				Template tempalte = applicationBean.getTemplateFromConfig(dcemTemplateEmail);
 				tempalte.process(map, stringWriter);
 				SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), stringWriter.toString(),
-						dbResourceBundle.getString(subjectResource), attachment);
+						dbResourceBundle.getString(subjectResource), attachments);
 			} catch (Exception e) {
 				logger.error("E-Mail Task FAILED", e);
 				continue;
