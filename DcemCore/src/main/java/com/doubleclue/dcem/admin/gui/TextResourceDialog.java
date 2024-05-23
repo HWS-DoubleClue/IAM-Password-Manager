@@ -11,6 +11,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.primefaces.model.file.UploadedFile;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
@@ -35,6 +37,8 @@ import com.hazelcast.core.IExecutorService;
 @SessionScoped
 public class TextResourceDialog extends DcemDialog {
 
+	private static final Logger logger = LogManager.getLogger(TextResourceDialog.class);
+	
 	@Inject
 	private TextResourceLogic textResourceLogic;
 	
@@ -50,6 +54,10 @@ public class TextResourceDialog extends DcemDialog {
 
 	@Override
 	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
+		String action = autoViewAction.getDcemAction().getAction();
+		if (action.equals(DcemConstants.ACTION_UPLOAD) || action.equals(DcemConstants.ACTION_DOWNLOAD)) {
+			return;
+		}
 		TextMessage textMessage = (TextMessage) this.getActionObject();
 		if (textMessage.getId() != null) {
 			textResourceLogic.getEntityById(textMessage.getId());
@@ -75,18 +83,21 @@ public class TextResourceDialog extends DcemDialog {
 		return true;
 	}
 	
-	public void actionDownload() throws Exception {
+	public void actionDownload() {
+		try {
 		Locale locale = DcemUtils.getLocaleFromDisplayName(displayLanguage);
 		DbResourceBundle bundle = DbResourceBundle.getDbResourceBundle(locale);
 		JsfUtils.downloadFile(MediaType.TEXT_HTML, "TextResource_" +  locale.getLanguage() +  ".properties", bundle.getPropertyContents());
 //		viewNavigator.getActiveView().closeDialog();
-		return;
+		} catch (Exception e) {
+			logger.error("Could not download TextResources", e);
+		}
 	}
 
 	/**
 	 * @throws Exception
 	 */
-	public void actionUpload() throws Exception {
+	public void actionUpload() {
 		if (uploadedFile == null || uploadedFile.getSize() == 0) {
 			JsfUtils.addMessage(FacesMessage.SEVERITY_ERROR, AdminModule.RESOURCE_NAME, "Upload.noFile", null, null);
 			return;
@@ -110,10 +121,11 @@ public class TextResourceDialog extends DcemDialog {
 			return;	
 		}
 		Properties properties = new Properties();
-		ByteArrayInputStream bais = new ByteArrayInputStream(uploadedFile.getContent());
-		InputStreamReader inputStreamReader = new InputStreamReader(bais, DcemConstants.CHARSET_UTF8);	
-		properties.load(inputStreamReader);
+		ByteArrayInputStream bais = null;
 		try {
+			bais = new ByteArrayInputStream(uploadedFile.getContent());
+			InputStreamReader inputStreamReader = new InputStreamReader(bais, DcemConstants.CHARSET_UTF8);	
+			properties.load(inputStreamReader);
 			textResourceLogic.addTextResourceProperties(AdminModule.MODULE_ID, properties, locale, true);
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage(e.toString());
@@ -171,6 +183,11 @@ public class TextResourceDialog extends DcemDialog {
 
 	public void setUploadedFile(UploadedFile uploadedFile) {
 		this.uploadedFile = uploadedFile;
+	}
+	
+	@Override
+	public String getHeight() {
+		return "20em";
 	}
 
 }

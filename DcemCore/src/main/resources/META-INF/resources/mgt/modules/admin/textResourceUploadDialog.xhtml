@@ -37,8 +37,7 @@
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4" styleClass="autoDialogTable">
 
 					<p:outputLabel for="localeSelect" value="#{AdminMsg['textResource.language']}: "></p:outputLabel>
-					<p:selectOneMenu id="localeSelect" value="#{textResourceDialog.displayLanguage}" style="vertical-align: middle;"
-						disabled="#{textResourceDialog.isEdit()}">
+					<p:selectOneMenu id="localeSelect" value="#{textResourceDialog.displayLanguage}" style="vertical-align: middle;">
 						<f:selectItems value="#{viewNavigator.supportedLanguages}" />
 					</p:selectOneMenu>
 
@@ -50,7 +49,7 @@
 				</h:panelGrid>
 				<p></p>
 
-				<p:commandButton id="ok" style="width: 8em" value="#{CoreMsg['OK']}" icon="fa fa-check" ajax="false"
+				<p:commandButton id="ok" style="width: 8em" value="#{CoreMsg['OK']}" icon="fa fa-check" ajax="true"
 					actionListener="#{textResourceDialog.actionUpload}" ></p:commandButton>
 
 				<p:spacer width="12" />
