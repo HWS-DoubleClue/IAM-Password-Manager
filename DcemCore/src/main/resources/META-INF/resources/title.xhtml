@@ -20,6 +20,9 @@
 	<h:form id="titleForm">
 		<div style="#{adminModule.titleStyle};" class="parent-flex-container">
 			<div class="flex-container">
+				<div class="toggle" id="toggle" onclick="toggleNav()">
+					<span></span>
+				</div>
 				<h:commandLink action="#{viewNavigator.actionRedirectionToHome}">
 					<div style="float: left; border: none; width: auto;">
 						<p:graphicImage cache="false" styleClass="companyLogoStyle"
