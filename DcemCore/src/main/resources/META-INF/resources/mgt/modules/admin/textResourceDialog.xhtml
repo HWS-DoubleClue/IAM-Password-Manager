@@ -44,12 +44,12 @@
 				</p:selectOneMenu>
 							
 
-				<p:outputLabel value="#{CoreMsg['textResources.ResourceKey']}" />
-				<p:inputText id="name" value="#{textResourceDialog.actionObject.key}" maxlength="128" style="width:450px" />
+				<p:outputLabel for="name" value="#{CoreMsg['textResources.ResourceKey']}" />
+				<p:inputText id="name" value="#{textResourceDialog.actionObject.key}" maxlength="128" style="width:425px" required="true" />
 				
 				<p:outputLabel for="text"
 					value="Text: " />
-				<p:inputTextarea id="text" style="width:450px" value="#{textResourceDialog.actionObject.value}" />
+				<p:inputTextarea id="text" style="width:425px" value="#{textResourceDialog.actionObject.value}" required="true" />
 
 
 			</h:panelGrid>
