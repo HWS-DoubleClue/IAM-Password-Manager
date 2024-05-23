@@ -12,7 +12,9 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.primefaces.event.ToggleEvent;
 import org.primefaces.event.data.FilterEvent;
+import org.primefaces.model.Visibility;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.admin.subjects.PrivilegeSubject;
@@ -22,17 +24,24 @@ import com.doubleclue.dcem.core.entities.DcemRole;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
+import com.doubleclue.dcem.core.gui.ViewVariable;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
+import com.doubleclue.dcem.core.jpa.VariableType;
 import com.doubleclue.dcem.core.logic.ActionLogic;
 import com.doubleclue.dcem.core.logic.ActionRoleAssignment;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.RoleLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SuppressWarnings("serial")
 @Named("privilegeView")
 @SessionScoped
 public class PrivilegeViewBean extends DcemView {
+
+	final String COLUMN_TOGGLER = "CT-";
 
 	@Inject
 	private DcemApplicationBean dcemApplicationBean;
@@ -53,6 +62,7 @@ public class PrivilegeViewBean extends DcemView {
 	List<DcemAction> dcemActions;
 	List<DcemRole> dcemRoles;
 	Map<Integer, ActionRoleAssignment> assignmentMap; // key is the ActionId
+	Map<Integer, Boolean> roleFilterSettings;
 	String moduleFilter;
 	DcemAction save;
 
@@ -75,7 +85,40 @@ public class PrivilegeViewBean extends DcemView {
 			}
 			assignmentMap.put(dcemAction.getId(), ara);
 		}
+		loadRoleFilter();
 		autoViewBean.reload();
+	}
+
+	private void loadRoleFilter() {
+		roleFilterSettings = new HashMap<Integer, Boolean>();
+		try {
+			String value = operatorSessionBean.getLocalStorageUserSetting(COLUMN_TOGGLER + viewNavigator.getActiveView().getClassName());
+			if (value != null) {
+				ObjectMapper objectMapper = new ObjectMapper();
+				TypeReference<Map<Integer, Boolean>> typeRef = new TypeReference<Map<Integer, Boolean>>() {
+				};
+				roleFilterSettings = objectMapper.readValue(value, typeRef);
+			}
+		} catch (Exception e) {
+			try {
+				operatorSessionBean.removeLocalStorageUserSetting(COLUMN_TOGGLER + viewNavigator.getActiveView().getClassName());
+			} catch (Exception exp) {
+			}
+		}
+	}
+
+	private void updateRoleFilter() {
+		try {
+			if (roleFilterSettings == null || roleFilterSettings.isEmpty()) {
+				operatorSessionBean.removeLocalStorageUserSetting(COLUMN_TOGGLER + viewNavigator.getActiveView().getClassName());
+				return;
+			}
+			ObjectMapper mapper = new ObjectMapper();
+			operatorSessionBean.setLocalStorageUserSetting(COLUMN_TOGGLER + viewNavigator.getActiveView().getClassName(),
+					mapper.writeValueAsString(roleFilterSettings));
+		} catch (Exception e) {
+			logger.warn("Could not save role filter to local storage for user: " + operatorSessionBean.getDcemUser().getDisplayName(), e);
+		}
 	}
 
 	public List<SelectItem> getModuleListFilter() {
@@ -88,6 +131,20 @@ public class PrivilegeViewBean extends DcemView {
 			listConfirmFilter.add(new SelectItem(module.getId(), module.getName()));
 		}
 		return listConfirmFilter;
+	}
+
+	public void onToggle(ToggleEvent event) {
+		try {
+			int columPosition = (int) event.getData();
+			if (columPosition < 3) {
+				return;
+			}
+			DcemRole columnRole = dcemRoles.get(columPosition - 3);
+			roleFilterSettings.put(columnRole.getId(), event.getVisibility() == Visibility.VISIBLE);
+			updateRoleFilter();
+		} catch (Exception e) {
+			logger.warn("Could not toggle column filter", e);
+		}
 	}
 
 	public String getModuleFilter() {
@@ -163,5 +220,13 @@ public class PrivilegeViewBean extends DcemView {
 
 	public List<?> getFilteredResults() {
 		return null;
+	}
+
+	public Map<Integer, Boolean> getRoleFilterSettings() {
+		return roleFilterSettings;
+	}
+
+	public void setRoleFilterSettings(Map<Integer, Boolean> roleFilterSettings) {
+		this.roleFilterSettings = roleFilterSettings;
 	}
 }
