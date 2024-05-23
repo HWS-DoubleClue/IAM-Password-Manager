@@ -17,7 +17,9 @@ import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.TextMessage;
+import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemDialog;
+import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.gui.ViewNavigator;
@@ -46,6 +48,15 @@ public class TextResourceDialog extends DcemDialog {
 
 	private UploadedFile uploadedFile;
 
+	@Override
+	public void show(DcemView dcemView, AutoViewAction autoViewAction) throws Exception {
+		TextMessage textMessage = (TextMessage) this.getActionObject();
+		if (textMessage.getId() != null) {
+			textResourceLogic.getEntityById(textMessage.getId());
+			dcemView.setActionObject(textMessage);
+		}
+	}
+	
 	@Override
 	public boolean actionOk() throws Exception {
 		TextMessage textMessage = (TextMessage) this.getActionObject();

@@ -86,7 +86,7 @@ public class TextResourceLogic {
 	public void addOrUpdate(TextMessage textMessage, DcemAction dcemAction, String baseName, String locale) {
 
 		String auditInfo = null;
-
+		auditingLogic.addAudit(dcemAction, textMessage);
 		if (dcemAction.getAction().equals(DcemConstants.ACTION_ADD) || dcemAction.getAction().equals(DcemConstants.ACTION_COPY)) {
 			TextResourceBundle textResourceBundle = addTextResourceBundle(locale);
 			textMessage.setTextResourceBundle(textResourceBundle);
@@ -97,8 +97,6 @@ public class TextResourceLogic {
 		} else {
 			em.merge(textMessage);
 		}
-		auditingLogic.addAudit(dcemAction, textMessage);
-
 	}
 
 	public TextMessage getResourceMessage(TextResourceBundle textResourceBundle, String key) {
@@ -135,7 +133,7 @@ public class TextResourceLogic {
 		return properties;
 	}
 
-	private TextMessage getEntityById(Integer id) {
+	public TextMessage getEntityById(Integer id) {
 		return em.find(TextMessage.class, id);
 	}
 
