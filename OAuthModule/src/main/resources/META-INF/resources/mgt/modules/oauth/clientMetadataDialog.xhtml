@@ -54,10 +54,12 @@
 						<h:panelGroup>
 							<p:outputLabel for="clientId"
 								value="#{oauthMsg['clientMetadataDialog.tab.details.clientId']}" />
-							<p:commandButton
+							<p:commandButton id="generate-client-id"
 								value="#{oauthMsg['clientMetadataDialog.button.generate']}"
-								action="#{clientMetadataDialog.actionCreateClientId}"
-								update="clientId" style="float:right;" />
+								immediate="true"
+								style="float:right;" >
+								<p:ajax event="click" listener="#{clientMetadataDialog.actionCreateClientId}" update="clientId" />
+							</p:commandButton>
 						</h:panelGroup>
 						<p:inputText id="clientId"
 							value="#{clientMetadataDialog.actionObject.clientId}"
@@ -69,12 +71,14 @@
 								value="#{oauthMsg['clientMetadataDialog.tab.details.clientSecret']}" />
 							<p:commandButton
 								value="#{oauthMsg['clientMetadataDialog.button.generate']}"
-								action="#{clientMetadataDialog.actionCreateClientSecret}"
-								update="clientSecret" style="float:right;" />
+								immediate="true"
+								style="float:right;" >
+								<p:ajax event="click" listener="#{clientMetadataDialog.actionCreateClientSecret}" update="clientSecret" />
+							</p:commandButton>
 						</h:panelGroup>
 						<p:inputText id="clientSecret"
 							value="#{clientMetadataDialog.actionObject.clientSecret}"
-							style="width:550px; color:lightgrey;" required="true"
+							style="width:550px; color:darkgrey;" required="true"
 							requiredMessage="#{AdminMsg['error.clientSecretCheck']}" />
 						<p />
 						<p:outputLabel for="redirectUris"
