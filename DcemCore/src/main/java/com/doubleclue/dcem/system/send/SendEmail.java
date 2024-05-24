@@ -85,7 +85,7 @@ public class SendEmail {
 	}
 
 	public static void sendMessage(String toReceiver, String body, String subject) throws DcemException {
-		sendMessage(toReceiver, body, subject, new ArrayList<EmailAttachment>(0));
+		sendMessage(toReceiver, body, subject, null);
 	}
 
 	public static void sendMessage(String toReceiver, String body, String subject, EmailAttachment attachment) throws DcemException {
@@ -93,21 +93,9 @@ public class SendEmail {
 		if (toReceiver != null) {
 			recipients.add(toReceiver);
 		}
-		sendMessage(recipients, body, subject, attachment);
-	}
-
-	public static void sendMessage(List<String> recipients, String body, String subject, EmailAttachment attachment) throws DcemException {
 		List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
 		if (attachment != null) {
 			attachments.add(attachment);
-		}
-		sendMessage(recipients, body, subject, attachments);
-	}
-
-	public static void sendMessage(String toReceiver, String body, String subject, List<EmailAttachment> attachments) throws DcemException {
-		List<String> recipients = new ArrayList<String>();
-		if (toReceiver != null) {
-			recipients.add(toReceiver);
 		}
 		sendMessage(recipients, body, subject, attachments);
 	}
