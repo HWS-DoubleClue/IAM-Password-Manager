@@ -94,12 +94,14 @@ public class PrivilegeViewBean extends DcemView {
 		try {
 			String value = operatorSessionBean.getLocalStorageUserSetting(COLUMN_TOGGLER + viewNavigator.getActiveView().getClassName());
 			if (value != null) {
-				ObjectMapper objectMapper = new ObjectMapper();
-				TypeReference<Map<Integer, Boolean>> typeRef = new TypeReference<Map<Integer, Boolean>>() {
-				};
-				roleFilterSettings = objectMapper.readValue(value, typeRef);
+				String[] columnVisibilties = value.split(", ");
+				for (String columnVisibilty : columnVisibilties) {
+					String[] keyValuePair = columnVisibilty.split("=");
+					roleFilterSettings.put(Integer.valueOf(keyValuePair[0]), Boolean.valueOf(keyValuePair[1]));
+				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			try {
 				operatorSessionBean.removeLocalStorageUserSetting(COLUMN_TOGGLER + viewNavigator.getActiveView().getClassName());
 			} catch (Exception exp) {
@@ -113,9 +115,11 @@ public class PrivilegeViewBean extends DcemView {
 				operatorSessionBean.removeLocalStorageUserSetting(COLUMN_TOGGLER + viewNavigator.getActiveView().getClassName());
 				return;
 			}
-			ObjectMapper mapper = new ObjectMapper();
-			operatorSessionBean.setLocalStorageUserSetting(COLUMN_TOGGLER + viewNavigator.getActiveView().getClassName(),
-					mapper.writeValueAsString(roleFilterSettings));
+			List<String> columnVisibilty = new ArrayList<String>();
+			for (Map.Entry<Integer, Boolean> entry : roleFilterSettings.entrySet()) {
+				columnVisibilty.add(String.format("%s=%s", entry.getKey(), entry.getValue()));
+			}
+			operatorSessionBean.setLocalStorageUserSetting(COLUMN_TOGGLER + viewNavigator.getActiveView().getClassName(), String.join(", ", columnVisibilty));
 		} catch (Exception e) {
 			logger.warn("Could not save role filter to local storage for user: " + operatorSessionBean.getDcemUser().getDisplayName(), e);
 		}
