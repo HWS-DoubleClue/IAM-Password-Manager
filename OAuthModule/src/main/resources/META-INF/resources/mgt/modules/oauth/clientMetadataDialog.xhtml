@@ -35,8 +35,10 @@
 			<p />
 			<h:panelGrid columns="2">
 				<p:outputLabel
+					for="@next"
 					value="#{oauthMsg['clientMetadataDialog.displayName']}: " />
 				<p:inputText
+					id="display-input"
 					value="#{clientMetadataDialog.actionObject.displayName}"
 					style="width:300px" required="true"
 					requiredMessage="#{AdminMsg['error.displayNameCheck']}" />
