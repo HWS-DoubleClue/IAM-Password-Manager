@@ -95,9 +95,15 @@ public class TenantLogic implements ReloadClassInterface {
 				logger.info("addOrUpdateTenant", exp);
 				throw new DcemException(DcemErrorCodes.EXCEPTION, exp.getMessage());
 			}
+			if (audit) {
+				auditingLogic.addAudit(dcemAction, tenantEntity);
+			}
 			em.persist(tenantEntity);
 			auditInfo = tenantEntity.getName();
 		} else {
+			if (audit) {
+				auditingLogic.addAudit(dcemAction, tenantEntity);
+			}
 			TenantEntity tenantEntityDb = em.find(TenantEntity.class, tenantEntity.getId());
 			try {
 				tenantEntityDb.setFullName(tenantEntity.getFullName());
@@ -108,9 +114,6 @@ public class TenantLogic implements ReloadClassInterface {
 				auditInfo = "ERROR: " + exp.getMessage();
 				throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "", exp);
 			}
-		}
-		if (audit) {
-			auditingLogic.addAudit(dcemAction, tenantEntity);
 		}
 		return;
 	}
