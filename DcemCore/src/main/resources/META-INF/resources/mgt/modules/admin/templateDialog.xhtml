@@ -37,11 +37,11 @@
 
 
 
-			<p:outputLabel value="#{CoreMsg['Template.name']}: " />
-			<p:inputText id="name" value="#{templateDialog.actionObject.name}" style="width: 20em" />
+			<p:outputLabel for="@next" value="#{CoreMsg['Template.name']}: " />
+			<p:inputText id="name" value="#{templateDialog.actionObject.name}" style="width: 20em; margin-left: 1em" required="true" />
 
 			<p:outputLabel style="padding-left: 30px" for="localeSelect" value="#{CoreMsg['Template.locale']}: " />
-			<p:selectOneMenu id="localeSelect" value="#{templateDialog.actionObject.language}" style="vertical-align: middle;">
+			<p:selectOneMenu id="localeSelect" value="#{templateDialog.actionObject.language}" style="vertical-align: middle; margin-left: 1em" required="true">
 				<f:selectItem itemLabel="#{CoreMsg['selectOne']}" itemValue="#{null}" noSelectionOption="true" />
 				<f:selectItems value="#{viewNavigator.supportedLanguages}" />
 			</p:selectOneMenu>
