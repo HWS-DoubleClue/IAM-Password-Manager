@@ -98,11 +98,11 @@
 					style="height:20em">
 					<p />
 					<p:commandButton
-						value="#{oauthMsg['clientMetadataDialog.tab.claims.add']}"
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.add']}" immediate="true"
 						action="#{clientMetadataDialog.addNewClaim}" icon="fa fa-plus" />
 						&nbsp;
 						<p:commandButton
-						value="#{oauthMsg['clientMetadataDialog.tab.claims.edit']}"
+						value="#{oauthMsg['clientMetadataDialog.tab.claims.edit']}" immediate="true"
 						actionListener="#{clientMetadataDialog.editClaim}" update=""
 						icon="fa fa-edit" />
 						&nbsp;
