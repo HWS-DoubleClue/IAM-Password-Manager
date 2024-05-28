@@ -121,7 +121,7 @@ public class LicenceLogic implements ReloadClassInterface {
 			}
 		}
 		
-		boolean exceedsUserCount = (userLogic.getTotalUserCount()*100000) >= licenceKeyContent.getMaxUsers();
+		boolean exceedsUserCount = (userLogic.getTotalUserCount()) >= licenceKeyContent.getMaxUsers();
 		if (exceedsUserCount) {
 			if (allowChanceAfterExpiration && expiredLicenceUserShouldAuthenticate) {
 					expiredLicenceUserShouldAuthenticate = !expiredLicenceUserShouldAuthenticate;
