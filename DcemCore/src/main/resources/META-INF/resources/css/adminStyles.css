@@ -1,0 +1,9 @@
+.priviledgeTable .ui-datatable-tablewrapper {
+	max-height: 500px;
+}
+
+.priviledgeTable .ui-datatable-tablewrapper thead th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
