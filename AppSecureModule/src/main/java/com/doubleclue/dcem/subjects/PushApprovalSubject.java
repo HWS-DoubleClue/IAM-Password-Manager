@@ -27,7 +27,7 @@ public class PushApprovalSubject extends SubjectAbs {
 		rawAction = new RawAction(AsConstants.ACTION_SEND_MESSAGE,
 				new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
 				ActionSelection.IGNORE);
-		rawAction.setIcon("fa fa-envelope-o");
+		rawAction.setIcon("fa fa-solid fa-envelope");
 		rawActions.add(rawAction);
 		
 		rawAction = new RawAction(AsConstants.ACTION_PENDING_MESSAGES,

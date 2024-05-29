@@ -1,7 +1,6 @@
 package com.doubleclue.dcem.as.gui;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;

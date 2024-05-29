@@ -1,4 +1,4 @@
-#define MyAppVersion "2.11.0-SNAPSHOT"
+#define MyAppVersion "3.1.0-SNAPSHOT"
 #define MyAppName "DoubleClue Enterprise Management"
 
 #include "services.iss"

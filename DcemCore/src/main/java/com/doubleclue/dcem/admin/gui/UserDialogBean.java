@@ -298,7 +298,7 @@ public class UserDialogBean extends DcemDialog {
 	}
 
 	public void actionDisableUser() {
-		DcemUser dcemUser = (DcemUser) getActionObject();
+		dcemUser = (DcemUser) getActionObject();
 		if (userOutranksOperator()) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, "userDialog.error.userOutranksOperator");
 		} else {

@@ -16,5 +16,5 @@ if '%errorlevel%' NEQ '0' (
 
 pushd %~dp0
 call setenv.bat
-%wrapper_bat% -r %dcem_installation_path%/conf/DcemApplication.conf
+%wrapper_bat% -r "%dcem_installation_path%/conf/DcemApplication.conf"
 popd

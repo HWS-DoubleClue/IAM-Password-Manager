@@ -184,7 +184,7 @@ public class CreateTables {
 		}
 		System.out.println("Tables created, now improving the sql scripts");
 		File inputDirectory = new File(outputDir);
-		File outputDirectory = new File(args[0] + File.separator + "DcemCore" + File.separator + "resources" + File.separator + "com/doubleclue/dcem/db");
+		File outputDirectory = new File(args[0] + File.separator + "DcemCore/src/main/resources/com/doubleclue/dcem/db");
 		try {
 			System.out.println("						Input directory:		" + inputDirectory.getPath());
 			System.out.println("						Output directory:		" + outputDirectory.getPath());

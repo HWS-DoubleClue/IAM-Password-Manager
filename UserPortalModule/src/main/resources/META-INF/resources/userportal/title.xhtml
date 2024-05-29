@@ -73,7 +73,7 @@
 									</p:commandLink>
 
 
-									<p:commandLink styleClass="portalMenuItems" action="#{upLoginView.logoff()}" update="viewPart" ajax="false">
+									<p:commandLink styleClass="portalMenuItems" action="#{upLoginView.logoff()}" immediate="true" ajax="true">
 										<h:panelGroup styleClass="portalMenuText">
 											<i class="fa fa-sign-out portalMenuText" style="font-size: 1.2em; margin-right: 1em;"></i>
 											<h:outputText styleClass="portalMenuText" value="#{DcupMsg['title.logOff']}" icon="fa fa-sign-out" style="color:black;" />

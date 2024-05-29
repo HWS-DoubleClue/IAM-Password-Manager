@@ -145,6 +145,7 @@ public abstract class DcemFilter implements Filter {
 					response.getWriter().append("<partial-response><redirect url=\"");
 					response.getWriter().append(redirectUrl);
 					response.getWriter().append("\"></redirect></partial-response>");
+					return;
 				} else {
 					if (httpServletRequest.getHeader("authorization") == null) {
 						httpServletRequest.getSession().invalidate();

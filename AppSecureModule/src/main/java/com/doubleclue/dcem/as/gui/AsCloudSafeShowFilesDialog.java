@@ -44,7 +44,7 @@ public class AsCloudSafeShowFilesDialog extends DcemDialog {
 	public String getRecoveryKey() {
 		DcemUser dcemUser = ((CloudSafeLimitEntity) getActionObject()).getUser();
 		try {
-			CloudSafeEntity cloudSafeEntity = cloudSafeLogic.getCloudSafe(CloudSafeOwner.USER, DcemConstants.RECOVERY_KEY, dcemUser, null, 0, null);
+			CloudSafeEntity cloudSafeEntity = cloudSafeLogic.getCloudSafe(CloudSafeOwner.USER, DcemConstants.RECOVERY_KEY, dcemUser, null, cloudSafeLogic.getCloudSafeRoot().getId(), null);
 			return cloudSafeLogic.getContentAsString(cloudSafeEntity, null, null);
 		} catch (DcemException e) {
 			JsfUtils.addErrorMessage(e.getLocalizedMessage());

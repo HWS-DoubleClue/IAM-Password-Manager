@@ -116,6 +116,10 @@
 			<outputDirectory>REST-WebServices/CSharpSimpleDemo</outputDirectory>
 			<directory>${basedir}/../RestApiDemoCSharp</directory>
 		</fileSet>
+		<fileSet>
+			<outputDirectory>Plugins</outputDirectory>
+			<directory>${basedir}/artifacts/Plugins</directory>
+		</fileSet>
 
 
 	</fileSets>

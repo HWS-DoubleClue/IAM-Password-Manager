@@ -11,10 +11,10 @@
 				<h:panelGrid columns="2">
 					<p:outputLabel value="#{CoreMsg['clusterConfig.clusterId']} " />
 					<p:outputLabel value="#{clusterConfigView.config.name}" />
-					<h:outputText id="output" value="#{CoreMsg['clusterConfig.scaleFactor']}#{clusterConfigView.config.scaleFactor}" />
+					<h:outputText id="output" value="#{CoreMsg['clusterConfig.scaleFactor']} #{clusterConfigView.config.scaleFactor}%" />
 					<h:panelGroup>
 						<h:inputHidden id="scaleFactor" value="#{clusterConfigView.config.scaleFactor}" />
-						<p:slider for="scaleFactor" display="output" style="width: 200px;" minValue="1" maxValue="100" displayTemplate="Scale Factor %{value}" />
+						<p:slider for="scaleFactor" display="output" styleClass="cluster-slider" minValue="1" maxValue="100" displayTemplate="#{CoreMsg['clusterConfig.scaleFactor']} {value}%" />
 					</h:panelGroup>
 					<p:outputLabel for="givenName" value="#{CoreMsg['clusterConfig.givenName']}" />
 					<p:inputText id="givenName" value="#{clusterConfigView.config.givenName}" size="32"

@@ -216,7 +216,9 @@ public class DcemApplicationBean implements Serializable {
 				module.start();
 			} catch (DcemException e) {
 				reportingLogic.addWelcomeViewAlert(module.getName(), DcemErrorCodes.STARTING_MODULE,
-						(e.getMessage() != null && !e.getMessage().isEmpty()) ? e.getMessage() : e.getErrorCode().toString(), AlertSeverity.ERROR, false);
+						(e.getMessage() != null && !e.getMessage().isEmpty()) ? e.getMessage()
+								: e.getErrorCode().toString(),
+						AlertSeverity.ERROR, false);
 				logger.warn("Failed to start module: " + module.toString(), e);
 			}
 		}
@@ -231,7 +233,9 @@ public class DcemApplicationBean implements Serializable {
 				module.stop();
 			} catch (DcemException e) {
 				reportingLogic.addWelcomeViewAlert(module.getName(), DcemErrorCodes.STOPPING_MODULE,
-						(e.getMessage() != null && !e.getMessage().isEmpty()) ? e.getMessage() : e.getErrorCode().toString(), AlertSeverity.WARNING, false);
+						(e.getMessage() != null && !e.getMessage().isEmpty()) ? e.getMessage()
+								: e.getErrorCode().toString(),
+						AlertSeverity.WARNING, false);
 				logger.warn("Failed to stop module: " + module.toString(), e);
 			}
 		}
@@ -432,7 +436,8 @@ public class DcemApplicationBean implements Serializable {
 			if (disabled == false) {
 				if (dcemModule.isPluginModule() == true) {
 					if (pluginModules != null) {
-						if (pluginModules.length > 0 && pluginModules[0].compareToIgnoreCase(DcemConstants.LICENCE_PLUGINS_ALL) == 0) {
+						if (pluginModules.length > 0
+								&& pluginModules[0].compareToIgnoreCase(DcemConstants.LICENCE_PLUGINS_ALL) == 0) {
 							list.add(dcemModule);
 						} else {
 							for (String id : pluginModules) {
@@ -442,6 +447,8 @@ public class DcemApplicationBean implements Serializable {
 								}
 							}
 						}
+					} else {
+						list.add(dcemModule);
 					}
 				} else {
 					list.add(dcemModule);
@@ -522,22 +529,26 @@ public class DcemApplicationBean implements Serializable {
 			if (tenantMap.get(tenantEntity.getName().toUpperCase()) == null) {
 				// New Tenant
 				tenantMap.put(tenantEntity.getName().toUpperCase(), tenantEntity);
-				Future<Hashtable<String, Exception>> future = taskExecutor.submit(new CallInittializeTenant(tenantEntity, sortedModules));
+				Future<Hashtable<String, Exception>> future = taskExecutor
+						.submit(new CallInittializeTenant(tenantEntity, sortedModules));
 				try {
 					Hashtable<String, Exception> exceptionTable = future.get();
 					if (exceptionTable != null && exceptionTable.isEmpty() == false) {
 						for (String moduleId : exceptionTable.keySet()) {
-							reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.UNEXPECTED_ERROR,
-									"TENANT-Module " + tenantEntity.getName() + "-" + moduleId + " : " + exceptionTable.get(moduleId).getMessage(),
+							reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM,
+									DcemErrorCodes.UNEXPECTED_ERROR, "TENANT-Module " + tenantEntity.getName() + "-"
+											+ moduleId + " : " + exceptionTable.get(moduleId).getMessage(),
 									AlertSeverity.ERROR, false);
 						}
 
 					}
 				} catch (Exception e) {
-					String msg = "Error on initialization Tenant: " + tenantEntity.getName() + " Cause: " + e.toString();
+					String msg = "Error on initialization Tenant: " + tenantEntity.getName() + " Cause: "
+							+ e.toString();
 					logger.fatal(msg, e);
-					reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.UNEXPECTED_ERROR,
-							"TENANT " + tenantEntity.getName() + " : " + msg, AlertSeverity.ERROR, false);
+					reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM,
+							DcemErrorCodes.UNEXPECTED_ERROR, "TENANT " + tenantEntity.getName() + " : " + msg,
+							AlertSeverity.ERROR, false);
 					// throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Cant Initialize
 					// Tenant: " + tenantEntity.getName(), e);
 				}
@@ -653,7 +664,8 @@ public class DcemApplicationBean implements Serializable {
 				String tenantName = names[0];
 				TenantEntity tenantEntity = getTenant(tenantName.substring(0, tenantName.length() - 1));
 				if (tenantEntity == null) {
-					message = "Invalid tenant name '" + tenantName + "'. Perhaps you need to set a domain name in Cluster Config.";
+					message = "Invalid tenant name '" + tenantName
+							+ "'. Perhaps you need to set a domain name in Cluster Config.";
 				} else {
 					tenant = tenantEntity;
 				}
@@ -681,7 +693,8 @@ public class DcemApplicationBean implements Serializable {
 			}
 		}
 		if (message != null) {
-			throw new DcemException(DcemErrorCodes.INVALID_TENANT, "Error while retreiving tenant from '" + hostName + "': " + message);
+			throw new DcemException(DcemErrorCodes.INVALID_TENANT,
+					"Error while retreiving tenant from '" + hostName + "': " + message);
 		}
 		return tenant;
 	}
@@ -807,7 +820,8 @@ public class DcemApplicationBean implements Serializable {
 		try {
 			template = freeMarkerConfiguration.getTemplate(tempalteName);
 		} catch (TemplateNotFoundException e) {
-			DcFreeMarkerStringLoader stringLoader = (DcFreeMarkerStringLoader) freeMarkerConfiguration.getTemplateLoader();
+			DcFreeMarkerStringLoader stringLoader = (DcFreeMarkerStringLoader) freeMarkerConfiguration
+					.getTemplateLoader();
 			stringLoader.putTemplate(tempalteName, content);
 			// Wait until the template is loaded in the configuration
 			for (int sleepCounter = 0; sleepCounter < 20; sleepCounter++) {
@@ -819,7 +833,8 @@ public class DcemApplicationBean implements Serializable {
 				}
 			}
 			if (template == null) {
-				throw new TemplateNotFoundException(tempalteName, null, "The template could not be loaded after 10 seconds");
+				throw new TemplateNotFoundException(tempalteName, null,
+						"The template could not be loaded after 10 seconds");
 			}
 		} catch (Exception e) {
 			throw e;

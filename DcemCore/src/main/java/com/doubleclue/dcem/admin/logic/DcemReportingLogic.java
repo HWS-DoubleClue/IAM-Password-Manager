@@ -37,6 +37,7 @@ import com.doubleclue.dcem.core.logic.AuthMethodsActivityDto;
 import com.doubleclue.dcem.core.logic.DbResourceBundle;
 import com.doubleclue.dcem.core.logic.GroupLogic;
 import com.doubleclue.dcem.core.logic.TemplateLogic;
+import com.doubleclue.dcem.system.send.EmailAttachment;
 import com.doubleclue.dcem.system.send.SendEmail;
 import com.doubleclue.utils.StringUtils;
 
@@ -251,7 +252,7 @@ public class DcemReportingLogic {
 				} else {
 					String body = StringUtils.substituteTemplate(bodyTemplate.getContent(), templateMap);
 					for (String entryValue : entry.getValue()) {
-						SendEmail.sendMessage(entryValue, body, bundle.getString(DcemConstants.EMAIL_ALERTS_SUBJECT_BUNDLE_KEY), null);
+						SendEmail.sendMessage(entryValue, body, bundle.getString(DcemConstants.EMAIL_ALERTS_SUBJECT_BUNDLE_KEY), (EmailAttachment) null);
 					}
 
 				}

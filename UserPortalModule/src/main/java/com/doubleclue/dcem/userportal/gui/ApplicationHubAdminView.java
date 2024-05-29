@@ -253,7 +253,7 @@ public class ApplicationHubAdminView extends DcemView {
 				ObjectMapper mapper = new ObjectMapper();
 				ApplicationHubEntity appHubEntity = mapper.readValue(fileContents, ApplicationHubEntity.class);
 
-				if (appHubEntity.getLogo().length == 0 || appHubEntity.getLogo() == null) {
+				if (appHubEntity.getLogo() == null || appHubEntity.getLogo().length == 0) {
 					InputStream x = this.getClass().getResourceAsStream("/appHub/DC_Logo_transp_01.2.png");
 					appHubEntity.setLogo(ByteStreams.toByteArray(x));
 				}

@@ -17,12 +17,12 @@
 				<p:tab id="users" title="#{CoreMsg['importDomain.users']} ">
 					<p:fieldset legend="Filter">
 						<h:panelGrid columns="2">
-							<p:outputLabel value="#{CoreMsg['importDomain.reversedDn']}" for="ldapTree" rendered="#{importLdapUsersView.ldapDomain}" />
+<!-- 							<p:outputLabel value="#{CoreMsg['importDomain.reversedDn']}" for="ldapTree" rendered="#{importLdapUsersView.ldapDomain}" />
 							<h:panelGroup rendered="#{importLdapUsersView.ldapDomain}">
 								<p:autoComplete id="ldapTree" value="#{importLdapUsersView.ldapTree}" inputStyleClass="mystyle" completeMethod="#{importLdapUsersView.completeLdapTree}"
 									size="70" />
 								<p:tooltip for="@(.mystyle)" showEvent="focus" hideEvent="blur" position="top" value="Enter a COMMA for a full search" />
-							</h:panelGroup>
+							</h:panelGroup> -->
 							<p:outputLabel value="#{CoreMsg['importDomain.group']}" for="group" />
 							<h:panelGroup>
 								<p:autoComplete id="group" value="#{importLdapUsersView.group}" completeMethod="#{importLdapUsersView.completeGroup}" size="40" scrollHeight="350" />

@@ -1,7 +1,6 @@
 package com.doubleclue.dcem.as.gui;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.SessionScoped;
@@ -23,7 +22,6 @@ import com.doubleclue.dcem.core.gui.DcemDialog;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
-import com.doubleclue.dcem.core.logic.UserLogic;
 
 @SuppressWarnings("serial")
 @Named("asActivationDialog")
