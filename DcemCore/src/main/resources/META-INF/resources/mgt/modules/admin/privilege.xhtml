@@ -25,7 +25,7 @@
 		<p:dataTable id="pTable" value="#{privilegeView.dcemActions}" var="dcemAction" widgetVar="actionsTable" paginator="true" rows="20"
 			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 			paginatorPosition="bottom" rowKey="#{dcemAction.id}" rowsPerPageTemplate="20, 50,100" emptyMessage="#{CoreMsg['emptyTable']}" stickyHeader="false"
-			styleClass="priviledgeTable">
+			styleClass="table-sticky-head" >
 
 			<p:column filterBy="#{dcemAction.moduleId}" filterMatchMode="exact" style="width: 8em;" id="module-id-column" >
 				<f:facet name="header">

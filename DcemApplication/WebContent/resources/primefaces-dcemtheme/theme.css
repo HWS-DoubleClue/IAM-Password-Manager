@@ -23,6 +23,8 @@
 	--inputfield-border-color: #c3c3c3;
 	--inputfield-hover-border-color: #777777;
 	--toggleswitch-background-color: #c3c3c3;
+	--slider-background-color: #999999;
+	--slider-widget-color: #555555;
 	--filter: none;
 	--powered-by-logo:
 		url("#{resource['pictures/HWS_Logo_schwarz_hor_web.png']}");
@@ -62,6 +64,8 @@
 	--inputfield-border-color: #c3c3c3;
 	--inputfield-hover-border-color: #777777;
 	--toggleswitch-background-color: #7b7b7b;
+	--slider-background-color: #888888;
+	--slider-widget-color: #444444;
 	--filter: invert(100%);
 	--powered-by-logo:
 		url("#{resource['pictures/HWS_Logo_weiss_hor_web.png']}");
