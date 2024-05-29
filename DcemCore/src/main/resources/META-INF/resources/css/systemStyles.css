@@ -67,7 +67,7 @@
 	background: #ffffff;
 	display: block;
 	position: relative;
-	coursor: pointer;
+	cursor: pointer;
 	border-radius: 4px;
 }
 
@@ -514,4 +514,27 @@
 .ui-commandlink.header-button:hover, .header-button:hover {
 	background: #303030;
 /* 	color: yellow; */
+}
+
+body .cluster-slider {
+	width: 17em;
+	background-color: var(--slider-background-color);
+}
+
+body .cluster-slider .ui-widget-header {
+	background-color: var(--slider-widget-color);
+}
+
+.table-sticky-head {
+	overflow: auto;
+}
+
+.table-sticky-head .ui-datatable-tablewrapper {
+	max-height: 70vh;
+}
+
+.table-sticky-head .ui-datatable-tablewrapper thead {
+	position: sticky;
+	top: 0;
+	z-index: 1;
 }
