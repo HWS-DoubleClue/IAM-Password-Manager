@@ -2191,12 +2191,3 @@ textarea:hover, textarea:active, textarea:focus, select:hover, select:active,
 .ui-organigram .control {
 	filter: var(--filter);
 }
-
-.cluster-slider {
-	width: 17em;
-	background-color: var(--slider-background-color);
-}
-
-.cluster-slider .ui-widget-header {
-	background-color: var(--slider-widget-color);
-}
