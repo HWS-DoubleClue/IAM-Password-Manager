@@ -322,8 +322,10 @@ public class DomainLdap implements DomainApi {
 			} catch (DcemException e) {
 				throw e;
 			}
-
+		} catch (NameNotFoundException ce) {
+			throw new DcemException(DcemErrorCodes.LDAP_NAME_NOT_FOUND, String.format("DN = %d, Filter = %d", dn, searchFilter), ce);
 		} catch (Exception exp) {
+			logger.debug(String.format("DN = %d, Filter = %d", dn, searchFilter), exp);
 			throw new DcemException(DcemErrorCodes.LDAP_LOGIN_SEARCH_ACCOUNT_FAILED, "Search Account login failed.", exp);
 		} finally {
 			if (results != null) {
