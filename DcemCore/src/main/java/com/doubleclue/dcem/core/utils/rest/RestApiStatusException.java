@@ -3,20 +3,20 @@ package com.doubleclue.dcem.core.utils.rest;
 @SuppressWarnings("serial")
 public class RestApiStatusException extends Exception {
 	
-	int resposneCode;
+	int responseCode;
 	
 	
-	public RestApiStatusException(int resposneCode, String message) {
+	public RestApiStatusException(int responseCode, String message) {
 		super(message);
-		this.resposneCode = resposneCode;
+		this.responseCode = responseCode;
 	}
 
-	public int getResposneCode() {
-		return resposneCode;
+	public int getResponseCode() {
+		return responseCode;
 	}
 
-	public void setResposneCode(int resposneCode) {
-		this.resposneCode = resposneCode;
+	public void setResponseCode(int responseCode) {
+		this.responseCode = responseCode;
 	}
 	
 }
