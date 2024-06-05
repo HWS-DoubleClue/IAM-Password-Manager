@@ -2201,3 +2201,23 @@ textarea:hover, textarea:active, textarea:focus, select:hover, select:active,
 .ui-organigram .control {
 	filter: var(--filter);
 }
+
+.rowColorClassBlue {
+	background-color: var(--rowColorClassBlue);
+}
+
+.rowColorClassGreen {
+	background-color: var(--rowColorClassGreen);
+}
+
+.rowColorClassYellow {
+	background-color: var(--rowColorClassYellow);
+}
+
+.rowColorClassRed {
+	background-color: var(--rowColorClassRed);
+}
+
+.rowColorClassGrey {
+	background-color: var(--rowColorClassGrey);
+}
