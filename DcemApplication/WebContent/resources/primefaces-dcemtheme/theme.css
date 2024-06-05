@@ -38,6 +38,11 @@
 		url("#{resource['primefaces-dcemtheme:images/angle-down-solid.svg']}");
 	--angle-right-icon:
 		url("#{resource['primefaces-dcemtheme:images/angle-right-solid.svg']}");
+	--rowColorClassBlue: #ddebf7;
+	--rowColorClassGreen: #dff7dd;
+	--rowColorClassYellow: #f7f7dd;
+	--rowColorClassRed: #f7dddd;
+	--rowColorClassGrey: #f5f5f5;
 }
 
 :root.dark-theme {
@@ -78,6 +83,11 @@
 		url("#{resource['primefaces-dcemtheme:images/angle-down-solid-white.svg']}");
 	--angle-right-icon:
 		url("#{resource['primefaces-dcemtheme:images/angle-right-solid-white.svg']}");
+	--rowColorClassBlue: #053a66;
+	--rowColorClassGreen: #357b00;
+	--rowColorClassYellow: #9d920a;
+	--rowColorClassRed: #962323;
+	--rowColorClassGrey: #707070;
 }
 
 body {
