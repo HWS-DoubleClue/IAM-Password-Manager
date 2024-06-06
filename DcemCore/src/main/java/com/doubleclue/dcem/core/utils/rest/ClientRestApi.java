@@ -11,7 +11,6 @@ import javax.net.ssl.TrustManager;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -20,6 +19,7 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -38,35 +38,41 @@ public class ClientRestApi {
 	boolean traceRestApi;
 
 	private Logger logger = LogManager.getLogger(ClientRestApi.class);
-		
-	public CloseableHttpResponse restGet (ClientRestApiParams clientRestApiParams) throws Exception {
-		HttpUriRequest request  = new HttpGet(clientRestApiParams.url);
+
+	public CloseableHttpResponse restGet(ClientRestApiParams clientRestApiParams) throws Exception {
+		HttpUriRequest request = new HttpGet(clientRestApiParams.url);
 		return getResponse(request, clientRestApiParams);
 	}
-	
-	public CloseableHttpResponse restDelete (ClientRestApiParams clientRestApiParams) throws Exception {
-		HttpUriRequest request  = new HttpDelete(clientRestApiParams.url);
+
+	public CloseableHttpResponse restDelete(ClientRestApiParams clientRestApiParams) throws Exception {
+		HttpUriRequest request = null;
+		if (clientRestApiParams.getResponseBody() != null) {
+			request = RequestBuilder.create("DELETE").setUri(clientRestApiParams.getUrl()).setEntity(new StringEntity(clientRestApiParams.getResponseBody()))
+					.build();
+		} else {
+			request = new HttpDelete(clientRestApiParams.url);
+		}
 		return getResponse(request, clientRestApiParams);
 	}
-	
-	public CloseableHttpResponse restPost (ClientRestApiParams clientRestApiParams, String requestBody) throws Exception {
-		HttpPost request  = new HttpPost(clientRestApiParams.url);
+
+	public CloseableHttpResponse restPost(ClientRestApiParams clientRestApiParams, String requestBody) throws Exception {
+		HttpPost request = new HttpPost(clientRestApiParams.url);
 		request.setEntity(new StringEntity(requestBody, "UTF-8"));
 		return getResponse(request, clientRestApiParams);
 	}
-	
-	public CloseableHttpResponse restPut (ClientRestApiParams clientRestApiParams, String requestBody) throws Exception {
-		HttpPut request  = new HttpPut(clientRestApiParams.url);
+
+	public CloseableHttpResponse restPut(ClientRestApiParams clientRestApiParams, String requestBody) throws Exception {
+		HttpPut request = new HttpPut(clientRestApiParams.url);
 		request.setEntity(new StringEntity(requestBody, "UTF-8"));
 		return getResponse(request, clientRestApiParams);
 	}
-	
-	public CloseableHttpResponse restPatch (ClientRestApiParams clientRestApiParams, String requestBody) throws Exception {
-		HttpPatch request  = new HttpPatch(clientRestApiParams.url);
+
+	public CloseableHttpResponse restPatch(ClientRestApiParams clientRestApiParams, String requestBody) throws Exception {
+		HttpPatch request = new HttpPatch(clientRestApiParams.url);
 		request.setEntity(new StringEntity(requestBody, "UTF-8"));
 		return getResponse(request, clientRestApiParams);
 	}
-	
+
 	private CloseableHttpResponse getResponse(HttpUriRequest request, ClientRestApiParams clientRestApiParams) throws Exception {
 		long start = System.currentTimeMillis();
 		CloseableHttpResponse response = null;
@@ -80,9 +86,9 @@ public class ClientRestApi {
 		if (clientRestApiParams.contentType != null) {
 			request.addHeader(HttpHeaders.CONTENT_TYPE, clientRestApiParams.contentType);
 		}
-//		if (accept != null) {
-//			request.addHeader(HttpHeaders.ACCEPT, accept);
-//		}
+		// if (accept != null) {
+		// request.addHeader(HttpHeaders.ACCEPT, accept);
+		// }
 		if (clientRestApiParams.headers != null) {
 			for (KeyValuePair keyValuePair : clientRestApiParams.headers) {
 				if (keyValuePair.getValue() == null) {
@@ -107,8 +113,8 @@ public class ClientRestApi {
 				}
 			};
 		}
-		RequestConfig config = RequestConfig.custom().setConnectTimeout(clientRestApiParams.getTimeoutMilli()).setConnectionRequestTimeout(clientRestApiParams.getRequestTimeout())
-				.setSocketTimeout(clientRestApiParams.getTimeoutMilli()).build();
+		RequestConfig config = RequestConfig.custom().setConnectTimeout(clientRestApiParams.getTimeoutMilli())
+				.setConnectionRequestTimeout(clientRestApiParams.getRequestTimeout()).setSocketTimeout(clientRestApiParams.getTimeoutMilli()).build();
 
 		CloseableHttpClient client = null;
 		if (hostnameVerifier == null) {
@@ -154,13 +160,15 @@ public class ClientRestApi {
 		}
 		clientRestApiParams.setResponseCode(response.getStatusLine().getStatusCode());
 		try {
-			clientRestApiParams.setResponseBody(EntityUtils.toString(response.getEntity()));
+			if (response.getEntity() != null) {
+				clientRestApiParams.setResponseBody(EntityUtils.toString(response.getEntity()));
+			}
 		} catch (Exception exp) {
 			throw exp;
 		}
 		clientRestApiParams.responseTime = System.currentTimeMillis() - start;
 		if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-			throw new RestApiStatusException (response.getStatusLine().getStatusCode(), clientRestApiParams.getResponseBody());
+			throw new RestApiStatusException(response.getStatusLine().getStatusCode(), clientRestApiParams.getResponseBody());
 		}
 		return response;
 	}
@@ -173,7 +181,7 @@ public class ClientRestApi {
 		}
 		return null;
 	}
-	
+
 	public boolean isTraceRestApi() {
 		return traceRestApi;
 	}
