@@ -17,7 +17,7 @@
 				<p:commandButton styleClass="actionButton" value="#{autoAction.actionText}" rendered="#{autoAction.link == false}"
 					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}"
 					onclick="startAjaxStatus()">
-					<p:ajax event="dialogReturn" update="licenceGroup" />
+					<p:ajax event="dialogReturn" listener="#{adminLicenceView.reload()}" update="licenceGroup" />
 				</p:commandButton>
 				<p:spacer width="12" />
 			</c:forEach>
