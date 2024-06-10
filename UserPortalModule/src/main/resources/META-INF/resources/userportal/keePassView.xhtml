@@ -455,6 +455,13 @@
 					<p:outputLabel for="repeatNewKeePassword" value="#{DcupMsg['label.confirmNewPassword']}" />
 					<p:password id="repeatNewKeePassword" toggleMask="true" value="#{keePassView.newPassword}" maxlength="128" size="36" redisplay="false" autocomplete="false" />
 
+				<h:panelGroup>
+					<h:outputLabel value="#{DcupMsg['dialog.savePassword']}" />
+					<p:spacer width="10" />
+					<h:outputText id="savePasswordLocally" style="margin-bottom: 0.5em; font-size: 1.5em" class="fa fa-info-circle iconHelpBtn" />
+					<p:tooltip for="savePasswordLocally" showEvent="click" position="top" value="#{DcupMsg['info.savePasswordLocally']}" />
+				</h:panelGroup>
+				<p:selectBooleanCheckbox value="#{keePassView.rememberPassword}" />
 				</h:panelGrid>
 				<p />
 				<br />
