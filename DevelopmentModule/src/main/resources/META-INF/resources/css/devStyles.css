@@ -1,21 +1,5 @@
 @CHARSET "ISO-8859-1";
 
-.rowColorClassBlue {
-	background-color: rgb(221, 235, 247) !important;
-}	
-.rowColorClassRed {
-	background-color: rgb(247, 221, 221) !important;
-}	
-.rowColorClassGreen {
-	background-color: rgb(221, 247, 222) !important;
-}
-.rowColorClassGrey {
-	background-color: rgb(245, 245, 245) !important;
-}
-.rowColorClassGrey:hover {
-	background-color: #bae2f5 !important;
-}
-	
 .ui-button.infoButton {
 	background-color: #ad0000 !important;
 }
