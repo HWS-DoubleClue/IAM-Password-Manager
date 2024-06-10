@@ -454,7 +454,9 @@
 				<p:outputLabel value="#{DcupMsg['cloudSafe.downloadFileName']}: " />
 				<p:outputLabel id="folderName" value="#{cloudSafeView.folderName}" />
 				<p></p>
-			
+				<p:outputLabel for="folderPassword" value="#{DcupMsg['label.password']}" />
+			    <p:password id="folderPassword" style="margin-left: 1em" value="#{cloudSafeView.filePassword}" autocomplete="off" required="true" toggleMask="true" />
+				<p></p>
 				<p:commandButton id="openFolderbtn" icon="fa fa-folder-open-o" value="#{DcupMsg['button.open']}" ajax="true" action="#{cloudSafeView.openFolder}">
 				</p:commandButton>
 				<p></p>
