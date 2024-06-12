@@ -1252,8 +1252,13 @@ public class KeePassView extends AbstractPortalView {
 					return;
 				}
 				loadKeepassFile(content, password);
-				updatePsHistory((int) selectedFile.getUniqueKey().dbId, selectedFile.getUniqueKey().getName(), password, false,
+				if (rememberPassword) {
+					updatePsHistory((int) selectedFile.getUniqueKey().dbId, selectedFile.getUniqueKey().getName(), password, false,
 						selectedFile.getUniqueKey().getGroupName());
+				} else {
+					updatePsHistory((int) selectedFile.getUniqueKey().dbId, selectedFile.getUniqueKey().getName(), null, true,
+							selectedFile.getUniqueKey().getGroupName());
+				}
 				PrimeFaces.current().executeScript("PF('changeFilePasswordDialog').hide();");
 				JsfUtils.addInfoMessage(portalSessionBean.getResourceBundle().getString("info.passwordChange"));
 				PrimeFaces current = PrimeFaces.current();

@@ -23,6 +23,11 @@ public class ClientRestApiParams {
 	String responseBody;
 	int responseCode;	
 	
+	public ClientRestApiParams(String url) {
+		super();
+		this.url = url;
+	}
+	
 	public ClientRestApiParams(String url, String authHeader) {
 		super();
 		this.url = url;
@@ -39,6 +44,14 @@ public class ClientRestApiParams {
 		super();
 		this.url = url;
 		this.credentials = credentials;
+		this.requestTimeoutSeconds = requestTimeoutSeconds;
+	}
+	
+	public ClientRestApiParams(String url, UsernamePasswordCredentials credentials, boolean unsecure, int requestTimeoutSeconds) {
+		super();
+		this.url = url;
+		this.credentials = credentials;
+		this.unsecure = unsecure;
 		this.requestTimeoutSeconds = requestTimeoutSeconds;
 	}
 
