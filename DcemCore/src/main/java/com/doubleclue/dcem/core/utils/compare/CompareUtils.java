@@ -30,13 +30,18 @@ public class CompareUtils {
 	final static String FIN = ";  ";
 	final static String ARROW_RIGHT = " >  ";
 	final static String MODIFIED = "-MODIFIED-";
-
+	
 	public static String compareObjects(final Object oldObject, final Object newObject) throws CompareException {
+		
+		return compareObjects(oldObject, newObject, false);
+	}
+
+	public static String compareObjects(final Object oldObject, final Object newObject, boolean defaultDeepCompare) throws CompareException {
 		if (oldObject == null && newObject == null) {
 			return "";
 		}
 		StringBuffer stringBuffer = new StringBuffer();
-		Object comapreObject = compare(oldObject, newObject, stringBuffer);
+		Object comapreObject = compare(oldObject, newObject, stringBuffer, defaultDeepCompare);
 		if (stringBuffer.isEmpty() == false) {
 			return "[" + comapreObject.toString() + "] = " + stringBuffer.toString();
 		}
@@ -53,7 +58,7 @@ public class CompareUtils {
 	 * @throws NoSuchFieldException
 	 * @throws DcemException
 	 */
-	private static Object compare(final Object oldObject, final Object newObject, StringBuffer stringBuilder) throws CompareException {
+	private static Object compare(final Object oldObject, final Object newObject, StringBuffer stringBuilder, boolean defaultDeepCompare) throws CompareException {
 		Object compareObject = null;
 		try {
 			if (oldObject == null && newObject == null) {
@@ -71,7 +76,6 @@ public class CompareUtils {
 			}
 			Class<?> objectClass = compareObject.getClass();
 			boolean isEntity = objectClass.getSuperclass().equals(EntityInterface.class);
-			Field newField;
 			int modifiers;
 			DcemCompare compareAnnotation;
 			for (Field field : objectClass.getDeclaredFields()) {
@@ -86,16 +90,34 @@ public class CompareUtils {
 				if (field.getName().startsWith("$")) {
 					continue;
 				}
-				newField = objectClass.getDeclaredField(field.getName());
-				newField.setAccessible(true);
-				field.setAccessible(true);
+//				newField = objectClass.getDeclaredField(field.getName());
+		//		newField.setAccessible(true);
+		//		field.setAccessible(true);
 				if (isEntity == true && Persistence.getPersistenceUtil().isLoaded(compareObject, field.getName()) == false) {
 					continue;
 				}
 				if (field.getAnnotation(javax.persistence.Version.class) != null) {
 					continue;
 				}
-				Method getterMethod = DcemUtils.getGetterMethodFromString(field.getName(), objectClass);
+				Object oldValue = null;
+				Object newValue;
+				if (oneObject == true) {
+					if (Modifier.isPublic(modifiers)) {
+						newValue = field.get(compareObject);
+					} else {
+						Method getterMethod = DcemUtils.getGetterMethodFromString(field.getName(), objectClass);
+						newValue = getterMethod.invoke(compareObject);
+					}
+				} else {
+				if (Modifier.isPublic(modifiers)) {
+					oldValue = field.get(oldObject);
+					newValue = field.get(newObject);
+				} else {
+					Method getterMethod = DcemUtils.getGetterMethodFromString(field.getName(), objectClass);
+					oldValue = getterMethod.invoke(oldObject);
+					newValue = getterMethod.invoke(newObject);
+				}
+				}
 				Class<?> cls = field.getType();
 				if (cls.equals(String.class)) {
 					if (oneObject == true) {
@@ -107,12 +129,12 @@ public class CompareUtils {
 							if (compareAnnotation != null && compareAnnotation.withoutResult()) {
 								stringBuilder.append(MODIFIED);
 							} else {
-								stringBuilder.append(getterMethod.invoke(compareObject));
+								stringBuilder.append(newValue);
 							}
 						}
 					} else {
-						String oldString = (String) getterMethod.invoke(oldObject);
-						String newString = (String) getterMethod.invoke(newObject);
+						String oldString = (String) oldValue;
+						String newString = (String) newValue;
 						if (Objects.equals(oldString, newString) == false) {
 							stringBuilder.append(field.getName());
 							stringBuilder.append(": ");
@@ -132,10 +154,10 @@ public class CompareUtils {
 					}
 				} else if (cls.equals(Boolean.class) || cls.isEnum() == true || cls.isPrimitive() || cls.equals(Long.class) == true
 						|| cls.equals(Integer.class)) {
-					compareField(stringBuilder, field, getterMethod, oldObject, newObject);
+					compareField(stringBuilder, field, oldValue, newValue, oneObject);
 				} else if (cls.equals(Map.class)) {
-					Map<Object, Object> oldMap = (Map) getterMethod.invoke(oldObject);
-					Map<Object, Object> newMap = (Map) getterMethod.invoke(newObject);
+					Map<Object, Object> oldMap = (Map) oldValue;
+					Map<Object, Object> newMap = (Map) newValue;
 					for (Object object : oldMap.keySet()) {
 						if (oldMap.get(object).equals(newMap.get(object)) == false) {
 							stringBuilder.append(object.toString());
@@ -148,13 +170,29 @@ public class CompareUtils {
 					}
 				} else if (cls.equals(byte[].class)) {
 					continue;
+				} else if (cls.equals(ArrayList.class)) {
+					ArrayList<Object> oldList = (ArrayList) oldValue;
+					ArrayList<Object> newList = (ArrayList) newValue;
+					for (Object object : oldList) {
+						if (newList.contains(object) == false) {
+							stringBuilder.append(field.getName());
+							stringBuilder.append(":- ");
+							stringBuilder.append(object);
+						}
+					}
+					for (Object object : newList) {
+						if (oldList.contains(object) == false) {
+							stringBuilder.append(field.getName());
+							stringBuilder.append(":+ ");
+							stringBuilder.append(object);
+						}
+					}
+					continue;
 				} else {
-					if (compareAnnotation == null || compareAnnotation.deepCompare() == false) {
-						compareField(stringBuilder, field, getterMethod, oldObject, newObject);
+					if (defaultDeepCompare == false && (compareAnnotation == null || compareAnnotation.deepCompare() == false)) {
+						compareField(stringBuilder, field, oldValue, newValue, oneObject);
 					} else {
-						Object oldFieldObject = getterMethod.invoke(oldObject);
-						Object newFieldObject = getterMethod.invoke(newObject);
-						compare(oldFieldObject, newFieldObject, stringBuilder);
+						compare(oldValue, newValue, stringBuilder, defaultDeepCompare);
 					}
 				}
 			}
@@ -165,21 +203,13 @@ public class CompareUtils {
 		}
 	}
 
-	static private void compareField(StringBuffer stringBuilder, Field field, Method getterMethod, Object oldObject, Object newObject) throws Exception {
-		Object compareObject = null;
-		if (oldObject == null) {
-			compareObject = newObject;
-		} else if (newObject == null) {
-			compareObject = oldObject;
-		}
-		if (compareObject != null) {
+	static private void compareField(StringBuffer stringBuilder, Field field, Object oldValue, Object newValue, boolean oneObject ) throws Exception {
+		if (oneObject == true) {
 			stringBuilder.append(field.getName());
 			stringBuilder.append(": ");
-			stringBuilder.append(getterMethod.invoke(compareObject));
+			stringBuilder.append(newValue);
 			stringBuilder.append(FIN);
 		} else {
-			Object newValue = getterMethod.invoke(newObject);
-			Object oldValue = getterMethod.invoke(oldObject);
 			if (newValue instanceof Collection) {
 				compareColletions(field.getName(), (Collection) oldValue, (Collection) newValue, stringBuilder);
 			} else {
@@ -208,15 +238,15 @@ public class CompareUtils {
 					collectionSb.append("-(" + oldEntity + ") ");
 				} else {
 					foundOld.add(newEntity);
-					compare(oldEntity, newEntity, collectionSb);
+					compare(oldEntity, newEntity, collectionSb, false);
 				}
 			} else {
 				// standard Objet
 				if (newCollection.contains(oldEntity) == false) {
-					collectionSb.append("-(" + oldEntity+ ") ");
+					collectionSb.append("-(" + oldEntity + ") ");
 				}
 			}
-	//		System.out.println("CompareUtils.compareColletions() " + sb.toString());
+			// System.out.println("CompareUtils.compareColletions() " + sb.toString());
 		}
 		Iterator<?> newIterator = newCollection.iterator();
 		while (newIterator.hasNext()) {
@@ -224,7 +254,7 @@ public class CompareUtils {
 			if (foundOld.contains(newEntity)) {
 				continue;
 			}
-			collectionSb.append("+(" + newEntity + ") " );
+			collectionSb.append("+(" + newEntity + ") ");
 		}
 		if (collectionSb.isEmpty() == false) {
 			sb.append("[");
