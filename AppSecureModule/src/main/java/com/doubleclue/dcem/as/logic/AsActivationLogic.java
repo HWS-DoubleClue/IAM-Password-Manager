@@ -160,7 +160,7 @@ public class AsActivationLogic {
 		activationCode.setInfo(info);
 		if (validTill == null) {
 			validTill = LocalDateTime.now();
-			validTill.plusHours(getPreferences().getActivationCodeDefaultValidTill());
+			validTill = validTill.plusHours(getPreferences().getActivationCodeDefaultValidTill());
 		}
 		activationCode.setValidTill(validTill);
 		addUpdateActivationCode(activationCode, new DcemAction(DcemConstants.AS_MODULE_ID, null, DcemConstants.ACTION_ADD), sendBy, false, dcemTemplate);
