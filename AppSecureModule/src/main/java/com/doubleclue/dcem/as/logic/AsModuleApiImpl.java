@@ -209,7 +209,7 @@ public class AsModuleApiImpl implements AsModuleApi {
 		} else {
 			templateName = DcemConstants.EMAIL_ACTIVATION_SELF_CREATE_TENANT_TEMPLATE;
 		}
-		dcemTemplate = templateLogic.getTemplateByNameLanguage(DcemConstants.EMAIL_ACTIVATION_SELF_CREATE_TENANT_TEMPLATE, supportedLanguage);
+		dcemTemplate = templateLogic.getTemplateByNameLanguage(templateName, supportedLanguage);
 		if (dcemTemplate == null) {
 			throw new DcemException(DcemErrorCodes.NO_TEMPLATE_FOUND, templateName);
 		}
