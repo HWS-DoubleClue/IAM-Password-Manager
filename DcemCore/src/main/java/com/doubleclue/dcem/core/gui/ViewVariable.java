@@ -448,15 +448,12 @@ public class ViewVariable implements Serializable {
 
 	public LinkedList<SelectItem> getEnumItems() {
 		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
-		list.add(new SelectItem("", ""));
 		if (klass == null | klass.isEnum() == false) {
 			return list;
 		}
 		Object[] items = klass.getEnumConstants();
 		for (Object item : items) {
 			list.add(new SelectItem(Integer.toString(((Enum) item).ordinal()), ((Enum) item).name()));
-			// list.add(new SelectItem((((Enum)item).ordinal()),((Enum)item).name()));
-
 		}
 		return list;
 	}
