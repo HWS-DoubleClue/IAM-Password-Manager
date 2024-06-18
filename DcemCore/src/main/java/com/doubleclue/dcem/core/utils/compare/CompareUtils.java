@@ -12,6 +12,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.Persistence;
 
@@ -131,6 +134,7 @@ public class CompareUtils {
 							} else {
 								stringBuilder.append(newValue);
 							}
+							stringBuilder.append(FIN);
 						}
 					} else {
 						String oldString = (String) oldValue;
@@ -171,8 +175,8 @@ public class CompareUtils {
 				} else if (cls.equals(byte[].class)) {
 					continue;
 				} else if (cls.equals(ArrayList.class)) {
-					ArrayList<Object> oldList = (ArrayList) oldValue;
-					ArrayList<Object> newList = (ArrayList) newValue;
+					ArrayList<Object> oldList = oldValue == null ? new ArrayList<Object>() : (ArrayList) oldValue;
+					ArrayList<Object> newList = newValue == null ? new ArrayList<Object>() : (ArrayList) newValue;
 					for (Object object : oldList) {
 						if (newList.contains(object) == false) {
 							stringBuilder.append(field.getName());
