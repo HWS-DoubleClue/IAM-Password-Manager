@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
@@ -32,6 +33,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.logging.log4j.LogManager;
@@ -280,7 +282,8 @@ public class JpaSelectProducer<T> implements Serializable {
 					if (((String) filterProperty.getValue()).contains("%")) {
 						predicates.add(cb.like(expression, (String) filterProperty.getValue(), DcemConstants.JPA_ESCAPE_CHAR));
 					} else {
-						predicates.add(cb.like(cb.lower(expression), "%" +  ((String) filterProperty.getValue()).toLowerCase() + "%", DcemConstants.JPA_ESCAPE_CHAR));
+						predicates.add(
+								cb.like(cb.lower(expression), "%" + ((String) filterProperty.getValue()).toLowerCase() + "%", DcemConstants.JPA_ESCAPE_CHAR));
 					}
 					break;
 				case EQUALS:
@@ -289,23 +292,19 @@ public class JpaSelectProducer<T> implements Serializable {
 				case NOT_EQUALS:
 					predicates.add(cb.notLike(expression, (String) filterProperty.getValue(), DcemConstants.JPA_ESCAPE_CHAR));
 					break;
-
 				}
 			}
 				break;
 
 			case BOOLEAN:
-
 				if (filterProperty.filterOperator.equals(FilterOperator.IS_TRUE)) {
 					predicates.add(cb.equal(preFrom.<Boolean> get((SingularAttribute<Object, Boolean>) attribute), true));
 				} else if (filterProperty.filterOperator.equals(FilterOperator.IS_FALSE)) {
 					predicates.add(cb.equal(preFrom.<Boolean> get((SingularAttribute<Object, Boolean>) attribute), false));
 				}
 				break;
-
 			case EPOCH_DATE: {
 				// Expression<Long> expression = preFrom.<Long> get((SingularAttribute<Object, Long>) attribute);
-
 				Expression<Integer> expression = preFrom.get(attribute.getName() + "Milli");
 				if (filterProperty.getValue() == null) {
 					continue;
@@ -342,16 +341,17 @@ public class JpaSelectProducer<T> implements Serializable {
 
 				break;
 			}
-
 			case ENUM: {
-				Expression<Long> expression = preFrom.<Long> get((SingularAttribute<Object, Long>) attribute);
-				String value = (String) filterProperty.getValue();
-
-				if (value == null) {
+				Expression<Integer> expression = preFrom.<Integer> get((SingularAttribute<Object, Integer>) attribute);
+				String [] list = (String []) filterProperty.getValue();
+				if (list == null || list.length == 0) {
 					continue;
 				}
-				Number number = (Number) Integer.parseInt(value);
-				predicates.add(cb.equal(expression, number));
+				In<Integer> inClause = cb.in (expression);
+				for (int i = 0; i < list.length; i++) {
+					inClause.value((Integer) Integer.parseInt(list[i]));
+				}
+				predicates.add(inClause);
 				break;
 			}
 
@@ -359,7 +359,6 @@ public class JpaSelectProducer<T> implements Serializable {
 				if (filterProperty.getValue() == null) {
 					continue;
 				}
-
 				Expression<String> expression = preFrom.<String> get(attribute.getName());
 				predicates.add(cb.equal(expression, filterProperty.getValue()));
 				break;

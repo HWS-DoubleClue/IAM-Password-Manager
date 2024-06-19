@@ -86,9 +86,9 @@
 					</f:facet>
 
 					<f:facet name="filter">
-						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'ENUM'}" onchange="PF('viewTable').filter()">
+						<p:selectCheckboxMenu dynamic="true" filter="true"  style="vertical-align: middle;" rendered="#{item.variableType eq 'ENUM'}" onchange="PF('viewTable').filter()">
 							<f:selectItems value="#{item.enumItems}" />
-						</p:selectOneMenu>
+						</p:selectCheckboxMenu >
 						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'BOOLEAN'}" onchange="PF('viewTable').filter()">
 							<f:selectItems value="#{dcemApplication.booleanOperators}" />
 						</p:selectOneMenu>
