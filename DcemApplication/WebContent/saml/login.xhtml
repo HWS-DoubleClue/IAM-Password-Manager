@@ -155,11 +155,8 @@
 								<p></p>
 								<h:outputLabel for="password" value="#{DbMsg['sso.login.panel.password']} " rendered="#{samlLoginView.passwordRequired}" style="font-size:1.2em;" />
 								<br></br>
-								<h:panelGroup>
-									<p:password id="password" autocomplete="off" value="#{samlLoginView.password}" label="#{DbMsg['sso.login.panel.password']}"
+								<p:password id="password" autocomplete="off" value="#{samlLoginView.password}" label="#{DbMsg['sso.login.panel.password']}"
 										rendered="#{samlLoginView.passwordRequired}" style="width: 85%" maxlength="64" toggleMask="true" />
-
-								</h:panelGroup>
 
 								<br />
 								<br></br>
