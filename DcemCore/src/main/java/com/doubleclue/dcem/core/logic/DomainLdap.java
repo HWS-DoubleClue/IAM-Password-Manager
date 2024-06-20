@@ -294,29 +294,37 @@ public class DomainLdap implements DomainApi {
 	}
 	
 	private Attributes getAttributes(String dn, String[] attributes) throws DcemException {
-		return getAttributes(dn, attributes, "(objectclass=person)", SearchControls.OBJECT_SCOPE);
+		Map<String, Attributes> map = getAttributes(dn, attributes, "(objectclass=person)", SearchControls.OBJECT_SCOPE);
+		if (map.isEmpty()) {
+			return null;
+		}
+		return map.values().iterator().next();
+		
 	}
 	
-	public Attributes getAttributes(String dn, String[] attributes, String searchFilter, int scope) throws DcemException {
+	public Map<String, Attributes> getAttributes(String dn, String[] attributes, String searchFilter, int scope) throws DcemException {
 		SearchControls searchControls = new SearchControls();
 		searchControls.setSearchScope(scope);
 		searchControls.setReturningAttributes(attributes);
 		NamingEnumeration<SearchResult> results = null;
 		SearchResult searchResult = null;
+		Map<String, Attributes> map = new HashMap<String, Attributes>();
 		try {
 			results = getSearchAccount().search(dn, searchFilter, searchControls);
 			while (results.hasMore()) {
 				searchResult = results.nextElement();
-				return searchResult.getAttributes();
+				map.put(searchResult.getName(), searchResult.getAttributes());
 			}
+			return map;
 		} catch (CommunicationException ce) {
 			close();
 			try {
 				results = getSearchAccount().search(dn, searchFilter, searchControls);
 				while (results.hasMore()) {
 					searchResult = results.nextElement();
-					return searchResult.getAttributes();
+					map.put(searchResult.getName(), searchResult.getAttributes());
 				}
+				return map;
 			} catch (NamingException exp) {
 				throw new DcemException(DcemErrorCodes.LDAP_LOGIN_SEARCH_ACCOUNT_FAILED, "getAttributes.", exp);
 			} catch (DcemException e) {
@@ -335,7 +343,6 @@ public class DomainLdap implements DomainApi {
 				}
 			}
 		}
-		return null;
 	}
 
 	@Override
