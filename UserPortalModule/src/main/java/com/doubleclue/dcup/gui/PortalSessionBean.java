@@ -405,7 +405,7 @@ public class PortalSessionBean implements Serializable {
 		if (dcemUser == null) {
 			return false;
 		}
-		return (dcemUser.getDcemRole().getRank() > 0);
+		return operatorSessionBean.isLoggedIn() && operatorSessionBean.hasManagementRights();
 	}
 
 	public void changeCurrentIndex(int currentTab) {

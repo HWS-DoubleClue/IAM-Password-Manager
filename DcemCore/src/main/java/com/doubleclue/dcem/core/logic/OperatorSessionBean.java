@@ -264,7 +264,7 @@ public class OperatorSessionBean implements Serializable {
 			sb.append(role.getName());
 			haveAction.addAll(role.getActions());
 		}
-		if (haveAction.isEmpty() == true) {
+		if (hasManagementRights() == false) {
 			throw new DcemException(DcemErrorCodes.NO_MANAGEMENT_RIGHTS, user.getLoginId());
 		}
 		rolesText = sb.toString();
@@ -313,7 +313,10 @@ public class OperatorSessionBean implements Serializable {
 		haveAction.iterator().hasNext();
 		tenantEntity = TenantIdResolver.getCurrentTenant();
 		return true;
-
+	}
+	
+	public boolean hasManagementRights() {
+		return haveAction.isEmpty() == false;
 	}
 
 	public Locale getLocale() {
