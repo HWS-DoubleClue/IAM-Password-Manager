@@ -27,7 +27,10 @@ import com.doubleclue.dcem.as.policy.PolicyLogic;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.AuthApplication;
 import com.doubleclue.dcem.core.config.ConnectionServicesType;
+import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.JsfUtils;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.userportal.logic.UserPortalModule;
 import com.doubleclue.dcup.logic.DcupConstants;
@@ -74,6 +77,9 @@ public class UpLoginView extends LoginViewAbstract {
 
 	@Inject
 	PasswordSafeView passwordSafeView;
+
+	@Inject
+	OperatorSessionBean operatorSessionBean;
 
 	private String latestView;
 	private String flag;
@@ -142,6 +148,14 @@ public class UpLoginView extends LoginViewAbstract {
 	protected void finishLogin() {
 		try {
 			super.finishLogin();
+			try {
+				operatorSessionBean.loggedInOperator(dcemUser, null);
+			} catch (DcemException e) {
+				if (e.getErrorCode() != DcemErrorCodes.NO_MANAGEMENT_RIGHTS) {
+					throw e;
+				}
+			}
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("PortalUser login " + userLoginId + " from " + JsfUtils.getRemoteIpAddress());
 			}
