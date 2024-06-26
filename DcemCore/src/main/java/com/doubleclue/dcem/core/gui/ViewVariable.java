@@ -515,6 +515,9 @@ public class ViewVariable implements Serializable {
 	}
 	
 	public String getColumnStyle() {
+		if (dcemGui != null && dcemGui.style().isEmpty() == false) {
+			return dcemGui.style();
+		}
 		switch (this.variableType) {
 			case BOOLEAN:
 			case NUMBER:
