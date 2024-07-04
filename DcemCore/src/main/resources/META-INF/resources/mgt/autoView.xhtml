@@ -75,7 +75,7 @@
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
 
 				<p:columns id="columns" value="#{autoView.visibleVariables}" var="item" columnIndexVar="colIndex" filterBy="#{item.id}"
-					style="text-align: left; word-break: break;  white-space: normal; " visible="#{item.visible}" field="#{item.id}">
+					 style="#{item.columnStyle}" visible="#{item.visible}" field="#{item.id}">
 
 					<f:facet name="header">
 						<p:outputLabel value="#{item.displayName}" rendered="#{item.variableType ne 'IMAGE'}" />
@@ -86,7 +86,7 @@
 					</f:facet>
 
 					<f:facet name="filter">
-						<p:selectCheckboxMenu dynamic="true" filter="true"  style="vertical-align: middle;" rendered="#{item.variableType eq 'ENUM'}" onchange="PF('viewTable').filter()">
+						<p:selectCheckboxMenu dynamic="true" multiple="true" filter="true" style="vertical-align: middle;" scrollHeight="250" rendered="#{item.variableType eq 'ENUM'}" onchange="PF('viewTable').filter()">
 							<f:selectItems value="#{item.enumItems}" />
 						</p:selectCheckboxMenu >
 						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'BOOLEAN'}" onchange="PF('viewTable').filter()">

@@ -513,6 +513,19 @@ public class ViewVariable implements Serializable {
 	public void setListClass(Class<?> listClass) {
 		this.listClass = listClass;
 	}
+	
+	public String getColumnStyle() {
+		if (dcemGui != null && dcemGui.style().isEmpty() == false) {
+			return dcemGui.style();
+		}
+		switch (this.variableType) {
+			case BOOLEAN:
+			case NUMBER:
+				return "text-align: center;";
+			default:
+				return "text-align: left; word-break: break;  white-space: normal";
+		}
+	}
 
 	private OperatorSessionBean getOperatorSessionBean() {
 		if (operatorSessionBean == null) {
