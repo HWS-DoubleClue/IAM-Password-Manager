@@ -3,6 +3,8 @@ package com.doubleclue.dcem.core.utils.process;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,16 +27,19 @@ public class ProcessUtil {
 //		System.exit(0);
 //	}
 
-	public static ProcessResult executePoweShell(String resourcePath, String [] parameters, int timeoutSeconds) throws Exception {
+	public static ProcessResult executePowerShell(String resourcePath, String invoke,  String [] parameters, int timeoutSeconds) throws Exception {
 		File tempFile = copyResourceToTempFile(resourcePath, ".ps1");
-		String[] commandList = new String [parameters.length + 3];
-		commandList[0] = "powershell.exe";
-		commandList[1] = "-File";
-		commandList[2] = tempFile.getAbsolutePath();
-		for (int i = 0; i < parameters.length; i++) {
-			commandList[i+3] = parameters[i];
+		List<String> commandList = new ArrayList <> ();
+		commandList.add("powershell.exe");
+		if (invoke != null) {
+			commandList.add(invoke);
 		}
-		ProcessResult processResult = executeProcess(commandList, timeoutSeconds);
+		commandList.add("-File");
+		commandList.add(tempFile.getAbsolutePath());
+		for (int i = 0; i < parameters.length; i++) {
+			commandList.add(parameters[i]);
+		}
+		ProcessResult processResult = executeProcess(commandList.toArray(new String[0]), timeoutSeconds);
 		tempFile.delete();
 		return processResult;
 	}
