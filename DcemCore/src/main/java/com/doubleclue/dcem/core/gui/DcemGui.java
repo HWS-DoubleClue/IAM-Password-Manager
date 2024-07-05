@@ -37,4 +37,6 @@ public @interface DcemGui {
 	public boolean masterOnly() default false;
 	public VariableType variableType() default VariableType.UNKNOWN;
 	public boolean restricted() default false;
+	public boolean sortEnumerations() default false; 
+	public String linkUrl() default "";
 }
