@@ -873,13 +873,6 @@ public class UserLogic {
 	}
 
 	public DcemUserExtension getDcemUserExtension(DcemUser dcemUser) {
-		StackTraceElement[] steArray = Thread.currentThread().getStackTrace();
-		System.out.println(dcemUser.getAccountName());
-		for (StackTraceElement ste : steArray) {
-			if (ste.getClassName().startsWith("com.doubleclue")) {
-				System.out.println(ste);
-			}
-		}
 		return em.find(DcemUserExtension.class, dcemUser.getId());
 	}
 
