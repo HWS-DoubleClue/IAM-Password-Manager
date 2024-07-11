@@ -243,6 +243,27 @@ public class EntityManagerProducer {
 			}
 		}
 
+		String[] entityNames = statistics.getEntityNames();
+		for (String entity : entityNames) {
+			String name = "ENTITY: -" + entity;
+			org.hibernate.stat.EntityStatistics entityStatistics = statistics.getEntityStatistics(entity);
+			if (entityStatistics.getLoadCount() != 0) {
+				statisticsRecord = dbStatisticMap.get(name);
+				if (statisticsRecord == null) {
+					statisticsRecord = new StatisticCounter();
+					dbStatisticMap.put(name, statisticsRecord);
+				}
+				statisticsRecord.count = entityStatistics.getLoadCount();
+				if (entityStatistics.getCacheRegionName() != null) {
+					statisticsRecord.aveTime = entityStatistics.getCacheHitCount();
+					statisticsRecord.longestTime = entityStatistics.getCacheMissCount();
+				} else {
+					statisticsRecord.aveTime = -1;
+					statisticsRecord.longestTime = -1;
+				}
+			}
+		}
+
 		String[] queries = statistics.getQueries();
 		for (String query : queries) {
 			String queryLow = query.toLowerCase();
@@ -250,7 +271,7 @@ public class EntityManagerProducer {
 			if (startName >= 0) {
 				startName += QUERY_FROM.length();
 				int endName = queryLow.indexOf(' ', startName + QUERY_FROM.length());
-				String name = "DB-" + query.substring(startName, endName);
+				String name = "QUERY: " + query.substring(startName, endName);
 				org.hibernate.stat.QueryStatistics queryStatistics = statistics.getQueryStatistics(query);
 				statisticsRecord = dbStatisticMap.get(name);
 				if (statisticsRecord == null) {
