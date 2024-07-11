@@ -873,6 +873,13 @@ public class UserLogic {
 	}
 
 	public DcemUserExtension getDcemUserExtension(DcemUser dcemUser) {
+		StackTraceElement[] steArray = Thread.currentThread().getStackTrace();
+		System.out.println(dcemUser.getAccountName());
+		for (StackTraceElement ste : steArray) {
+			if (ste.getClassName().startsWith("com.doubleclue")) {
+				System.out.println(ste);
+			}
+		}
 		return em.find(DcemUserExtension.class, dcemUser.getId());
 	}
 
@@ -922,7 +929,7 @@ public class UserLogic {
 
 	public TimeZone getTimeZone(DcemUser dcemUser) {
 		TimeZone timeZone;
-		DcemUserExtension dcemUserExt = getDcemUserExtension(dcemUser);
+		DcemUserExtension dcemUserExt = dcemUser.getDcemUserExt();
 		if (dcemUserExt != null && dcemUserExt.getTimezone() != null) {
 			timeZone = dcemUserExt.getTimezone();
 		} else {
