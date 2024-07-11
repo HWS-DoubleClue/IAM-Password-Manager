@@ -14,19 +14,14 @@ import com.doubleclue.utils.KaraUtils;
 
 public class ProcessUtil {
 
-//	public static void main(String[] args) {
-//		String [] parameters = new String [] {"vc01-nbg-w01.adidas.noris.de", "prdsdcapp43345"};
-//		try {
-//			ProcessResult processResult = executePoweShell("/com/doubleclue/dcem/lsc/powershell/Vcenter.ps1" , parameters, 30);
-//			System.out.println("PowerShellUtil.main() " +  processResult);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		System.out.println("PowerShellUtil.main() READY");
-//		System.exit(0);
-//	}
-
+	/**
+	* @param resourcePath  This is the path for a Java resource path. using '/' as package seperator
+	* @param invoke       Set this to null, if script shall run on same machine. Else build up the invoke command
+	* @param parameters    parameters for the ps script
+	* @param timeoutSeconds      If process will take longer, a TimeoutException will be thrown
+	* @return  ProcessResult
+	* @throws Exception
+	*/
 	public static ProcessResult executePowerShell(String resourcePath, String invoke,  String [] parameters, int timeoutSeconds) throws Exception {
 		File tempFile = copyResourceToTempFile(resourcePath, ".ps1");
 		List<String> commandList = new ArrayList <> ();
@@ -44,6 +39,12 @@ public class ProcessUtil {
 		return processResult;
 	}
 
+	/**
+	* @param commandList command Name and parameters
+	* @param timeoutSeconds If process will take longer a TimeoutException will be thrown
+	* @return  ProcessResult
+	* @throws Exception
+	*/
 	public static ProcessResult executeProcess(String[] commandList, int timeoutSeconds) throws Exception {
 		ProcessBuilder processBuilder = new ProcessBuilder(commandList);
 		processBuilder.redirectErrorStream(true);

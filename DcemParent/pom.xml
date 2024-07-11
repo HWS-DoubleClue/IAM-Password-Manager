@@ -57,7 +57,6 @@
 		<jaxwsrt.version>2.3.5</jaxwsrt.version>
 		<jaxwstools.version>2.2.6</jaxwstools.version>
 		<jspapi.version>2.2.1-b03</jspapi.version>
-		<mssql-driver.version>4.0</mssql-driver.version>
 		<thrift.version>0.13.0</thrift.version>
 		<jersey.version>2.41</jersey.version>
 		<tomcat.version>9.0.86</tomcat.version>
@@ -969,7 +968,7 @@
 			<dependency>
 				<groupId>com.microsoft.sqlserver</groupId>
 				<artifactId>mssql-jdbc</artifactId>
-				<version>12.2.0.jre8</version>
+				<version>12.7.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.microsoft.sqlserver</groupId>
