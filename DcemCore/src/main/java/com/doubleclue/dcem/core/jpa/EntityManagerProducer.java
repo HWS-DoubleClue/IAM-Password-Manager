@@ -247,7 +247,7 @@ public class EntityManagerProducer {
 		for (String entity : entityNames) {
 			String name = "ENTITY: -" + entity;
 			org.hibernate.stat.EntityStatistics entityStatistics = statistics.getEntityStatistics(entity);
-			if (entityStatistics.getLoadCount() != 0) {
+			if (entityStatistics.getLoadCount() > 0) {
 				statisticsRecord = dbStatisticMap.get(name);
 				if (statisticsRecord == null) {
 					statisticsRecord = new StatisticCounter();
@@ -273,14 +273,16 @@ public class EntityManagerProducer {
 				int endName = queryLow.indexOf(' ', startName + QUERY_FROM.length());
 				String name = "QUERY: " + query.substring(startName, endName);
 				org.hibernate.stat.QueryStatistics queryStatistics = statistics.getQueryStatistics(query);
-				statisticsRecord = dbStatisticMap.get(name);
-				if (statisticsRecord == null) {
-					statisticsRecord = new StatisticCounter();
-					dbStatisticMap.put(name, statisticsRecord);
+				if (queryStatistics.getExecutionCount() > 0) {
+					statisticsRecord = dbStatisticMap.get(name);
+					if (statisticsRecord == null) {
+						statisticsRecord = new StatisticCounter();
+						dbStatisticMap.put(name, statisticsRecord);
+					}
+					statisticsRecord.count = queryStatistics.getExecutionCount();
+					statisticsRecord.aveTime = queryStatistics.getExecutionAvgTime();
+					statisticsRecord.longestTime = queryStatistics.getExecutionMaxTime();
 				}
-				statisticsRecord.count = queryStatistics.getExecutionCount();
-				statisticsRecord.aveTime = queryStatistics.getExecutionAvgTime();
-				statisticsRecord.longestTime = queryStatistics.getExecutionMaxTime();
 			}
 		}
 		return dbStatisticMap;
