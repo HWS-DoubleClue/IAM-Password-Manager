@@ -28,9 +28,10 @@ import com.doubleclue.dcem.core.utils.compare.DcemCompare;
  */
 @Entity
 @Table(name = "core_userext")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NamedQueries({
 		@NamedQuery(name = DcemUserExtension.DELETE_USER_EXTENSION, query = "DELETE FROM DcemUserExtension ex where ex.id = ?1"), })
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+
 public class DcemUserExtension extends EntityInterface implements Serializable {
 
 	public final static String DELETE_USER_EXTENSION = "DcemUserExtension.deleteUserExtension";

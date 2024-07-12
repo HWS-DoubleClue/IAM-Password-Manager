@@ -48,7 +48,6 @@ import com.doubleclue.dcem.core.jpa.DbFactoryProducer;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
-import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.compare.CompareException;
 import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
