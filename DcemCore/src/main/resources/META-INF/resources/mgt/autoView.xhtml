@@ -86,7 +86,7 @@
 					</f:facet>
 
 					<f:facet name="filter">
-						<p:selectCheckboxMenu dynamic="true" multiple="true" filter="true" style="vertical-align: middle;" scrollHeight="250" rendered="#{item.variableType eq 'ENUM'}" onchange="PF('viewTable').filter()">
+						<p:selectCheckboxMenu dynamic="true" multiple="true" filterMatchMode="contains" filter="true" style="vertical-align: middle;" scrollHeight="250" rendered="#{item.variableType eq 'ENUM'}" onchange="PF('viewTable').filter()">
 							<f:selectItems value="#{item.enumItems}" />
 						</p:selectCheckboxMenu >
 						<p:selectOneMenu style="vertical-align: middle;" rendered="#{item.variableType eq 'BOOLEAN'}" onchange="PF('viewTable').filter()">
@@ -100,7 +100,8 @@
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
 						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />
 					</p:avatar>
-					<h:outputText rendered="#{item.variableType ne 'IMAGE'}" id="row2" style="#{item.style}" value="#{item.getRecordData(record)}" />
+					<p:link href="#{item.getLinkUrl(record)}" rendered="#{item.isLink()}" value="#{item.getRecordData(record)}" target="_blank" />
+					<h:outputText rendered="#{item.isText()}" id="row2" style="#{item.style}" value="#{item.getRecordData(record)}" />
 					<h:panelGroup rendered="#{item.variableType eq 'RATING'}">
 						<br></br>
 						<ui:repeat var="val" value="#{item.getRatings(record)}">

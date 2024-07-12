@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -777,6 +778,13 @@ public class DcemUser extends EntityInterface implements Serializable, Cloneable
 
 	public void setDcemLdapAttributes(DcemLdapAttributes dcemLdapAttributes) {
 		this.dcemLdapAttributes = dcemLdapAttributes;
+	}
+	
+	public TimeZone getTimeZone () {
+		if (dcemUserExt == null || dcemUserExt.getTimezone() == null) {
+			return null;
+		}
+		return dcemUserExt.getTimezone();
 	}
 
 	

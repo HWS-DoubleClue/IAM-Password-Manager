@@ -48,7 +48,6 @@ import com.doubleclue.dcem.core.jpa.DbFactoryProducer;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.licence.LicenceLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
-import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.compare.CompareException;
 import com.doubleclue.dcem.core.utils.compare.CompareUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
@@ -872,9 +871,9 @@ public class UserLogic {
 		return query.executeUpdate();
 	}
 
-	public DcemUserExtension getDcemUserExtension(DcemUser dcemUser) {
-		return em.find(DcemUserExtension.class, dcemUser.getId());
-	}
+//	public DcemUserExtension getDcemUserExtension(DcemUser dcemUser) {
+//		return em.find(DcemUserExtension.class, dcemUser.getId());
+//	}
 
 	public DcemUser getSuperAdmin() {
 		return adminModule.getAdminTenantData().getSuperAdmin();
@@ -921,18 +920,15 @@ public class UserLogic {
 	}
 
 	public TimeZone getTimeZone(DcemUser dcemUser) {
-		TimeZone timeZone;
-		DcemUserExtension dcemUserExt = getDcemUserExtension(dcemUser);
-		if (dcemUserExt != null && dcemUserExt.getTimezone() != null) {
-			timeZone = dcemUserExt.getTimezone();
+		TimeZone timeZone = dcemUser.getTimeZone();
+		if (timeZone != null) {
+			return timeZone;
 		} else {
-			timeZone = adminModule.getTimezone();
+			return adminModule.getTimezone();
 		}
-		return timeZone;
 	}
 
-	public LocalDateTime getUserZonedTime(LocalDateTime localDateTime, DcemUser dcemUser) {
-		TimeZone timeZone = getTimeZone(dcemUser);
+	public LocalDateTime getUserZonedTime(LocalDateTime localDateTime, TimeZone timeZone) {
 		if (TimeZone.getDefault().equals(timeZone)) {
 			return localDateTime;
 		}
@@ -940,8 +936,7 @@ public class UserLogic {
 		return zonedDateTime.withZoneSameInstant(timeZone.toZoneId()).toLocalDateTime();
 	}
 
-	public LocalDateTime getDefaultZonedTime(LocalDateTime localDateTime, DcemUser dcemUser) {
-		TimeZone timeZone = getTimeZone(dcemUser);
+	public LocalDateTime getDefaultZonedTime(LocalDateTime localDateTime, TimeZone timeZone) {
 		if (TimeZone.getDefault().equals(timeZone)) {
 			return localDateTime;
 		}
@@ -982,6 +977,10 @@ public class UserLogic {
 		if (changeInfo != null && changeInfo.isEmpty() == false) {
 			auditingLogic.addAudit(new DcemAction(userSubject, DcemConstants.ACTION_EDIT), dcemUser, changeInfo);
 		}
+	}
+
+	public DcemUserExtension getDcemUserExtension(DcemUser clonedDcemUser) {
+		return em.find(DcemUserExtension.class, clonedDcemUser.getId());
 	}
 
 }

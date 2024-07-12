@@ -10,6 +10,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -455,6 +458,14 @@ public class ViewVariable implements Serializable {
 		for (Object item : items) {
 			list.add(new SelectItem(Integer.toString(((Enum) item).ordinal()), ((Enum) item).name()));
 		}
+		if (dcemGui.sortEnumerations() == true) {
+			Collections.sort(list, new Comparator<SelectItem>() {
+			    @Override
+			    public int compare(SelectItem o1, SelectItem o2) {
+			        return o1.getLabel().compareTo(o2.getLabel());
+			    }
+			});
+		}
 		return list;
 	}
 
@@ -525,6 +536,18 @@ public class ViewVariable implements Serializable {
 			default:
 				return "text-align: left; word-break: break;  white-space: normal";
 		}
+	} 
+	
+	public boolean isLink() {
+		return dcemGui.linkUrl().isEmpty() == false;
+	}
+	
+	public boolean isText() {
+		return variableType != VariableType.IMAGE && isLink() == false;
+	}
+	
+	public String getLinkUrl(Object value) {
+		return dcemGui.linkUrl().replaceAll("#\\{value}", getRecordData(value));
 	}
 
 	private OperatorSessionBean getOperatorSessionBean() {

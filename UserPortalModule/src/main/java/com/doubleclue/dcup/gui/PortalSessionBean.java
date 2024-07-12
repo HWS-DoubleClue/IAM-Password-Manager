@@ -448,12 +448,12 @@ public class PortalSessionBean implements Serializable {
 		this.latestView = latestView;
 	}
 	
-	public LocalDateTime getUserZonedTime(LocalDateTime value) {
-		return userLogic.getUserZonedTime(value, dcemUser);
-	}
-	
-	public LocalDateTime getDefaultZonedTime(LocalDateTime value) {
-		return userLogic.getDefaultZonedTime(value, dcemUser);
-	}
+//	public LocalDateTime getUserZonedTime(LocalDateTime value) {
+//		return userLogic.getUserZonedTime(value, dcemUser.getTimezone());
+//	}
+//	
+//	public LocalDateTime getDefaultZonedTime(LocalDateTime value) {
+//		return userLogic.getDefaultZonedTime(value, dcemUser.getTimezone());
+//	}
 	
 }
