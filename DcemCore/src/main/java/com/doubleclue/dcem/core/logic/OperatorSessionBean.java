@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -96,6 +97,8 @@ public class OperatorSessionBean implements Serializable {
 	Map<String, String> userSettings;
 		
 	byte[] image = null;
+	
+	TimeZone myTimeZone;
 		
 
 	/**
@@ -306,6 +309,7 @@ public class OperatorSessionBean implements Serializable {
 			return false;
 		}
 		dcemUser = authenticateResponse.getDcemUser();
+		myTimeZone = userLogic.getTimeZone(dcemUser);
 		userLogic.setUserLogin(dcemUser);
 		password = null;
 		loggedIn = true;
@@ -341,6 +345,7 @@ public class OperatorSessionBean implements Serializable {
 
 	public void setDcemUser(DcemUser dcemUser) {
 		this.dcemUser = dcemUser;
+		myTimeZone = userLogic.getTimeZone(dcemUser);;
 		loadPhotoImage();
 	} 
 
@@ -461,16 +466,17 @@ public class OperatorSessionBean implements Serializable {
 	}
 
 	public LocalDateTime getUserZonedTime(LocalDateTime value) {
-		return userLogic.getUserZonedTime(value, dcemUser);
+		return userLogic.getUserZonedTime(value, myTimeZone);
 	}
 	
 	public LocalDateTime getDefaultZonedTime(LocalDateTime value) {
-		return userLogic.getDefaultZonedTime(value, dcemUser);
+		return userLogic.getDefaultZonedTime(value, myTimeZone);
 	}
 
 	public DcemUser refeshUser() {
 		dcemUser = userLogic.getUser(dcemUser.getId());
 		dcemUser.getDcemUserExt();
+		myTimeZone = userLogic.getTimeZone(dcemUser);
 		return dcemUser;
 	}
 	
