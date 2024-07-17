@@ -95,11 +95,10 @@ public class OperatorSessionBean implements Serializable {
 	List<DcemGroup> userGroups;
 
 	Map<String, String> userSettings;
-		
+
 	byte[] image = null;
-	
+
 	TimeZone myTimeZone;
-		
 
 	/**
 	 * 
@@ -134,7 +133,7 @@ public class OperatorSessionBean implements Serializable {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Check if at least one of the permission there
 	 * 
@@ -157,7 +156,7 @@ public class OperatorSessionBean implements Serializable {
 		DcemAction dcemActionSubjectManager = new DcemAction(dcemAction.getModuleId(), dcemAction.getSubject(), DcemConstants.ACTION_MANAGE);
 		DcemAction dcemActionModuleManager = new DcemAction(dcemAction.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
 		try {
-			if (haveAction.contains(dcemAction) || haveAction.contains(dcemActionSubjectManager) || haveAction.contains(dcemActionModuleManager) ) {
+			if (haveAction.contains(dcemAction) || haveAction.contains(dcemActionSubjectManager) || haveAction.contains(dcemActionModuleManager)) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -166,7 +165,6 @@ public class OperatorSessionBean implements Serializable {
 		return false;
 	}
 
-	
 	public DcemAction getPermission(DcemAction dcemAction) {
 		if (dcemUser == null || dcemAction == null) {
 			return null;
@@ -189,18 +187,20 @@ public class OperatorSessionBean implements Serializable {
 	}
 
 	public boolean isUserLoggedInAndEnabled(HttpServletRequest httpServletRequest) {
-		TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession().getAttribute(DcemConstants.URL_TENANT_SWITCH);
-		if (tenantEntity != null) {
-			try {
-				dcemUser = userLogic.getDistinctUser(DcemConstants.SUPER_ADMIN_OPERATOR);
-				userLogic.enableUserWoAuditing(dcemUser);
-				dcemUser.setDisabled(false);
-				loggedInOperator(dcemUser, httpServletRequest);
-				masterAdminGuest = true;
-				httpServletRequest.getSession().removeAttribute(DcemConstants.URL_TENANT_SWITCH);
-			} catch (DcemException e) {
-				logger.warn("Couldn't swithc to Tenant", e);
-				return false;
+		if (httpServletRequest != null) {
+			TenantEntity tenantEntity = (TenantEntity) httpServletRequest.getSession().getAttribute(DcemConstants.URL_TENANT_SWITCH);
+			if (tenantEntity != null) {
+				try {
+					dcemUser = userLogic.getDistinctUser(DcemConstants.SUPER_ADMIN_OPERATOR);
+					userLogic.enableUserWoAuditing(dcemUser);
+					dcemUser.setDisabled(false);
+					loggedInOperator(dcemUser, httpServletRequest);
+					masterAdminGuest = true;
+					httpServletRequest.getSession().removeAttribute(DcemConstants.URL_TENANT_SWITCH);
+				} catch (DcemException e) {
+					logger.warn("Couldn't swithc to Tenant", e);
+					return false;
+				}
 			}
 		}
 
@@ -225,7 +225,6 @@ public class OperatorSessionBean implements Serializable {
 		this.loggedIn = loggedIn;
 	}
 
-	
 	// private void setMaxInactiveInterval(HttpServletRequest httpServletRequest) {
 	// // String servletPath = httpServletRequest.getServletPath().toLowerCase();
 	//
@@ -318,7 +317,7 @@ public class OperatorSessionBean implements Serializable {
 		tenantEntity = TenantIdResolver.getCurrentTenant();
 		return true;
 	}
-	
+
 	public boolean hasManagementRights() {
 		return haveAction.isEmpty() == false;
 	}
@@ -345,9 +344,10 @@ public class OperatorSessionBean implements Serializable {
 
 	public void setDcemUser(DcemUser dcemUser) {
 		this.dcemUser = dcemUser;
-		myTimeZone = userLogic.getTimeZone(dcemUser);;
+		myTimeZone = userLogic.getTimeZone(dcemUser);
+		;
 		loadPhotoImage();
-	} 
+	}
 
 	public String getDateTimeShortPattern() {
 		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, getLocale());
@@ -358,7 +358,7 @@ public class OperatorSessionBean implements Serializable {
 		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, getLocale());
 		return ((SimpleDateFormat) formatter).toPattern();
 	}
-	
+
 	public String getDatePattern() {
 		DateFormat formatter = DateFormat.getDateInstance(DateFormat.MEDIUM, getLocale());
 		return ((SimpleDateFormat) formatter).toPattern();
@@ -388,8 +388,8 @@ public class OperatorSessionBean implements Serializable {
 			return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
 		}
 	}
-		
-	private void loadPhotoImage () {
+
+	private void loadPhotoImage() {
 		DcemUserExtension dcemUserExtension = dcemUser.getDcemUserExt();
 		if (dcemUserExtension != null) {
 			try {
@@ -450,17 +450,17 @@ public class OperatorSessionBean implements Serializable {
 	public Map<String, String> getUserSettings() {
 		return userSettings;
 	}
-	
+
 	public String getLocalStorageUserSetting(String key) {
 		return userSettings.get(key);
 	}
-	
-	public void removeLocalStorageUserSetting (String key) throws Exception {
+
+	public void removeLocalStorageUserSetting(String key) throws Exception {
 		userSettings.remove(key);
 		PrimeFaces.current().executeScript("localStorage.setItem('userSettings', '" + getUserSettingsToString() + "')");
 	}
-	
-	public void setLocalStorageUserSetting (String key, String value) throws Exception {
+
+	public void setLocalStorageUserSetting(String key, String value) throws Exception {
 		userSettings.put(key, value);
 		PrimeFaces.current().executeScript("localStorage.setItem('userSettings', '" + getUserSettingsToString() + "')");
 	}
@@ -468,7 +468,7 @@ public class OperatorSessionBean implements Serializable {
 	public LocalDateTime getUserZonedTime(LocalDateTime value) {
 		return userLogic.getUserZonedTime(value, myTimeZone);
 	}
-	
+
 	public LocalDateTime getDefaultZonedTime(LocalDateTime value) {
 		return userLogic.getDefaultZonedTime(value, myTimeZone);
 	}
@@ -479,6 +479,5 @@ public class OperatorSessionBean implements Serializable {
 		myTimeZone = userLogic.getTimeZone(dcemUser);
 		return dcemUser;
 	}
-	
-	
+
 }

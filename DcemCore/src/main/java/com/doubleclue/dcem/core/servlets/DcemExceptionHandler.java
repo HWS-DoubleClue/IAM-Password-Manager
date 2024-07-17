@@ -49,15 +49,16 @@ public class DcemExceptionHandler extends HttpServlet {
 		if (servletName == null) {
 			servletName = "Unknown";
 		}
-		if (servletName.equals("WebDAV")) {
-			return;
-		}
+		
 		request.getAttributeNames();
 		String requestUri = (String) request.getAttribute("javax.servlet.error.request_uri");
 		if (requestUri == null) {
 			requestUri = "Unknown";
 		}
 		logger.warn("DcemExceptionHandler: Status=" + statusCode + " URI: " + uri + ", Servlet=" + servletName + ", Msg=" + msg, throwable);
+		if (servletName.equals("jersey")) {
+			return;
+		}
 		String error = "Unexpected ERROR";
 		switch (statusCode) {
 		case 500:
