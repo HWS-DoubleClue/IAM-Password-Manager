@@ -9,16 +9,18 @@ import java.util.concurrent.Callable;
 public class ProcessMonitoring implements Callable<ProcessResult> {
 
 	Process process;
+	String encoding;
 	
-	public ProcessMonitoring(Process process) {
+	public ProcessMonitoring(Process process, String encoding) {
 		super();
 		this.process = process;
+		this.encoding = encoding;
 	}
 
 	@Override
 	public ProcessResult call() throws Exception {
 		StringBuffer stringBuffer = new StringBuffer();
-		BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream(), encoding));
 		String line;
 		try {
 			while ((line = in.readLine()) != null) {

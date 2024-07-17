@@ -131,6 +131,7 @@
 			<param-value>
                 com.doubleclue.dcem.as.restapi,
                 com.doubleclue.dcem.shifts.restapi,
+                com.doubleclue.dcem.recruiting.restapi,
                 com.doubleclue.dcem.core.jersey
             </param-value>
 		</init-param>
