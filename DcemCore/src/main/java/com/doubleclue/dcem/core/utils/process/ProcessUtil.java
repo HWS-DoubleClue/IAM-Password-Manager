@@ -61,7 +61,7 @@ public class ProcessUtil {
 		Future<ProcessResult> future = scheduler.submit(processMonitoring);
 		ProcessResult processResult = future.get(timeoutSeconds, TimeUnit.SECONDS);
 		scheduler.shutdown();
-		// TODO: delete output temp file
+		outputFile.delete();
 		return processResult;
 	}
 
