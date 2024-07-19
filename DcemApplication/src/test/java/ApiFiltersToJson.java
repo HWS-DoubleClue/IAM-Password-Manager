@@ -7,6 +7,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 
 import com.doubleclue.dcem.core.jpa.ApiFilterItem;
 import com.doubleclue.dcem.core.jpa.ApiFilterItem.OperatorEnum;
+import com.doubleclue.dcem.core.jpa.ApiFilterItem.SortOrderEnum;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +17,7 @@ public class ApiFiltersToJson {
 	
 	public static void main (String [] args) {
 		List<ApiFilterItem> filters = new ArrayList<>();
-		ApiFilterItem apiFilterItem = new ApiFilterItem ("title", "blabla", null,  OperatorEnum.LIKE);
+		ApiFilterItem apiFilterItem = new ApiFilterItem ("title", "blabla", SortOrderEnum.UNSORTED,  OperatorEnum.LIKE);
 		filters.add(apiFilterItem);
 		
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -33,10 +34,7 @@ public class ApiFiltersToJson {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
-		
-		
-		
 	}
+
 
 }
