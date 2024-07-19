@@ -3,6 +3,7 @@ package com.doubleclue.dcem.core.jpa;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Deque;
+import java.util.Set;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -13,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -104,6 +106,9 @@ public class DcemTransactionInterceptor {
 							+ transaction.hashCode() + ", transactionActive: " + transaction.isActive() + ", firstInterceptorInChain: "
 							+ firstInterceptorInChain + ", methodStack :" + methodStack);
 				}
+			}
+			if (exp instanceof javax.validation.ConstraintViolationException) {
+				throw new DcemException(DcemErrorCodes.VALIDATION_CONSTRAIN_VIOLATION, exp.getMessage(), exp);
 			}
 			if (exp.getCause() != null) {
 				if (exp.getCause() instanceof javax.validation.ConstraintViolationException) {

@@ -16,7 +16,7 @@ public class ApiFiltersToJson {
 	
 	public static void main (String [] args) {
 		List<ApiFilterItem> filters = new ArrayList<>();
-		ApiFilterItem apiFilterItem = new ApiFilterItem ("title", "blabla", OperatorEnum.LIKE);
+		ApiFilterItem apiFilterItem = new ApiFilterItem ("title", "blabla", null,  OperatorEnum.LIKE);
 		filters.add(apiFilterItem);
 		
 		ObjectMapper objectMapper = new ObjectMapper();

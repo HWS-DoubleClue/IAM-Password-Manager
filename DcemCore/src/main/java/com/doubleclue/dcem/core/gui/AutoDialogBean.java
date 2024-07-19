@@ -173,7 +173,7 @@ public class AutoDialogBean implements Serializable {
 			JsfUtils.addErrorMessage("No open dialog found");
 			return;
 		}
-
+		
 		try {
 			if (dcemDialog.actionOk() == false) {
 				return; // don't close dialog
@@ -181,6 +181,13 @@ public class AutoDialogBean implements Serializable {
 		} catch (DcemException dcemExp) {
 			logger.warn("OK Action Failed", dcemExp);
 			switch (dcemExp.getErrorCode()) {
+			case VALIDATION_CONSTRAIN_VIOLATION:
+				Set<ConstraintViolation<?>> set = ((javax.validation.ConstraintViolationException) dcemExp.getCause()).getConstraintViolations();
+				for (ConstraintViolation<?> entry : set) {
+					String path = entry.getPropertyPath().toString();
+					JsfUtils.addErrorMessage(Character.toUpperCase(path.charAt(0)) + path.substring(1) + ": " + entry.getMessage());
+				}
+				return;
 			case CONSTRAIN_VIOLATION_DB:
 				JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "db.constrain.at.insert", (Object[]) null);
 				return;
@@ -191,6 +198,14 @@ public class AutoDialogBean implements Serializable {
 				JsfUtils.addErrorMessage("Something went wrong. Cause: " + dcemExp.getMessage());
 				return;
 			default:
+				Exception exp = dcemExp;
+				while (true) {
+					exp = (Exception) exp.getCause();
+					if (exp == null) {
+						break;
+					}
+					System.out.println("AutoDialogBean.actionOk() " + exp);
+				}
 				JsfUtils.addErrorMessage(dcemExp.getLocalizedMessage());
 				return;
 

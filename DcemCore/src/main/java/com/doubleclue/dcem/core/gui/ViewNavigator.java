@@ -11,6 +11,7 @@ import java.util.TreeSet;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -44,7 +45,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ViewNavigator implements Serializable {
 
 	public static Logger logger = LogManager.getLogger(ViewNavigator.class);
-	
+
 	final String COLUMN_TOGGLER = "CT-";
 
 	@Inject
@@ -92,20 +93,25 @@ public class ViewNavigator implements Serializable {
 
 	public String getViewPath() {
 		if (activeView != null) {
+			activeView.reload();
 			return activeView.getSubject().getPath();
 		} else {
 			// TODO
 			return null;
 		}
 	}
-	
-	public String getUrlLink () {
+
+	public String getUrlLink() {
 		try {
-			return applicationBean.getDcemManagementUrl(null) + "/preLogin_.xhtml?view=" +activeModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER + activeView.getSubject().getViewName();
+			String url = applicationBean.getDcemManagementUrl(null) + "/preLogin_.xhtml?view=" + activeModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER
+					+ activeView.getSubject().getViewName();
+			if (activeView.getUrlParameters() != null) {
+				url = url + "&params=" + activeView.getUrlParameters();
+			}
+			return url;
 		} catch (DcemException e) {
 			return e.getMessage();
-		}
-		
+		}		
 	}
 
 	public void actionRedirectionToHome() {
@@ -163,8 +169,8 @@ public class ViewNavigator implements Serializable {
 	public DcemView getActiveView() {
 		return activeView;
 	}
-	
-	public StreamedContent getDownloadFile () {
+
+	public StreamedContent getDownloadFile() {
 		try {
 			return activeView.excelExportFile();
 		} catch (DcemException e) {
@@ -400,7 +406,7 @@ public class ViewNavigator implements Serializable {
 		activeView.getDisplayViewVariables().get((Integer) event.getData()).setVisible(event.getVisibility() == Visibility.VISIBLE);
 		activeView.getDisplayViewVariables().get(getPredefinedFilterId());
 		List<Boolean> togglerList = new ArrayList<>();
-		for (int i = 0; i <  activeView.getDisplayViewVariables().size(); i++) {
+		for (int i = 0; i < activeView.getDisplayViewVariables().size(); i++) {
 			ViewVariable variable = activeView.getDisplayViewVariables().get(i);
 			togglerList.add(variable.isVisible());
 		}
@@ -410,8 +416,8 @@ public class ViewNavigator implements Serializable {
 		} catch (Exception e) {
 		}
 	}
-	
-	public void removeToggle () {
+
+	public void removeToggle() {
 		try {
 			operatorSessionBean.removeLocalStorageUserSetting(COLUMN_TOGGLER + activeView.getClassName());
 		} catch (Exception e) {

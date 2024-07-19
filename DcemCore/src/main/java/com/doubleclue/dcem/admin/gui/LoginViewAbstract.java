@@ -158,6 +158,7 @@ public abstract class LoginViewAbstract implements Serializable {
 	protected boolean passwordPanelRendered = false;
 	String mgtActiveView;
 	String mgtUrlView;
+	String mgtUrlParams;
 
 	String location;
 	ListUserAccounts listUserAccounts;
@@ -1230,6 +1231,14 @@ public abstract class LoginViewAbstract implements Serializable {
 
 	public void setMgtUrlView(String mgtUrlView) {
 		this.mgtUrlView = mgtUrlView;
+	}
+	
+	public String getMgtUrlParams() {
+		return mgtUrlParams;
+	}
+
+	public void setMgtUrlParams(String mgtUrlParams) {
+		this.mgtUrlParams = mgtUrlParams;
 	}
 
 	protected ResourceBundle getResounceBundleModule() {
