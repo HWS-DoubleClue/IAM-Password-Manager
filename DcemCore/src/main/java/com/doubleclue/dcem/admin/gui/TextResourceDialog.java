@@ -60,7 +60,7 @@ public class TextResourceDialog extends DcemDialog {
 		}
 		TextMessage textMessage = (TextMessage) this.getActionObject();
 		if (textMessage.getId() != null) {
-			textResourceLogic.getEntityById(textMessage.getId());
+			textMessage = textResourceLogic.getEntityById(textMessage.getId());
 			dcemView.setActionObject(textMessage);
 		}
 	}
