@@ -157,16 +157,17 @@ public class AutoDialogBean implements Serializable {
 		/*
 		 * For some reason Validatin is not done in JSF, so we have to do it on oour
 		 * own.
-		 */
-		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-		Object selectedObject = viewNavigator.getActiveView().getActionObject();
-		if (selectedObject != null) {
-			Set<ConstraintViolation<Object>> violations = validator.validate(selectedObject);
-			if (violations.isEmpty() == false) {
-				JsfUtils.violations(violations, viewNavigator.getActiveView().getSubject().getName(), viewNavigator.getActiveModule().getResourceName(), viewVariables);
-				return;
-			}
-		}
+//		 */
+		// Could be that there wa a bug in JSF. It looks as if validation is working.
+//		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+//		Object selectedObject = viewNavigator.getActiveView().getActionObject();
+//		if (selectedObject != null) {
+//			Set<ConstraintViolation<Object>> violations = validator.validate(selectedObject);
+//			if (violations.isEmpty() == false) {
+//				JsfUtils.violations(violations, viewNavigator.getActiveView().getSubject().getName(), viewNavigator.getActiveModule().getResourceName(), viewVariables);
+//				return;
+//			}
+//		}
 
 		DcemDialog dcemDialog = viewNavigator.getActiveView().getActiveDialog();
 		if (dcemDialog == null) {
@@ -179,7 +180,7 @@ public class AutoDialogBean implements Serializable {
 				return; // don't close dialog
 			}
 		} catch (DcemException dcemExp) {
-			logger.warn("OK Action Failed", dcemExp);
+			logger.debug("OK Action Failed", dcemExp);
 			switch (dcemExp.getErrorCode()) {
 			case VALIDATION_CONSTRAIN_VIOLATION:
 				Set<ConstraintViolation<?>> set = ((javax.validation.ConstraintViolationException) dcemExp.getCause()).getConstraintViolations();
@@ -198,17 +199,8 @@ public class AutoDialogBean implements Serializable {
 				JsfUtils.addErrorMessage("Something went wrong. Cause: " + dcemExp.getMessage());
 				return;
 			default:
-				Exception exp = dcemExp;
-				while (true) {
-					exp = (Exception) exp.getCause();
-					if (exp == null) {
-						break;
-					}
-					System.out.println("AutoDialogBean.actionOk() " + exp);
-				}
 				JsfUtils.addErrorMessage(dcemExp.getLocalizedMessage());
 				return;
-
 			}
 
 		} catch (Exception exp) {

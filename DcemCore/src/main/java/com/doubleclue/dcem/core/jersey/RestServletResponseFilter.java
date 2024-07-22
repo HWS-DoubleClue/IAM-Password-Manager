@@ -53,7 +53,11 @@ public class RestServletResponseFilter implements ContainerResponseFilter {
 			
 			DcemApplicationBean dcemApplicationBean = CdiUtils.getReference(DcemApplicationBean.class);
 			DcemModule module = dcemApplicationBean.getModule(moduleId);
-			module.addCounter("REST-" + path.substring(ind), (System.currentTimeMillis() - startTime));
+			if (module != null) {
+				module.addCounter("REST-" + path.substring(ind), (System.currentTimeMillis() - startTime));
+			}
+			
+			responseContext.getStatus();
 
 		}
 

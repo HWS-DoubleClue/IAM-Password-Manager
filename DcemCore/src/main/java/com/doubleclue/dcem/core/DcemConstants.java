@@ -524,6 +524,9 @@ public final class DcemConstants {
 
 	public static final String LICENCE_PLUGINS_ALL = "all";
 
+	public static final String URL_VIEW = "?view=";
+	public static final String URL_PARAMS = "&params=";
+
 	
 
 }

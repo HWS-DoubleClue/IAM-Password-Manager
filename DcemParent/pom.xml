@@ -61,7 +61,7 @@
 		<jersey.version>2.41</jersey.version>
 		<tomcat.version>9.0.86</tomcat.version>
 		<jackson.version>2.14.0-rc1</jackson.version>
-		<swagger-core-version>1.5.18</swagger-core-version>
+		<swagger-core-version>2.0.0</swagger-core-version>
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
 		<junit.platform.version>1.8.1</junit.platform.version>
 	</properties>
@@ -1078,16 +1078,16 @@
 				<version>2.8.8</version>
 			</dependency>
 
-			<dependency>
-				<groupId>io.swagger</groupId>
-				<artifactId>swagger-jersey2-jaxrs</artifactId>
-				<scope>compile</scope>
-				<version>${swagger-core-version}</version>
-			</dependency>
-			<dependency>
+			<!--<dependency>
 				<groupId>io.swagger.core.v3</groupId>
 				<artifactId>swagger-jaxrs2</artifactId>
 				<scope>compile</scope>
+				<version>${swagger-core-version}</version>
+			</dependency>-->
+			<dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-jaxrs2</artifactId>
+				<!--<scope>compile</scope>-->
 				<version>${swagger-core-version}</version>
 			</dependency>
 			<dependency>

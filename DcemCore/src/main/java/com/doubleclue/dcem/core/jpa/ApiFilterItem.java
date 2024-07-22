@@ -39,9 +39,19 @@ public class ApiFilterItem implements Serializable {
 	
 	@JsonProperty("valueTo")
 	private String valueTo = null;
+	
+	@JsonProperty("sortOrder")
+	private SortOrderEnum sortOrder = SortOrderEnum.UNSORTED;
 
 	public ApiFilterItem() {
 
+	}
+	
+	public ApiFilterItem(String name, String value, OperatorEnum operator) {
+		super();
+		this.name = name;
+		this.value = value;
+		this.operator = operator;
 	}
 
 	public ApiFilterItem(String name, String value, SortOrderEnum sortOrder, OperatorEnum operator) {
@@ -95,8 +105,7 @@ public class ApiFilterItem implements Serializable {
 		}
 	}
 
-	@JsonProperty("sortOrder")
-	private SortOrderEnum sortOrder = null;
+
 
 	/**
 	   * Gets or Sets operator

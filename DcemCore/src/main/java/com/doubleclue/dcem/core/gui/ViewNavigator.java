@@ -93,7 +93,6 @@ public class ViewNavigator implements Serializable {
 
 	public String getViewPath() {
 		if (activeView != null) {
-			activeView.reload();
 			return activeView.getSubject().getPath();
 		} else {
 			// TODO
@@ -103,10 +102,10 @@ public class ViewNavigator implements Serializable {
 
 	public String getUrlLink() {
 		try {
-			String url = applicationBean.getDcemManagementUrl(null) + "/preLogin_.xhtml?view=" + activeModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER
+			String url = applicationBean.getDcemManagementUrl(null) + "/" + DcemConstants.PRE_LOGIN_PAGE + DcemConstants.URL_VIEW + activeModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER
 					+ activeView.getSubject().getViewName();
 			if (activeView.getUrlParameters() != null) {
-				url = url + "&params=" + activeView.getUrlParameters();
+				url = url + DcemConstants.URL_PARAMS + activeView.getUrlParameters();
 			}
 			return url;
 		} catch (DcemException e) {

@@ -106,7 +106,6 @@ public class DcemApiException extends Exception {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class AsApiException {\n");
-
 		sb.append("    code: ").append(toIndentedString(code)).append("\n");
 		sb.append("    message: ").append(toIndentedString(message)).append("\n");
 		sb.append("    details: ").append(toIndentedString(details)).append("\n");

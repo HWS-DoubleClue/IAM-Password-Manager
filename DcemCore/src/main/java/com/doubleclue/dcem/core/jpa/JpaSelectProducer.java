@@ -343,11 +343,16 @@ public class JpaSelectProducer<T> implements Serializable {
 			}
 			case ENUM: {
 				Expression<Integer> expression = preFrom.<Integer> get((SingularAttribute<Object, Integer>) attribute);
-				String [] list = (String []) filterProperty.getValue();
+				String[] list;
+				if (filterProperty.getValue() instanceof String) {
+					list = ((String) filterProperty.getValue()).split(",");
+				} else {
+					list = (String[]) filterProperty.getValue();
+				}
 				if (list == null || list.length == 0) {
 					continue;
 				}
-				In<Integer> inClause = cb.in (expression);
+				In<Integer> inClause = cb.in(expression);
 				for (int i = 0; i < list.length; i++) {
 					inClause.value((Integer) Integer.parseInt(list[i]));
 				}
@@ -448,37 +453,39 @@ public class JpaSelectProducer<T> implements Serializable {
 
 	public List<T> selectCriteriaQueryFilters(List<ApiFilterItem> filters, int firstResult, int maxResult, JpaPredicate jpaPredicate) throws DcemException {
 		List<ViewVariable> viewVariables = DcemUtils.getViewVariables(entityClass, null, "", null);
-		for (ApiFilterItem apiFilterItem : filters) {
-			ViewVariable viewVariable = getViewVariable(viewVariables, apiFilterItem.getName());
-			if (viewVariable == null) {
-				throw new DcemException(DcemErrorCodes.INVALID_FILTER_NAME,
-						apiFilterItem.getName() + ", Possible Values: " + getViewVariableIds(viewVariables));
-			}
-			switch (viewVariable.getVariableType()) {
-			case DATE:
-				Date date = null;
-				try {
-					if (apiFilterItem.getValue().length() == 10) {
-						date = dateDayFomat.parse(apiFilterItem.getValue());
-					} else {
-						date = dateFomat.parse(apiFilterItem.getValue());
-					}
-					viewVariable.setFilterValueOnly(date);
-					break;
-				} catch (ParseException e) {
-					throw new DcemException(DcemErrorCodes.INVALID_DATE_FORMAT,
-							apiFilterItem.getValue() + ". Format: " + DcemConstants.DAY_TIME_FORMAT + " OR " + DcemConstants.DAY_FORMAT, e);
+		if (filters != null) {
+			for (ApiFilterItem apiFilterItem : filters) {
+				ViewVariable viewVariable = getViewVariable(viewVariables, apiFilterItem.getName());
+				if (viewVariable == null) {
+					throw new DcemException(DcemErrorCodes.INVALID_FILTER_NAME,
+							apiFilterItem.getName() + ", Possible Values: " + getViewVariableIds(viewVariables));
 				}
-			default:
-				viewVariable.setFilterValueOnly(apiFilterItem.getValue());
-				break;
-			}
-			if (apiFilterItem.getOperator() == null) {
-				throw new DcemException(DcemErrorCodes.INVALID_PARAMETER, "Invalid Operator");
-			}
-			viewVariable.setFilterOperatorOnly(FilterOperator.valueOf(apiFilterItem.getOperator().name()));
-			if (apiFilterItem.getSortOrder() != null) {
-				viewVariable.setFilterSortOrderOnly(SortOrder.valueOf(apiFilterItem.getSortOrder().name()));
+				switch (viewVariable.getVariableType()) {
+				case DATE:
+					Date date = null;
+					try {
+						if (apiFilterItem.getValue().length() == 10) {
+							date = dateDayFomat.parse(apiFilterItem.getValue());
+						} else {
+							date = dateFomat.parse(apiFilterItem.getValue());
+						}
+						viewVariable.setFilterValueOnly(date);
+						break;
+					} catch (ParseException e) {
+						throw new DcemException(DcemErrorCodes.INVALID_DATE_FORMAT,
+								apiFilterItem.getValue() + ". Format: " + DcemConstants.DAY_TIME_FORMAT + " OR " + DcemConstants.DAY_FORMAT, e);
+					}
+				default:
+					viewVariable.setFilterValueOnly(apiFilterItem.getValue());
+					break;
+				}
+				if (apiFilterItem.getOperator() == null) {
+					throw new DcemException(DcemErrorCodes.INVALID_PARAMETER, "Invalid Operator");
+				}
+				viewVariable.setFilterOperatorOnly(FilterOperator.valueOf(apiFilterItem.getOperator().name()));
+				if (apiFilterItem.getSortOrder() != null) {
+					viewVariable.setFilterSortOrderOnly(SortOrder.valueOf(apiFilterItem.getSortOrder().name()));
+				}
 			}
 		}
 		List<FilterProperty> filterProperties = null;
@@ -497,14 +504,12 @@ public class JpaSelectProducer<T> implements Serializable {
 					descending = true;
 				}
 				filterOrders.add(new FilterOrder(viewVariable.getAttributes(), viewVariable.getId(), descending, viewVariable.getFilterItem().getSortRank()));
-				// break;
 			}
 			if (viewVariable.getDcemGui().sortRank() > 0) {
 				filterOrders.add(new FilterOrder(viewVariable.getAttributes(), viewVariable.getId(), true, viewVariable.getFilterItem().getSortRank()));
 			}
 		}
 		Collections.sort(filterOrders, new FilterOrderCompare());
-
 		return selectCriteriaQuery(filterOrders, filterProperties, firstResult, maxResult, jpaPredicate);
 	}
 
