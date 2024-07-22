@@ -688,7 +688,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		return topComposition;
 	}
 	
-	public String getUrlParameters() {
+	public Map<String, String> getShareUrlParameters() {
 		return null;
 	}
 

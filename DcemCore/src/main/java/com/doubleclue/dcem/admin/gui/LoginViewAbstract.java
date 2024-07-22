@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -64,6 +65,7 @@ import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.utils.QrCodeUtils;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
+import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.StringUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -1231,6 +1233,13 @@ public abstract class LoginViewAbstract implements Serializable {
 
 	public void setMgtUrlView(String mgtUrlView) {
 		this.mgtUrlView = mgtUrlView;
+	}
+	
+	public Map<String, String> getShareUrlParams() {
+		if (mgtUrlParams == null) {
+			return null;
+		}
+		return KaraUtils.urlParamStringToMap(mgtUrlParams);
 	}
 	
 	public String getMgtUrlParams() {

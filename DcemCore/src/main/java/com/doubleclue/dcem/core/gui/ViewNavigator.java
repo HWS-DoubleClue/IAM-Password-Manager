@@ -1,11 +1,15 @@
 package com.doubleclue.dcem.core.gui;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -16,6 +20,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -37,6 +42,7 @@ import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.weld.CdiUtils;
+import com.doubleclue.utils.KaraUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -104,15 +110,16 @@ public class ViewNavigator implements Serializable {
 		try {
 			String url = applicationBean.getDcemManagementUrl(null) + "/" + DcemConstants.PRE_LOGIN_PAGE + DcemConstants.URL_VIEW + activeModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER
 					+ activeView.getSubject().getViewName();
-			if (activeView.getUrlParameters() != null) {
-				url = url + DcemConstants.URL_PARAMS + activeView.getUrlParameters();
+			if (activeView.getShareUrlParameters() != null) {
+				url = url + DcemConstants.URL_PARAMS + KaraUtils.mapToUrlParamString(activeView.getShareUrlParameters());
 			}
 			return url;
 		} catch (DcemException e) {
 			return e.getMessage();
 		}		
 	}
-
+	
+	
 	public void actionRedirectionToHome() {
 		setActiveView(AdminModule.MODULE_ID + DcemConstants.MODULE_VIEW_SPLITTER + "welcomeView");
 	}

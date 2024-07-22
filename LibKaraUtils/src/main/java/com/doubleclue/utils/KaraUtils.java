@@ -16,6 +16,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Permission;
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
@@ -50,6 +52,8 @@ public class KaraUtils {
 	public static final String VERSION_DELIMITER = ".";
 	public static final int VERSION_ABS = 0x3FF;
 	public static final int VERSION_BITS = 10;
+	static final String URL_PARAM_SEPERATOR = "~";
+	static final String URL_PARAM_KEY_SEPERATOR = "=";
 
 	// public static PlatformInterface platformInterface = null;
 
@@ -70,7 +74,7 @@ public class KaraUtils {
 		}
 		return sb.toString();
 	}
-	
+
 	public static int getNumeric(String strNum) {
 		if (strNum == null) {
 			return -1;
@@ -225,8 +229,6 @@ public class KaraUtils {
 		return platformInterface;
 	}
 
-	
-
 	public static Throwable getRootCause(Exception exception) {
 		return getRootCause(exception, (String) null);
 	}
@@ -327,19 +329,14 @@ public class KaraUtils {
 			return null;
 		}
 		StringBuilder stringBuilder = new StringBuilder();
-
 		for (String key : map.keySet()) {
 			if (stringBuilder.length() > 0) {
 				stringBuilder.append("&");
 			}
 			String value = map.get(key);
-			try {
-				stringBuilder.append((key != null ? URLEncoder.encode(key, "UTF-8") : ""));
-				stringBuilder.append("=");
-				stringBuilder.append(value != null ? URLEncoder.encode(value, "UTF-8") : "");
-			} catch (UnsupportedEncodingException e) {
-				throw new RuntimeException("This method requires UTF-8 encoding support", e);
-			}
+			stringBuilder.append((key != null ? URLEncoder.encode(key, StandardCharsets.UTF_8) : ""));
+			stringBuilder.append("=");
+			stringBuilder.append(value != null ? URLEncoder.encode(value, StandardCharsets.UTF_8) : "");
 		}
 		return stringBuilder.toString();
 	}
@@ -354,6 +351,34 @@ public class KaraUtils {
 				map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(nameValue[1], "UTF-8") : "");
 			} catch (UnsupportedEncodingException e) {
 				throw new RuntimeException("This method requires UTF-8 encoding support", e);
+			}
+		}
+		return map;
+	}
+
+	public static String mapToUrlParamString(Map<String, String> map) {
+		if (map == null) {
+			return null;
+		}
+		StringBuilder sb = new StringBuilder();
+		for (Entry<String, String> entry : map.entrySet()) {
+			if (sb.length() > 0) {
+				sb.append(URL_PARAM_SEPERATOR);
+			}
+			sb.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));
+			sb.append(URL_PARAM_KEY_SEPERATOR);
+			sb.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
+		}
+		return sb.toString();
+	}
+
+	public static Map<String, String> urlParamStringToMap(String param) {
+		Map<String, String> map = new HashMap<>();
+		String[] values = param.split(URL_PARAM_SEPERATOR);
+		for (String item : values) {
+			String[] keyValue = item.split(URL_PARAM_KEY_SEPERATOR);
+			if (keyValue.length > 1) {
+				map.put(URLDecoder.decode(keyValue[0],StandardCharsets.UTF_8), URLDecoder.decode(keyValue[1],StandardCharsets.UTF_8));
 			}
 		}
 		return map;
