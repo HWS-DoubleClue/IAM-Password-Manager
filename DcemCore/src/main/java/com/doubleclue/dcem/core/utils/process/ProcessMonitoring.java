@@ -1,12 +1,9 @@
 package com.doubleclue.dcem.core.utils.process;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.concurrent.Callable;
 
 public class ProcessMonitoring implements Callable<ProcessResult> {
@@ -21,31 +18,29 @@ public class ProcessMonitoring implements Callable<ProcessResult> {
 	}
 
 	@Override
-	public ProcessResult call() throws UnsupportedEncodingException {
+	public ProcessResult call() throws Exception {
 		int exitCode = -1;
 		try {
 			exitCode = process.waitFor();
 		} catch (Exception e) {
 			return new ProcessResult(exitCode, null, e);
 		}
-		StringBuffer stringBuffer = new StringBuffer();
-		try (FileInputStream fileInputStream = new FileInputStream(outputFile);
-				// Standard Charset for .txt
-				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_16LE);
-				BufferedReader in = new BufferedReader(inputStreamReader)) {
-			//removing leading BOM character
-			in.mark(1);
-			int firstChar = in.read();
-			if (firstChar != 0xFEFF) {
-				in.reset();
+		byte[] fileContent = Files.readAllBytes(outputFile.toPath());
+		Charset charset = Charset.defaultCharset();
+		int offset = 0;
+		if (fileContent.length > 2) {
+			if (fileContent[0] == 0xFF && fileContent[1] == 0xFE) {
+				charset = StandardCharsets.UTF_16LE;
+				offset = 2;
+			} else if  (fileContent[0] == 0xFE && fileContent[1] == 0xFF){
+				charset = StandardCharsets.UTF_16BE;
+				offset = 2;
+			} else if  (fileContent[0] == 0xEF && fileContent[1] == 0xBB && fileContent[2] == 0xBF){
+				charset = StandardCharsets.UTF_8;
+				offset = 3;
 			}
-			String line;
-			while ((line = in.readLine()) != null) {
-				stringBuffer.append(line);
-			}
-		} catch (IOException e) {
-			return new ProcessResult(exitCode, null, e);
-		}
-		return new ProcessResult(exitCode, stringBuffer.toString(), null);
+		}		
+		String result = new String (fileContent, offset, fileContent.length - offset, charset);
+		return new ProcessResult(exitCode, result, null);
 	}
 }
