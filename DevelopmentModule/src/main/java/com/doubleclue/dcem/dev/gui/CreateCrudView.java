@@ -51,6 +51,8 @@ public class CreateCrudView extends DcemView {
 	private static final String SRC_MAIN_RESOURCE = "/src/main/resources/";
 	private static final String SRC_MAIN_JAVA = "/src/main/java/";
 	private static final String SRC = "/src/";
+	private static final String ADMIN = "/admin/";
+	private static final String CORE = "/core/";
 	private static final String RESOURCE = "/resources/";
 	private static final String MAP_LOGIC_METHODS = "logicMethods";
 
@@ -154,9 +156,9 @@ public class CreateCrudView extends DcemView {
 			String addName = "Name";
 			int ind = variableId.indexOf(".");
 			if (ind != -1) {
-				char ch = Character.toUpperCase(variableId.charAt(ind+1));
-				variableId = variableId.substring(0, ind) + ch + variableId.substring(ind+2);
-				addName ="";
+				char ch = Character.toUpperCase(variableId.charAt(ind + 1));
+				variableId = variableId.substring(0, ind) + ch + variableId.substring(ind + 2);
+				addName = "";
 			}
 			String variableIdUpper = Character.toUpperCase(variableId.charAt(0)) + variableId.substring(1);
 			sb.append("\n");
@@ -286,7 +288,7 @@ public class CreateCrudView extends DcemView {
 		String packageName = null;
 		switch (devObjectTypes) {
 		case Dialog:
-//			dcemApplication.removeFreeMarkerTemplate(clazz.getName() + devObjectTypes.name());
+			// dcemApplication.removeFreeMarkerTemplate(clazz.getName() + devObjectTypes.name());
 		case View:
 			packageName = "/gui/";
 			break;
@@ -294,7 +296,7 @@ public class CreateCrudView extends DcemView {
 			packageName = "/logic/";
 			break;
 		case Subject:
-//			dcemApplication.removeFreeMarkerTemplate(clazz.getName() + devObjectTypes.name());
+			// dcemApplication.removeFreeMarkerTemplate(clazz.getName() + devObjectTypes.name());
 			packageName = "/subjects/";
 			break;
 		case DialogXhtml:
@@ -310,8 +312,8 @@ public class CreateCrudView extends DcemView {
 			freemarker.template.Template template = dcemApplication.getTemplateFromConfig(clazz.getName() + devObjectTypes.name(), templateContent);
 			File viewFile;
 			if (devObjectTypes == DevObjectTypes.DialogXhtml) {
-				String dialogPath =  map.get("DialogPath");
-				String xhtmlDirectory = moduleResources + "META-INF/resources/mgt" + dialogPath.substring(1, dialogPath.length()-1);
+				String dialogPath = map.get("DialogPath");
+				String xhtmlDirectory = moduleResources + "META-INF/resources/mgt" + dialogPath.substring(1, dialogPath.length() - 1);
 				viewFile = new File(xhtmlDirectory);
 			} else {
 				viewFile = new File(moduleSources + packageName + entityName + devObjectTypes.name() + ".java");
@@ -356,7 +358,7 @@ public class CreateCrudView extends DcemView {
 		try {
 			String packageName = selectedDcemModule.getClass().getSuperclass().getName();
 			if (selectedDcemModule.getId() == AdminModule.MODULE_ID || selectedDcemModule.getId() == SystemModule.MODULE_ID) {
-				packageName = "com.doubleclue.dcen.core.entities";
+				packageName = "com.doubleclue.dcem.core";
 			} else {
 				int ind = packageName.lastIndexOf(".");
 				ind = packageName.lastIndexOf(".", ind - 1);
@@ -376,6 +378,7 @@ public class CreateCrudView extends DcemView {
 			} else {
 				moduleSources = sources.substring(0, ind2 + selectedDcemModule.getId().length() + 2);
 			}
+
 			File moduleSourcesDir = new File(moduleSources);
 			if (moduleSourcesDir.exists() == false) {
 				moduleSources = moduleSources.replace("/src/", SRC_MAIN_JAVA);
@@ -387,7 +390,11 @@ public class CreateCrudView extends DcemView {
 			}
 			System.out.println("CreateCrudView.onChangeModule() moduleSources: " + moduleSources);
 
-			entitySources = moduleSources + "entities" + File.separator;
+			if (selectedDcemModule.getId() == AdminModule.MODULE_ID || selectedDcemModule.getId() == SystemModule.MODULE_ID) {
+				entitySources = moduleSources.substring(0, moduleSources.lastIndexOf(ADMIN)) + CORE + "entities" + File.separator;
+			} else {
+				entitySources = moduleSources + "entities" + File.separator;
+			}
 			File entityDirectory = new File(entitySources);
 			entities = new ArrayList<String>();
 			for (String name : entityDirectory.list()) {

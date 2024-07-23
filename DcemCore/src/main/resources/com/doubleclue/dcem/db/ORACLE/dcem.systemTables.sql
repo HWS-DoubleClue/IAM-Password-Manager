@@ -16,6 +16,17 @@ audituserId number(10,0),
 primary key (dc_id)
 );
 
+create table core_branch_location (
+dc_id number(10,0) generated as identity,
+dc_city varchar2(255 char),
+dc_country varchar2(255 char) not null,
+dc_state varchar2(255 char),
+dc_street varchar2(255 char),
+dc_street_nr varchar2(32 char),
+dc_zipcode varchar2(32 char),
+primary key (dc_id)
+);
+
 create table core_config (
 dc_id number(10,0) not null,
 dc_key varchar2(128 char) not null,
