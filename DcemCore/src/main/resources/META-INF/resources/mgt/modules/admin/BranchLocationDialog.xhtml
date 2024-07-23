@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	
+
+<ui:include src="/mgt/modules/dialogHead.xhtml" />
+<f:view locale="#{operatorSession.locale}">
+
+	<h:body class="dialogBody">
+		<span id="customheader"> <h:outputLabel class="#{autoView.icon} dialogTitle" /> <h:outputLabel value="#{viewNavigator.dialogTitle}"
+				styleClass="dialogTitle" />
+		</span>
+
+		<h:form id="dialogForm" style="padding-bottom: 100px" >
+
+			<p:messages showSummary="true" showDetail="false" closable="true" >
+				<p:autoUpdate />
+			</p:messages>
+
+			<h:panelGrid columns="2" cellpadding="4" cellspacing="4"  >
+
+				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.city']} "  />
+				<p:inputText id="city" required="true"  value="#{branchLocationDialog.actionObject.city}" maxlength="255" size="50"  />
+
+				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.street']} " />
+				<p:inputText id="street" required="false" value="#{branchLocationDialog.actionObject.street}" maxlength="255" size="50"/>
+
+				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.streetNumber']} " />
+				<p:inputText id="streetNumber" required="false" value="#{branchLocationDialog.actionObject.streetNumber}" maxlength="32" size="50" />
+
+				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.zipCode']} "  />
+				<p:inputText id="zipCode" required="false" value="#{branchLocationDialog.actionObject.zipCode}" maxlength="32" size="50" />
+
+				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.countryState']} " />
+				<p:inputText id="countryState" required="false" value="#{branchLocationDialog.actionObject.countryState}" maxlength="255" size="50" />
+
+				<p:outputLabel for="country" value="#{AdminMsg['BranchLocation.country']} " />
+				<p:selectOneMenu id="country" required="true" value="#{branchLocationDialog.actionObject.country}" >
+					<f:selectItems value="#{branchLocationDialog.availableCountries}" />
+				</p:selectOneMenu>
+
+			</h:panelGrid>
+			<p />
+			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}" update="@form" />
+			<p:spacer width="12" />
+			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" icon="fa fa-close" style="width: 8em" immediate="true"
+				action="#{viewNavigator.actionCloseDialog}" />
+		</h:form>
+	</h:body>
+</f:view>
+</html>

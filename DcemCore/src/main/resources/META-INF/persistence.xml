@@ -32,6 +32,7 @@
 		
 		<class>com.doubleclue.dcem.core.entities.DcemReporting</class>
 		<class>com.doubleclue.dcem.core.entities.DepartmentEntity</class>
+		<class>com.doubleclue.dcem.core.entities.BranchLocation</class>
 		
 		<properties> 
 		 	
