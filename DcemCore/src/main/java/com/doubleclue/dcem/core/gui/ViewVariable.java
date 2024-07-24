@@ -532,7 +532,7 @@ public class ViewVariable implements Serializable {
 		switch (this.variableType) {
 			case BOOLEAN:
 			case NUMBER:
-				return "text-align: center;";
+				return "text-align: center !Important;";
 			default:
 				return "text-align: left; word-break: break;  white-space: normal";
 		}
