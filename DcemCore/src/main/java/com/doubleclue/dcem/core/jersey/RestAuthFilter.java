@@ -42,8 +42,10 @@ import com.google.common.cache.LoadingCache;
 public class RestAuthFilter implements ContainerRequestFilter {
 
 	private static final Logger logger = LogManager.getLogger(RestAuthFilter.class);
+	
+	static int SESSOIN_TIMEOUT_ON_ERROR = 2;
 
-	static LoadingCache<String, DcemUser> cache = CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.MINUTES)
+	static LoadingCache<String, DcemUser> cache = CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES)
 			.build(new CacheLoader<String, DcemUser>() {
 				@Override
 				public DcemUser load(String key) throws Exception {
@@ -69,9 +71,7 @@ public class RestAuthFilter implements ContainerRequestFilter {
 
 		// GET, POST, PUT, DELETE, ...
 		String method = containerRequest.getMethod();
-		// myresource/get/56bCA for example
 		String path = containerRequest.getUriInfo().getPath(true);
-
 		if (servletRequest.getLocalPort() != restPort) {
 			logger.warn("REST service with wrong Port, from " + servletRequest.getRemoteHost());
 			throw new WebApplicationException(Response.status(Status.UNAUTHORIZED).entity("Invalid URI").build());
@@ -109,7 +109,7 @@ public class RestAuthFilter implements ContainerRequestFilter {
 		}
 		if (auth == null) {
 			logger.info("REST-API missing HttpBasicAuthentication");
-			servletRequest.getSession().setMaxInactiveInterval(5);
+			servletRequest.getSession().setMaxInactiveInterval(SESSOIN_TIMEOUT_ON_ERROR);
 			throw new WebApplicationException(Response.status(Status.UNAUTHORIZED).entity("HttpBasic Authentication required!").build());
 		}
 		DcemApplicationBean dcemApplicationBean = CdiUtils.getReference(DcemApplicationBean.class);
@@ -144,7 +144,7 @@ public class RestAuthFilter implements ContainerRequestFilter {
 		// If the user does not have the right (does not provide any HTTP Basic Auth)
 		if (loginAuthenticator == null) {
 			logger.info("REST-API without authentication");
-			servletRequest.getSession().setMaxInactiveInterval(5);
+			servletRequest.getSession().setMaxInactiveInterval(SESSOIN_TIMEOUT_ON_ERROR);
 			throw new WebApplicationException(Response.status(Status.UNAUTHORIZED).entity("Invalid Authentication!").build());
 		}
 
@@ -156,28 +156,28 @@ public class RestAuthFilter implements ContainerRequestFilter {
 			}
 			if (verifiedOperator == false) {
 				logger.info("Operator login for REST-API failed: " + loginAuthenticator.getName());
-				servletRequest.getSession().setMaxInactiveInterval(5);
+				servletRequest.getSession().setMaxInactiveInterval(SESSOIN_TIMEOUT_ON_ERROR);
 				throw new WebApplicationException(Response.status(Status.UNAUTHORIZED).entity("Please check your authentication!").build());
 			}
 		} catch (DcemException e) {
 			logger.info (e);
-			servletRequest.getSession().setMaxInactiveInterval(5);
+			servletRequest.getSession().setMaxInactiveInterval(SESSOIN_TIMEOUT_ON_ERROR);
 			throw new WebApplicationException(Response.status(Status.UNAUTHORIZED).entity(e.getErrorCode().name()).build());
 		} 
 		dcemUser = operatorSession.getDcemUser();
 		dcemUser.setTenantName(operatorSession.getTenantEntity().getName());
-		cache.put(auth, dcemUser);
+		
 		String moduleId = path.substring(0, path.indexOf('/'));
 		DcemModule module = dcemApplicationBean.getModule(moduleId);
 		DcemAction dcemAction = new DcemAction(module.getId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_REST_API);
 		if (operatorSession.isPermission(dcemAction) == false) {
 			logger.info("Operator has no rights for REST-API: " + dcemUser.getLoginId());
-			servletRequest.getSession().setMaxInactiveInterval(5);
-			throw new WebApplicationException(Response.status(Status.UNAUTHORIZED).entity("Operator has no rights").build());
+			servletRequest.getSession().setMaxInactiveInterval(SESSOIN_TIMEOUT_ON_ERROR);
+			throw new WebApplicationException(Response.status(Status.UNAUTHORIZED).entity("Operator has no API rights for this Module").build());
 		}
+		cache.put(auth, dcemUser);
 		TenantIdResolver.setCurrentTenant(operatorSession.getTenantEntity());
 		module.addCounter("REST-Login", (System.currentTimeMillis() - startTime));
-
 	}
 
 	public static String getEmbeddedPass() {

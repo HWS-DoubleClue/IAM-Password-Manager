@@ -56,11 +56,7 @@ public class RestServletResponseFilter implements ContainerResponseFilter {
 			if (module != null) {
 				module.addCounter("REST-" + path.substring(ind), (System.currentTimeMillis() - startTime));
 			}
-			
 			responseContext.getStatus();
-
 		}
-
 	}
-
 }
