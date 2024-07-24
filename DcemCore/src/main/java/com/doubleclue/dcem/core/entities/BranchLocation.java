@@ -29,12 +29,25 @@ public class BranchLocation extends EntityInterface implements Comparable<Branch
 	@Column(name = "dc_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	@DcemGui
-	@Column(length = 255, name = "dc_city", nullable = true)
+	@Column(length = 255, name = "dc_country", nullable = false)
+	@NotNullOrEmptyString
+	private String country;
+
+	@DcemGui
+	@Column(length = 255, name = "dc_state")
+	private String countryState;
+
+	@DcemGui
+	@Column(length = 255, name = "dc_city", nullable = false)
 	@NotNullOrEmptyString
 	private String city;
-	
+
+	@DcemGui
+	@Column(length = 32, name = "dc_zipcode")
+	private String zipCode;
+
 	@DcemGui
 	@Column(length = 255, name = "dc_street")
 	private String street;
@@ -42,19 +55,6 @@ public class BranchLocation extends EntityInterface implements Comparable<Branch
 	@DcemGui
 	@Column(length = 32, name = "dc_street_nr")
 	private String streetNumber;
-
-	@DcemGui
-	@Column(length = 32, name = "dc_zipcode")
-	private String zipCode;
-
-	@DcemGui
-	@Column(length = 255, name = "dc_state")
-	private String countryState;
-
-	@DcemGui
-	@Column(length = 255, name = "dc_country", nullable = false)
-	@NotNullOrEmptyString
-	private String country;
 
 	public BranchLocation() {
 	}

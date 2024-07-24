@@ -4,8 +4,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
-	
-	
+
+
 
 <ui:include src="/mgt/modules/dialogHead.xhtml" />
 <f:view locale="#{operatorSession.locale}">
@@ -15,31 +15,32 @@
 				styleClass="dialogTitle" />
 		</span>
 
-		<h:form id="dialogForm" style="padding-bottom: 100px" >
+		<h:form id="dialogForm" style="padding-bottom: 100px">
 
-			<p:messages showSummary="true" showDetail="false" closable="true" >
+			<p:messages showSummary="true" showDetail="false" closable="true">
 				<p:autoUpdate />
 			</p:messages>
 
-			<h:panelGrid columns="2" cellpadding="4" cellspacing="4"  >
+			<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 
-				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.city']} "  />
-				<p:inputText id="city" required="true"  value="#{branchLocationDialog.actionObject.city}" maxlength="255" size="50"  />
+				<p:outputLabel for="@next" value="#{AdminMsg['branchLocationDialog.streetNrStreet']}" />
+				<h:panelGroup>
+					<p:inputText id="street" required="false" value="#{branchLocationDialog.actionObject.street}" maxlength="255" size="30" />
+					<p:outputLabel value=" - "></p:outputLabel>
+					<p:inputText id="streetNumber" required="false" value="#{branchLocationDialog.actionObject.streetNumber}" maxlength="32" size="2" />
+				</h:panelGroup>
 
-				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.street']} " />
-				<p:inputText id="street" required="false" value="#{branchLocationDialog.actionObject.street}" maxlength="255" size="50"/>
-
-				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.streetNumber']} " />
-				<p:inputText id="streetNumber" required="false" value="#{branchLocationDialog.actionObject.streetNumber}" maxlength="32" size="50" />
-
-				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.zipCode']} "  />
-				<p:inputText id="zipCode" required="false" value="#{branchLocationDialog.actionObject.zipCode}" maxlength="32" size="50" />
-
+				<p:outputLabel for="@next" value="#{AdminMsg['branchLocationDialog.zipCodeCity']}" />
+				<h:panelGroup>
+					<p:inputText id="zipCode" required="false" value="#{branchLocationDialog.actionObject.zipCode}" maxlength="10" size="7" />
+					<p:outputLabel value=" - "></p:outputLabel>
+					<p:inputText id="city" required="true" value="#{branchLocationDialog.actionObject.city}" maxlength="255" size="25" />
+				</h:panelGroup>
 				<p:outputLabel for="@next" value="#{AdminMsg['BranchLocation.countryState']} " />
-				<p:inputText id="countryState" required="false" value="#{branchLocationDialog.actionObject.countryState}" maxlength="255" size="50" />
+				<p:inputText id="countryState" required="false" value="#{branchLocationDialog.actionObject.countryState}" maxlength="255" style="padding-right: 0.5em;" size="40"/>
 
 				<p:outputLabel for="country" value="#{AdminMsg['BranchLocation.country']} " />
-				<p:selectOneMenu id="country" required="true" value="#{branchLocationDialog.actionObject.country}" >
+				<p:selectOneMenu id="country" required="true" value="#{branchLocationDialog.actionObject.country}">
 					<f:selectItems value="#{branchLocationDialog.availableCountries}" />
 				</p:selectOneMenu>
 
