@@ -153,16 +153,12 @@ public class OperatorSessionBean implements Serializable {
 		if (dcemUser == null || dcemAction == null) {
 			return false;
 		}
+		if (dcemAction.getAction().equals(DcemConstants.ACTION_REST_API)) {
+			return haveAction.contains(dcemAction);
+		}
 		DcemAction dcemActionSubjectManager = new DcemAction(dcemAction.getModuleId(), dcemAction.getSubject(), DcemConstants.ACTION_MANAGE);
 		DcemAction dcemActionModuleManager = new DcemAction(dcemAction.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
-		try {
-			if (haveAction.contains(dcemAction) || haveAction.contains(dcemActionSubjectManager) || haveAction.contains(dcemActionModuleManager)) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.warn(e);
-		}
-		return false;
+		return  (haveAction.contains(dcemAction) || haveAction.contains(dcemActionSubjectManager) || haveAction.contains(dcemActionModuleManager));
 	}
 
 	public DcemAction getPermission(DcemAction dcemAction) {
@@ -482,7 +478,7 @@ public class OperatorSessionBean implements Serializable {
 
 	public String toString () {
 		if (dcemUser == null) { 
-			return"USER-NULL";
+			return"USER IS NULL";
 		} else {
 			return dcemUser.getAccountName() + " LoggedIn: " + loggedIn;
 		}
