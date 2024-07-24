@@ -480,4 +480,11 @@ public class OperatorSessionBean implements Serializable {
 		return dcemUser;
 	}
 
+	public String toString () {
+		if (dcemUser == null) { 
+			return"USER-NULL";
+		} else {
+			return dcemUser.getAccountName() + " LoggedIn: " + loggedIn;
+		}
+	}
 }
