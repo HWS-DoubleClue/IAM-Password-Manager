@@ -49,12 +49,12 @@ public class ProcessUtil {
 	* @throws Exception
 	*/
 	public static ProcessResult executeProcess(List<String> commandList, int timeoutSeconds) throws Exception {
+	//	File outputFile = null;
 		File outputFile = createOutputTempFile(".txt");
-		commandList.add(">");
-		commandList.add(outputFile.getAbsolutePath());
 		ProcessBuilder processBuilder = new ProcessBuilder(commandList);
 		processBuilder.command(commandList);
-		processBuilder.redirectErrorStream(true);
+		processBuilder.redirectError(outputFile);
+		processBuilder.redirectOutput(outputFile);
 		Process process = processBuilder.start();
 		ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 		ProcessMonitoring processMonitoring = new ProcessMonitoring(process, outputFile);
