@@ -44,7 +44,6 @@ public class DcemCluster {
 	private DcemNode dcemNode;
 	private HazelcastInstance hazelcastInstance = null;
 	private ClusterConfig clusterConfig = null;
-	
 	byte [] clusterKey;
 
 	public Member startCluster(ClusterConfig clusterConfig, String nodeNameTmp) throws Exception {
