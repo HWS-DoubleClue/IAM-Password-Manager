@@ -52,9 +52,7 @@ public class DcemCluster {
 		this.clusterConfig = clusterConfig;
 		nodeName = nodeNameTmp;
 		Config config = null;
-
 		InputStream inputStream;
-
 		File file = LocalPaths.getClusterConfig();
 		if (file.exists()) {
 			try {
@@ -72,15 +70,11 @@ public class DcemCluster {
 		} catch (Exception e) {
 			throw new DcemException(DcemErrorCodes.CLUSTER_CONFIG_FILE_NOT_FOUND, e.getMessage());
 		}
-		
-		
-				
 		String clusterGroupName = clusterConfig.getGivenName();
 		if (clusterGroupName == null || clusterGroupName.isEmpty()) {
 			clusterGroupName = clusterConfig.getName().substring(8);
 		}
 		config.getGroupConfig().setName(clusterGroupName);
-				
 		config.getGroupConfig().setPassword(clusterConfig.getPassword());
 		logger.info("Cluster Configuration: " + config.toString());
 
@@ -88,7 +82,6 @@ public class DcemCluster {
 		// config.getCPSubsystemConfig().setCPMemberCount(3); // TODO not sure about the number
 		hazelcastInstance = Hazelcast.newHazelcastInstance(config);
 		Cluster cluster = hazelcastInstance.getCluster();
-		
 		cluster.addMembershipListener(new ClusterMembershipListener());
 
 		Member member = cluster.getLocalMember();
@@ -99,7 +92,6 @@ public class DcemCluster {
 		flakeIdGenerator = hazelcastInstance.getFlakeIdGenerator("default");
 		return member;
 	}
-
 	
 	public static DcemCluster getDcemCluster() {
 		return dcemCluster;
