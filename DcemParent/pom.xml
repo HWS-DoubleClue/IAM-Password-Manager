@@ -4,30 +4,30 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.doubleclue</groupId>
 	<artifactId>DcemParent</artifactId>
-	<version>3.2.0-SNAPSHOT</version>
+	<version>3.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<repositories>
 		<repository>
 			<id>snapshots</id>
 			<name>nexus-repo</name>
-			<url>http://hws001S0201.dom1.ad.tld:8081/repository/maven-snapshots</url>
+			<url>https://hws001S0201.dom1.ad.tld:8443/repository/maven-snapshots</url>
 		</repository>
 		<repository>
 			<id>releases</id>
 			<name>nexus-repo</name>
-			<url>http://hws001S0201.dom1.ad.tld:8081/repository/maven-releases</url>
+			<url>https://hws001S0201.dom1.ad.tld:8443/repository/maven-releases</url>
 		</repository>
 	</repositories>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>nexus-repo</name>
-			<url>http://hws001S0201.dom1.ad.tld:8081/repository/maven-snapshots</url>
+			<url>https://hws001S0201.dom1.ad.tld:8443/repository/maven-snapshots</url>
 		</snapshotRepository>
 		<repository>
 			<id>releases</id>
 			<name>nexus-repo</name>
-			<url>http://hws001S0201.dom1.ad.tld:8081/repository/maven-releases</url>
+			<url>https://hws001S0201.dom1.ad.tld:8443/repository/maven-releases</url>
 		</repository>
 	</distributionManagement>
 	<ciManagement>
