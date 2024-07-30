@@ -545,6 +545,7 @@ public abstract class LoginViewAbstract implements Serializable {
 		authResponse = asModuleApi.authenticate(authApplication, applicationSubId, userLoginId, chosenAuthMethod, password, passcode, requestParam);
 		availableAuthMethods = authResponse.getAuthMethods();
 		dcemUser = authResponse.getDcemUser();
+	//TODO 	dcemUser.getDcemUserExt();
 		password = null;
 		availableAuthMethods = authResponse.getAuthMethods();
 		if (authResponse.isSuccessful()) {
@@ -613,6 +614,11 @@ public abstract class LoginViewAbstract implements Serializable {
 	}
 
 	protected void finishLogin() throws DcemException {
+		if (dcemUser == null) {
+			dcemUser = userLogic.getUser(userLoginId);
+		} else {
+			dcemUser = userLogic.getUser(dcemUser.getId());
+		}
 		TimeZone timeZone = userLogic.getTimeZone(dcemUser);
 		ExternalContext ec = JsfUtils.getExternalContext();
 		HttpServletRequest httpServletRequest = (HttpServletRequest) ec.getRequest();
@@ -1236,7 +1242,7 @@ public abstract class LoginViewAbstract implements Serializable {
 	}
 	
 	public Map<String, String> getShareUrlParams() {
-		if (mgtUrlParams == null) {
+		if (mgtUrlParams == null || mgtUrlParams.isBlank()) {
 			return null;
 		}
 		return KaraUtils.urlParamStringToMap(mgtUrlParams);
