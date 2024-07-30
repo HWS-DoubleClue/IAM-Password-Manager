@@ -59,11 +59,6 @@ public class MfaLoginView extends LoginViewAbstract {
 	@Override
 	public void finishLogin() throws DcemException {
 		super.finishLogin();
-		if (dcemUser == null) {
-			dcemUser = userLogic.getUser(userLoginId);
-		} else {
-			dcemUser = userLogic.getUser(dcemUser.getId());
-		}
 		try { 
 			operatorSessionBean.loggedInOperator(dcemUser, null);
 			viewNavigator.getMenuModel();
