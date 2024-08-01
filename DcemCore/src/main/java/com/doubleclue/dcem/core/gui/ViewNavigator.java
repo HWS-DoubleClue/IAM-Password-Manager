@@ -108,18 +108,22 @@ public class ViewNavigator implements Serializable {
 
 	public String getUrlLink() {
 		try {
-			String url = applicationBean.getDcemManagementUrl(null) + "/" + DcemConstants.PRE_LOGIN_PAGE + DcemConstants.URL_VIEW + activeModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER
-					+ activeView.getSubject().getViewName();
-			if (activeView.getShareUrlParameters() != null) {
-				url = url + DcemConstants.URL_PARAMS + KaraUtils.mapToUrlParamString(activeView.getShareUrlParameters());
-			}
-			return url;
-		} catch (DcemException e) {
-			return e.getMessage();
-		}		
+			return createUrlLink(activeView, activeView.getShareUrlParameters());
+		} catch (Exception e) {
+			logger.error("",  e);
+			return "error";
+		}
 	}
-	
-	
+
+	public String createUrlLink(DcemView dcemView, Map<String, String> parameterMap) throws Exception {
+		String url = applicationBean.getDcemManagementUrl(null) + "/" + DcemConstants.PRE_LOGIN_PAGE + DcemConstants.URL_VIEW
+				+ dcemView.getSubject().getModuleId() + DcemConstants.MODULE_VIEW_SPLITTER + dcemView.getSubject().getViewName();
+		if (parameterMap != null) {
+			url = url + DcemConstants.URL_PARAMS + KaraUtils.mapToUrlParamString(parameterMap);
+		}
+		return url;
+	}
+
 	public void actionRedirectionToHome() {
 		setActiveView(AdminModule.MODULE_ID + DcemConstants.MODULE_VIEW_SPLITTER + "welcomeView");
 	}
