@@ -34,6 +34,7 @@ public class EmailTask extends CoreTask {
 	String subjectResource;
 	List<EmailAttachment> attachments;
 	SupportedLanguage language;
+	Object[] subjectParameter;
 
 	public EmailTask(List<DcemUser> users, Map<String, Object> map, String templateName, String subjectResource, List<EmailAttachment> attachments) {
 		super(EmailTask.class.getSimpleName(), null);
@@ -42,6 +43,17 @@ public class EmailTask extends CoreTask {
 		this.templateName = templateName;
 		this.subjectResource = subjectResource;
 		this.attachments = attachments;
+		this.subjectParameter = null;
+	}
+	
+	public EmailTask(List<DcemUser> users, Map<String, Object> map, String templateName, String subjectResource, List<EmailAttachment> attachments, Object[] subjectParameters) {
+		super(EmailTask.class.getSimpleName(), null);
+		this.users = users;
+		this.map = map;
+		this.templateName = templateName;
+		this.subjectResource = subjectResource;
+		this.attachments = attachments;
+		this.subjectParameter = subjectParameters;
 	}
 
 	public EmailTask(Set<String> emailAdresses, SupportedLanguage language, Map<String, Object> map, String templateName, String subjectResource,
@@ -53,8 +65,21 @@ public class EmailTask extends CoreTask {
 		this.subjectResource = subjectResource;
 		this.attachments = attachments;
 		this.language = language;
+		this.subjectParameter = null;
 	}
 
+	
+	public EmailTask(Set<String> emailAdresses, SupportedLanguage language, Map<String, Object> map, String templateName, String subjectResource,
+			List<EmailAttachment> attachments, Object[] subjectParameter) {
+		super(EmailTask.class.getSimpleName(), null);
+		this.emailAdresses = emailAdresses;
+		this.map = map;
+		this.templateName = templateName;
+		this.subjectResource = subjectResource;
+		this.attachments = attachments;
+		this.language = language;
+		this.subjectParameter = subjectParameter;
+	}
 	@Override
 	public void runTask() {
 		logger.debug("EmailTask started");
@@ -92,8 +117,12 @@ public class EmailTask extends CoreTask {
 				StringWriter stringWriter = new StringWriter();
 				Template tempalte = applicationBean.getTemplateFromConfig(dcemTemplateEmail);
 				tempalte.process(map, stringWriter);
+				String subject = dbResourceBundle.getString(subjectResource);
+				if (subjectParameter != null) {
+					subject = String.format(subject, subjectParameter);
+				}
 				SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), stringWriter.toString(),
-						dbResourceBundle.getString(subjectResource), attachments);
+						subject, attachments);
 			} catch (Exception e) {
 				logger.error("E-Mail Task FAILED", e);
 				continue;
