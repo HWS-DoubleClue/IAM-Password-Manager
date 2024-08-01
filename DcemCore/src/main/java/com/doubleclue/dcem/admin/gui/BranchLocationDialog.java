@@ -61,6 +61,13 @@ public class BranchLocationDialog extends DcemDialog {
 			}
 		}
 	}
+	
+	@Override
+	public void actionConfirm() throws Exception {
+		List<Object> branchLocationsAsObjects = this.autoViewBean.getSelectedItems();
+		List<BranchLocation> branchLocations = branchLocationsAsObjects.stream().map(obj -> (BranchLocation) obj).toList();
+		branchLocationLogic.deleteBranchLocations(branchLocations, this.getAutoViewAction().getDcemAction());
+	}
 
 	public void leaving() {
 	}

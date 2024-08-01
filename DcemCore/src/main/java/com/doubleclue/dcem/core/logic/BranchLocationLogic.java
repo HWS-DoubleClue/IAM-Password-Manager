@@ -1,8 +1,10 @@
 package com.doubleclue.dcem.core.logic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -18,6 +20,7 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.BranchLocation;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 
 @ApplicationScoped
@@ -28,6 +31,9 @@ public class BranchLocationLogic {
 	private Logger logger = LogManager.getLogger(BranchLocationLogic.class);
 
 	@Inject
+	DcemApplicationBean applicationBean;
+	
+	@Inject
 	AdminModule adminModule;
 
 	@Inject
@@ -35,6 +41,9 @@ public class BranchLocationLogic {
 
 	@Inject
 	AuditingLogic auditingLogic;
+	
+	@Inject
+	Event<List<BranchLocation>> eventBranchLocations;
 
 	@DcemTransactional
 	public void addOrUpdate(BranchLocation branchLocation, DcemAction dcemAction) throws DcemException {
@@ -52,6 +61,18 @@ public class BranchLocationLogic {
 		Root<BranchLocation> root = query.from(BranchLocation.class);
 		query.select(root);
 		return em.createQuery(query).getResultList();
+	}
+
+	@DcemTransactional
+	public void deleteBranchLocations(List<BranchLocation> branchLocations, DcemAction dcemAction) throws DcemException {
+		eventBranchLocations.fire(branchLocations);
+		List<String> locationNames= new ArrayList<String>(branchLocations.size());
+		for (BranchLocation branchLocation : branchLocations) {
+			branchLocation = em.merge(branchLocation);
+			em.remove(branchLocation);
+			locationNames.add(branchLocation.toString());
+		}
+		auditingLogic.addAudit(dcemAction, String.join(", ", locationNames));
 	}
 
 }
