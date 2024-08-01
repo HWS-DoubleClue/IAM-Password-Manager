@@ -3,12 +3,17 @@ package com.doubleclue.dcem.core.tasks;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
+import com.doubleclue.dcem.core.weld.CdiUtils;
 
 public class NightlyTaskTenant extends CoreTask {
 
@@ -27,6 +32,9 @@ public class NightlyTaskTenant extends CoreTask {
 	public void runTask() {
 		try {
 			logger.info("Nightly-Task for " + TenantIdResolver.getCurrentTenantName());
+			OperatorSessionBean operatorSessionBean = CdiUtils.getReference(OperatorSessionBean.class);
+			AdminModule adminModule =  CdiUtils.getReference(AdminModule.class);
+			operatorSessionBean.setDcemUser(adminModule.getAdminTenantData().getSuperAdmin());
 			for (DcemModule module : sortedModules) {
 				if (module.isMasterOnly() && TenantIdResolver.isCurrentTenantMaster() == false) {
 					continue;
@@ -34,7 +42,7 @@ public class NightlyTaskTenant extends CoreTask {
 				module.runNightlyTask();
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("NightlyTaskTenant",e);
 		} finally {
 			countDownLatch.countDown();
 		}

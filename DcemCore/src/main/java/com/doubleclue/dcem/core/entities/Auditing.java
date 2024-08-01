@@ -30,14 +30,14 @@ import com.doubleclue.dcem.core.gui.DcemGui;
 @Entity
 @Table(name = "core_auditing")
 
-@NamedQueries({ @NamedQuery(name = Auditing.GET_AFTER, query = "SELECT rp FROM Auditing rp where rp.timestamp < ?1"),
-		@NamedQuery(name = Auditing.DELETE_AFTER, query = "DELETE FROM Auditing rp where rp.timestamp < ?1"),
+@NamedQueries({ @NamedQuery(name = Auditing.GET_BEFORE, query = "SELECT rp FROM Auditing rp where rp.timestamp < ?1"),
+		@NamedQuery(name = Auditing.DELETE_BEFORE, query = "DELETE FROM Auditing rp where rp.timestamp < ?1"),
 		@NamedQuery(name = Auditing.DELETE_BY_USER, query = "DELETE FROM Auditing rp where rp.dcemUser = ?1"), })
 public class Auditing extends EntityInterface implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	public static final String GET_AFTER = "Auditing.getAfter";
-	public static final String DELETE_AFTER = "Auditing.deleteAfter";
+	public static final String GET_BEFORE = "Auditing.getBefore";
+	public static final String DELETE_BEFORE = "Auditing.deleteBefore";
 	public static final String DELETE_BY_USER = "Auditing.deleteByUser";
 
 	@Id

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,9 +31,7 @@ public class ExportRecords {
 	 */
 	@DcemTransactional
 	public String[] archive(int days, Class<?> klass, String searchQuery, String deleteQuery) throws DcemException {
-		LocalDateTime localDateTime = LocalDateTime.now();
-		localDateTime.minusDays(days);
-		
+		LocalDateTime localDateTime = LocalDateTime.now().minusDays(days);
 		ExportTsv exportTsv;
 		int position = 0;
 		List<EntityInterface> list = getRecordsAfter(localDateTime, position, searchQuery);

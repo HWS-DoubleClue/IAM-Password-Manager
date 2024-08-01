@@ -322,8 +322,10 @@ public class OperatorSessionBean implements Serializable {
 		if (dcemUser != null && dcemUser.getLanguage() != null) {
 			return dcemUser.getLanguage().getLocale();
 		}
-		Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
-		return locale;
+		if (FacesContext.getCurrentInstance() != null) {
+			return FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
+		}
+		return Locale.getDefault();
 	}
 
 	public TenantEntity getTenantEntity() {

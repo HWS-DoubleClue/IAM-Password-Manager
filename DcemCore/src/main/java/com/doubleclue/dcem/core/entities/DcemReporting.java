@@ -32,8 +32,8 @@ import com.hazelcast.nio.serialization.DataSerializable;
  */
 @Entity
 @Table(name = "core_reporting")
-@NamedQueries({ @NamedQuery(name = DcemReporting.GET_AFTER, query = "SELECT rp FROM DcemReporting rp where rp.localDateTime < ?1"),
-		@NamedQuery(name = DcemReporting.DELETE_AFTER, query = "DELETE FROM DcemReporting rp where rp.localDateTime < ?1"),
+@NamedQueries({ @NamedQuery(name = DcemReporting.GET_BEFORE, query = "SELECT rp FROM DcemReporting rp where rp.localDateTime < ?1"),
+		@NamedQuery(name = DcemReporting.DELETE_BEFORE, query = "DELETE FROM DcemReporting rp where rp.localDateTime < ?1"),
 		@NamedQuery(name = DcemReporting.DELETE_USER_REPORTS, query = "DELETE FROM DcemReporting rp where rp.user = ?1"),
 		@NamedQuery(name = DcemReporting.GET_ALL_REPORTS_COUNT, query = "SELECT COUNT(rp) FROM DcemReporting rp where rp.localDateTime >= ?1 AND rp.localDateTime <= ?2 AND rp.action >= ?3 AND rp.action <= ?4 AND rp.errorCode IS NULL"),
 		@NamedQuery(name = DcemReporting.GET_REPORTS_COUNT, query = "SELECT COUNT(rp) FROM DcemReporting rp where rp.localDateTime >= ?1 AND rp.localDateTime <= ?2 AND rp.action = ?3"),
@@ -44,9 +44,9 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 public class DcemReporting extends EntityInterface implements DataSerializable {
 
-	public final static String GET_AFTER = "DcemReporting.getAfter";
+	public final static String GET_BEFORE = "DcemReporting.getBefore";
 	public static final String DELETE_USER_REPORTS = "DcemReporting.deleteUsrRpts";
-	public static final String DELETE_AFTER = "DcemReporting.deleteAfter";
+	public static final String DELETE_BEFORE = "DcemReporting.deleteBefore";
 	public static final String GET_ALL_REPORTS_COUNT = "DcemReporting.getAllReportsCount";
 	public static final String GET_REPORTS_COUNT = "DcemReporting.getReportsCount";
 	public static final String GET_ALL_AUTH_METHODS_COUNT = "DcemReporting.getAllAuthMethodsCount";

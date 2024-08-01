@@ -7,6 +7,7 @@ import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.weld.WeldContextUtils;
 import com.doubleclue.dcem.core.weld.WeldRequestContext;
+import com.doubleclue.dcem.core.weld.WeldSessionContext;
 
 /**
  * 
@@ -39,10 +40,12 @@ public abstract class CoreTask implements Runnable {
 	@Override
 	public void run() {
 		WeldRequestContext requestContext = null;
+		WeldSessionContext sessionContext = null;
 		try {
 			Thread.currentThread().setName(name);
 			TenantIdResolver.setCurrentTenant(coreTenantEntity);
 			requestContext = WeldContextUtils.activateRequestContext();
+			sessionContext = WeldContextUtils.activateSessionContext(null);
 
 			if (logger.isTraceEnabled()) {
 				logger.trace("trying to execute SEM task[" + Thread.currentThread().getName() + "]");
@@ -55,6 +58,7 @@ public abstract class CoreTask implements Runnable {
 			logger.warn("Could not execute SEM task[" + Thread.currentThread().getName() + "]", t);
 		} finally {
 			WeldContextUtils.deactivateRequestContext(requestContext);
+			WeldContextUtils.deactivateSessionContext(sessionContext);
 		}
 	}
 

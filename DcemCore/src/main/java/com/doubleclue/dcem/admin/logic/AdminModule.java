@@ -2,8 +2,8 @@ package com.doubleclue.dcem.admin.logic;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -100,8 +100,6 @@ public class AdminModule extends DcemModule {
 	@Inject
 	WelcomeSubject welcomeSubject;
 
-	@Inject
-	private ActionLogic actionLogic;
 
 	@Override
 	public void start() throws DcemException {
@@ -248,7 +246,6 @@ public class AdminModule extends DcemModule {
 				}
 				name = name + " - " + tenantEntity.getName();
 			}
-
 			return DcemConstants.APP_TITLE + name;
 		}
 	}
@@ -350,15 +347,12 @@ public class AdminModule extends DcemModule {
 	@Override
 	public void runNightlyTask() {
 
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-
 		// Archive Reports
-		if (cal.get(Calendar.DAY_OF_MONTH) == 1 || systemModule.getSpecialPropery(DcemConstants.SPECIAL_PROPERTY_RUN_NIGHTLY_TASK) != null) {
+		if (LocalDate.now().getDayOfMonth() == 1 || systemModule.getSpecialPropery(DcemConstants.SPECIAL_PROPERTY_RUN_NIGHTLY_TASK) != null) {
 			int days = getPreferences().getDurationForHistoryArchive();
 			if (days > 0) {
 				try {
-					String[] result = exportRecords.archive(days, Auditing.class, Auditing.GET_AFTER, Auditing.DELETE_AFTER);
+					String[] result = exportRecords.archive(days, Auditing.class, Auditing.GET_BEFORE, Auditing.DELETE_BEFORE);
 					if (result != null) {
 						logger.info("Admin History-Archived: File=" + result[0] + " Records=" + result[1]);
 					}
@@ -366,11 +360,10 @@ public class AdminModule extends DcemModule {
 					logger.warn("Couldn't archive Admin-History", exp);
 				}
 			}
-
 			days = getPreferences().getDurationForReportArchive();
 			if (days > 0) {
 				try {
-					String[] result = exportRecords.archive(days, DcemReporting.class, DcemReporting.GET_AFTER, DcemReporting.DELETE_AFTER);
+					String[] result = exportRecords.archive(days, DcemReporting.class, DcemReporting.GET_BEFORE, DcemReporting.DELETE_BEFORE);
 					if (result != null) {
 						logger.info("AsReporting-Archived: File=" + result[0] + " Records=" + result[1]);
 					}
@@ -380,8 +373,6 @@ public class AdminModule extends DcemModule {
 			}
 		}
 		applicationBean.updateFreeMarkerCache();
-		// Check for any alerts regarding licence limits
-		// licenceLogic.checkLicenceAlerts();
 	}
 
 	// @Override
@@ -401,9 +392,11 @@ public class AdminModule extends DcemModule {
 		adminTenantData.setReportIdGenerator(reportIdGenerator);
 		DcemUser superAdmin = userLogic.getDistinctUser(DcemConstants.SUPER_ADMIN_OPERATOR);
 		if (superAdmin != null) {
-			em.detach(superAdmin);
-			superAdmin.setHashPassword(null);
+			superAdmin.getDcemUserExt().getTimezone();  // loaded for LAZY Exception
 			adminTenantData.setSuperAdmin(superAdmin);
+			em.detach(superAdmin);	
+			superAdmin.setHashPassword(null);
+			superAdmin.setSalt(null);					
 		}
 		try {
 			TenantBrandingEntity brandingEntity = tenantBrandingLogic.getTenantBrandingEntity();

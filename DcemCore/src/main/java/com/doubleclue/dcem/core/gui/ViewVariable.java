@@ -232,8 +232,7 @@ public class ViewVariable implements Serializable {
 			}
 			return convertAsString(klassObject);
 		} catch (Exception exp) {
-			exp.printStackTrace();
-			logger.warn(exp);
+			logger.warn(klassObject.toString(), exp);
 			return null;
 		}
 	}
@@ -284,8 +283,7 @@ public class ViewVariable implements Serializable {
 		if (value == null) {
 			return "";
 		}
-		Locale locale;
-		locale = getOperatorSessionBean().getLocale();
+		Locale locale = getOperatorSessionBean().getLocale();
 		String resultValue;
 		DateTimeFormatter dateFormatter;
 		switch (variableType) {
@@ -302,7 +300,7 @@ public class ViewVariable implements Serializable {
 			resultValue = ldt.format(dateTimeFormatter);
 			break;
 		case BOOLEAN:
-			if ((Boolean)value == true) {
+			if ((Boolean) value == true) {
 				return "\u2705";
 			} else {
 				return "\u2718";
@@ -460,10 +458,10 @@ public class ViewVariable implements Serializable {
 		}
 		if (dcemGui.sortEnumerations() == true) {
 			Collections.sort(list, new Comparator<SelectItem>() {
-			    @Override
-			    public int compare(SelectItem o1, SelectItem o2) {
-			        return o1.getLabel().compareTo(o2.getLabel());
-			    }
+				@Override
+				public int compare(SelectItem o1, SelectItem o2) {
+					return o1.getLabel().compareTo(o2.getLabel());
+				}
 			});
 		}
 		return list;
@@ -524,28 +522,28 @@ public class ViewVariable implements Serializable {
 	public void setListClass(Class<?> listClass) {
 		this.listClass = listClass;
 	}
-	
+
 	public String getColumnStyle() {
 		if (dcemGui != null && dcemGui.style().isEmpty() == false) {
 			return dcemGui.style();
 		}
 		switch (this.variableType) {
-			case BOOLEAN:
-			case NUMBER:
-				return "text-align: center !Important;";
-			default:
-				return "text-align: left; word-break: break;  white-space: normal";
+		case BOOLEAN:
+		case NUMBER:
+			return "text-align: center !Important;";
+		default:
+			return "text-align: left; word-break: break;  white-space: normal";
 		}
-	} 
-	
+	}
+
 	public boolean isLink() {
 		return dcemGui.linkUrl().isEmpty() == false;
 	}
-	
+
 	public boolean isText() {
 		return variableType != VariableType.IMAGE && isLink() == false;
 	}
-	
+
 	public String getLinkUrl(Object value) {
 		return dcemGui.linkUrl().replaceAll("#\\{value}", getRecordData(value));
 	}
