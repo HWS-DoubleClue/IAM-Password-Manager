@@ -1,9 +1,14 @@
 package com.doubleclue.dcem.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public abstract class EntityInterface {
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public abstract class EntityInterface   {
 
+	/**
+	 * 
+	 */
 	public abstract Number getId();
 
 	public abstract void setId(Number id);

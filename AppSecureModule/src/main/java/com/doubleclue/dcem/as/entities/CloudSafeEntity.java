@@ -30,6 +30,8 @@ import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * The persistent class for the Registered Version
@@ -74,7 +76,6 @@ import com.doubleclue.dcem.core.gui.DcemGui;
 		@NamedQuery(name = CloudSafeEntity.UPDATE_LAST_MODIFY_STATE_BY_USER, query = "UPDATE CloudSafeEntity c SET c.lastModifiedUser = NULL WHERE c.lastModifiedUser = ?1"),
 
 })
-
 public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	public final static String GET_GLOBAL_CLOUDDATA = "CloudSafeEntity.getGlobalProperty";
@@ -134,21 +135,25 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@Enumerated(EnumType.ORDINAL)
 	@Column
+	@JsonIgnore
 	CloudSafeOwner owner;
 
 	@DcemGui(name = "user", subClass = "loginId")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_USER"), nullable = false, insertable = true, updatable = true)
+	@JsonIgnore
 	private DcemUser user;
 
 	@DcemGui(name = "device", subClass = "name")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_DEVICE"), nullable = false, insertable = true, updatable = false)
+	@JsonIgnore
 	private DeviceEntity device;
 
 	@DcemGui(name = "group", subClass = "name")
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_GROUP"), name = "group_dc_id", nullable = true, insertable = true, updatable = true)
+	@JsonIgnore
 	private DcemGroup group;
 
 	@DcemGui
@@ -163,11 +168,13 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_AS_PARENT_ID"), name = "dc_parent_id", nullable = true, insertable = true, updatable = true)
+	@JsonIgnore
 	private CloudSafeEntity parent;
 
 	@DcemGui(name = "last_Modified_User", subClass = "loginId")
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_USER_MODIFIED"), nullable = true, insertable = true, updatable = true)
+	@JsonIgnore
 	private DcemUser lastModifiedUser;
 
 	// @DcemGui
@@ -180,6 +187,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Column(nullable = true)
 	LocalDateTime discardAfter;
 
+	@JsonIgnore
 	String options;
 
 	// @Column(name = "dc_signature")
@@ -187,6 +195,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	// byte[] signature;
 
 	@Column(name = "dc_salt", length = 32)
+	@JsonIgnore
 	byte[] salt;
 
 	@DcemGui
@@ -195,31 +204,40 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	@DcemGui
 	@Column(name = "dc_gcm", nullable = false)
+	@JsonIgnore
 	Boolean isGcm = true;
 
 	@DcemGui
 	@Column(name = "recycled", nullable = false)
+	@JsonIgnore
 	boolean recycled = false;
 
 	@Transient
+	@JsonIgnore
 	String loginId;
 
 	@Transient
+	@JsonIgnore
 	String deviceName;
 
 	@Transient
+	@JsonIgnore
 	String lengthString;
 
 	@Transient
+	@JsonIgnore
 	boolean writeAccess = true;
 
 	@Transient
+	@JsonIgnore
 	boolean restrictDownload;
 
 	@Transient
+	@JsonIgnore
 	boolean newEntity = false;
 
 	@Transient
+	@JsonIgnore
 	String path;
 
 	public String getPath() {
@@ -295,18 +313,17 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	}
 
 	@Transient
-	public String toString() { // TODO is this being used?
+	public String toString() { 
 		StringBuffer sb = new StringBuffer();
-		sb.append("Propery ID=");
+		sb.append("ID=");
 		sb.append(id);
-		sb.append(", Owner=");
-		sb.append(owner.name());
 		sb.append(", Name=");
 		sb.append(name);
 		return sb.toString();
 	}
 
 	@Transient
+	@JsonIgnore
 	public long getDiscardAfterAsLong() {
 		if (discardAfter == null) {
 			return 0;
@@ -330,69 +347,13 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.options = options;
 	}
 
-	// public void setContent(byte[] content) {
-	// if (content != null && content.length == 0) {
-	// content = null;
-	// this.length = 0;
-	// }
-	// this.content = content;
-	// if (content != null) {
-	// length = content.length;
-	// }
-	// }
-	//
-	// @Transient
-	// public void setContentText(String text) throws UnsupportedEncodingException {
-	// this.content = text.getBytes(DcemConstants.CHARSET_UTF8);
-	// length = content.length;
-	//
-	// }
-
-	// @Transient
-	// public String getContentText() {
-	// if (content != null) {
-	// try {
-	// return new String(this.content, DcemConstants.CHARSET_UTF8);
-	// } catch (UnsupportedEncodingException e) {
-	// return new String(this.content);
-	// }
-	// } else {
-	// return "";
-	// }
-	//
-	// }
-
 	public boolean isOption(CloudSafeOptions options) {
 		if (this.options == null) {
 			return false;
 		}
 		return this.options.contains(options.name());
 	}
-
-	// @Transient
-	// public void setEncytedContent(byte[] contentx, char [] password) throws DcemException {
-	// if (isOption(CloudDataOptions.PWD)) {
-	// setSalt(RandomUtils.getRandom(8));
-	// this.setContent(SecureServerUtils.cryptContentPass(contentx, password, false, salt));
-	// } else if (isOption(CloudDataOptions.ENC)) {
-	// this.setContent(DbEncryption.encryptSeed(contentx));
-	// } else {
-	// this.setContent(contentx);
-	// }
-	// length = contentx.length;
-	// }
-	//
-	// @Transient
-	// public byte[] getDecytedContent(char [] password) throws DcemException {
-	// if (isOption(CloudDataOptions.PWD)) {
-	// return (SecureServerUtils.cryptContentPass(content, password, true, salt));
-	// } else if (isOption(CloudDataOptions.ENC)) {
-	// return DbEncryption.decryptSeed(content);
-	// } else {
-	// return content;
-	// }
-	// }
-
+	
 	public byte[] getSalt() {
 		return salt;
 	}
@@ -425,6 +386,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	}
 
 	@Transient
+	@JsonIgnore
 	public String getLengthKb() {
 		if (isFolder) {
 			return "-";
@@ -444,6 +406,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.parent = parent;
 	}
 
+	@JsonIgnore
 	public boolean isFolder() {
 		return isFolder;
 	}
@@ -476,6 +439,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.recycled = isRecycled;
 	}
 
+	@JsonIgnore
 	public boolean isGcm() {
 		if (isGcm == null) {
 			isGcm = false;
@@ -511,132 +475,6 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.group = group;
 	}
 	
-	
-
-//	@Override
-//	public int hashCode() {
-//		final int prime = 31;
-//		int result = 1;
-//		result = prime * result + ((device == null) ? 0 : device.hashCode());
-//		result = prime * result + ((deviceName == null) ? 0 : deviceName.hashCode());
-//		result = prime * result + ((discardAfter == null) ? 0 : discardAfter.hashCode());
-//		result = prime * result + ((group == null) ? 0 : group.hashCode());
-//		result = prime * result + ((id == null) ? 0 : id.hashCode());
-//		result = prime * result + (isFolder ? 1231 : 1237);
-//		result = prime * result + ((isGcm == null) ? 0 : isGcm.hashCode());
-//		result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-//		result = prime * result + ((lastModifiedUser == null) ? 0 : lastModifiedUser.hashCode());
-//		result = prime * result + (int) (length ^ (length >>> 32));
-//		result = prime * result + ((lengthString == null) ? 0 : lengthString.hashCode());
-//		result = prime * result + ((loginId == null) ? 0 : loginId.hashCode());
-//		result = prime * result + ((name == null) ? 0 : name.hashCode());
-//		result = prime * result + (newEntity ? 1231 : 1237);
-//		result = prime * result + ((options == null) ? 0 : options.hashCode());
-//		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-//		result = prime * result + (recycled ? 1231 : 1237);
-//		result = prime * result + (restrictDownload ? 1231 : 1237);
-//		result = prime * result + ((user == null) ? 0 : user.hashCode());
-//		result = prime * result + (writeAccess ? 1231 : 1237);
-//		return result;
-//	}
-
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		CloudSafeEntity other = (CloudSafeEntity) obj;
-//		if (device == null) {
-//			if (other.device != null)
-//				return false;
-//		} else if (!device.equals(other.device))
-//			return false;
-//		if (deviceName == null) {
-//			if (other.deviceName != null)
-//				return false;
-//		} else if (!deviceName.equals(other.deviceName))
-//			return false;
-//		if (discardAfter == null) {
-//			if (other.discardAfter != null)
-//				return false;
-//		} else if (!discardAfter.equals(other.discardAfter))
-//			return false;
-//		if (group == null) {
-//			if (other.group != null)
-//				return false;
-//		} else if (!group.equals(other.group))
-//			return false;
-//		if (id == null) {
-//			if (other.id != null)
-//				return false;
-//		} else if (!id.equals(other.id))
-//			return false;
-//		if (isFolder != other.isFolder)
-//			return false;
-//		if (isGcm == null) {
-//			if (other.isGcm != null)
-//				return false;
-//		} else if (!isGcm.equals(other.isGcm))
-//			return false;
-//		if (lastModified == null) {
-//			if (other.lastModified != null)
-//				return false;
-//		} else if (!lastModified.equals(other.lastModified))
-//			return false;
-//		if (lastModifiedUser == null) {
-//			if (other.lastModifiedUser != null)
-//				return false;
-//		} else if (!lastModifiedUser.equals(other.lastModifiedUser))
-//			return false;
-//		if (length != other.length)
-//			return false;
-//		if (lengthString == null) {
-//			if (other.lengthString != null)
-//				return false;
-//		} else if (!lengthString.equals(other.lengthString))
-//			return false;
-//		if (loginId == null) {
-//			if (other.loginId != null)
-//				return false;
-//		} else if (!loginId.equals(other.loginId))
-//			return false;
-//		if (name == null) {
-//			if (other.name != null)
-//				return false;
-//		} else if (!name.equals(other.name))
-//			return false;
-//		if (newEntity != other.newEntity)
-//			return false;
-//		if (options == null) {
-//			if (other.options != null)
-//				return false;
-//		} else if (!options.equals(other.options))
-//			return false;
-//		if (owner != other.owner)
-//			return false;
-//		if (parent == null) {
-//			if (other.parent != null)
-//				return false;
-//		} else if (!parent.equals(other.parent))
-//			return false;
-//		if (recycled != other.recycled)
-//			return false;
-//		if (restrictDownload != other.restrictDownload)
-//			return false;
-//		if (!Arrays.equals(salt, other.salt))
-//			return false;
-//		if (user == null) {
-//			if (other.user != null)
-//				return false;
-//		} else if (!user.equals(other.user))
-//			return false;
-//		if (writeAccess != other.writeAccess)
-//			return false;
-//		return true;
-//	}
 
 	@Override
 	public int hashCode() {
@@ -659,8 +497,8 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		return isFolder == false;
 	}
 
+	@JsonIgnore
 	public String getCanonicalPath() {
-		// TODO Auto-generated method stub we implement this later
 		return name;
 	}
 
