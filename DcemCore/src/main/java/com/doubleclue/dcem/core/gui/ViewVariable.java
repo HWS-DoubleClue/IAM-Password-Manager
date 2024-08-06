@@ -14,9 +14,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.SortedSet;
 
 import javax.faces.component.UIComponent;
@@ -34,6 +36,7 @@ import org.primefaces.model.SortOrder;
 import org.primefaces.model.StreamedContent;
 
 import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.FilterItem;
 import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.jpa.VariableType;
@@ -47,6 +50,9 @@ import com.doubleclue.dcem.core.weld.CdiUtils;
  * @author Emanuel Galea
  */
 public class ViewVariable implements Serializable {
+
+	private static final String VALUE_URL_TOKEN = "value";
+	private static final String HOST_URL_TOKEN = "host";
 
 	private static final long serialVersionUID = 4725468617809734809L;
 
@@ -544,8 +550,18 @@ public class ViewVariable implements Serializable {
 		return variableType != VariableType.IMAGE && isLink() == false;
 	}
 
-	public String getLinkUrl(Object value) {
-		return dcemGui.linkUrl().replaceAll("#\\{value}", getRecordData(value));
+	public String getLinkUrl(AutoViewBean autoViewBean, Object value) {
+		String host = autoViewBean.viewNavigator.getActiveView().linkUrlHost;
+		Map<String, String> map = new HashMap<String, String>();
+		if (host != null) {
+			map.put(HOST_URL_TOKEN, host);
+		}		
+		map.put(VALUE_URL_TOKEN, getRecordData(value));
+		try {
+			return DcemUtils.processTemplate(dcemGui.linkUrl(), map);
+		} catch (DcemException e) {
+			return e.toString();
+		}
 	}
 
 	private OperatorSessionBean getOperatorSessionBean() {
