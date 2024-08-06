@@ -386,6 +386,9 @@ public class UserLogic {
 	}
 
 	private void updateUserExtensionAttributes(DcemUserExtension dcemUserExtension, DcemLdapAttributes dcemLdapAttributes) throws DcemException {
+		if (dcemLdapAttributes == null) {
+			return;
+		}
 		if (dcemLdapAttributes.country != null) {
 			dcemUserExtension.setCountry(dcemLdapAttributes.country);
 		}
@@ -871,9 +874,9 @@ public class UserLogic {
 		return query.executeUpdate();
 	}
 
-//	public DcemUserExtension getDcemUserExtension(DcemUser dcemUser) {
-//		return em.find(DcemUserExtension.class, dcemUser.getId());
-//	}
+	// public DcemUserExtension getDcemUserExtension(DcemUser dcemUser) {
+	// return em.find(DcemUserExtension.class, dcemUser.getId());
+	// }
 
 	public DcemUser getSuperAdmin() {
 		return adminModule.getAdminTenantData().getSuperAdmin();

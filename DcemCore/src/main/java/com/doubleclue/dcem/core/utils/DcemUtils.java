@@ -1100,7 +1100,6 @@ public class DcemUtils {
 	static public void copyObject(Object sourceObject, Object destObject) {
 
 		Method[] gettersAndSetters = sourceObject.getClass().getMethods();
-
 		for (int i = 0; i < gettersAndSetters.length; i++) {
 			String methodName = gettersAndSetters[i].getName();
 			try {
@@ -1111,13 +1110,9 @@ public class DcemUtils {
 					destObject.getClass().getMethod(methodName.replaceFirst("is", "set"), gettersAndSetters[i].getReturnType()).invoke(destObject,
 							gettersAndSetters[i].invoke(sourceObject));
 				}
-
-			} catch (NoSuchMethodException exp) {
-
 			} catch (Exception exp) {
 				logger.debug(exp);
 			}
-
 		}
 		return;
 	}

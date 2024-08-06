@@ -392,6 +392,9 @@ public class AdminModule extends DcemModule {
 		adminTenantData.setReportIdGenerator(reportIdGenerator);
 		DcemUser superAdmin = userLogic.getDistinctUser(DcemConstants.SUPER_ADMIN_OPERATOR);
 		if (superAdmin != null) {
+			if (superAdmin.getDcemUserExt() == null) {
+				userLogic.updateExtention (superAdmin, null, null);
+			}
 			superAdmin.getDcemUserExt().getTimezone();  // loaded for LAZY Exception
 			adminTenantData.setSuperAdmin(superAdmin);
 			em.detach(superAdmin);	
