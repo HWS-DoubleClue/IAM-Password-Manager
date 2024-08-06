@@ -551,7 +551,7 @@ public class ViewVariable implements Serializable {
 	}
 
 	public String getLinkUrl(AutoViewBean autoViewBean, Object value) {
-		String host = autoViewBean.viewNavigator.getActiveView().linkUrlHost;
+		String host = autoViewBean.viewNavigator.getActiveView().getLinkUrlHost();
 		Map<String, String> map = new HashMap<String, String>();
 		if (host != null) {
 			map.put(HOST_URL_TOKEN, host);

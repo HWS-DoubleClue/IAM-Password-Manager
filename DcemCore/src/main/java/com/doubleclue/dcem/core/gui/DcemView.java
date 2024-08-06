@@ -119,7 +119,7 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 
 	private String topComposition;
 	
-	protected String linkUrlHost;
+	private String linkUrlHost;
 
 	public List<AutoViewAction> getViewActions() {
 		return autoViewActions;
@@ -700,6 +700,14 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 
 	public String getClassName() {
 		return this.getClass().getSimpleName();
+	}
+
+	public String getLinkUrlHost() {
+		return linkUrlHost;
+	}
+
+	public void setLinkUrlHost(String linkUrlHost) {
+		this.linkUrlHost = linkUrlHost;
 	}
 
 }
