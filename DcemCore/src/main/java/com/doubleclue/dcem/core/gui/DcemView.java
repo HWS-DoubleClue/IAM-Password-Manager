@@ -118,6 +118,8 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 	protected int maxExport = 1000;
 
 	private String topComposition;
+	
+	protected String linkUrlHost;
 
 	public List<AutoViewAction> getViewActions() {
 		return autoViewActions;

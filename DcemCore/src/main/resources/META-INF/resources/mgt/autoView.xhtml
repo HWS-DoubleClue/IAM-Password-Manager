@@ -100,7 +100,7 @@
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
 						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />
 					</p:avatar>
-					<p:link href="#{item.getLinkUrl(record)}" rendered="#{item.isLink()}" value="#{item.getRecordData(record)}" target="_blank" />
+					<p:link href="#{item.getLinkUrl(autoView, record)}" rendered="#{item.isLink()}" value="#{item.getRecordData(record)}" target="_blank" />
 					<h:outputText rendered="#{item.isText()}" id="row2" style="#{item.style}" value="#{item.getRecordData(record)}" />
 					<h:panelGroup rendered="#{item.variableType eq 'RATING'}">
 						<br></br>

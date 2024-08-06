@@ -888,7 +888,7 @@ public class DcemUtils {
 		return cal.getTime();
 	}
 
-	public static String processTemplate(String template, HashMap<String, String> map) throws DcemException {
+	public static String processTemplate(String template, Map<String, String> map) throws DcemException {
 
 		int fromIndex = 0;
 		int indexStart = 0;
