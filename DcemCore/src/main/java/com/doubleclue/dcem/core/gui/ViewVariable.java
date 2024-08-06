@@ -459,8 +459,14 @@ public class ViewVariable implements Serializable {
 			return list;
 		}
 		Object[] items = klass.getEnumConstants();
+
 		for (Object item : items) {
-			list.add(new SelectItem(Integer.toString(((Enum) item).ordinal()), ((Enum) item).name()));
+			try {
+				if (((Enum) item).getClass().getField(((Enum) item).name()).isAnnotationPresent(Deprecated.class) == false) {
+					list.add(new SelectItem(Integer.toString(((Enum) item).ordinal()), ((Enum) item).name()));
+				}
+			} catch (Exception e) {
+			}
 		}
 		if (dcemGui.sortEnumerations() == true) {
 			Collections.sort(list, new Comparator<SelectItem>() {
@@ -555,7 +561,7 @@ public class ViewVariable implements Serializable {
 		Map<String, String> map = new HashMap<String, String>();
 		if (host != null) {
 			map.put(HOST_URL_TOKEN, host);
-		}		
+		}
 		map.put(VALUE_URL_TOKEN, getRecordData(value));
 		try {
 			return DcemUtils.processTemplate(dcemGui.linkUrl(), map);
