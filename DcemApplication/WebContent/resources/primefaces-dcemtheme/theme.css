@@ -2231,3 +2231,7 @@ textarea:hover, textarea:active, textarea:focus, select:hover, select:active,
 	background-image: var(--angle-down-icon);
 	background-position: 0;
 }
+
+.ui-outputlabel {
+	display: inline-block;
+}
