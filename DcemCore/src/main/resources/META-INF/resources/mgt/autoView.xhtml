@@ -81,7 +81,7 @@
 						<p:outputLabel value="#{item.displayName}" rendered="#{item.variableType ne 'IMAGE'}" />
 						<p:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
 						<h:panelGroup rendered="#{viewNavigator.predefinedFilterId != 0}">
-							<h:outputText value="#{item.displayName}" />
+							<h:outputText style="text-align: left" value="#{item.displayName}" />
 						</h:panelGroup>
 					</f:facet>
 

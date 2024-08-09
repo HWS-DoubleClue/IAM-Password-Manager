@@ -7,7 +7,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.doubleclue.dcem.${ModuleId}.subjects. ${EntityName}Subject;
+import com.doubleclue.dcem.${ModuleId}.subjects.${ClassFileName}Subject;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.gui.AutoViewBean;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
@@ -15,18 +15,18 @@ import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 
 @SuppressWarnings("serial")
-@Named("${EntityNameVariable}View")
+@Named("${namedClassName}View")
 @SessionScoped
-public class ${EntityName}View extends DcemView {
+public class ${ClassFileName}View extends DcemView {
 
 	@Inject
-	private ${EntityName}Subject ${EntityNameVariable}Subject;
+	private ${ClassFileName}Subject ${EntityNameVariable}Subject;
 
 	@Inject
 	private AutoViewBean autoViewBean;
 
 	@Inject
-	private ${EntityName}Dialog ${EntityNameVariable}Dialog;  // small letters
+	private ${ClassFileName}Dialog ${EntityNameVariable}Dialog;  // small letters
 
 
 	@Inject

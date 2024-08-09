@@ -19,9 +19,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @ApplicationScoped
-public class ${EntityName}Logic {
+public class ${ClassFileName}Logic {
 
-	private Logger logger = LogManager.getLogger(${EntityName}Logic.class);
+	private Logger logger = LogManager.getLogger(${ClassFileName}Logic.class);
 
 	@Inject
 	AdminModule adminModule;
