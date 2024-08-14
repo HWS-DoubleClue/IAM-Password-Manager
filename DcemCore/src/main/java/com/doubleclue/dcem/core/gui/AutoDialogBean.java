@@ -195,11 +195,8 @@ public class AutoDialogBean implements Serializable {
 			case CONSTRAIN_VIOLATION:
 				JsfUtils.addErrorMessage("Verification Error: " + dcemExp.getMessage());
 				return;
-			case EXCEPTION:
-				JsfUtils.addErrorMessage("Something went wrong. Cause: " + dcemExp.getMessage());
-				return;
 			default:
-				JsfUtils.addErrorMessage(dcemExp.getLocalizedMessage());
+				JsfUtils.addErrorMessage("Something went wrong. Cause: " + dcemExp.getMessage());
 				return;
 			}
 

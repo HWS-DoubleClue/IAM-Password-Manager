@@ -14,9 +14,9 @@ import com.doubleclue.dcem.${ModuleId}.entities.${EntityName};
 
 @SuppressWarnings("serial")
 @ApplicationScoped
-public class ${EntityName}Subject extends SubjectAbs {
+public class ${ClassFileName}Subject extends SubjectAbs {
 	
-	public ${EntityName}Subject() {
+	public ${ClassFileName}Subject() {
 
 		rawActions.add(new RawAction(DcemConstants.ACTION_ADD, new String[] { DcemConstants.SYSTEM_ROLE_SUPERADMIN, DcemConstants.SYSTEM_ROLE_ADMIN },
 				ActionSelection.IGNORE));	

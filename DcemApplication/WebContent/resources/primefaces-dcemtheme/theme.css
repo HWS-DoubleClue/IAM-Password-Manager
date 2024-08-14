@@ -2226,3 +2226,12 @@ textarea:hover, textarea:active, textarea:focus, select:hover, select:active,
 	width: 8em;
 	margin-top: 1em;
 }
+
+.ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger .ui-icon.ui-icon-triangle-1-s {
+	background-image: var(--angle-down-icon);
+	background-position: 0;
+}
+
+.ui-outputlabel {
+	display: inline-block;
+}

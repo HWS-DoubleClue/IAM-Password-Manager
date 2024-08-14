@@ -35,6 +35,7 @@ import com.doubleclue.utils.KaraUtils;
 @SessionScoped
 public class CreateCrudView extends DcemView {
 
+	private static final String CLASS_FILE_NAME = "ClassFileName";
 	private static String FREEMARKER_RESOURCES = "com/doubleclue/dcem/dev/resources/freemarker/";
 	private static String FREEMARKER_SUBJECT_TEMPLATE = FREEMARKER_RESOURCES + "Subject.ftl";
 	private static String FREEMARKER_VIEW_TEMPLATE = FREEMARKER_RESOURCES + "View.ftl";
@@ -55,6 +56,8 @@ public class CreateCrudView extends DcemView {
 	private static final String CORE = "/core/";
 	private static final String RESOURCE = "/resources/";
 	private static final String MAP_LOGIC_METHODS = "logicMethods";
+	private static final String ENTITY = "Entity";
+	private static final String NAMED_CLASS = "namedClassName";
 
 	@Inject
 	private CreateCrudSubject createCredSubject;
@@ -99,6 +102,12 @@ public class CreateCrudView extends DcemView {
 			JsfUtils.addErrorMessage("Entity Class is not annotated with @Entity: " + e);
 			return;
 		}
+
+		if (entityClassName.endsWith(ENTITY) == false) {
+			JsfUtils.addErrorMessage("Entity Class must ends eith 'Entity'");
+			return;
+		}
+
 		HashMap<String, String> map = new HashMap<>();
 		map.put("ModuleId", selectedDcemModule.getId());
 		map.put(MAP_MODULE_CLASS_SIMPLE, selectedDcemModule.getClass().getSuperclass().getSimpleName());
@@ -117,11 +126,14 @@ public class CreateCrudView extends DcemView {
 			map.put("ViewPath", viewXhtml);
 			map.put("EntityClass", "null");
 		}
+		String classFileName = entityName.substring(0, entityName.length() - ENTITY.length());
 		if (autoDialog == false) {
-			map.put("DialogPath", "\"/modules/" + selectedDcemModule.getId() + "/" + entityName + "Dialog.xhtml\"");
+			map.put("DialogPath", "\"/modules/" + selectedDcemModule.getId() + "/" + classFileName + "Dialog.xhtml\"");
 		} else {
 			map.put("DialogPath", "\"null\"");
 		}
+		map.put(CLASS_FILE_NAME, classFileName);
+		map.put(NAMED_CLASS,  Character.toLowerCase(classFileName.charAt(0)) + classFileName.substring(1));
 
 		createJavaFile(clazz, map, entityName, FREEMARKER_SUBJECT_TEMPLATE, DevObjectTypes.Subject);
 		createJavaFile(clazz, map, entityName, FREEMARKER_VIEW_TEMPLATE, DevObjectTypes.View);
@@ -286,6 +298,7 @@ public class CreateCrudView extends DcemView {
 		// create subject Class
 		FileWriter writer = null;
 		String packageName = null;
+		String classFileName = map.get(CLASS_FILE_NAME);
 		switch (devObjectTypes) {
 		case Dialog:
 			// dcemApplication.removeFreeMarkerTemplate(clazz.getName() + devObjectTypes.name());
@@ -316,7 +329,7 @@ public class CreateCrudView extends DcemView {
 				String xhtmlDirectory = moduleResources + "META-INF/resources/mgt" + dialogPath.substring(1, dialogPath.length() - 1);
 				viewFile = new File(xhtmlDirectory);
 			} else {
-				viewFile = new File(moduleSources + packageName + entityName + devObjectTypes.name() + ".java");
+				viewFile = new File(moduleSources + packageName + classFileName + devObjectTypes.name() + ".java");
 			}
 			if (overwriteAllFiles == false) {
 				if (viewFile.exists()) {

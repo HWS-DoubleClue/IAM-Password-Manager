@@ -11,7 +11,7 @@ import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.logic.JpaLogic;
 import com.doubleclue.dcem.${ModuleId}.entities.${EntityName};
-import com.doubleclue.dcem.${ModuleId}.logic.${EntityName}Logic;
+import com.doubleclue.dcem.${ModuleId}.logic.${ClassFileName}Logic;
 import com.doubleclue.dcem.${ModuleId}.logic.${ModuleClass};
 import java.util.List;
 import java.util.ArrayList;
@@ -19,17 +19,17 @@ import javax.faces.model.SelectItem;
 import java.util.ResourceBundle;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 
-@Named("${EntityNameVariable}Dialog")
+@Named("${namedClassName}Dialog")
 @SessionScoped
-public class ${EntityName}Dialog extends DcemDialog {
+public class ${ClassFileName}Dialog extends DcemDialog {
 
-	private Logger logger = LogManager.getLogger(${EntityName}Dialog.class);
-
-	@Inject
-	private ${EntityName}Logic ${EntityNameVariable}Logic;
+	private Logger logger = LogManager.getLogger(${ClassFileName}Dialog.class);
 
 	@Inject
-	private ${EntityName}View ${EntityNameVariable}View;
+	private ${ClassFileName}Logic ${EntityNameVariable}Logic;
+
+	@Inject
+	private ${ClassFileName}View ${EntityNameVariable}View;
 
 	@Inject
 	JpaLogic jpaLogic;
