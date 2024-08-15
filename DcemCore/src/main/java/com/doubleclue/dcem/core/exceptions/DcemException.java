@@ -39,7 +39,8 @@ public class DcemException extends Exception {
 			if (error.startsWith("???")) {
 				return this.toString();
 			} 
-			return error;
+			
+			return error +  " : " + this.getMessage();
 		} catch (Exception e) {
 			return this.toString();
 		}
