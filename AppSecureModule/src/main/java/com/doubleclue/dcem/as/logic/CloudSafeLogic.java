@@ -1483,6 +1483,7 @@ public class CloudSafeLogic {
 			}
 			CloudSafeEntity cloudSafeEntity = new CloudSafeEntity();
 			cloudSafeEntity.setName(uploadedFile.fileName);
+			cloudSafeEntity.setInfo(uploadedFile.info);
 			cloudSafeEntity.setDiscardAfter(expiryDate);
 			switch (cloudSafeOwner) {
 			case GLOBAL:

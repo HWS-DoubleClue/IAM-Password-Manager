@@ -159,6 +159,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@Column(name = "dc_name", length = 255, nullable = false)
 	String name;
+	
+	@DcemGui
+	@Column(name = "dc_info", length = 255, nullable = true)
+	String info;
 
 	@DcemGui
 	@Column(name = "dc_length")
@@ -505,5 +509,13 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Transient
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
 	}
 }

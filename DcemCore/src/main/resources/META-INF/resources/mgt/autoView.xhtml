@@ -75,11 +75,11 @@
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
 
 				<p:columns id="columns" value="#{autoView.visibleVariables}" var="item" columnIndexVar="colIndex" filterBy="#{item.id}"
-					 style="#{item.columnStyle}" visible="#{item.visible}" field="#{item.id}">
+					 style="#{item.columnStyle}" visible="#{item.visible}" field="#{item.id}" sortable="#{item.variableType != 'IMAGE'}" >
 
 					<f:facet name="header">
 						<p:outputLabel value="#{item.displayName}" rendered="#{item.variableType ne 'IMAGE'}" />
-						<p:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
+						<p:outputLabel value="#{CoreMsg['profilePhoto']}" rendered="#{item.variableType eq 'IMAGE'}" style="display: none" />
 						<h:panelGroup rendered="#{viewNavigator.predefinedFilterId != 0}">
 							<h:outputText style="text-align: left" value="#{item.displayName}" />
 						</h:panelGroup>
@@ -95,7 +95,7 @@
 						<p:datePicker rendered="#{item.variableType eq 'DATE' or item.variableType eq 'DATE_TIME'}" showButtonBar="true" locale="#{operatorSession.locale}"
 							showTime="false" selectionMode="range" onchange="PF('viewTable').filter()" yearNavigator="true">
 						</p:datePicker>
-						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" />
+						<h:outputLabel value="" rendered="#{item.variableType eq 'IMAGE'}" style="display: none"  />
 					</f:facet>
 					<p:avatar rendered="#{item.variableType eq 'IMAGE'}" shape="circle">
 						<p:graphicImage id="image2" value="#{item.getRecordImage(record)}" stream="false" />
