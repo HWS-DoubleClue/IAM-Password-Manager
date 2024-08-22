@@ -11,15 +11,7 @@ public class RestApplication extends ResourceConfig {
 				JacksonFeature.class,
 				JacksonConfig.class
 				);
-		
-		
-		
-//		JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
-		
-//		register(RolesAllowedDynamicFeature.class);
 		register(JacksonFeature.class);
 		register(JacksonConfig.class); 
-		
-		
 	}
 }

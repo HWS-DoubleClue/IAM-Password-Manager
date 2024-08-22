@@ -19,13 +19,10 @@ public class JacksonConfig implements ContextResolver<ObjectMapper> {
 
 	public JacksonConfig() {
 
-		mapper = new ObjectMapper();
-
-		/* Register JodaModule to handle Joda DateTime Objects. */
+		mapper = new ObjectMapper();	/* Register JodaModule to handle Joda DateTime Objects. */
 		// mapper.registerModule(new JodaModule());
 		// /* We want dates to be treated as ISO8601 not timestamps. */
 		// mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -39,7 +36,6 @@ public class JacksonConfig implements ContextResolver<ObjectMapper> {
 		// mapper.enable(SerializationConfig.Feature.INDENT_OUTPUT);
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 		mapper.registerModule(new JavaTimeModule());
-		
 	}
 
 	@Override
