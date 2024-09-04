@@ -30,6 +30,7 @@ primary key (dc_id)
 create table as_cloudsafe (
 dc_id int4 not null,
 discardAfter timestamp,
+dc_info varchar(255),
 dc_is_folder boolean not null,
 dc_gcm boolean not null,
 lastModified timestamp,
