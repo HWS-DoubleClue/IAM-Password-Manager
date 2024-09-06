@@ -18,7 +18,7 @@ primary key (dc_id)
 
 create table core_branch_location (
 dc_id integer not null auto_increment,
-dc_city varchar(255),
+dc_city varchar(255) not null,
 dc_country varchar(255) not null,
 dc_state varchar(255),
 dc_street varchar(255),
