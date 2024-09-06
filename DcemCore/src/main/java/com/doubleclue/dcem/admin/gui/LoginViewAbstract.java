@@ -956,7 +956,7 @@ public abstract class LoginViewAbstract implements Serializable {
 		// return DcemConstants.HTML_PAGE_LOGIN + DcemConstants.FACES_REDIRECT;
 		// }
 
-		if (listUserAccounts != null && listUserAccounts.getAccounts().isEmpty()) {
+		if (listUserAccounts == null || listUserAccounts.getAccounts().isEmpty()) {
 			selectedAccount = null;
 			return DcemConstants.HTML_PAGE_LOGIN + DcemConstants.FACES_REDIRECT;
 		}
