@@ -288,6 +288,10 @@ body {
 	border-bottom: 2px solid var(--header-link-text-color) !important;
 }
 
+.ui-tabs .ui-tabs-nav li.ui-state-error a {
+	color: #cd0a0a;
+}
+
 .ui-tabs .ui-tabs-nav li.ui-state-hover {
 	background: var(--tab-hover-background-color) !important;
 }
