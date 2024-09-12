@@ -8,15 +8,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.tika.Tika;
 
 import com.doubleclue.dcem.core.as.DcemUploadFile;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
-import com.doubleclue.dcem.core.gui.JsfUtils;
-import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.StreamUtils;
 import com.doubleclue.utils.KaraUtils;
 
@@ -26,12 +23,29 @@ public class FileUploadDetector {
 		Tika tika = new Tika();
 		return tika.detect(file);
 	}
-
+	
+	public static String detectMediaType(InputStream inputStream) throws Exception{
+		Tika tika = new Tika();
+		return tika.detect(inputStream);
+	}
+	
 	public static boolean isMediaTypeAllowed(File file, Collection<String> allowedTypes) throws Exception {
 		if (file == null || allowedTypes == null || allowedTypes.isEmpty()) {
 			return false;
 		}
 		String mediaType = detectMediaType(file);
+		return validateMediaType(mediaType, allowedTypes);
+	}
+	
+	public static boolean isMediaTypeAllowed(InputStream inputStream, Collection<String> allowedTypes) throws Exception {
+		if (inputStream == null || allowedTypes == null || allowedTypes.isEmpty()) {
+			return false;
+		}
+		String mediaType = detectMediaType(inputStream);
+		return validateMediaType(mediaType, allowedTypes);
+	}
+	
+	private static boolean validateMediaType(String mediaType, Collection<String> allowedTypes) throws Exception {
 		String subType = getSubType(mediaType);
 		for (String allowedType : allowedTypes) {
 			if (mediaType.equalsIgnoreCase(allowedType) || allowedType.toLowerCase().endsWith(subType.toLowerCase())) {
@@ -40,12 +54,28 @@ public class FileUploadDetector {
 		}
 		return false;
 	}
-
+	
 	private static String getSubType(String mediaType) {
 		int slashIndex = mediaType.lastIndexOf('/');
 		return mediaType.substring(slashIndex + 1);
 	}
 
+	public static boolean isMediaTypeAllowedWithDcemTypes(InputStream inputStream, Collection<DcemMediaType> allowedTypes) throws Exception {
+		if (inputStream == null || allowedTypes == null || allowedTypes.isEmpty()) {
+			return false;
+		}
+		Set<String> allowedTypesAsString = allowedTypes.stream().map(type -> type.getMediaType()).collect(Collectors.toSet());
+		return isMediaTypeAllowed(inputStream, allowedTypesAsString);
+	}
+
+	public static boolean isMediaTypeAllowedWithDcemTypes(InputStream inputStream, DcemMediaType[] allowedTypes) throws Exception {
+		if (inputStream == null || allowedTypes == null || allowedTypes.length == 0) {
+			return false;
+		}
+		Set<String> allowedTypesAsString = Arrays.stream(allowedTypes).map(type -> type.getMediaType()).collect(Collectors.toSet());
+		return isMediaTypeAllowed(inputStream, allowedTypesAsString);
+	}
+	
 	public static boolean isMediaTypeAllowedWithDcemTypes(File file, Collection<DcemMediaType> allowedTypes) throws Exception {
 		if (file == null || allowedTypes == null || allowedTypes.isEmpty()) {
 			return false;
@@ -53,7 +83,7 @@ public class FileUploadDetector {
 		Set<String> allowedTypesAsString = allowedTypes.stream().map(type -> type.getMediaType()).collect(Collectors.toSet());
 		return isMediaTypeAllowed(file, allowedTypesAsString);
 	}
-
+	
 	public static boolean isMediaTypeAllowedWithDcemTypes(File file, DcemMediaType[] allowedTypes) throws Exception {
 		if (file == null || allowedTypes == null || allowedTypes.length == 0) {
 			return false;
