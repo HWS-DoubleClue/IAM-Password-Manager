@@ -4,6 +4,8 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.primefaces.PrimeFaces;
+
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -88,6 +90,7 @@ public class TemplateDialog extends DcemDialog {
 		try {
 			int count = asTemplateLogic.updateAllTemplates();
 			JsfUtils.addInfoMessage("Templates Recovered: " + count);
+			PrimeFaces.current().ajax().update("autoForm:pTable");
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage(e.toString());
 		}
