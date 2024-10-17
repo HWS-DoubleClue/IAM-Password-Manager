@@ -49,6 +49,7 @@ import com.doubleclue.dcem.as.entities.DeviceEntity;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentDb;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentI;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentNas;
+import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentS3;
 import com.doubleclue.dcem.as.restapi.model.AsApiCloudSafeFile;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.DcemUploadFile;
@@ -143,6 +144,9 @@ public class CloudSafeLogic {
 				}
 				cloudSafeContentI = new CloudSafeContentNas(file);
 				break;
+			case AwsS3:
+				cloudSafeContentI = new CloudSafeContentS3(clusterConfig.getAwsS3AccesskeyId(), clusterConfig.getAwsS3SecretAccessKey());
+				break;
 			default:
 				reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.INVALID_CLOUDSTORAGE_TYPE,
 						clusterConfig.getCloudSafeStorageType().name(), AlertSeverity.ERROR, true);
@@ -150,6 +154,8 @@ public class CloudSafeLogic {
 			}
 		} catch (DcemException e) {
 			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, e.getErrorCode(), e.getMessage(), AlertSeverity.ERROR, false);
+		} catch (Exception e) {
+			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, null, e.getMessage(), AlertSeverity.ERROR, false);
 		}
 	}
 
@@ -876,8 +882,6 @@ public class CloudSafeLogic {
 		query.executeUpdate();
 	}
 
-	
-
 	public List<CloudSafeEntity> getCloudSafeAllFileList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, boolean withShareFiles)
 			throws DcemException {
 		DcemUser user = userLogic.getUser(userId);
@@ -942,8 +946,8 @@ public class CloudSafeLogic {
 				cloudSafeKey.setOwner(CloudSafeOwner.GROUP);
 			}
 			list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
-					cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null, cloudSafeEntity.getLength(), null, true,
-					false));
+					cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
+					cloudSafeEntity.getLength(), null, true, false));
 		}
 		if (withShareFiles) {
 			List<CloudSafeShareEntity> cloudSafeShareEntities = getUserCloudSafeShareEntities(user, like);
@@ -976,9 +980,9 @@ public class CloudSafeLogic {
 					cloudSafeKey.setDbId(cloudSafeEntity.getId());
 					// cloudSafeKey.setOwner(cloudSafeEntity.getOwner());
 					list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
-							cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null, cloudSafeEntity.getLength(),
-							cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null, cloudSafeShareEntity.isWriteAccess(),
-							cloudSafeShareEntity.isRestrictDownload()));
+							cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
+							cloudSafeEntity.getLength(), cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null,
+							cloudSafeShareEntity.isWriteAccess(), cloudSafeShareEntity.isRestrictDownload()));
 				}
 			}
 		}
@@ -1027,9 +1031,9 @@ public class CloudSafeLogic {
 				cloudSafeKey.setDbId(cloudSafeEntity.getId());
 				// cloudSafeKey.setOwner(cloudSafeEntity.getOwner());
 				result.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
-						cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null, cloudSafeEntity.getLength(),
-						cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null, cloudSafeShareEntity.isWriteAccess(),
-						cloudSafeShareEntity.isRestrictDownload()));
+						cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
+						cloudSafeEntity.getLength(), cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null,
+						cloudSafeShareEntity.isWriteAccess(), cloudSafeShareEntity.isRestrictDownload()));
 			}
 		}
 		return result;
@@ -1074,7 +1078,6 @@ public class CloudSafeLogic {
 		}
 		return allDeletedFiles;
 	}
-
 
 	@DcemTransactional
 	public void deleteCloudSafeFilesContent(List<CloudSafeDto> list) throws DcemException {
@@ -1449,9 +1452,9 @@ public class CloudSafeLogic {
 	public IAtomicLong getGlobalCloudSafeUsageTotal() {
 		return asModule.getTenantData().getGlobalCloudSafeUsageTotal();
 	}
-	
+
 	@DcemTransactional
-	public List<CloudSafeEntity> saveMultipleFiles(List<CloudSafeUploadFile> uploadedFiles, DcemUser dcemUser )throws Exception {
+	public List<CloudSafeEntity> saveMultipleFiles(List<CloudSafeUploadFile> uploadedFiles, DcemUser dcemUser) throws Exception {
 		HashSet<String> hashSet = new HashSet<>();
 		List<CloudSafeEntity> savedFiles = new ArrayList<>();
 		for (CloudSafeUploadFile cloudSafeUploadedFile : uploadedFiles) {
@@ -1461,7 +1464,8 @@ public class CloudSafeLogic {
 			if (cloudSafeUploadedFile.cloudSafeEntity.getParent() == null) {
 				cloudSafeUploadedFile.cloudSafeEntity.setParent(getCloudSafeRoot());
 			}
-			CloudSafeEntity cloudSafeEntity = setCloudSafeStream(cloudSafeUploadedFile.cloudSafeEntity , (char [])null, new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser);
+			CloudSafeEntity cloudSafeEntity = setCloudSafeStream(cloudSafeUploadedFile.cloudSafeEntity, (char[]) null,
+					new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser);
 			hashSet.add(cloudSafeUploadedFile.fileName);
 			savedFiles.add(cloudSafeEntity);
 		}
@@ -1525,7 +1529,6 @@ public class CloudSafeLogic {
 		}
 		return savedFiles;
 	}
-
 
 	@DcemTransactional
 	public void addCloudSafeFolder(CloudSafeEntity cloudSafeEntity) throws DcemException {

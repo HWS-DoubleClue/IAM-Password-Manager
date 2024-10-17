@@ -27,9 +27,14 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 		super();
 		this.directory = directory;
 	}
-
+	
 	@Override
 	public InputStream getContentInputStream(EntityManager em, int id) throws DcemException {
+		return getContentInputStream(em, id, null);
+	}
+
+	@Override
+	public InputStream getContentInputStream(EntityManager em, int id, String prefix) throws DcemException {
 		File tenantFile = new File (directory, TenantIdResolver.getCurrentTenantName());
 		if (tenantFile.exists() == false) {
 			tenantFile.mkdir();
@@ -42,9 +47,14 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, Integer.toString(id), e);
 		}
 	}
-
-	// @Override
+	
+	@Override
 	public int writeContentOutput(EntityManager em, CloudSafeEntity cloudSafeEntity, InputStream inputStream) throws DcemException {
+		return writeContentOutput(em, cloudSafeEntity, null, inputStream);
+	}
+
+	@Override
+	public int writeContentOutput(EntityManager em, CloudSafeEntity cloudSafeEntity, String prefix, InputStream inputStream) throws DcemException {
 		File tenantFile = new File (directory, TenantIdResolver.getCurrentTenantName());
 		if (tenantFile.exists() == false) {
 			tenantFile.mkdir();
@@ -67,8 +77,14 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 			}
 		}
 	}
+	
 	@Override
 	public void delete(EntityManager em, int id) {
+		delete (em, id, null);
+	}
+	
+	@Override
+	public void delete(EntityManager em, int id, String prefix) {
 		File tenantFile = new File (directory, TenantIdResolver.getCurrentTenantName());
 		if (tenantFile.exists() == false) {
 			tenantFile.mkdir();
@@ -82,6 +98,14 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 	@Override
 	public String toString() {
 		return "CloudSafeContentNas [directory=" + directory + "]";
+	}
+
+	@Override
+	public void initiateTenant(String teneantName) throws DcemException {
+		File tenantFile = new File (directory, TenantIdResolver.getCurrentTenantName());
+		if (tenantFile.exists() == false) {
+			tenantFile.mkdir();
+		}		
 	}
 		
 }
