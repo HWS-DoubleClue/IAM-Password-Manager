@@ -320,18 +320,22 @@
 							<f:selectItems value="#{setupCloudSafe.cloudStorageTypes}" />
 							<p:ajax process="storageType" update="cloudSafeStorageGroup" />
 						</p:selectOneMenu>
+						<p:outputLabel for="@next" value="Copy File Contents" />
+						<p:selectBooleanCheckbox id="copyFiles" value="#{setupCloudSafe.copyFileContent}" />
 					</h:panelGrid>
 					<p></p>
 
 					<h:panelGrid columns="2" cellpadding="4" cellspacing="4" rendered="#{setupCloudSafe.nas}">
-						<p:outputLabel value="NAS Path: " rendered="#{setupCloudSafe.nas}" />
-						<p:inputText size="60" value="#{setupCloudSafe.nasPath}" rendered="#{setupCloudSafe.nas}" />
+						<p:outputLabel value="NAS Path: " />
+						<p:inputText size="60" value="#{setupCloudSafe.nasPath}" />
 					</h:panelGrid>
 
 					<h:panelGrid columns="2" cellpadding="4" cellspacing="4" rendered="#{setupCloudSafe.awsS3}">
-						<p:outputLabel for="@next" value="S3-AccessKey ID: " />
+						<p:outputLabel for="@next" value="URL " />
+						<p:inputText id="s3url" size="55" value="#{setupCloudSafe.s3Url}" required="true" />
+						<p:outputLabel for="@next" value="S3-AccessKey ID " />
 						<p:inputText id="s3AccessKeyId" size="55" value="#{setupCloudSafe.s3AccessKeyId}" required="true" />
-						<p:outputLabel for="@next" value="S3-Secret Access Key: " />
+						<p:outputLabel for="@next" value="S3-Secret Access Key " />
 						<p:inputText id="s3SecretAccessKey" size="55" value="#{setupCloudSafe.s3SecretAccessKey}" required="true" />
 					</h:panelGrid>
 

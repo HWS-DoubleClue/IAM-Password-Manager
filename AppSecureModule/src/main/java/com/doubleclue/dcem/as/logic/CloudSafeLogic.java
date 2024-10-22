@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -132,7 +131,7 @@ public class CloudSafeLogic {
 	@PostConstruct
 	public void init() {
 		try {
-			ClusterConfig clusterConfig = configLogic.getClusterConfig();
+			ClusterConfig clusterConfig = configLogic.getClusterConfig();			
 			switch (clusterConfig.getCloudSafeStorageType()) {
 			case Database:
 				cloudSafeContentI = new CloudSafeContentDb();
@@ -145,7 +144,7 @@ public class CloudSafeLogic {
 				cloudSafeContentI = new CloudSafeContentNas(file);
 				break;
 			case AwsS3:
-				cloudSafeContentI = new CloudSafeContentS3(clusterConfig.getAwsS3AccesskeyId(), clusterConfig.getAwsS3SecretAccessKey());
+				cloudSafeContentI = new CloudSafeContentS3(clusterConfig.getName(), clusterConfig.getAwsS3Url(), clusterConfig.getAwsS3AccesskeyId(), clusterConfig.getAwsS3SecretAccessKey());
 				break;
 			default:
 				reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.INVALID_CLOUDSTORAGE_TYPE,
@@ -155,9 +154,12 @@ public class CloudSafeLogic {
 		} catch (DcemException e) {
 			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, e.getErrorCode(), e.getMessage(), AlertSeverity.ERROR, false);
 		} catch (Exception e) {
-			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, null, e.getMessage(), AlertSeverity.ERROR, false);
+			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, e.getMessage(), AlertSeverity.ERROR, false);
 		}
 	}
+	
+	
+
 
 	public String getContentAsStringWoChiper(int id) throws DcemException {
 		InputStream inputStream = null;
@@ -1891,5 +1893,12 @@ public class CloudSafeLogic {
 			}
 			auditingLogic.addAudit(dcemAction, auditUser, "File: " + cloudSafeEntity.getName() + shareUser);
 		}
+	}
+
+
+
+
+	public CloudSafeContentI getCloudSafeContentI() {
+		return cloudSafeContentI;
 	}
 }

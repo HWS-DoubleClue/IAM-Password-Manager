@@ -80,6 +80,8 @@ public class SetupCloudSafe extends DcemView {
 
 	String s3AccessKeyId;
 	String s3SecretAccessKey;
+	String s3Url;
+	boolean copyFileContent;
 
 	ClusterConfig clusterConfig;
 
@@ -94,7 +96,13 @@ public class SetupCloudSafe extends DcemView {
 			connection.close();
 			currentCloudStorageType = clusterConfig.getCloudSafeStorageType().name();
 			cloudStorageType = currentCloudStorageType;
-
+			s3AccessKeyId = clusterConfig.getAwsS3AccesskeyId();
+			s3SecretAccessKey = clusterConfig.getAwsS3SecretAccessKey();
+			copyFileContent = true;
+			s3Url = clusterConfig.getAwsS3Url();
+			if (s3Url == null) {
+				s3Url = CloudSafeContentS3.DIGITAL_OCEAN_SPACES_URL;
+			}
 		} catch (Exception e) {
 			logger.error("Couldn't read Cluster configuration file", e);
 			return;
@@ -125,11 +133,7 @@ public class SetupCloudSafe extends DcemView {
 			}
 			break;
 		case Database:
-			file = new File(nasPath);
-			if (file.exists() == false) {
-				JsfUtils.addErrorMessage("Directory does not exists");
-				return;
-			}
+			
 			break;
 		case AwsS3:
 			if (selectedType == CloudSafeStorageType.AwsS3) {
@@ -149,27 +153,29 @@ public class SetupCloudSafe extends DcemView {
 				}
 				JsfUtils.addInfoMessage("There is nothing to do. Source and destination are the same.");
 			} else {
-				List<TenantEntity> tenants = tenantLogic.getAllTenants();
-				tenants.add(0, TenantIdResolver.getMasterTenant());
-				if (selectedType != currentType) {
-					for (TenantEntity tenantEntity : tenants) {
-						CloudSafeContentI source = getCloudStorage(currentType);
-						CloudSafeContentI destination = getCloudStorage(selectedType);
-						destination.initiateTenant(tenantEntity.getName());
-						source.initiateTenant(tenantEntity.getName());
-						Future<Exception> future = taskExecutor.submit(new CallCloudSafeStorageCopy(tenantEntity, source, destination));
-						try {
-							Exception exp = future.get();
-							if (exp != null) {
-								throw exp;
+				if (copyFileContent == true) {
+					List<TenantEntity> tenants = tenantLogic.getAllTenants();
+					tenants.add(0, TenantIdResolver.getMasterTenant());
+					if (selectedType != currentType) {
+						for (TenantEntity tenantEntity : tenants) {
+							CloudSafeContentI source = getCloudStorage(currentType);
+							CloudSafeContentI destination = getCloudStorage(selectedType);
+							destination.initiateTenant(tenantEntity.getName());
+							source.initiateTenant(tenantEntity.getName());
+							Future<Exception> future = taskExecutor.submit(new CallCloudSafeStorageCopy(tenantEntity, source, destination));
+							try {
+								Exception exp = future.get();
+								if (exp != null) {
+									throw exp;
+								}
+							} catch (Exception e) {
+								String msg = "Error on initialization Tenant: " + tenantEntity.getName() + " Cause: " + e.toString();
+								logger.fatal(msg, e);
+								throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Can't copy CloudSafeStorage for : " + tenantEntity.getName(), e);
 							}
-						} catch (Exception e) {
-							String msg = "Error on initialization Tenant: " + tenantEntity.getName() + " Cause: " + e.toString();
-							logger.fatal(msg, e);
-							throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Can't copy CloudSafeStorage for : " + tenantEntity.getName(), e);
 						}
+						JsfUtils.addInfoMessage("Migration to " + selectedType.name() + " is succesfull");
 					}
-					JsfUtils.addInfoMessage("Migration to " + selectedType.name() + " is succesfull");
 				}
 			}
 
@@ -179,6 +185,7 @@ public class SetupCloudSafe extends DcemView {
 			clusterConfig.setNasDirectory(nasPath);
 			clusterConfig.setAwsS3AccesskeyId(s3AccessKeyId);
 			clusterConfig.setAwsS3SecretAccessKey(s3SecretAccessKey);
+			clusterConfig.setAwsS3Url(s3Url);
 			DcemConfiguration dcemConfiguration = configLogic.createClusterConfig(clusterConfig);
 			configLogic.setDcemConfiguration(dcemConfiguration);
 			WeldContextUtils.deactivateRequestContext(requestContext);
@@ -212,7 +219,7 @@ public class SetupCloudSafe extends DcemView {
 			cloudSafeContentI = new CloudSafeContentNas(file);
 			break;
 		case AwsS3:
-			cloudSafeContentI = new CloudSafeContentS3(s3AccessKeyId, s3SecretAccessKey);
+			cloudSafeContentI = new CloudSafeContentS3(clusterConfig.getName(), s3Url, s3AccessKeyId, s3SecretAccessKey);
 			break;
 		default:
 			break;
@@ -290,7 +297,6 @@ public class SetupCloudSafe extends DcemView {
 	}
 
 	public String getS3AccessKeyId() {
-		s3AccessKeyId = clusterConfig.getAwsS3AccesskeyId();
 		return s3AccessKeyId;
 	}
 
@@ -299,12 +305,27 @@ public class SetupCloudSafe extends DcemView {
 	}
 
 	public String getS3SecretAccessKey() {
-		s3SecretAccessKey = clusterConfig.getAwsS3SecretAccessKey();
 		return s3SecretAccessKey;
 	}
 
 	public void setS3SecretAccessKey(String s3SecretAccessKey) {
 		this.s3SecretAccessKey = s3SecretAccessKey;
+	}
+
+	public String getS3Url() {
+		return s3Url;
+	}
+
+	public void setS3Url(String s3Url) {
+		this.s3Url = s3Url;
+	}
+
+	public boolean isCopyFileContent() {
+		return copyFileContent;
+	}
+
+	public void setCopyFileContent(boolean copyFileContent) {
+		this.copyFileContent = copyFileContent;
 	}
 
 }

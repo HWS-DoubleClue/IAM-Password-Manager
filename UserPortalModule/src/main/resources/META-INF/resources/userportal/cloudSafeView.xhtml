@@ -500,15 +500,17 @@
 					<p:fileDownload value="#{cloudSafeView.actionDownloadFile()}" />
 				</p:commandButton>
 
-				<p:commandButton id="actionDownloadMultiFile" icon="fa fa-cloud-download" value="#{DcupMsg['button.download']}" ajax="false"
-					action="#{cloudSafeView.verifyPasswordForDownloadFolder()}" rendered="#{cloudSafeView.multipleFile == true}" update="downloadForm">
+				<p:commandButton id="actionDownloadMultiFile" icon="fa fa-cloud-download" value="#{DcupMsg['button.download']}" 
+					 onclick="PrimeFaces.monitorDownload(null, stopDownLoad);" ajax="false"
+					 rendered="#{cloudSafeView.multipleFile == true}" update="downloadForm">
+					<p:fileDownload value="#{cloudSafeView.actionDownloadMultipleFiles()}" />
 				</p:commandButton>
 
 				<p></p>
 				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" actionListener="#{cloudSafeView.actionCloseDownloadFile}"
 					style="float: right; margin-right: 1em;" immediate="true" />
 				<br></br>
-				<p:remoteCommand name="stopDownLoad" action="#{cloudSafeView.actionCloseDownloadFile()}" ignoreAutoUpdate="true" />
+				<p:remoteCommand name="stopDownLoad" action="#{cloudSafeView.actionCloseDownloadFile()}" ignoreAutoUpdate="false" />
 				<p></p>
 			</p:dialog>
 		</h:form>

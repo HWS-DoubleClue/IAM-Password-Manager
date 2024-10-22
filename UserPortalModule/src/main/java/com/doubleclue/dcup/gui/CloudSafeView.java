@@ -2,10 +2,13 @@ package com.doubleclue.dcup.gui;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -13,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -153,6 +157,7 @@ public class CloudSafeView extends AbstractPortalView {
 	private DcemUser loggedInUser;
 	private String ownerGroup;
 	private DcemGroup selectedDcemGroup;
+	File downloadTempFile;
 
 	@PostConstruct
 	public void init() {
@@ -274,7 +279,7 @@ public class CloudSafeView extends AbstractPortalView {
 			parent = (selectedFolder == null || selectedFolder.getId() == 0) ? cloudSafeRoot : selectedFolder;
 		}
 		if (parent.isRecycled() || parent.getName().toString().equals(DcemConstants.CLOUD_SAFE_RECYCLE_BIN)) {
-			JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("message.notAllowToUploadFile"));
+			JsfUtils.addErrorMessage(JsfUtils.getStringSafely(portalSessionBean.getResourceBundle(), "message.notAllowToUploadFile"));
 			return;
 		}
 		if (uploadedFiles == null || uploadedFiles.isEmpty()) {
@@ -327,7 +332,7 @@ public class CloudSafeView extends AbstractPortalView {
 				if (selectedDcemGroup != null) {
 					cloudSafeOwner = CloudSafeOwner.GROUP;
 				}
-				
+
 				if (parent != null && (parent.isOption(CloudSafeOptions.PWD) || parent.isOption(CloudSafeOptions.FPD))) {
 					cloudSafeLogic.saveMultipleFiles(uploadedFiles, dcemUser, passwordToEncryptContent, expiryDate, passwordProtected, true, parent,
 							loggedInUser, selectedDcemGroup, cloudSafeOwner);
@@ -381,7 +386,8 @@ public class CloudSafeView extends AbstractPortalView {
 			if (parent.isOption((CloudSafeOptions.PWD)) || parent.isOption((CloudSafeOptions.FPD))) {
 				filePassword = passwordToEncryptContent;
 			}
-			cloudSafeLogic.saveMultipleFiles(uploadedFiles, loggedInUser, filePassword, expiryDate, passwordProtected, true, parent, loggedInUser, null, CloudSafeOwner.USER);
+			cloudSafeLogic.saveMultipleFiles(uploadedFiles, loggedInUser, filePassword, expiryDate, passwordProtected, true, parent, loggedInUser, null,
+					CloudSafeOwner.USER);
 		} catch (DcemException exception) {
 			logger.info(exception);
 			JsfUtils.addErrorMessage(portalSessionBean.getErrorMessage(exception));
@@ -567,9 +573,9 @@ public class CloudSafeView extends AbstractPortalView {
 		return downloadFileName;
 	}
 
-	public void verifyPasswordForDownloadFolder() {
+	public StreamedContent actionDownloadMultipleFiles() {
 		if (currentSelectedFiles == null) {
-			return;
+			return null;
 		}
 		DcemUser currentUser = loggedInUser;
 		char[] password = null;
@@ -581,7 +587,6 @@ public class CloudSafeView extends AbstractPortalView {
 		}
 		try {
 			for (CloudSafeEntity cloudSafeEntity : currentSelectedFiles) {
-
 				if (cloudSafeEntity.isOption(CloudSafeOptions.PWD) && cloudSafeEntity.isFolder()) {
 					InputStream inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, password, currentUser);
 					byte[] buffer = KaraUtils.readInputStream(inputStream);
@@ -602,12 +607,24 @@ public class CloudSafeView extends AbstractPortalView {
 					}
 				}
 			}
-			actionDownloadMultipleFilesOrFolders(password);
-
+			downloadTempFile = File.createTempFile("dcem-", "-cloudSafe");
+			OutputStream outputStream = new FileOutputStream(downloadTempFile);
+			ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
+			String path;
+			for (CloudSafeEntity cloudSafeEntity : currentSelectedFiles) {
+				toDownLoadCloudSafeFile = cloudSafeEntity;
+				path = cloudSafeEntity.getName();
+				zipFoldersOrFiles(path, zipOutputStream, outputStream, cloudSafeEntity, password);
+			}
+			zipOutputStream.close();
+			outputStream.close();
+			FileInputStream fileInputStream = new FileInputStream(downloadTempFile);
+			return DefaultStreamedContent.builder().contentType("application/zip").name(MY_DOUBLE_CLUE_FILE_ZIP)
+					.stream(() -> fileInputStream).build();
 		} catch (InvalidCipherTextIOException ex) {
-			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.verifyPasswordForDownload");
-			logger.info("Could not download file or folder verify your password for User : " + currentUser);
-			actionCloseDownloadFile();
+			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.corruptedFile");
+			logger.error("Could not download file or folder verify your password for User : " + currentUser);
+			return null;
 		} catch (DcemException e) {
 			if (e.getErrorCode() == DcemErrorCodes.INVALID_PASSWORD) {
 				logger.info("Could not download file or folder verify your password for User : " + currentUser);
@@ -616,35 +633,11 @@ public class CloudSafeView extends AbstractPortalView {
 				logger.info("Could not download file or folder verify your password for User : " + currentUser, e);
 				JsfUtils.addErrorMessage(e.getLocalizedMessage());
 			}
-			actionCloseDownloadFile();
+			return null;
 		} catch (Exception ex) {
-			logger.info("somthing went wrong by verifying the password for download, User : " + currentUser, ex);
+			logger.error("somthing went wrong by verifying the password for download, User : " + currentUser, ex);
 			JsfUtils.addErrorMessage("Something went wrong. Please contact your administrator Cause:" + ex.toString());
-			actionCloseDownloadFile();
-		}
-	}
-
-	public void actionDownloadMultipleFilesOrFolders(char[] password) {
-		if (currentSelectedFiles == null) {
-			return;
-		}
-		try {
-			OutputStream output;
-			output = JsfUtils.getDownloadFileOutputStream("application/zip", MY_DOUBLE_CLUE_FILE_ZIP);
-			ZipOutputStream zipOutputStream = new ZipOutputStream(output);
-			String path;
-			for (CloudSafeEntity cloudSafeEntity : currentSelectedFiles) {
-				toDownLoadCloudSafeFile = cloudSafeEntity;
-				path = cloudSafeEntity.getName();
-				zipFoldersOrFiles(path, zipOutputStream, output, cloudSafeEntity, password);
-			}
-			zipOutputStream.close();
-			output.close();
-			actionCloseDownloadFile();
-			FacesContext.getCurrentInstance().responseComplete();
-		} catch (Exception e) {
-			logger.info("Coundn't downlaod files " + MY_DOUBLE_CLUE_FILE_ZIP, e);
-			FacesContext.getCurrentInstance().responseComplete();
+			return null;
 		}
 	}
 
@@ -665,8 +658,7 @@ public class CloudSafeView extends AbstractPortalView {
 			if (toDownLoadCloudSafeFile.isOption(CloudSafeOptions.FPD)) {
 				inputStream = cloudSafeLogic.getCloudSafeContentAsStream(toDownLoadCloudSafeFile, passwordToEncryptContent.toCharArray(), loggedInUser);
 			} else {
-				toDownLoadCloudSafeFile = cloudSafeLogic.getCloudSafe(toDownLoadCloudSafeFile.getId()); // refresh from
-																										// DB
+				toDownLoadCloudSafeFile = cloudSafeLogic.getCloudSafe(toDownLoadCloudSafeFile.getId()); // refresh from DB
 				inputStream = cloudSafeLogic.getCloudSafeContentAsStream(toDownLoadCloudSafeFile, password, loggedInUser);
 			}
 			defaultStreamedContent = DefaultStreamedContent.builder().contentType(MediaType.APPLICATION_FORM_URLENCODED).name(toDownLoadCloudSafeFile.getName())
@@ -674,7 +666,7 @@ public class CloudSafeView extends AbstractPortalView {
 
 			return defaultStreamedContent;
 		} catch (DcemException e) {
-			logger.info("Coundn't downlaod file " + toDownLoadCloudSafeFile.getName(), e);
+			logger.error("Coundn't downlaod file " + toDownLoadCloudSafeFile.getName(), e);
 			if (e.getErrorCode() == DcemErrorCodes.CLOUD_SAFE_READ_ERROR) {
 				JsfUtils.addErrorMessage(e.getLocalizedMessage());
 			} else {
@@ -682,14 +674,14 @@ public class CloudSafeView extends AbstractPortalView {
 			}
 			return null;
 		} catch (Throwable e) {
-			logger.info("Coundn't downlaod files " + toDownLoadCloudSafeFile.getName(), e);
+			logger.error("Coundn't downlaod files " + toDownLoadCloudSafeFile.getName(), e);
 			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.verifyPasswordForDownload");
 			return null;
 		}
 	}
 
 	private void zipFoldersOrFiles(String path, ZipOutputStream zipOutputStream, OutputStream output, CloudSafeEntity cloudSafeEntity, char[] password)
-			throws IOException {
+			throws Exception {
 
 		zipOutputStream.setLevel(Deflater.BEST_SPEED);
 		int length = -1;
@@ -697,14 +689,12 @@ public class CloudSafeView extends AbstractPortalView {
 		InputStream inputStream;
 		ZipEntry zipEntry;
 		BufferedInputStream bis;
-		try {
 			List<CloudSafeEntity> childernSubFolder = getAsApiCloudSafeFiles(cloudSafeEntity != null ? cloudSafeEntity.getId() : null,
 					cloudSafeEntity.getUser());
 			if (childernSubFolder.size() == 0 && cloudSafeEntity.isFolder()) {
 				zipEntry = new ZipEntry(cloudSafeEntity.getName() + "/");
 				zipOutputStream.putNextEntry(zipEntry);
 			} else if (cloudSafeEntity.isFolder() == false) {
-
 				inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, password, loggedInUser);
 				bis = new BufferedInputStream(inputStream);
 				zipEntry = new ZipEntry(cloudSafeEntity.getName());
@@ -730,10 +720,6 @@ public class CloudSafeView extends AbstractPortalView {
 				}
 				zipOutputStream.closeEntry();
 			}
-		} catch (Exception e) {
-			logger.info("Couldn't zip files and download them");
-			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.verifyPasswordForDownload");
-		}
 	}
 
 	public boolean isDownloadMultipleProtectedFilesOrFolders() {
@@ -796,6 +782,10 @@ public class CloudSafeView extends AbstractPortalView {
 		downloadSharedFileFPD = false;
 		if (isError() == false) {
 			hideDialog(DOWNLOAD_DLG);
+		}
+		if (downloadTempFile != null) {
+			downloadTempFile.delete();
+			downloadTempFile = null;
 		}
 	}
 

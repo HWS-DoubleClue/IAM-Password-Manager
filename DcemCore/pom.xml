@@ -413,7 +413,7 @@
             </exclusions>
             <scope>compile</scope>
 		</dependency>
-		 <dependency>
+		<!-- <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sso</artifactId> 
         </dependency>
@@ -421,6 +421,7 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>ssooidc</artifactId>
         </dependency>
+        -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>apache-client</artifactId> 

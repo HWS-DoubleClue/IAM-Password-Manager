@@ -1,5 +1,8 @@
 package com.doubleclue.dcem.as.logic.cloudsafe;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
@@ -8,8 +11,11 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 
 import com.doubleclue.dcem.as.entities.CloudSafeEntity;
+import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
+import com.doubleclue.utils.KaraUtils;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
@@ -30,15 +36,18 @@ import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-@Named("cloudSafeContentNas")
+@Named("cloudSafeContentS3")
 public class CloudSafeContentS3 implements CloudSafeContentI {
 
-	final static String AWS_S3_NAME = "doubleclue-";
+	static String awsS3BucketPrefix;
+
+	public final static String DIGITAL_OCEAN_SPACES_URL = "https://nyc3.digitaloceanspaces.com";
 
 	S3Client s3Client;
 
-	public CloudSafeContentS3(String s3AccessKeyId, String s3SecretAccessKey) throws Exception {
+	public CloudSafeContentS3(String clusterName, String s3Url, String s3AccessKeyId, String s3SecretAccessKey) throws Exception {
 		super();
+		awsS3BucketPrefix = "doubleclue-" + clusterName.toLowerCase() + "-";
 		AwsCredentials awsCreds = AwsBasicCredentials.create(s3AccessKeyId, s3SecretAccessKey);
 		AwsCredentialsProvider awsCredentialsProvider = new AwsCredentialsProvider() {
 			@Override
@@ -46,26 +55,27 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 				return awsCreds;
 			}
 		};
-		URI uri = new URI("https://nyc3.digitaloceanspaces.com");
-		s3Client = S3Client.builder().region(Region.EU_CENTRAL_1).credentialsProvider(awsCredentialsProvider).endpointOverride(uri).build();
+		if (s3Url == null || s3Url.isBlank()) {
+			s3Client = S3Client.builder().region(Region.EU_CENTRAL_1).credentialsProvider(awsCredentialsProvider).build();
+		} else {
+			URI uri = new URI(s3Url);
+			s3Client = S3Client.builder().region(Region.EU_CENTRAL_1).credentialsProvider(awsCredentialsProvider).endpointOverride(uri).build();
+		}
 		ListBucketsResponse listBucketsResponse = s3Client.listBuckets();
 		List<Bucket> buckets = listBucketsResponse.buckets();
-		System.out.println("Buckets:");
 		for (Bucket bucket : buckets) {
-			System.out.println(bucket.name());
+			System.out.println(" Bucket: " + bucket.name());
 		}
 	}
 
 	@Override
 	public void initiateTenant(String tenantName) throws Exception {
-		String bucketName = AWS_S3_NAME + TenantIdResolver.getCurrentTenantName().toLowerCase();
+		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
 		if (checkAccessBucket(bucketName) == true) {
 			return;
 		}
 		// Create Bucket
-		CreateBucketRequest bucketRequest = CreateBucketRequest.builder()
-			    .bucket(bucketName)
-			    .build();
+		CreateBucketRequest bucketRequest = CreateBucketRequest.builder().bucket(bucketName).build();
 		s3Client.createBucket(bucketRequest);
 	}
 
@@ -93,7 +103,7 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 
 	@Override
 	public InputStream getContentInputStream(EntityManager em, int id, String prefix) throws DcemException {
-		String bucketName = AWS_S3_NAME + TenantIdResolver.getCurrentTenantName().toLowerCase();
+		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
 		GetObjectRequest objectRequest = GetObjectRequest.builder().bucket(bucketName).key(getObjectKey(id, prefix)).build();
 		ResponseInputStream<GetObjectResponse> inputStream = s3Client.getObject(objectRequest);
 		return inputStream;
@@ -117,10 +127,33 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 
 	@Override
 	public int writeContentOutput(EntityManager em, CloudSafeEntity cloudSafeEntity, String prefix, InputStream inputStream) throws DcemException {
-		String bucketName = AWS_S3_NAME + TenantIdResolver.getCurrentTenantName().toLowerCase();
+		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
 		String key = getObjectKey(cloudSafeEntity.getId(), prefix);
+		long length = cloudSafeEntity.getLength() + 16;  // add 16 bytesw for signiture
+	//	length += (16 - cloudSafeEntity.getLength() % 16);
+//		File tempFile = null;
+//		FileOutputStream os = null;
+//		InputStream is = null;
+//		try {
+//			tempFile = File.createTempFile("dcem-", "-cloudSafe");
+//			os = new FileOutputStream(tempFile);
+//			KaraUtils.copyStream(inputStream, os);
+//		} catch (IOException e) {
+//			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_WRITE_ERROR, cloudSafeEntity.getName(), e);
+//		} finally {
+//			if (os != null) {
+//				try {
+//					os.close();
+//				} catch (IOException e) {}
+//			}
+//			if (inputStream != null) {
+//				try {
+//					inputStream.close();
+//				} catch (IOException e) {				}
+//			}
+//		}		
 		PutObjectRequest request = PutObjectRequest.builder().bucket(bucketName).key(key).build();
-		RequestBody requestBody = RequestBody.fromInputStream(inputStream, cloudSafeEntity.getLength());
+		RequestBody requestBody = RequestBody.fromInputStream(inputStream, length);
 		s3Client.putObject(request, requestBody);
 		return (int) cloudSafeEntity.getLength();
 	}
@@ -130,14 +163,14 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 	}
 
 	public void delete(EntityManager em, int id, String prefix) {
-		String bucketName = AWS_S3_NAME + TenantIdResolver.getCurrentTenantName().toLowerCase();
+		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
 		String key = getObjectKey(id, prefix);
 		DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(key).build();
 		s3Client.deleteObject(deleteObjectRequest);
 	}
 
 	public void deleteBucket() throws Exception {
-		String bucketName = AWS_S3_NAME + TenantIdResolver.getCurrentTenantName().toLowerCase();
+		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
 		DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName).build();
 		s3Client.deleteBucket(deleteBucketRequest);
 		System.out.println("Successfully deleted bucket : " + bucketName);

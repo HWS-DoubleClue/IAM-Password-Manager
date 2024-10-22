@@ -53,7 +53,7 @@ public class TenantEntity extends EntityInterface implements Serializable  {
 
 	@Column(name = "dc_name", length = 32, nullable = false, updatable = true)
 	@DcemGui
-	@Pattern (regexp = "^[a-zA-Z][0-9a-zA-Z_-]*$", message = "{tenant.config.name.invalid}"  )
+	@Pattern (regexp = "^[a-zA-Z][0-9a-zA-Z-]*$", message = "{tenant.config.name.invalid}"  )
 	private String name;
 		
 	@Column(name = "dc_fullname", length = 255, updatable = true)

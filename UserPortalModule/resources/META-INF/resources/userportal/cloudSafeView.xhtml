@@ -501,7 +501,7 @@
 				</p:commandButton>
 
 				<p:commandButton id="actionDownloadMultiFile" icon="fa fa-cloud-download" value="#{DcupMsg['button.download']}" ajax="false"
-					action="#{cloudSafeView.verifyPasswordForDownloadFolder()}" rendered="#{cloudSafeView.multipleFile == true}" update="downloadForm">
+					action="#{cloudSafeView.verifyPasswordForDownloadFolder()}" rendered="#{cloudSafeView.multipleFile == true}" update="downloadForm" onclick="PrimeFaces.monitorDownload(null, stopDownLoad);">
 				</p:commandButton>
 
 				<p></p>

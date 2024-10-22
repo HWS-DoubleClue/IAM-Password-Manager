@@ -56,6 +56,7 @@ public class ClusterConfig implements Cloneable, Serializable {
 	
 	private String awsS3AccesskeyId;
 	private String awsS3SecretAccessKey;
+	private String awsS3Url;
 	
 	private String redirectPort80 = null;
 
@@ -216,6 +217,14 @@ public class ClusterConfig implements Cloneable, Serializable {
 
 	public void setAwsS3SecretAccessKey(String awsS3secretAccessKey) {
 		this.awsS3SecretAccessKey = awsS3secretAccessKey;
+	}
+
+	public String getAwsS3Url() {
+		return awsS3Url;
+	}
+
+	public void setAwsS3Url(String awsS3Url) {
+		this.awsS3Url = awsS3Url;
 	}
 	
 	
