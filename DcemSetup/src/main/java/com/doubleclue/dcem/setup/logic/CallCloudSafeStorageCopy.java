@@ -52,7 +52,14 @@ public class CallCloudSafeStorageCopy implements Callable<Exception> {
 		}
 	}
 
-	private void copyStorage(CloudSafeContentI source, CloudSafeContentI destination) throws Exception, SQLException, IOException {
+	/**
+	 * @param source
+	 * @param destination
+	 * @throws Exception
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	private void copyStorage(CloudSafeContentI source, CloudSafeContentI destination) throws Exception {
 		CloudSafeLogic cloudSafeLogic = CdiUtils.getReference(CloudSafeLogic.class);
 		List<Integer> list = cloudSafeLogic.getIdsOfEntries();
 		CloudSafeEntity cloudSafeEntity;
@@ -70,6 +77,7 @@ public class CallCloudSafeStorageCopy implements Callable<Exception> {
 					throw e;
 				}
 			}
+			logger.info("Reading  :  " + cloudSafeEntity.getId()  + ",  Name: " +  cloudSafeEntity.getName() + "Size: " + cloudSafeEntity.getLength());
 			cloudSafeEntity.setNewEntity(true);
 			try {
 				destination.writeContentOutput(em, cloudSafeEntity, inputStream);
@@ -83,7 +91,7 @@ public class CallCloudSafeStorageCopy implements Callable<Exception> {
 					throw e;
 				}
 			}
-
+			logger.info("Write done for :  " + cloudSafeEntity.getId()  + ",  Name: " + cloudSafeEntity.getName() + "Size: " + cloudSafeEntity.getLength());
 		}
 	}
 

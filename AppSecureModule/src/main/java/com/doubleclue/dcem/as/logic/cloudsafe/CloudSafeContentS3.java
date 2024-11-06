@@ -1,8 +1,5 @@
 package com.doubleclue.dcem.as.logic.cloudsafe;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
@@ -10,12 +7,10 @@ import java.util.List;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 
+import com.doubleclue.comm.thrift.CloudSafeOptions;
 import com.doubleclue.dcem.as.entities.CloudSafeEntity;
-import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
-import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
-import com.doubleclue.utils.KaraUtils;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
@@ -42,6 +37,7 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 	static String awsS3BucketPrefix;
 
 	public final static String DIGITAL_OCEAN_SPACES_URL = "https://nyc3.digitaloceanspaces.com";
+	public final static String CLOUDSAFEFILE = "cloudsafe/";
 
 	S3Client s3Client;
 
@@ -107,17 +103,6 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 		GetObjectRequest objectRequest = GetObjectRequest.builder().bucket(bucketName).key(getObjectKey(id, prefix)).build();
 		ResponseInputStream<GetObjectResponse> inputStream = s3Client.getObject(objectRequest);
 		return inputStream;
-
-		// ResponseBytes<GetObjectResponse> responseResponseBytes = s3Client.getObjectAsBytes(objectRequest);
-
-		// byte[] data = responseResponseBytes.asByteArray();
-
-		// Write the data to a local file.
-		// java.io.File myFile = new java.io.File("/Users/user/Desktop/hello.txt");
-		// OutputStream os = new FileOutputStream(myFile);
-		// os.write(data);
-		// System.out.println("Successfully obtained bytes from an S3 object");
-		// os.close();
 	}
 
 	@Override
@@ -129,29 +114,10 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 	public int writeContentOutput(EntityManager em, CloudSafeEntity cloudSafeEntity, String prefix, InputStream inputStream) throws DcemException {
 		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
 		String key = getObjectKey(cloudSafeEntity.getId(), prefix);
-		long length = cloudSafeEntity.getLength() + 16;  // add 16 bytesw for signiture
-	//	length += (16 - cloudSafeEntity.getLength() % 16);
-//		File tempFile = null;
-//		FileOutputStream os = null;
-//		InputStream is = null;
-//		try {
-//			tempFile = File.createTempFile("dcem-", "-cloudSafe");
-//			os = new FileOutputStream(tempFile);
-//			KaraUtils.copyStream(inputStream, os);
-//		} catch (IOException e) {
-//			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_WRITE_ERROR, cloudSafeEntity.getName(), e);
-//		} finally {
-//			if (os != null) {
-//				try {
-//					os.close();
-//				} catch (IOException e) {}
-//			}
-//			if (inputStream != null) {
-//				try {
-//					inputStream.close();
-//				} catch (IOException e) {				}
-//			}
-//		}		
+		long length = cloudSafeEntity.getLength();
+		if (cloudSafeEntity.isOption(CloudSafeOptions.ENC) && cloudSafeEntity.isGcm()) {
+			length +=16;
+		}
 		PutObjectRequest request = PutObjectRequest.builder().bucket(bucketName).key(key).build();
 		RequestBody requestBody = RequestBody.fromInputStream(inputStream, length);
 		s3Client.putObject(request, requestBody);
@@ -167,6 +133,11 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 		String key = getObjectKey(id, prefix);
 		DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(key).build();
 		s3Client.deleteObject(deleteObjectRequest);
+		// now delete with prefix
+		key = getObjectKey(id, null);
+		deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(key).build();
+		s3Client.deleteObject(deleteObjectRequest);
+		
 	}
 
 	public void deleteBucket() throws Exception {
@@ -183,9 +154,9 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 
 	private String getObjectKey(int id, String prefix) {
 		if (prefix == null) {
-			return Integer.toString(id);
+			return CLOUDSAFEFILE + Integer.toString(id);
 		}
-		return prefix + "-" + Integer.toString(id);
+		return CLOUDSAFEFILE + prefix + "-" + Integer.toString(id);
 	}
 
 }

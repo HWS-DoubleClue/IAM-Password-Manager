@@ -266,28 +266,6 @@ public class CloudSafeLogic {
 		}
 	}
 
-	// public CloudSafeEntity getCloudSafeFromDevice(SdkCloudSafeKey uniqueKey, DeviceEntity detachedDevice, int userId) throws DcemException {
-	// CloudSafeOwner owner = null;
-	// try {
-	// if (uniqueKey == null || uniqueKey.owner == null || uniqueKey.name == null) {
-	// throw new DcemException(DcemErrorCodes.INVALID_CLOUDDATA_OWNER, uniqueKey.toString());
-	// }
-	// owner = uniqueKey.getOwner();
-	// if (owner == CloudSafeOwner.DEVICE && detachedDevice == null) {
-	// throw new DcemException(DcemErrorCodes.INVALID_CLOUDDATA_OWNER, "Cannot get Device Cloud Data from a non-device user.");
-	// }
-	// } catch (Exception e) {
-	// throw new DcemException(DcemErrorCodes.INVALID_CLOUDDATA_OWNER, uniqueKey.toString());
-	// }
-	// // Check user
-	// DcemUser user = (detachedDevice != null) ? detachedDevice.getUser() : userLogic.getUser(userId);
-	// if (user == null) {
-	// throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for Cloud Data.");
-	// }
-	// CloudSafeEntity cloudSafeEntity;
-	// cloudSafeEntity = getCloudSafeFromPath(owner, uniqueKey.name, user, detachedDevice);
-	// return cloudSafeEntity;
-	// }
 
 	public List<Integer> getCloudSafeFromIds(List<DevicesUserDto> devicesUserDtos, String key) throws DcemException {
 		TypedQuery<Integer> query = em.createNamedQuery(CloudSafeEntity.GET_DEVICES_CLOUDDATA_IN, Integer.class);
@@ -458,19 +436,21 @@ public class CloudSafeLogic {
 			CloudSafeEntity originalDbCloudSafeEntity) throws DcemException {
 		return setCloudSafeStream(cloudSafeEntity, password, new ByteArrayInputStream(content), content.length, loggedInUser, originalDbCloudSafeEntity);
 	}
-
-	public CloudSafeEntity setCloudSafeStream(CloudSafeEntity cloudSafeEntity, char[] password, InputStream inputStream, int length, DcemUser loggedInUser)
-			throws DcemException {
-		return setCloudSafeStream(cloudSafeEntity, password, inputStream, length, loggedInUser, null);
-	}
-
-	@DcemTransactional
-	public CloudSafeEntity setCloudSafeStream(CloudSafeEntity cloudSafeEntity, char[] password, InputStream inputStream, int length, DcemUser loggedInUser,
+	/**
+	 * @param cloudSafeEntity
+	 * @param password
+	 * @param inputStream
+	 * @param length
+	 * @param loggedInUser
+	 * @param originalDbCloudSafeEntity
+	 * @return
+	 * @throws DcemException
+	 */
+	private CloudSafeEntity setCloudSafeStream(CloudSafeEntity cloudSafeEntity, char[] password, InputStream inputStream, int length, DcemUser loggedInUser,
 			CloudSafeEntity originalDbCloudSafeEntity) throws DcemException {
 		if (cloudSafeEntity.getSalt() == null) {
 			cloudSafeEntity.setSalt(RandomUtils.getRandom(16));
 		}
-
 		cloudSafeEntity.setLength(length);
 		CloudSafeEntity dbCloudSafeEntity = updateCloudSafeEntity(cloudSafeEntity, loggedInUser, true, originalDbCloudSafeEntity);
 		long delta = validateCloudSafeContentChange(dbCloudSafeEntity, length);
@@ -542,7 +522,6 @@ public class CloudSafeLogic {
 				}
 			} else {
 				logger.debug("UPDATE CloudSafe File lastModified is NULL");
-
 			}
 			originalDbEntity.setOptions(cloudSafeEntity.getOptions());
 			originalDbEntity.setSalt(cloudSafeEntity.getSalt());
@@ -1467,7 +1446,7 @@ public class CloudSafeLogic {
 				cloudSafeUploadedFile.cloudSafeEntity.setParent(getCloudSafeRoot());
 			}
 			CloudSafeEntity cloudSafeEntity = setCloudSafeStream(cloudSafeUploadedFile.cloudSafeEntity, (char[]) null,
-					new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser);
+					new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser, null);
 			hashSet.add(cloudSafeUploadedFile.fileName);
 			savedFiles.add(cloudSafeEntity);
 		}
@@ -1525,7 +1504,7 @@ public class CloudSafeLogic {
 				cloudSafeEntity.setOptions(CloudSafeOptions.ENC.name());
 			}
 			cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, filePassword == null ? null : filePassword.toCharArray(),
-					new FileInputStream(uploadedFile.file), (int) uploadedFile.file.length(), lastModifiedUser);
+					new FileInputStream(uploadedFile.file), (int) uploadedFile.file.length(), lastModifiedUser, null);
 			hashSet.add(uploadedFile.fileName);
 			savedFiles.add(cloudSafeEntity);
 		}
@@ -1572,20 +1551,20 @@ public class CloudSafeLogic {
 					byte[] randomByte = RandomUtils.getRandom(8);
 					byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 					InputStream is = new ByteArrayInputStream((content));
-					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null);
+					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null);
 				} else if (selectedFolder.isOption(CloudSafeOptions.ENC) && passwordProtected) {
 					cloudSafeEntity.setOptions(CloudSafeOptions.PWD.name());
 					byte[] randomByte = RandomUtils.getRandom(8);
 					byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 					InputStream is = new ByteArrayInputStream((content));
-					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null);
+					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null);
 				}
 			} else {
 				cloudSafeEntity.setOptions(CloudSafeOptions.PWD.name());
 				byte[] randomByte = RandomUtils.getRandom(8);
 				byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 				InputStream is = new ByteArrayInputStream((content));
-				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null);
+				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null);
 			}
 		} else if (encryptProtected) {
 			cloudSafeEntity.setOptions(CloudSafeOptions.ENC.name());
@@ -1684,7 +1663,7 @@ public class CloudSafeLogic {
 				fileOutputStream.close();
 				fileInputStreamTemp = new FileInputStream(tempFile);
 				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), fileInputStreamTemp, (int) cloudSafeEntity.getLength(),
-						loggedInUser);
+						loggedInUser, null);
 			} catch (Exception ex) {
 				throw new DcemException(DcemErrorCodes.CLOUD_SAFE_MOVE_FILE, "Could not move file " + cloudSafeEntity.getName(), ex);
 			} finally {
@@ -1894,9 +1873,6 @@ public class CloudSafeLogic {
 			auditingLogic.addAudit(dcemAction, auditUser, "File: " + cloudSafeEntity.getName() + shareUser);
 		}
 	}
-
-
-
 
 	public CloudSafeContentI getCloudSafeContentI() {
 		return cloudSafeContentI;
