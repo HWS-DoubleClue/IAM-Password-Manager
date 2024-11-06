@@ -70,7 +70,4 @@ public class CloudSafeContentDb implements CloudSafeContentI {
 	public void initiateTenant(String teneantName) throws DcemException {
 
 	}
-
-		
-
 }

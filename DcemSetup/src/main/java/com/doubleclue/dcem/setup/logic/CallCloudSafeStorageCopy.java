@@ -1,5 +1,7 @@
 package com.doubleclue.dcem.setup.logic;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -19,6 +21,7 @@ import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.core.weld.WeldContextUtils;
 import com.doubleclue.dcem.core.weld.WeldRequestContext;
+import com.doubleclue.utils.KaraUtils;
 
 public class CallCloudSafeStorageCopy implements Callable<Exception> {
 
@@ -32,7 +35,6 @@ public class CallCloudSafeStorageCopy implements Callable<Exception> {
 		this.tenantEntity = tenantEntity;
 		this.source = source;
 		this.destination = destination;
-
 	}
 
 	@Override
@@ -64,20 +66,47 @@ public class CallCloudSafeStorageCopy implements Callable<Exception> {
 		List<Integer> list = cloudSafeLogic.getIdsOfEntries();
 		CloudSafeEntity cloudSafeEntity;
 		InputStream inputStream = null;
+		EntityManager em = CdiUtils.getReference(EntityManager.class);
+
+		File fileDir = new File("c:\\Temp\\Doubleclue");
 		for (Integer id : list) {
 			cloudSafeEntity = cloudSafeLogic.getCloudSafe(id);
-			EntityManager em = CdiUtils.getReference(EntityManager.class);
+//			File file = new File(fileDir, cloudSafeEntity.getName());
+//			FileOutputStream fileOutputStream = null;
+//			try {
+//				inputStream = source.getContentInputStream(em, id);
+//				fileOutputStream = new FileOutputStream(file);
+//				KaraUtils.copyStream(inputStream, fileOutputStream);
+//			} catch (DcemException e) {
+//				// if Entity has no content like folder
+//				if (e.getErrorCode() == DcemErrorCodes.CLOUD_SAFE_NOT_FOUND && cloudSafeEntity.isFolder()
+//						&& cloudSafeEntity.isOption(CloudSafeOptions.FPD) == false) {
+//					continue;
+//				} else {
+//					throw e;
+//				}
+//			} finally {
+//				if (fileOutputStream != null) {
+//					fileOutputStream.close();
+//				}
+//			}
+			
 			try {
 				inputStream = source.getContentInputStream(em, id);
 			} catch (DcemException e) {
 				// if Entity has no content like folder
-				if (e.getErrorCode() == DcemErrorCodes.CLOUD_SAFE_NOT_FOUND && cloudSafeEntity.isFolder() && cloudSafeEntity.isOption(CloudSafeOptions.FPD) == false) {
+				if (e.getErrorCode() == DcemErrorCodes.CLOUD_SAFE_NOT_FOUND && cloudSafeEntity.isFolder()
+						&& cloudSafeEntity.isOption(CloudSafeOptions.FPD) == false) {
 					continue;
 				} else {
 					throw e;
 				}
 			}
-			logger.info("Reading  :  " + cloudSafeEntity.getId()  + ",  Name: " +  cloudSafeEntity.getName() + "Size: " + cloudSafeEntity.getLength());
+			if (cloudSafeEntity.isGcm() == false && cloudSafeEntity.isOption(CloudSafeOptions.ENC)) {
+				System.out.println("CallCloudSafeStorageCopy.copyStorage()");
+			}
+			logger.info("Reading: " + cloudSafeEntity.isGcm() + " " + cloudSafeEntity.getOptions() + " " + cloudSafeEntity.getId() + ",  Name: " + cloudSafeEntity.getName() + "Size: " + cloudSafeEntity.getLength() 
+			);
 			cloudSafeEntity.setNewEntity(true);
 			try {
 				destination.writeContentOutput(em, cloudSafeEntity, inputStream);
@@ -91,8 +120,9 @@ public class CallCloudSafeStorageCopy implements Callable<Exception> {
 					throw e;
 				}
 			}
-			logger.info("Write done for :  " + cloudSafeEntity.getId()  + ",  Name: " + cloudSafeEntity.getName() + "Size: " + cloudSafeEntity.getLength());
+			logger.info("Write done for :  " + cloudSafeEntity.getId() + ",  Name: " + cloudSafeEntity.getName() + "Size: " + cloudSafeEntity.getLength());
 		}
+
 	}
 
 }

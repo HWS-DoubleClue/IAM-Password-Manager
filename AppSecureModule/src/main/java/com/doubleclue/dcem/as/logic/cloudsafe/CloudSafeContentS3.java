@@ -66,7 +66,7 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 
 	@Override
 	public void initiateTenant(String tenantName) throws Exception {
-		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
+		String bucketName = awsS3BucketPrefix + tenantName.toLowerCase();
 		if (checkAccessBucket(bucketName) == true) {
 			return;
 		}

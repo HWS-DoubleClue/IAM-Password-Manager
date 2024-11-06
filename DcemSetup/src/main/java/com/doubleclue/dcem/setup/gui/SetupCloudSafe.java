@@ -168,12 +168,14 @@ public class SetupCloudSafe extends DcemView {
 								if (exp != null) {
 									throw exp;
 								}
+								logger.info("CloudSafe migrated for " + tenantEntity.getName());
 							} catch (Exception e) {
 								String msg = "Error on initialization Tenant: " + tenantEntity.getName() + " Cause: " + e.toString();
 								logger.fatal(msg, e);
 								throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Can't copy CloudSafeStorage for : " + tenantEntity.getName(), e);
 							}
 						}
+						
 						JsfUtils.addInfoMessage("Migration to " + selectedType.name() + " is succesfull");
 					}
 				}
