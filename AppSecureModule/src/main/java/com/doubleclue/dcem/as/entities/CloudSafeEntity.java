@@ -2,9 +2,11 @@ package com.doubleclue.dcem.as.entities;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,6 +17,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -23,6 +27,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+
 import com.doubleclue.comm.thrift.CloudSafeOptions;
 import com.doubleclue.comm.thrift.CloudSafeOwner;
 import com.doubleclue.dcem.as.logic.DataUnit;
@@ -30,8 +35,8 @@ import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
+import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * The persistent class for the Registered Version
@@ -167,19 +172,34 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@Column(name = "dc_length")
 	long length;
-
+	
+	@DcemGui
+	@Column(name = "lengthTexT")
+	long lengthOfText;  // if tero this document has no Text Content
+	
 	@Nullable
 	@DcemGui
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_AS_PARENT_ID"), name = "dc_parent_id", nullable = true, insertable = true, updatable = true)
 	@JsonIgnore
 	private CloudSafeEntity parent;
+	
+	@Enumerated (EnumType.ORDINAL)
+	@DcemGui
+	@Column (nullable = true)
+	DcemMediaType dcemMediaType;
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "as_ref_cloudsafe_tag", joinColumns = @JoinColumn(name = "group_id"), foreignKey = @ForeignKey(name = "FK_USER_GROUP"), inverseJoinColumns = @JoinColumn(name = "user_id"), inverseForeignKey = @ForeignKey(name = "FK_GROUP_USER"))
+	private List<CloudSafeTagEntity> tags;
 
 	@DcemGui(name = "last_Modified_User", subClass = "loginId")
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_USER_MODIFIED"), nullable = true, insertable = true, updatable = true)
 	@JsonIgnore
 	private DcemUser lastModifiedUser;
+	
+	
 
 	// @DcemGui
 	// boolean sign;
