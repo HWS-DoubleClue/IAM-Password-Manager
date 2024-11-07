@@ -115,7 +115,7 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
 		String key = getObjectKey(cloudSafeEntity.getId(), prefix);
 		long length = cloudSafeEntity.getLength();
-		if (cloudSafeEntity.isOption(CloudSafeOptions.ENC) && cloudSafeEntity.isGcm()) {
+		if (cloudSafeEntity.isOption(CloudSafeOptions.ENC) || cloudSafeEntity.isOption(CloudSafeOptions.PWD) && cloudSafeEntity.isGcm()) {
 			length +=16;
 		}
 		PutObjectRequest request = PutObjectRequest.builder().bucket(bucketName).key(key).build();

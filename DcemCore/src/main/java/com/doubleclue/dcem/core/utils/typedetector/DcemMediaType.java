@@ -1,7 +1,7 @@
 package com.doubleclue.dcem.core.utils.typedetector;
 
 public enum DcemMediaType {
-	
+// DO NOT CHANGE TO ORDINAL NUMBERS	
 	HTML("text/html"),
 	TXT("text/plain"),
 	
@@ -14,7 +14,8 @@ public enum DcemMediaType {
 	PDF("application/pdf"),
 	TAR("application/x-tar"),
 	XML("application/xml"),
-	ZIP("application/zip");
+	ZIP("application/zip"),
+	BINARY("application/octet-stream");
 	
 	private String mediaType;
 

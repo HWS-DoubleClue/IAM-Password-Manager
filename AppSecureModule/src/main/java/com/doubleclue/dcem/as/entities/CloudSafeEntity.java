@@ -3,8 +3,11 @@ package com.doubleclue.dcem.as.entities;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,6 +18,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,6 +35,7 @@ import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
+import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -166,6 +172,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@Column(name = "dc_length")
 	long length;
+	
+	@DcemGui
+	@Column(name = "text_length")
+	Long textLength = (long) 0;
 
 	@Nullable
 	@DcemGui
@@ -173,6 +183,16 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_AS_PARENT_ID"), name = "dc_parent_id", nullable = true, insertable = true, updatable = true)
 	@JsonIgnore
 	private CloudSafeEntity parent;
+	
+	@Enumerated (EnumType.ORDINAL)
+	@DcemGui
+	@Column (nullable = true)
+	DcemMediaType dcemMediaType;
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "as_ref_cloudsafe_tag", joinColumns = @JoinColumn(name = "dc_id"), foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_TAG"))
+	private Set<CloudSafeTagEntity> tags;
+
 
 	@DcemGui(name = "last_Modified_User", subClass = "loginId")
 	@ManyToOne
@@ -315,15 +335,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.deviceName = deviceName;
 	}
 
-	@Transient
-	public String toString() { 
-		StringBuffer sb = new StringBuffer();
-		sb.append("ID=");
-		sb.append(id);
-		sb.append(", Name=");
-		sb.append(name);
-		return sb.toString();
-	}
+	
 
 	@Transient
 	@JsonIgnore
@@ -517,4 +529,35 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public void setInfo(String info) {
 		this.info = info;
 	}
+	
+	@Transient
+	public String toString() { 
+		StringBuffer sb = new StringBuffer();
+		sb.append("ID=");
+		sb.append(id);
+		sb.append(", Name=");
+		sb.append(name);
+		return sb.toString();
+	}
+
+	public Long getTextLength() {
+		return textLength;
+	}
+
+	public void setTextLength(Long textLength) {
+		if (textLength == null) {
+			this.textLength = (long)0;
+		}
+		this.textLength = textLength;
+	}
+
+	public Set<CloudSafeTagEntity> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<CloudSafeTagEntity> tags) {
+		this.tags = tags;
+	}
+
+	
 }
