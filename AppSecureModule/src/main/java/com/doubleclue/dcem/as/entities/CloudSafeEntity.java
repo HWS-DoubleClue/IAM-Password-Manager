@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
