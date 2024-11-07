@@ -103,6 +103,11 @@
 						<p:outputLabel id="defineOwnerGroup" class="fa fa-users iconsButtons"></p:outputLabel>
 						<p:tooltip for="defineOwnerGroup" value="#{DcupMsg['label.changeOwnerGroupTitle']}" position="bottom" />
 					</p:commandLink>
+
+					<p:commandLink onclick="PF('webcamDialog').show();" immediate="true">
+						<p:outputLabel class="fa fa-users iconsButtons"></p:outputLabel>
+					</p:commandLink>
+
 					<div style="display: inline-block; float: right; margin-right: 0.5em; vertical-align: top">
 						<p:outputLabel id="searchIcon" class="fa fa-search" style="color:#bae2f5 !important; margin-top: 0.4em; vertical-align: top"></p:outputLabel>
 						<p:inputText id="searchTxt" value="#{cloudSafeView.searchFile}" size="20" placeholder="#{DcupMsg['searchPlaceHolder']}"
@@ -173,7 +178,7 @@
 								</h:outputText>
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.lastModifiedUser']}" sortBy="#{cloudSafeFile.lastModifiedUser.displayName}" class="columnToBeHidden">
-								<h:outputText value="#{cloudSafeFile.lastModifiedUser.displayName}" class="columnToBeHidden"  />
+								<h:outputText value="#{cloudSafeFile.lastModifiedUser.displayName}" class="columnToBeHidden" />
 							</p:column>
 							<p:column headerText="#{DcupMsg['columnTitle.discardsAfter']}" sortBy="#{cloudSafeFile.discardAfter}" class="columnToBeHidden">
 								<h:outputText value="#{cloudSafeFile.discardAfter}" class="columnToBeHidden" converter="dcem.LocalDateTimeConverter">
@@ -455,7 +460,7 @@
 				<p:outputLabel id="folderName" value="#{cloudSafeView.folderName}" />
 				<p></p>
 				<p:outputLabel for="folderPassword" value="#{DcupMsg['label.password']}" />
-			    <p:password id="folderPassword" style="margin-left: 1em" value="#{cloudSafeView.filePassword}" autocomplete="off" required="true" toggleMask="true" />
+				<p:password id="folderPassword" style="margin-left: 1em" value="#{cloudSafeView.filePassword}" autocomplete="off" required="true" toggleMask="true" />
 				<p></p>
 				<p:commandButton id="openFolderbtn" icon="fa fa-folder-open-o" value="#{DcupMsg['button.open']}" ajax="true" action="#{cloudSafeView.openFolder}">
 				</p:commandButton>
@@ -500,8 +505,10 @@
 					<p:fileDownload value="#{cloudSafeView.actionDownloadFile()}" />
 				</p:commandButton>
 
-				<p:commandButton id="actionDownloadMultiFile" icon="fa fa-cloud-download" value="#{DcupMsg['button.download']}" ajax="false"
-					action="#{cloudSafeView.verifyPasswordForDownloadFolder()}" rendered="#{cloudSafeView.multipleFile == true}" update="downloadForm">
+
+				<p:commandButton id="actionDownloadMultiFile" icon="fa fa-cloud-download" value="#{DcupMsg['button.download']}"
+					onclick="PrimeFaces.monitorDownload(null, stopDownLoad);" ajax="false" rendered="#{cloudSafeView.multipleFile == true}" update="downloadForm">
+					<p:fileDownload value="#{cloudSafeView.actionDownloadMultipleFiles()}" />
 				</p:commandButton>
 
 				<p></p>
@@ -712,6 +719,43 @@
 					style="float: right; margin-right: 1em;" immediate="true" />
 				<p />
 				<p></p>
+				<br />
+			</p:dialog>
+		</h:form>
+
+
+		<h:form id="webForm">
+			<p:dialog id="webcamDialog" widgetVar="webcamDialog" modal="true" resizable="false" style="border:none;">
+				<p />
+				<f:facet name="header">
+					<h:outputLabel value="webcamDialog" styleClass="dialogTitle" />
+				</f:facet>
+				<p />
+				<h:panelGrid columns="2">
+					<h:panelGrid  columns="2" cellpadding="4" cellspacing="2">
+						<p:outputLabel for="captureName" value="Document Name: " />
+						<p:inputText id="captureName" size="36" value="#{webcamView.documentName}" maxlength="64" rendered="true" />
+					</h:panelGrid>
+
+					<p />
+					<p:photoCam widgetVar="pc" update="photo" listener="#{webcamView.oncapture}" />
+					
+					<p:commandButton type="button" value="Capture" onclick="PF('pc').capture()" update="photo" />
+					<p:outputPanel id="photo">
+						<p:graphicImage value="#{webcamView.photo}" stream="false" /> />
+					</p:outputPanel>
+
+				</h:panelGrid>
+
+				<p />
+				<br />
+				<p:commandButton value="#{DcupMsg['button.ok']}" action="#{cloudSafeView.moveFileEntry}" style="width: 8em" icon="fa fa-check" ajax="true"
+					update="cloudSafeForm:cloudSafeTable">
+				</p:commandButton>
+				<br />
+				<p:commandLink styleClass="closeDialog" value="#{DcupMsg['close']}" onclick="PF('moveEntryConfirmationDialog').hide();"
+					style="float: right; margin-right: 1em;" immediate="true" />
+				<br />
 				<br />
 			</p:dialog>
 		</h:form>

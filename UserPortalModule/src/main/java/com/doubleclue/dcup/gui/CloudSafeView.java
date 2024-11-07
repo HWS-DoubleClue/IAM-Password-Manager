@@ -21,10 +21,13 @@ import javax.annotation.PostConstruct;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.FacesException;
 import javax.faces.component.UIComponentBase;
 import javax.faces.component.UINamingContainer;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.io.InvalidCipherTextIOException;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -1886,6 +1890,9 @@ public class CloudSafeView extends AbstractPortalView {
 	public void setCloudSafeEntityForShow(CloudSafeEntity cloudSafeEntityForShow) {
 		this.cloudSafeEntityForShow = cloudSafeEntityForShow;
 	}
+	
+	
+	
 
 	public boolean isFolder() {
 		return folder;
