@@ -36,12 +36,12 @@ dc_is_folder boolean not null,
 dc_gcm boolean not null,
 lastModified timestamp,
 dc_length bigint,
-lengthTexT bigint,
 dc_name varchar(255) not null,
 options varchar(255),
 owner integer,
 recycled boolean not null,
 dc_salt varchar(32) for bit data,
+text_length bigint,
 device_dc_id integer not null,
 group_dc_id integer,
 lastModifiedUser_dc_id integer,
@@ -155,7 +155,8 @@ primary key (dc_id)
 
 create table as_ref_cloudsafe_tag (
 dc_id integer not null,
-tags_dc_id integer not null
+tags_dc_id integer not null,
+primary key (dc_id, tags_dc_id)
 );
 
 create table as_userfingerprint (
