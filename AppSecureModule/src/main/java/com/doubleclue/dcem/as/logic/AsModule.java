@@ -609,16 +609,13 @@ public class AsModule extends DcemModule {
 		AsTenantData tenantData = new AsTenantData();
 		super.initializeTenant(tenantEntity, tenantData);
 		DcemCluster dcemCluster = DcemCluster.getInstance();
-
 		tenantData.setMainPolicyApps(policyLogic.getMainPolicies());
 
 		IMap<Long, PendingMsg> pendingMsgs = (IMap<Long, PendingMsg>) dcemCluster.getMap("PendingMsgs@" + tenantName);
 		pendingMsgs.addIndex("userId", false);
 		pendingMsgs.addLocalEntryListener(new PendingMessageListener());
 		tenantData.setPendingMsgs(pendingMsgs);
-
 		FlakeIdGenerator msgIdGenerator = dcemCluster.getIdGenerator("messageIdGen@" + tenantName);
-
 		tenantData.setMsgIdGenerator(msgIdGenerator);
 		tenantData.setSmsPasscodesMap((IMap<FingerprintId, String>) dcemCluster.getMap("smsPasscodesMap@" + tenantName));
 		tenantData.setLoginQrCodes((IMap<String, LoginQrCode>) dcemCluster.getMap("loginQrCodes@" + tenantName));
@@ -649,13 +646,16 @@ public class AsModule extends DcemModule {
 		} catch (Exception e) {
 			logger.error("Couldn't reset devices for " + tenantName);
 		}
-
 		try {
 			domainLogic.reload(null);
 		} catch (Exception e) {
 			logger.warn("Could initialize LDAP", e);
 		}
-
+		try {
+			cloudSafeLogic.getCloudSafeContentI().initiateTenant(tenantName);
+		}  catch (Exception e) {
+			logger.error("Could initialize CloudSafe", e);
+		}
 	}
 
 	public String getUserFullQualifiedId(DcemUser dcemUser) {

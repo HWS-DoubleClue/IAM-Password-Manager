@@ -1,20 +1,18 @@
 package com.doubleclue.dcem.as.entities;
 
-import java.awt.Color;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
 
+
 @Entity
 @Table(name = "as_cloudsafe_tag")
-public class CloudSafeTagEntity extends EntityInterface {
+public class CloudSafeTagEntity  extends EntityInterface implements Comparable<CloudSafeTagEntity> {
 
 	@Id
 	@Column(name = "dc_id")
@@ -26,13 +24,12 @@ public class CloudSafeTagEntity extends EntityInterface {
 	String name;
 	
 	@DcemGui
-	@Column (name = "dc_color", nullable = false)
-	Color color;
+	@Column (name = "dc_color", nullable = false, length = 64)
+	String color;
 
 	public Integer getId() {
 		return id;
 	}
-
 
 	@Override
 	public void setId(Number id) {
@@ -54,17 +51,17 @@ public class CloudSafeTagEntity extends EntityInterface {
 		this.name = name;
 	}
 
-
-	public Color getColor() {
+	public String getColor() {
 		return color;
 	}
 
-
-	public void setColor(Color color) {
+	public void setColor(String color) {
 		this.color = color;
 	}
 
-
-
+	@Override
+	public int compareTo(CloudSafeTagEntity cloudSafeTagEntity) {
+		return name.compareTo(cloudSafeTagEntity.getName());
+	}
 
 }

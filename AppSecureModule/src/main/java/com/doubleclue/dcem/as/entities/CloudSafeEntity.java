@@ -2,8 +2,8 @@ package com.doubleclue.dcem.as.entities;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
@@ -26,7 +26,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-
 
 import com.doubleclue.comm.thrift.CloudSafeOptions;
 import com.doubleclue.comm.thrift.CloudSafeOwner;
@@ -174,9 +173,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	long length;
 	
 	@DcemGui
-	@Column(name = "lengthTexT")
-	long lengthOfText;  // if tero this document has no Text Content
-	
+
+	@Column(name = "text_length")
+	Long textLength = (long) 0;
+
 	@Nullable
 	@DcemGui
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -190,8 +190,9 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	DcemMediaType dcemMediaType;
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "as_ref_cloudsafe_tag", joinColumns = @JoinColumn(name = "group_id"), foreignKey = @ForeignKey(name = "FK_USER_GROUP"), inverseJoinColumns = @JoinColumn(name = "user_id"), inverseForeignKey = @ForeignKey(name = "FK_GROUP_USER"))
-	private List<CloudSafeTagEntity> tags;
+
+	@JoinTable(name = "as_ref_cloudsafe_tag", joinColumns = @JoinColumn(name = "dc_id"), foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_TAG"))
+	private Set<CloudSafeTagEntity> tags;
 
 	@DcemGui(name = "last_Modified_User", subClass = "loginId")
 	@ManyToOne
@@ -199,8 +200,6 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@JsonIgnore
 	private DcemUser lastModifiedUser;
 	
-	
-
 	// @DcemGui
 	// boolean sign;
 
@@ -336,15 +335,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.deviceName = deviceName;
 	}
 
-	@Transient
-	public String toString() { 
-		StringBuffer sb = new StringBuffer();
-		sb.append("ID=");
-		sb.append(id);
-		sb.append(", Name=");
-		sb.append(name);
-		return sb.toString();
-	}
+	
 
 	@Transient
 	@JsonIgnore
@@ -538,4 +529,35 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public void setInfo(String info) {
 		this.info = info;
 	}
+	
+	@Transient
+	public String toString() { 
+		StringBuffer sb = new StringBuffer();
+		sb.append("ID=");
+		sb.append(id);
+		sb.append(", Name=");
+		sb.append(name);
+		return sb.toString();
+	}
+
+	public Long getTextLength() {
+		return textLength;
+	}
+
+	public void setTextLength(Long textLength) {
+		if (textLength == null) {
+			this.textLength = (long)0;
+		}
+		this.textLength = textLength;
+	}
+
+	public Set<CloudSafeTagEntity> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<CloudSafeTagEntity> tags) {
+		this.tags = tags;
+	}
+
+	
 }

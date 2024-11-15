@@ -265,7 +265,6 @@ public class PasswordSafeView extends AbstractPortalView {
 			}
 		} catch (DcemException e) {
 			logger.warn(e.getLocalizedMessage(), e);
-
 		} catch (Exception e) {
 			logger.warn(e.toString(), e);
 		}
@@ -1135,11 +1134,18 @@ public class PasswordSafeView extends AbstractPortalView {
 		keePassFile = null;
 		try {
 			KeePassDatabase database = KeePassDatabase.getInstance(inputStream);
+			if (database.getHeader().getCrsAlgorithm() == null) {
+				JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "appHub.error.FAILED_LOAD_PASSWORDSAFE", selectedPasswordSafeFile);
+				throw new DcemException(DcemErrorCodes.INVALID_KEEPASS_ALGORITHM, "Wrong KeePass algorithm.");
+			};
 			keePassFile = database.openDatabase(password_);
+		} catch (DcemException e) {
+			throw e;
 		} catch (KeePassDatabaseUnreadableException exp) {
 			if (exp.getCause() != null && exp.getCause() instanceof javax.crypto.BadPaddingException) {
 				throw new DcemException(DcemErrorCodes.INVALID_PASSWORD, " Please check your Master Password. ");
 			}
+			throw exp;
 		} catch (Exception e) {
 			logger.warn(e);
 			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "appHub.error.FAILED_LOAD_PASSWORDSAFE", selectedPasswordSafeFile);

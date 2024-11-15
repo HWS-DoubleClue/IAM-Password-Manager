@@ -16,6 +16,7 @@ import com.doubleclue.dcem.as.logic.CloudSafeLogic;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentDb;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentI;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentNas;
+import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentS3;
 import com.doubleclue.dcem.core.config.CloudSafeStorageType;
 import com.doubleclue.dcem.core.config.ClusterConfig;
 import com.doubleclue.dcem.core.config.DatabaseConfig;
@@ -77,6 +78,11 @@ public class SetupCloudSafe extends DcemView {
 	String nodeName;
 	String nasPath;
 
+	String s3AccessKeyId;
+	String s3SecretAccessKey;
+	String s3Url;
+	boolean copyFileContent;
+
 	ClusterConfig clusterConfig;
 
 	@PostConstruct
@@ -90,6 +96,13 @@ public class SetupCloudSafe extends DcemView {
 			connection.close();
 			currentCloudStorageType = clusterConfig.getCloudSafeStorageType().name();
 			cloudStorageType = currentCloudStorageType;
+			s3AccessKeyId = clusterConfig.getAwsS3AccesskeyId();
+			s3SecretAccessKey = clusterConfig.getAwsS3SecretAccessKey();
+			copyFileContent = true;
+			s3Url = clusterConfig.getAwsS3Url();
+			if (s3Url == null) {
+				s3Url = CloudSafeContentS3.DIGITAL_OCEAN_SPACES_URL;
+			}
 		} catch (Exception e) {
 			logger.error("Couldn't read Cluster configuration file", e);
 			return;
@@ -111,59 +124,70 @@ public class SetupCloudSafe extends DcemView {
 	public void actionSave() throws Exception {
 		CloudSafeStorageType selectedType = CloudSafeStorageType.valueOf(cloudStorageType);
 		CloudSafeStorageType currentType = clusterConfig.getCloudSafeStorageType();
-		if (selectedType == CloudSafeStorageType.NetworkAccessStorage) {
+		switch (currentType) {
+		case NetworkAccessStorage:
 			File file = new File(nasPath);
 			if (file.exists() == false) {
 				JsfUtils.addErrorMessage("Directory does not exists");
 				return;
 			}
-		}
-		// currentType = CloudSafeStorageType.Database;
-		if (selectedType == currentType && nasPath.equals(clusterConfig.getNasDirectory())) {
-			JsfUtils.addInfoMessage("There is nothing to do. Source and destination are the same.");
-			return;
-		}
-		if (selectedType == CloudSafeStorageType.Database) {
-			File file = new File(nasPath);
-			if (file.exists() == false) {
-				JsfUtils.addErrorMessage("Directory does not exists");
-				return;
+			break;
+		case Database:
+			
+			break;
+		case AwsS3:
+			if (selectedType == CloudSafeStorageType.AwsS3) {
+				// validate
+				getCloudStorage(selectedType);
 			}
-		}
-		if (selectedType == currentType) {
-			if (selectedType == CloudSafeStorageType.NetworkAccessStorage) {
-				JsfUtils.addInfoMessage(
-						"No change in Storage Media. Note: If you changed the NAS Path, you would need to copy the files" + "manually to the new path.");
-			}
+			break;
 		}
 
 		//// Starting copy
 		try {
 			startDatabase();
-			List<TenantEntity> tenants = tenantLogic.getAllTenants();
-			tenants.add(0, TenantIdResolver.getMasterTenant());
-			if (selectedType != currentType) {
-				for (TenantEntity tenantEntity : tenants) {
-					CloudSafeContentI source = getCloudStorage(currentType);
-					CloudSafeContentI destination = getCloudStorage(selectedType);
-					Future<Exception> future = taskExecutor.submit(new CallCloudSafeStorageCopy(tenantEntity, source, destination));
-					try {
-						Exception exp = future.get();
-						if (exp != null) {
-							throw exp;
+			if (selectedType == currentType) {
+				if (selectedType == CloudSafeStorageType.NetworkAccessStorage) {
+					JsfUtils.addInfoMessage(
+							"No change in Storage Media. Note: If you changed the NAS Path, you would need to copy the files" + "manually to the new path.");
+				}
+				JsfUtils.addInfoMessage("There is nothing to do. Source and destination are the same.");
+			} else {
+				if (copyFileContent == true) {
+					List<TenantEntity> tenants = tenantLogic.getAllTenants();
+					tenants.add(0, TenantIdResolver.getMasterTenant());
+					if (selectedType != currentType) {
+						for (TenantEntity tenantEntity : tenants) {
+							CloudSafeContentI source = getCloudStorage(currentType);
+							CloudSafeContentI destination = getCloudStorage(selectedType);
+							destination.initiateTenant(tenantEntity.getName());
+							source.initiateTenant(tenantEntity.getName());
+							Future<Exception> future = taskExecutor.submit(new CallCloudSafeStorageCopy(tenantEntity, source, destination));
+							try {
+								Exception exp = future.get();
+								if (exp != null) {
+									throw exp;
+								}
+								logger.info("CloudSafe migrated for " + tenantEntity.getName());
+							} catch (Exception e) {
+								String msg = "Error on initialization Tenant: " + tenantEntity.getName() + " Cause: " + e.toString();
+								logger.fatal(msg, e);
+								throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Can't copy CloudSafeStorage for : " + tenantEntity.getName(), e);
+							}
 						}
-					} catch (Exception e) {
-						String msg = "Error on initialization Tenant: " + tenantEntity.getName() + " Cause: " + e.toString();
-						logger.fatal(msg, e);
-						throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Can't copy CloudSafeStorage for : " + tenantEntity.getName(), e);
+						
+						JsfUtils.addInfoMessage("Migration to " + selectedType.name() + " is succesfull");
 					}
 				}
-				JsfUtils.addInfoMessage("Migration to " + selectedType.name() + " is succesfull");
 			}
+
 			requestContext = WeldContextUtils.activateRequestContext();
 			TenantIdResolver.setMasterTenant();
 			clusterConfig.setCloudSafeStorageType(selectedType);
 			clusterConfig.setNasDirectory(nasPath);
+			clusterConfig.setAwsS3AccesskeyId(s3AccessKeyId);
+			clusterConfig.setAwsS3SecretAccessKey(s3SecretAccessKey);
+			clusterConfig.setAwsS3Url(s3Url);
 			DcemConfiguration dcemConfiguration = configLogic.createClusterConfig(clusterConfig);
 			configLogic.setDcemConfiguration(dcemConfiguration);
 			WeldContextUtils.deactivateRequestContext(requestContext);
@@ -173,6 +197,9 @@ public class SetupCloudSafe extends DcemView {
 		} catch (DcemException e) {
 			JsfUtils.addErrorMessage(e.toString());
 			return;
+		} catch (Exception e) {
+			JsfUtils.addErrorMessage(e.toString());
+			return;
 		} finally {
 			closeDatabase();
 		}
@@ -180,7 +207,7 @@ public class SetupCloudSafe extends DcemView {
 		return;
 	}
 
-	private CloudSafeContentI getCloudStorage(CloudSafeStorageType cloudSafeStorageType) {
+	private CloudSafeContentI getCloudStorage(CloudSafeStorageType cloudSafeStorageType) throws Exception {
 		CloudSafeContentI cloudSafeContentI = null;
 		switch (cloudSafeStorageType) {
 		case Database:
@@ -192,6 +219,10 @@ public class SetupCloudSafe extends DcemView {
 				file.mkdir();
 			}
 			cloudSafeContentI = new CloudSafeContentNas(file);
+			break;
+		case AwsS3:
+			cloudSafeContentI = new CloudSafeContentS3(clusterConfig.getName(), s3Url, s3AccessKeyId, s3SecretAccessKey);
+			break;
 		default:
 			break;
 		}
@@ -241,6 +272,10 @@ public class SetupCloudSafe extends DcemView {
 		return cloudStorageType.equals(CloudSafeStorageType.NetworkAccessStorage.name());
 	}
 
+	public boolean isAwsS3() {
+		return cloudStorageType.equals(CloudSafeStorageType.AwsS3.name());
+	}
+
 	private void startDatabase() throws DcemException {
 
 		// requestContext = WeldContextUtils.activateRequestContext();
@@ -261,6 +296,38 @@ public class SetupCloudSafe extends DcemView {
 		}
 		// WeldContextUtils.deactivateRequestContext(requestContext);
 		WeldContextUtils.deactivateSessionContext(weldSessionContext);
+	}
+
+	public String getS3AccessKeyId() {
+		return s3AccessKeyId;
+	}
+
+	public void setS3AccessKeyId(String s3AccessKeyId) {
+		this.s3AccessKeyId = s3AccessKeyId;
+	}
+
+	public String getS3SecretAccessKey() {
+		return s3SecretAccessKey;
+	}
+
+	public void setS3SecretAccessKey(String s3SecretAccessKey) {
+		this.s3SecretAccessKey = s3SecretAccessKey;
+	}
+
+	public String getS3Url() {
+		return s3Url;
+	}
+
+	public void setS3Url(String s3Url) {
+		this.s3Url = s3Url;
+	}
+
+	public boolean isCopyFileContent() {
+		return copyFileContent;
+	}
+
+	public void setCopyFileContent(boolean copyFileContent) {
+		this.copyFileContent = copyFileContent;
 	}
 
 }

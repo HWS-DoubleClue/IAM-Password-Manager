@@ -85,7 +85,7 @@
 						onclick="PF('cloudSafeStorageDialog').show();" rendered="#{dbView.stateOk}" />
 					<p></p>
 					<br />
-					
+
 					<p:outputLabel style="font-size: small" value="Local configuration file stored at: #{dbView.localConfigurationFile}" />
 				</p:tab>
 				<p:tab id="createSchema" title="Create Database">
@@ -300,13 +300,12 @@
 		</h:form>
 		<h:form id="cloudSafeStorageForm">
 			<p:remoteCommand name="updateDialog" update="currentType" />
-			<p:dialog id="cloudSafeStorageDialog" header="Configure CloudSafe Storage" widgetVar="cloudSafeStorageDialog" modal="true" width="670px"
-				rendered="#{dbView.stateOk}" onShow="updateDialog ">
+			<p:dialog id="cloudSafeStorageDialog" header="Configure CloudSafe Storage" widgetVar="cloudSafeStorageDialog" modal="true" width="700px"
+				rendered="#{dbView.stateOk}" onShow="updateDialog">
 				<f:facet name="header">
 					<h:graphicImage library="pictures" style="border: 0; vertical-align: middle; height: 22px; width: 22px; margin-right: 5px; margin-bottom: 7px;"
 						name="Cloud_white.png" />
 					<h:outputText style="font-size: large" value=" Configure CloudSafe Storage" />
-
 				</f:facet>
 				<p:messages showDetail="false" closable="true">
 					<p:autoUpdate />
@@ -318,13 +317,28 @@
 					<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 						<p:outputLabel for="storageType" value="Change Storage Type to: " />
 						<p:selectOneMenu id="storageType" value="#{setupCloudSafe.cloudStorageType}">
-							<f:selectItems value="#{setupCloudSafe.cloudStorageTypes}" var="types" itemLabel="#{types.name()}" />
+							<f:selectItems value="#{setupCloudSafe.cloudStorageTypes}" />
 							<p:ajax process="storageType" update="cloudSafeStorageGroup" />
 						</p:selectOneMenu>
-						<p:outputLabel value="NAS Path: " rendered="#{setupCloudSafe.nas}" />
-						<p:inputText size="60" value="#{setupCloudSafe.nasPath}" rendered="#{setupCloudSafe.nas}" />
-
+						<p:outputLabel for="@next" value="Copy File Contents" />
+						<p:selectBooleanCheckbox id="copyFiles" value="#{setupCloudSafe.copyFileContent}" />
 					</h:panelGrid>
+					<p></p>
+
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="4" rendered="#{setupCloudSafe.nas}">
+						<p:outputLabel value="NAS Path: " />
+						<p:inputText size="60" value="#{setupCloudSafe.nasPath}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="4" rendered="#{setupCloudSafe.awsS3}">
+						<p:outputLabel for="@next" value="URL " />
+						<p:inputText id="s3url" size="55" value="#{setupCloudSafe.s3Url}" required="true" />
+						<p:outputLabel for="@next" value="S3-AccessKey ID " />
+						<p:inputText id="s3AccessKeyId" size="55" value="#{setupCloudSafe.s3AccessKeyId}" required="true" />
+						<p:outputLabel for="@next" value="S3-Secret Access Key " />
+						<p:inputText id="s3SecretAccessKey" size="55" value="#{setupCloudSafe.s3SecretAccessKey}" required="true" />
+					</h:panelGrid>
+
 					<p></p>
 					<p:commandButton id="cloudSafeStorageOk" value="OK" style="width: 8em; color: white;" icon="fa fa-check" action="#{setupCloudSafe.actionSave}"
 						update="currentType" />

@@ -54,6 +54,10 @@ public class ClusterConfig implements Cloneable, Serializable {
 	
 	private String nasDirectory;
 	
+	private String awsS3AccesskeyId;
+	private String awsS3SecretAccessKey;
+	private String awsS3Url;
+	
 	private String redirectPort80 = null;
 
 	List<ConnectionService> connectionServices;
@@ -197,6 +201,30 @@ public class ClusterConfig implements Cloneable, Serializable {
 
 	public void setNasDirectory(String nasDirectory) {
 		this.nasDirectory = nasDirectory;
+	}
+
+	public String getAwsS3AccesskeyId() {
+		return awsS3AccesskeyId;
+	}
+
+	public void setAwsS3AccesskeyId(String awsS3AccesskeyId) {
+		this.awsS3AccesskeyId = awsS3AccesskeyId;
+	}
+
+	public String getAwsS3SecretAccessKey() {
+		return awsS3SecretAccessKey;
+	}
+
+	public void setAwsS3SecretAccessKey(String awsS3secretAccessKey) {
+		this.awsS3SecretAccessKey = awsS3secretAccessKey;
+	}
+
+	public String getAwsS3Url() {
+		return awsS3Url;
+	}
+
+	public void setAwsS3Url(String awsS3Url) {
+		this.awsS3Url = awsS3Url;
 	}
 	
 	

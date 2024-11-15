@@ -29,6 +29,7 @@ primary key (dc_id)
 
 create table as_cloudsafe (
 dc_id integer not null,
+dcemMediaType integer,
 discardAfter datetime,
 dc_info varchar(255),
 dc_is_folder bit not null,
@@ -40,11 +41,19 @@ options varchar(255),
 owner integer,
 recycled bit not null,
 dc_salt tinyblob,
+text_length bigint,
 device_dc_id integer not null,
 group_dc_id integer,
 lastModifiedUser_dc_id integer,
 dc_parent_id integer,
 user_dc_id integer not null,
+primary key (dc_id)
+) engine=InnoDB;
+
+create table as_cloudsafe_tag (
+dc_id integer not null auto_increment,
+dc_color varchar(64) not null,
+dc_name varchar(255) not null,
 primary key (dc_id)
 ) engine=InnoDB;
 
@@ -142,6 +151,12 @@ dc_disabled bit,
 subId integer not null,
 subname varchar(255),
 primary key (dc_id)
+) engine=InnoDB;
+
+create table as_ref_cloudsafe_tag (
+dc_id integer not null,
+tags_dc_id integer not null,
+primary key (dc_id, tags_dc_id)
 ) engine=InnoDB;
 
 create table as_userfingerprint (
@@ -300,6 +315,16 @@ alter table as_message
 add constraint FK_APP_MSG_USER
 foreign key (userId)
 references core_user (dc_id);
+
+alter table as_ref_cloudsafe_tag
+add constraint FKtn5egj0ktr5del1n3rrrrvq3a
+foreign key (tags_dc_id)
+references as_cloudsafe_tag (dc_id);
+
+alter table as_ref_cloudsafe_tag
+add constraint FK_CLOUDSAFE_TAG
+foreign key (dc_id)
+references as_cloudsafe (dc_id);
 
 alter table as_version
 add constraint FK_APP_VERSION_USER

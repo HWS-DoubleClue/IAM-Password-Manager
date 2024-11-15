@@ -30,7 +30,8 @@
 			<version>2.9.10</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-cbor -->
+		<!--
+		https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-cbor -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-cbor</artifactId>
@@ -51,7 +52,7 @@
 			<artifactId>cose-java</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-<!-- 
+		<!-- 
 		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>DcemCore</artifactId>
@@ -85,7 +86,9 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		
+
 	</dependencies>
 
 	<build>

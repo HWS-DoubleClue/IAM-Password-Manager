@@ -54,7 +54,7 @@ public class WebcamView implements Serializable {
 			InputStream in = new ByteArrayInputStream(photoData);
 			return DefaultStreamedContent.builder().contentType("image/png").stream(() -> in).build();
 		} else {
-			return JsfUtils.getDefaultUserImage();
+			return JsfUtils.getEmptyImage();
 		}
 	}
 

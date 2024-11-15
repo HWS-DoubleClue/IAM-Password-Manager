@@ -28,7 +28,6 @@ public class TestSolr {
 			document.addField("name", "Kenmore Dishwasher");
 			document.addField("price", "599.99");
 			document.addField("text", "ÖÄÜxxxxxxxxxxxxxxxöäü");
-
 			solrClient.add(document);
 			BodyContentHandler textHandler = new BodyContentHandler();
 			ParseContext context = new ParseContext();

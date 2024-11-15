@@ -29,6 +29,7 @@ primary key (dc_id)
 
 create table as_cloudsafe (
 dc_id number(10,0) not null,
+dcemMediaType number(10,0),
 discardAfter timestamp,
 dc_info varchar2(255 char),
 dc_is_folder number(1,0) not null,
@@ -40,11 +41,19 @@ options varchar2(255 char),
 owner number(10,0),
 recycled number(1,0) not null,
 dc_salt blob,
+text_length number(19,0),
 device_dc_id number(10,0) not null,
 group_dc_id number(10,0),
 lastModifiedUser_dc_id number(10,0),
 dc_parent_id number(10,0),
 user_dc_id number(10,0) not null,
+primary key (dc_id)
+);
+
+create table as_cloudsafe_tag (
+dc_id number(10,0) generated as identity,
+dc_color varchar2(64 char) not null,
+dc_name varchar2(255 char) not null,
 primary key (dc_id)
 );
 
@@ -142,6 +151,12 @@ dc_disabled number(1,0),
 subId number(10,0) not null,
 subname varchar2(255 char),
 primary key (dc_id)
+);
+
+create table as_ref_cloudsafe_tag (
+dc_id number(10,0) not null,
+tags_dc_id number(10,0) not null,
+primary key (dc_id, tags_dc_id)
 );
 
 create table as_userfingerprint (
@@ -300,6 +315,16 @@ alter table as_message
 add constraint FK_APP_MSG_USER
 foreign key (userId)
 references core_user;
+
+alter table as_ref_cloudsafe_tag
+add constraint FKtn5egj0ktr5del1n3rrrrvq3a
+foreign key (tags_dc_id)
+references as_cloudsafe_tag;
+
+alter table as_ref_cloudsafe_tag
+add constraint FK_CLOUDSAFE_TAG
+foreign key (dc_id)
+references as_cloudsafe;
 
 alter table as_version
 add constraint FK_APP_VERSION_USER
