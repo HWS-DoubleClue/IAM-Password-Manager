@@ -22,6 +22,7 @@
 	background-color: #005078;
 }
 </style>
+	
 	<h:panelGroup id="cloudSafeView" rendered="#{portalSessionBean.isViewVisible('CLOUD_DATA_VIEW')}">
 		<h:form id="cloudSafeForm">
 
@@ -104,8 +105,8 @@
 						<p:tooltip for="defineOwnerGroup" value="#{DcupMsg['label.changeOwnerGroupTitle']}" position="bottom" />
 					</p:commandLink>
 
-					<p:commandLink onclick="PF('webcamDialog').show();" immediate="true">
-						<p:outputLabel class="fa fa-users iconsButtons"></p:outputLabel>
+					<p:commandLink action="#{cloudSafeView.actionWebcamDialog}" immediate="true">
+						<p:outputLabel class="fa fa-camera iconsButtons"></p:outputLabel>
 					</p:commandLink>
 
 					<div style="display: inline-block; float: right; margin-right: 0.5em; vertical-align: top">
@@ -506,8 +507,9 @@
 				</p:commandButton>
 
 
-				<p:commandButton id="actionDownloadMultiFile" icon="fa fa-cloud-download" value="#{DcupMsg['button.download']}"
-					onclick="PrimeFaces.monitorDownload(null, stopDownLoad);" ajax="false" rendered="#{cloudSafeView.multipleFile == true}" update="downloadForm">
+				<p:commandButton id="actionDownloadMultiFile" icon="fa fa-cloud-download" value="#{DcupMsg['button.download']}" 
+					 onclick="PrimeFaces.monitorDownload(null, stopDownLoad);" ajax="false"
+					 rendered="#{cloudSafeView.multipleFile == true}" update="downloadForm">
 					<p:fileDownload value="#{cloudSafeView.actionDownloadMultipleFiles()}" />
 				</p:commandButton>
 
@@ -515,7 +517,7 @@
 				<p:commandLink value="#{DcupMsg['close']}" styleClass="closeDialog" actionListener="#{cloudSafeView.actionCloseDownloadFile}"
 					style="float: right; margin-right: 1em;" immediate="true" />
 				<br></br>
-				<p:remoteCommand name="stopDownLoad" action="#{cloudSafeView.actionCloseDownloadFile()}" ignoreAutoUpdate="true" />
+				<p:remoteCommand name="stopDownLoad" action="#{cloudSafeView.actionCloseDownloadFile()}" ignoreAutoUpdate="false" />
 				<p></p>
 			</p:dialog>
 		</h:form>
@@ -722,43 +724,7 @@
 				<br />
 			</p:dialog>
 		</h:form>
-
-
-		<h:form id="webForm">
-			<p:dialog id="webcamDialog" widgetVar="webcamDialog" modal="true" resizable="false" style="border:none;">
-				<p />
-				<f:facet name="header">
-					<h:outputLabel value="webcamDialog" styleClass="dialogTitle" />
-				</f:facet>
-				<p />
-				<h:panelGrid columns="2">
-					<h:panelGrid  columns="2" cellpadding="4" cellspacing="2">
-						<p:outputLabel for="captureName" value="Document Name: " />
-						<p:inputText id="captureName" size="36" value="#{webcamView.documentName}" maxlength="64" rendered="true" />
-					</h:panelGrid>
-
-					<p />
-					<p:photoCam widgetVar="pc" update="photo" listener="#{webcamView.oncapture}" />
-					
-					<p:commandButton type="button" value="Capture" onclick="PF('pc').capture()" update="photo" />
-					<p:outputPanel id="photo">
-						<p:graphicImage value="#{webcamView.photo}" stream="false" /> />
-					</p:outputPanel>
-
-				</h:panelGrid>
-
-				<p />
-				<br />
-				<p:commandButton value="#{DcupMsg['button.ok']}" action="#{cloudSafeView.moveFileEntry}" style="width: 8em" icon="fa fa-check" ajax="true"
-					update="cloudSafeForm:cloudSafeTable">
-				</p:commandButton>
-				<br />
-				<p:commandLink styleClass="closeDialog" value="#{DcupMsg['close']}" onclick="PF('moveEntryConfirmationDialog').hide();"
-					style="float: right; margin-right: 1em;" immediate="true" />
-				<br />
-				<br />
-			</p:dialog>
-		</h:form>
+				
 
 	</h:panelGroup>
 </ui:composition>
