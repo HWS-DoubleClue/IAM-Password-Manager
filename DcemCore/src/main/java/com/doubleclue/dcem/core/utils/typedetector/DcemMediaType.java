@@ -15,6 +15,7 @@ public enum DcemMediaType {
 	TAR("application/x-tar"),
 	XML("application/xml"),
 	ZIP("application/zip"),
+	KEEPASS("application/octet-stream"),
 	BINARY("application/octet-stream");
 	
 	private String mediaType;

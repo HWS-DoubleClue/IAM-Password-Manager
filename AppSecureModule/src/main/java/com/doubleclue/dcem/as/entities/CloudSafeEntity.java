@@ -173,6 +173,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	long length;
 	
 	@DcemGui
+
 	@Column(name = "text_length")
 	Long textLength = (long) 0;
 
@@ -189,16 +190,16 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	DcemMediaType dcemMediaType;
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
 	@JoinTable(name = "as_ref_cloudsafe_tag", joinColumns = @JoinColumn(name = "dc_id"), foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_TAG"))
 	private Set<CloudSafeTagEntity> tags;
-
 
 	@DcemGui(name = "last_Modified_User", subClass = "loginId")
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_USER_MODIFIED"), nullable = true, insertable = true, updatable = true)
 	@JsonIgnore
 	private DcemUser lastModifiedUser;
-
+	
 	// @DcemGui
 	// boolean sign;
 

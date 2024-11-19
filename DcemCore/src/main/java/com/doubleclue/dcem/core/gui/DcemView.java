@@ -710,4 +710,6 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		this.linkUrlHost = linkUrlHost;
 	}
 
+	
+
 }

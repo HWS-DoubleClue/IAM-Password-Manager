@@ -63,4 +63,5 @@ public class CloudSafeTagEntity  extends EntityInterface implements Comparable<C
 	public int compareTo(CloudSafeTagEntity cloudSafeTagEntity) {
 		return name.compareTo(cloudSafeTagEntity.getName());
 	}
+
 }
