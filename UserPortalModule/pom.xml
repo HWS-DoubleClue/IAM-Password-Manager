@@ -49,11 +49,7 @@
 			<version>10.0.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.solr/solr-solrj -->
-		<dependency>
-			<groupId>org.apache.solr</groupId>
-			<artifactId>solr-solrj</artifactId>
-			<version>9.7.0</version>
-		</dependency>
+		
 
 		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-demo -->
 		<!--<dependency>
