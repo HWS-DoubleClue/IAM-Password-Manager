@@ -27,7 +27,6 @@ public enum DcemMediaType {
 	ODT ("application/vnd.oasis.opendocument.text",  "word-file.png");
 	
 	
-	
 	private String mediaType;
 	private String iconName;
 
