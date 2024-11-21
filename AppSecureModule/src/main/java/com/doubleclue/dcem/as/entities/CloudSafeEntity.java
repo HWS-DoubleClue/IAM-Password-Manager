@@ -559,5 +559,17 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.tags = tags;
 	}
 
+	public DcemMediaType getDcemMediaType() {
+		return dcemMediaType;
+	}
+
+	public void setDcemMediaType(DcemMediaType dcemMediaType) {
+		this.dcemMediaType = dcemMediaType;
+	}
+
+	public void setLengthString(String lengthString) {
+		this.lengthString = lengthString;
+	}
+
 	
 }

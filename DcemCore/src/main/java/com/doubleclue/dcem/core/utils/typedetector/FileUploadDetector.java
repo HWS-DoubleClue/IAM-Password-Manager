@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.tika.Tika;
+import org.apache.tika.metadata.Metadata;
 
 import com.doubleclue.dcem.core.as.DcemUploadFile;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
@@ -22,6 +23,13 @@ public class FileUploadDetector {
 	public static String detectMediaType(File file) throws Exception {
 		Tika tika = new Tika();
 		return tika.detect(file);
+	}
+	
+	public static DcemMediaType detectDcemMediaType(InputStream inputStream ) throws Exception {
+		Tika tika = new Tika();
+		String mediaType = tika.detect(inputStream);
+		DcemMediaType dcemMediaType = DcemMediaType.getDcemMediaType(mediaType);
+		return dcemMediaType;
 	}
 	
 	public static String detectMediaType(InputStream inputStream) throws Exception{
