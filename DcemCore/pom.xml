@@ -207,6 +207,10 @@
 					<groupId>org.jboss.logging</groupId>
 					<artifactId>jboss-logging</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.jaxb</groupId>
+					<artifactId>jaxb-runtime</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -399,6 +403,25 @@
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-core</artifactId>
 		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/org.apache.tika/tika-parsers-standard-package -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers-standard-package</artifactId>
+			<!--<exclusions>
+				<exclusion>tika-parser-xml-module</exclusion>
+			 </exclusions>-->
+			<exclusions>
+				<exclusion>
+					<groupId>org.glassfish.jaxb</groupId>
+					<artifactId>jaxb-runtime</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.tika</groupId>
+					<artifactId>tika-parser-xml-module</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 
 		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/s3 -->
@@ -438,6 +461,17 @@
 		</dependency>
 
 
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<version>${hibernate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.glassfish.jaxb</groupId>
+					<artifactId>jaxb-runtime</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins></plugins>

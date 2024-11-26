@@ -19,6 +19,7 @@ public enum DcemMediaType {
 	ZIP("application/zip", "zip-file.svg"),
 	KEEPASS("application/octet-stream", "keepass-icon.png"),
 	BINARY("application/octet-stream", DcemConstants.DEFAULT_FILE_ICON),
+	
 	DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "word-file.png"),
 	XLS("application/vnd.ms-excel", "excel-file.png"),
 	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "excel-file.png"),
@@ -32,7 +33,7 @@ public enum DcemMediaType {
 
 	private DcemMediaType(String mediaType, String iconName) {
 		this.mediaType = mediaType;
-		this.mediaType = iconName;
+		this.iconName = iconName;
 	}
 
 	public String getMediaType() {

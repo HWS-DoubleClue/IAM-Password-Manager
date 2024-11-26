@@ -20,8 +20,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -34,6 +36,7 @@ import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
+import com.doubleclue.dcem.core.utils.compare.DcemCompare;
 import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -208,7 +211,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	@DcemGui
 	@Column(nullable = true)
-	LocalDateTime discardAfter;
+	LocalDateTime discardAfter;  // TODO to be removed
 
 	@JsonIgnore
 	String options;
@@ -234,7 +237,15 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Column(name = "recycled", nullable = false)
 	@JsonIgnore
 	boolean recycled = false;
-
+	
+	@Column(nullable = true, length = 256)
+	@DcemCompare (ignore = true) 
+	String textExtract;
+	
+	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(nullable = true, foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_THUMBNAIL"), referencedColumnName = "dc_id")
+	private CloudSafeThumbnailEntity thumbnailEntity;
+	
 	@Transient
 	@JsonIgnore
 	String loginId;
@@ -571,5 +582,21 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.lengthString = lengthString;
 	}
 
-	
+	public String getTextExtract() {
+		return textExtract;
+	}
+
+	public void setTextExtract(String textExtract) {
+		this.textExtract = textExtract;
+	}
+
+	public CloudSafeThumbnailEntity getThumbnailEntity() {
+		return thumbnailEntity;
+	}
+
+	public void setThumbnailEntity(CloudSafeThumbnailEntity thumbnailEntity) {
+		this.thumbnailEntity = thumbnailEntity;
+	}
+
+		
 }

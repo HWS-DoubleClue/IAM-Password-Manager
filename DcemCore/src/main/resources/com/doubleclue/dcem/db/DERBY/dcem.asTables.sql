@@ -41,11 +41,13 @@ options varchar(255),
 owner integer,
 recycled boolean not null,
 dc_salt varchar(32) for bit data,
+textExtract varchar(256),
 text_length bigint,
 device_dc_id integer not null,
 group_dc_id integer,
 lastModifiedUser_dc_id integer,
 dc_parent_id integer,
+thumbnail_dc_id integer not null,
 user_dc_id integer not null,
 primary key (dc_id)
 );
@@ -79,6 +81,12 @@ writeAccess boolean,
 cloudSafe_dc_id integer,
 group_dc_id integer,
 user_dc_id integer,
+primary key (dc_id)
+);
+
+create table as_cloudsafethumbnail (
+dc_id integer not null,
+thumbnail blob,
 primary key (dc_id)
 );
 
@@ -242,6 +250,11 @@ alter table as_cloudsafe
 add constraint FK_AS_PARENT_ID
 foreign key (dc_parent_id)
 references as_cloudsafe;
+
+alter table as_cloudsafe
+add constraint FK_CLOUDSAFE_THUMBNAIL
+foreign key (thumbnail_dc_id)
+references as_cloudsafethumbnail;
 
 alter table as_cloudsafe
 add constraint FK_AS_PROP_USER

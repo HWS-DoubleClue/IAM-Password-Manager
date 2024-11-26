@@ -22,6 +22,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/x
 		<class>com.doubleclue.dcem.as.entities.CloudSafeContentEntity</class>
 		<class>com.doubleclue.dcem.as.entities.CloudSafeLimitEntity</class>
 		<class>com.doubleclue.dcem.as.entities.CloudSafeTagEntity</class>
+		<class>com.doubleclue.dcem.as.entities.CloudSafeThumbnailEntity</class>
 
 <!--  
  		<class  >com.doubleclue.dcem.core.entities.DcemAction</class>

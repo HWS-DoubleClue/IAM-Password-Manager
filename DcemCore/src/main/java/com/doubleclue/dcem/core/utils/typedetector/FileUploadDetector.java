@@ -1,14 +1,17 @@
 package com.doubleclue.dcem.core.utils.typedetector;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
 
@@ -17,6 +20,7 @@ import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.utils.StreamUtils;
 import com.doubleclue.utils.KaraUtils;
+import com.google.common.io.CharStreams;
 
 public class FileUploadDetector {
 
@@ -27,10 +31,35 @@ public class FileUploadDetector {
 	
 	public static DcemMediaType detectDcemMediaType(InputStream inputStream ) throws Exception {
 		Tika tika = new Tika();
-		String mediaType = tika.detect(inputStream);
+		String mediaType = tika.detect(inputStream );
 		DcemMediaType dcemMediaType = DcemMediaType.getDcemMediaType(mediaType);
 		return dcemMediaType;
 	}
+	
+	public static DcemMediaType detectDcemMediaType(File file ) throws Exception {
+		Tika tika = new Tika();
+		Metadata metadata = new Metadata();
+		FileInputStream fileInputStream = new FileInputStream(file);
+		
+		Reader reader = tika.parse(file, metadata);
+		char [] buffer = new char [8096];
+		int lenght = reader.read(buffer);
+		System.out.println("FileUploadDetector.detectDcemMediaType() " + new String (buffer));
+		reader.close();
+		
+		String mediaType = tika.detect(fileInputStream, metadata);
+		DcemMediaType dcemMediaType = DcemMediaType.getDcemMediaType(mediaType);
+		return dcemMediaType;
+	}
+	
+	public static String parseFile (File file, Metadata metadata) throws Exception {
+		Tika tika = new Tika();
+		Reader reader = tika.parse(file, metadata);
+		String targetString = IOUtils.toString(reader);
+		reader.close();
+		return targetString;
+	}
+	
 	
 	public static String detectMediaType(InputStream inputStream) throws Exception{
 		Tika tika = new Tika();

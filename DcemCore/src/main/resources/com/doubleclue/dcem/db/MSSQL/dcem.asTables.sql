@@ -41,11 +41,13 @@ options varchar(255),
 owner int,
 recycled bit not null,
 dc_salt varbinary(32),
+textExtract varchar(256),
 text_length bigint,
 device_dc_id int not null,
 group_dc_id int,
 lastModifiedUser_dc_id int,
 dc_parent_id int,
+thumbnail_dc_id int not null,
 user_dc_id int not null,
 primary key (dc_id)
 );
@@ -79,6 +81,12 @@ writeAccess bit,
 cloudSafe_dc_id int,
 group_dc_id int,
 user_dc_id int,
+primary key (dc_id)
+);
+
+create table as_cloudsafethumbnail (
+dc_id int not null,
+thumbnail varbinary(MAX),
 primary key (dc_id)
 );
 
@@ -249,6 +257,11 @@ alter table as_cloudsafe
 add constraint FK_AS_PARENT_ID
 foreign key (dc_parent_id)
 references as_cloudsafe;
+
+alter table as_cloudsafe
+add constraint FK_CLOUDSAFE_THUMBNAIL
+foreign key (thumbnail_dc_id)
+references as_cloudsafethumbnail;
 
 alter table as_cloudsafe
 add constraint FK_AS_PROP_USER

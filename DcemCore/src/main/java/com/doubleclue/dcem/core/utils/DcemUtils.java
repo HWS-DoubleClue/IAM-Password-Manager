@@ -1379,15 +1379,7 @@ public class DcemUtils {
 			}
 			return image;
 		}
-		if (imageWidth > maxWidth || imageHeight > maxHeight) {
-			float factx = (float) imageWidth / maxWidth;
-			float facty = (float) imageHeight / maxHeight;
-			float fact = (factx > facty) ? factx : facty;
-			imageWidth = (int) ((int) imageWidth / fact);
-			imageHeight = (int) ((int) imageHeight / fact);
-		}
-		BufferedImageOp resampler = new ResampleOp(imageWidth, imageHeight);
-		BufferedImage outputImage = resampler.filter(inputImage, null);
+		BufferedImage outputImage = resizeImage(inputImage, maxWidth, maxHeight);
 		try {
 			ImageIO.write(outputImage, "png", outputStream);
 		} catch (Exception e) {
@@ -1398,6 +1390,23 @@ public class DcemUtils {
 		}
 		return outputStream.toByteArray();
 	}
+	
+	public static BufferedImage resizeImage(BufferedImage inputImage, int maxWidth, int maxHeight) throws DcemException {
+		int imageWidth = inputImage.getWidth();
+		int imageHeight = inputImage.getHeight();
+		if (imageWidth > maxWidth || imageHeight > maxHeight) {
+			float factx = (float) imageWidth / maxWidth;
+			float facty = (float) imageHeight / maxHeight;
+			float fact = (factx > facty) ? factx : facty;
+			imageWidth = (int) ((int) imageWidth / fact);
+			imageHeight = (int) ((int) imageHeight / fact);
+		}
+		BufferedImageOp resampler = new ResampleOp(imageWidth, imageHeight);
+		BufferedImage outputImage = resampler.filter(inputImage, null);
+		return outputImage; 
+	}
+	
+	
 
 	public static byte[] resizeImage(byte[] image, int maxLength) throws Exception {
 		try {
