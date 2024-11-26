@@ -47,7 +47,6 @@ device_dc_id int4 not null,
 group_dc_id int4,
 lastModifiedUser_dc_id int4,
 dc_parent_id int4,
-thumbnail_dc_id int4 not null,
 user_dc_id int4 not null,
 primary key (dc_id)
 );
@@ -85,9 +84,9 @@ primary key (dc_id)
 );
 
 create table as_cloudsafethumbnail (
-dc_id int4 not null,
+thumbnail_id int4 not null,
 thumbnail oid,
-primary key (dc_id)
+primary key (thumbnail_id)
 );
 
 create table as_device (
@@ -259,11 +258,6 @@ foreign key (dc_parent_id)
 references as_cloudsafe;
 
 alter table as_cloudsafe
-add constraint FK_CLOUDSAFE_THUMBNAIL
-foreign key (thumbnail_dc_id)
-references as_cloudsafethumbnail;
-
-alter table as_cloudsafe
 add constraint FK_AS_PROP_USER
 foreign key (user_dc_id)
 references core_user;
@@ -288,6 +282,11 @@ alter table as_cloudsafeshare
 add constraint FK_AS_CD_SHARE_USER
 foreign key (user_dc_id)
 references core_user;
+
+alter table as_cloudsafethumbnail
+add constraint FK_CLOUDSAFE_THUMBNAIL
+foreign key (thumbnail_id)
+references as_cloudsafe;
 
 alter table as_device
 add constraint FK_APP_DEVICE_VERSION

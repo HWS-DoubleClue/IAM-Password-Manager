@@ -242,8 +242,9 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemCompare (ignore = true) 
 	String textExtract;
 	
-	@OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(nullable = true, foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_THUMBNAIL"), referencedColumnName = "dc_id")
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "cloudSafeEntity", fetch = FetchType.LAZY)
+//	@ManytoOne (mappedBy = "as_cloudsafe",  fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//	@JoinColumn(nullable = true, foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_THUMBNAIL"))
 	private CloudSafeThumbnailEntity thumbnailEntity;
 	
 	@Transient

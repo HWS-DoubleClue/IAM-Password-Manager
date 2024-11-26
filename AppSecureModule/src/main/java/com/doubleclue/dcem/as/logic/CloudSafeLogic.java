@@ -512,6 +512,7 @@ public class CloudSafeLogic {
 						cloudSafeEntity.getParent() == null ? getCloudSafeRoot().getId() : cloudSafeEntity.getParent().getId(), cloudSafeEntity.getGroup());
 			}
 			if (cloudSafeEntity.getLastModified() != null) {
+				// Check synchronization !!!
 				LocalDateTime localDateTime = cloudSafeEntity.getLastModified().plusSeconds(1);
 				logger.debug("UPDATE CloudSafe File" + cloudSafeEntity.getName() + " New Time: " + localDateTime + " Original:"
 						+ originalDbEntity.getLastModified());
@@ -1509,6 +1510,11 @@ public class CloudSafeLogic {
 			savedFiles.add(cloudSafeEntity);
 		}
 		return savedFiles;
+	}
+	
+	@DcemTransactional
+	public CloudSafeEntity addCloudSafeEntity(CloudSafeEntity cloudSafeEntity, char  [] password, DcemUser dcemUser, File file, String ocrText) throws Exception {
+		return setCloudSafeStream(cloudSafeEntity, password, new FileInputStream(file), (int)cloudSafeEntity.getLength(), dcemUser, null);
 	}
 
 	@DcemTransactional

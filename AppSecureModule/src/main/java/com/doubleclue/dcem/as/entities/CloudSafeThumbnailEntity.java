@@ -5,6 +5,7 @@ import java.sql.Blob;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,13 +27,7 @@ import com.doubleclue.dcem.core.entities.EntityInterface;
 @Entity
 @Table(name = "as_cloudsafethumbnail")
 
-@NamedQueries({ @NamedQuery(name = CloudSafeThumbnailEntity.DELETE_ENTITY, query = "DELETE FROM CloudSafeContentEntity ac WHERE ac.id = ?1"),
-
-})
-
 public class CloudSafeThumbnailEntity extends EntityInterface {
-
-	public final static String DELETE_ENTITY = "CloudSafeThumbnailEntity.delete";
 	
 	public CloudSafeThumbnailEntity() {
 	}
@@ -41,6 +36,11 @@ public class CloudSafeThumbnailEntity extends EntityInterface {
 	@Column(name = "dc_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	
+	@OneToOne(cascade = CascadeType.ALL, optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "thumbnail_id", foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_THUMBNAIL"))
+    @MapsId
+    private CloudSafeEntity cloudSafeEntity;
 
 
 	@Lob	
@@ -66,6 +66,14 @@ public class CloudSafeThumbnailEntity extends EntityInterface {
 
 	public void setThumbnail(byte[] thumbnail) {
 		this.thumbnail = thumbnail;
+	}
+
+	public CloudSafeEntity getCloudSafeEntity() {
+		return cloudSafeEntity;
+	}
+
+	public void setCloudSafeEntity(CloudSafeEntity cloudSafeEntity) {
+		this.cloudSafeEntity = cloudSafeEntity;
 	}
 
 	
