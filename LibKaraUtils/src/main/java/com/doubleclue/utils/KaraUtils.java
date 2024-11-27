@@ -181,7 +181,7 @@ public class KaraUtils {
 	}
 
 	public static int copyStream(InputStream inputStream, OutputStream outputStream) throws IOException {
-		return copyStream(inputStream, outputStream, 4096);
+		return copyStream(inputStream, outputStream, 1024 * 8);
 	}
 
 	public static int copyStream(InputStream inputStream, OutputStream outputStream, int bufferSize) throws IOException {

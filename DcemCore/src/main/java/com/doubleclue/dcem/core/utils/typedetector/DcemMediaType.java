@@ -5,7 +5,7 @@ import com.doubleclue.dcem.core.DcemConstants;
 public enum DcemMediaType {
 // DO NOT CHANGE TO ORDINAL NUMBERS	
 	HTML("text/html", "html-file.svg"),
-	TXT("text/plain", "txt-file.png"),
+	TEXT("text/plain", "txt-file.png"),
 	
 	GIF("image/gif", "picture-file.svg"),
 	JPEG("image/jpeg", "picture-file.svg"),
@@ -25,7 +25,8 @@ public enum DcemMediaType {
 	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "excel-file.png"),
 	PPT("application/vnd.ms-powerpoint", "powerpoint-file.png"),
 	PPTX("application/vnd.openxmlformats-officedocument.presentationml.presentation", "powerpoint-file.png"),
-	ODT ("application/vnd.oasis.opendocument.text",  "word-file.png");
+	ODT ("application/vnd.oasis.opendocument.text",  "word-file.png"),
+	RICH_TEXT("text/html", "html-file.svg");
 	
 	
 	private String mediaType;
