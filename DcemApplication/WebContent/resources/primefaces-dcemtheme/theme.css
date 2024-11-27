@@ -108,8 +108,8 @@ body {
 .ui-dialog {
 	border: 0;
 	background: yellow;
-	width: auto !important;
-	height: auto !important;
+	width: auto;
+	height: auto;
 }
 
 .dialogBody {
