@@ -28,13 +28,9 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 		this.directory = directory;
 	}
 	
-	@Override
-	public InputStream getContentInputStream(EntityManager em, int id) throws DcemException {
-		return getContentInputStream(em, id, null);
-	}
 
 	@Override
-	public InputStream getContentInputStream(EntityManager em, int id, String prefix) throws DcemException {
+	public InputStream getContentInputStream(EntityManager em, int id) throws DcemException {
 		File tenantFile = new File (directory, TenantIdResolver.getCurrentTenantName());
 		if (tenantFile.exists() == false) {
 			tenantFile.mkdir();
@@ -48,13 +44,9 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 		}
 	}
 	
+	
 	@Override
 	public int writeContentOutput(EntityManager em, CloudSafeEntity cloudSafeEntity, InputStream inputStream) throws DcemException {
-		return writeContentOutput(em, cloudSafeEntity, null, inputStream);
-	}
-
-	@Override
-	public int writeContentOutput(EntityManager em, CloudSafeEntity cloudSafeEntity, String prefix, InputStream inputStream) throws DcemException {
 		File tenantFile = new File (directory, TenantIdResolver.getCurrentTenantName());
 		if (tenantFile.exists() == false) {
 			tenantFile.mkdir();
@@ -78,13 +70,9 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 		}
 	}
 	
-	@Override
-	public void delete(EntityManager em, int id) {
-		delete (em, id, null);
-	}
 	
 	@Override
-	public void delete(EntityManager em, int id, String prefix) {
+	public void delete(EntityManager em, int id) {
 		File tenantFile = new File (directory, TenantIdResolver.getCurrentTenantName());
 		if (tenantFile.exists() == false) {
 			tenantFile.mkdir();
@@ -106,6 +94,24 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 		if (tenantFile.exists() == false) {
 			tenantFile.mkdir();
 		}		
+	}
+
+
+	@Override
+	public InputStream getS3Data(int id, String prefix) throws DcemException {
+		throw new DcemException(DcemErrorCodes.NOT_IMPLEMENTED, prefix);
+	}
+
+
+	@Override
+	public void writeS3Data(int id, String prefix, InputStream inputStream, int length) throws DcemException {
+		throw new DcemException(DcemErrorCodes.NOT_IMPLEMENTED, prefix);
+	}
+
+
+	@Override
+	public void deleteS3Data(int id, String prefix) throws DcemException {
+		throw new DcemException(DcemErrorCodes.NOT_IMPLEMENTED, prefix);		
 	}
 		
 }

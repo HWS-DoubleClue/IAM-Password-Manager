@@ -4,6 +4,7 @@
 **/testLogs/
 **/.settings/
 **/work/
+**/logs/
 .factorypath
 .classpath
 .project

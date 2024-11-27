@@ -58,10 +58,10 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 			s3Client = S3Client.builder().region(Region.EU_CENTRAL_1).credentialsProvider(awsCredentialsProvider).endpointOverride(uri).build();
 		}
 		ListBucketsResponse listBucketsResponse = s3Client.listBuckets();
-		List<Bucket> buckets = listBucketsResponse.buckets();
-		for (Bucket bucket : buckets) {
-			System.out.println(" Bucket: " + bucket.name());
-		}
+//		List<Bucket> buckets = listBucketsResponse.buckets();
+//		for (Bucket bucket : buckets) {
+//			System.out.println(" Bucket: " + bucket.name());
+//		}
 	}
 
 	@Override
@@ -94,26 +94,17 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 
 	@Override
 	public InputStream getContentInputStream(EntityManager em, int id) throws DcemException {
-		return getContentInputStream(em, id, null);
-	}
-
-	@Override
-	public InputStream getContentInputStream(EntityManager em, int id, String prefix) throws DcemException {
 		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
-		GetObjectRequest objectRequest = GetObjectRequest.builder().bucket(bucketName).key(getObjectKey(id, prefix)).build();
+		GetObjectRequest objectRequest = GetObjectRequest.builder().bucket(bucketName).key(getObjectKey(id, null)).build();
 		ResponseInputStream<GetObjectResponse> inputStream = s3Client.getObject(objectRequest);
 		return inputStream;
 	}
 
+	
 	@Override
 	public int writeContentOutput(EntityManager em, CloudSafeEntity cloudSafeEntity, InputStream inputStream) throws DcemException {
-		return writeContentOutput(em, cloudSafeEntity, null, inputStream);
-	}
-
-	@Override
-	public int writeContentOutput(EntityManager em, CloudSafeEntity cloudSafeEntity, String prefix, InputStream inputStream) throws DcemException {
 		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
-		String key = getObjectKey(cloudSafeEntity.getId(), prefix);
+		String key = getObjectKey(cloudSafeEntity.getId(), null);
 		long length = cloudSafeEntity.getLength();
 		if (cloudSafeEntity.isOption(CloudSafeOptions.ENC) || cloudSafeEntity.isOption(CloudSafeOptions.PWD) && cloudSafeEntity.isGcm()) {
 			length +=16;
@@ -137,14 +128,18 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 		key = getObjectKey(id, null);
 		deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(key).build();
 		s3Client.deleteObject(deleteObjectRequest);
-		
 	}
+	
+	@Override
+	public void deleteS3Data(int id, String prefix) throws DcemException {
+		delete (null, id, prefix);		
+	}
+
 
 	public void deleteBucket() throws Exception {
 		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
 		DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName).build();
 		s3Client.deleteBucket(deleteBucketRequest);
-		System.out.println("Successfully deleted bucket : " + bucketName);
 	}
 
 	@Override
@@ -159,4 +154,25 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 		return CLOUDSAFEFILE + prefix + "-" + Integer.toString(id);
 	}
 
+	@Override
+	public InputStream getS3Data(int id, String prefix) throws DcemException {
+		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
+		GetObjectRequest objectRequest = GetObjectRequest.builder().bucket(bucketName).key(getObjectKey(id, prefix)).build();
+		ResponseInputStream<GetObjectResponse> inputStream = s3Client.getObject(objectRequest);
+		return inputStream;
+	}
+
+	@Override
+	public void writeS3Data(int id, String prefix, InputStream inputStream, int length) throws DcemException {
+		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
+		String key = getObjectKey(id, prefix);
+		PutObjectRequest request = PutObjectRequest.builder().bucket(bucketName).key(key).build();
+		RequestBody requestBody = RequestBody.fromInputStream(inputStream, length);
+		s3Client.putObject(request, requestBody);
+		return;
+		
+	}
+
+	
+	
 }

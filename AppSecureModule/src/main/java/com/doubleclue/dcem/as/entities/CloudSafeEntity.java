@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -20,7 +21,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -36,6 +36,7 @@ import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
+import com.doubleclue.dcem.core.jpa.DbEncryptConverter;
 import com.doubleclue.dcem.core.utils.compare.DcemCompare;
 import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -240,11 +241,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	
 	@Column(nullable = true, length = 256)
 	@DcemCompare (ignore = true) 
+	@Convert(converter = DbEncryptConverter.class)
 	String textExtract;
 	
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "cloudSafeEntity", fetch = FetchType.LAZY)
-//	@ManytoOne (mappedBy = "as_cloudsafe",  fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//	@JoinColumn(nullable = true, foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_THUMBNAIL"))
 	private CloudSafeThumbnailEntity thumbnailEntity;
 	
 	@Transient
