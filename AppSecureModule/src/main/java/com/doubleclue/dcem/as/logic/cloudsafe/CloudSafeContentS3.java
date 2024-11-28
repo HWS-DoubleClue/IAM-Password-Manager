@@ -124,8 +124,6 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 		String key = getObjectKey(id, prefix);
 		DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(key).build();
 		s3Client.deleteObject(deleteObjectRequest);
-		// now delete with prefix
-		key = getObjectKey(id, null);
 		deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(key).build();
 		s3Client.deleteObject(deleteObjectRequest);
 	}
