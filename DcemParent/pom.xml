@@ -1188,9 +1188,9 @@
 			<!--
 			https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-pdfbox -->
 			<dependency>
-				<groupId>com.openhtmltopdf</groupId>
+				<groupId>io.github.openhtmltopdf</groupId>
 				<artifactId>openhtmltopdf-pdfbox</artifactId>
-				<version>1.0.10</version>
+				<version>1.1.22</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.pdfbox</groupId>

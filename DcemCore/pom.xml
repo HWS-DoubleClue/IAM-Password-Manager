@@ -383,7 +383,7 @@
 		<!--
 		https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-pdfbox -->
 		<dependency>
-			<groupId>com.openhtmltopdf</groupId>
+			<groupId>io.github.openhtmltopdf</groupId>
 			<artifactId>openhtmltopdf-pdfbox</artifactId>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->

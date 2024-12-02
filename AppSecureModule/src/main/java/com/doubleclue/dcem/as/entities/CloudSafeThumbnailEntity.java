@@ -36,12 +36,11 @@ public class CloudSafeThumbnailEntity extends EntityInterface {
 
 	@Id
 	@Column(name = "dc_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
+    @MapsId 
 	@OneToOne(cascade = CascadeType.ALL, optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "thumbnail_id", foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_THUMBNAIL"))
-    @MapsId
+    @JoinColumn(name = "dc_id", foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_THUMBNAIL"))
     private CloudSafeEntity cloudSafeEntity;
 
 

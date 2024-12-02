@@ -678,7 +678,7 @@ public class AuthenticationLogic {
 				try {
 					CloudSafeEntity cloudSafeEntity = cloudSafeLogic.getCloudSafe(CloudSafeOwner.USER, claimAttribute.getValue(), user, null, 0, null);
 					if (cloudSafeEntity != null) {
-						claimAttribute.setValue(cloudSafeLogic.getContentAsString(cloudSafeEntity, null, null));
+						claimAttribute.setValue(cloudSafeLogic.getContentAsString(cloudSafeEntity, null, null, false));
 					} else {
 						logger.info("SAML - could not find CloudSafe '" + claimAttribute.getName() + "' for user '" + user.getDisplayNameOrLoginId() + "'.");
 					}

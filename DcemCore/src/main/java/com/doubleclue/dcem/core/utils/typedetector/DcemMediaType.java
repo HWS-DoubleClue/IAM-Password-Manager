@@ -4,7 +4,7 @@ import com.doubleclue.dcem.core.DcemConstants;
 
 public enum DcemMediaType {
 // DO NOT CHANGE TO ORDINAL NUMBERS	
-	RICH_TEXT("text/html", "html-file.svg"),
+	XHTML("text/html", "html-file.svg"),
 	TEXT("text/plain", "txt-file.png"),
 	
 	GIF("image/gif", "picture-file.svg"),
@@ -20,7 +20,7 @@ public enum DcemMediaType {
 	KEEPASS("application/octet-stream", "keepass-icon.png"),
 	BINARY("application/octet-stream", DcemConstants.DEFAULT_FILE_ICON),
 	
-	DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "word-file.png"),
+	WORD("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "word-file.png"),
 	XLS("application/vnd.ms-excel", "excel-file.png"),
 	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "excel-file.png"),
 	PPT("application/vnd.ms-powerpoint", "powerpoint-file.png"),

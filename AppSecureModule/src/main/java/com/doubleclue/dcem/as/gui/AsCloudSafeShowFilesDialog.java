@@ -45,7 +45,7 @@ public class AsCloudSafeShowFilesDialog extends DcemDialog {
 		DcemUser dcemUser = ((CloudSafeLimitEntity) getActionObject()).getUser();
 		try {
 			CloudSafeEntity cloudSafeEntity = cloudSafeLogic.getCloudSafe(CloudSafeOwner.USER, DcemConstants.RECOVERY_KEY, dcemUser, null, cloudSafeLogic.getCloudSafeRoot().getId(), null);
-			return cloudSafeLogic.getContentAsString(cloudSafeEntity, null, null);
+			return cloudSafeLogic.getContentAsString(cloudSafeEntity, null, null, false);
 		} catch (DcemException e) {
 			JsfUtils.addErrorMessage(e.getLocalizedMessage());
 			ResourceBundle asResourceBundle = JsfUtils.getBundle(AsModule.RESOURCE_NAME);

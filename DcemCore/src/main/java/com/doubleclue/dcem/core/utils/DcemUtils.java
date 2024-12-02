@@ -23,6 +23,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
@@ -36,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -1508,5 +1511,21 @@ public class DcemUtils {
 		}
 		return list;
 	}
+	
+	public static String formatDate(Locale locale, LocalDate date) {
+		return Objects.isNull(date) == true ? "" : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(date);
+	}
+
+	public static String formatDateTime(String locale, LocalDateTime dateTime) {
+		return formatDateTime(new Locale(locale), dateTime);
+	}
+
+	public static String formatDateTime(Locale locale, LocalDateTime dateTime) {
+		return Objects.isNull(dateTime) == true ? "" : DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale).format(dateTime);
+	}
+	public static String formatDate(String locale, LocalDate date) {
+		return formatDate(new Locale(locale), date);
+	}
+
 
 }

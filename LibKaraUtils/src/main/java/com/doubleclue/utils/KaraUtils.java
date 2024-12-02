@@ -202,7 +202,7 @@ public class KaraUtils {
 	}
 
 	public static String readInputStreamText(InputStream inputStream) throws IOException {
-		return new String(readInputStream(inputStream), "UTF-8");
+		return new String(readInputStream(inputStream), StandardCharsets.UTF_8);
 	}
 
 	// static public PlatformInterface getPlatformInterface() throws Exception {

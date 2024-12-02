@@ -41,7 +41,7 @@ options varchar(255),
 owner int,
 recycled bit not null,
 dc_salt varbinary(32),
-textExtract varchar(256),
+textExtract varbinary(MAX),
 text_length bigint,
 device_dc_id int not null,
 group_dc_id int,
@@ -84,9 +84,9 @@ primary key (dc_id)
 );
 
 create table as_cloudsafethumbnail (
-thumbnail_id int not null,
+dc_id int not null,
 thumbnail varbinary(MAX),
-primary key (thumbnail_id)
+primary key (dc_id)
 );
 
 create table as_device (
@@ -285,7 +285,7 @@ references core_user;
 
 alter table as_cloudsafethumbnail
 add constraint FK_CLOUDSAFE_THUMBNAIL
-foreign key (thumbnail_id)
+foreign key (dc_id)
 references as_cloudsafe;
 
 alter table as_device

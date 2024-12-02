@@ -41,7 +41,7 @@ options varchar2(255 char),
 owner number(10,0),
 recycled number(1,0) not null,
 dc_salt blob,
-textExtract varchar2(256 char),
+textExtract long raw,
 text_length number(19,0),
 device_dc_id number(10,0) not null,
 group_dc_id number(10,0),
@@ -84,9 +84,9 @@ primary key (dc_id)
 );
 
 create table as_cloudsafethumbnail (
-thumbnail_id number(10,0) not null,
+dc_id number(10,0) not null,
 thumbnail blob,
-primary key (thumbnail_id)
+primary key (dc_id)
 );
 
 create table as_device (
@@ -285,7 +285,7 @@ references core_user;
 
 alter table as_cloudsafethumbnail
 add constraint FK_CLOUDSAFE_THUMBNAIL
-foreign key (thumbnail_id)
+foreign key (dc_id)
 references as_cloudsafe;
 
 alter table as_device

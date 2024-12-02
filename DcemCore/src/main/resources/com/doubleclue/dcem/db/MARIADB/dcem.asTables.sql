@@ -41,7 +41,7 @@ options varchar(255),
 owner integer,
 recycled bit not null,
 dc_salt tinyblob,
-textExtract varchar(256),
+textExtract mediumblob,
 text_length bigint,
 device_dc_id integer not null,
 group_dc_id integer,
@@ -84,9 +84,9 @@ primary key (dc_id)
 ) engine=InnoDB;
 
 create table as_cloudsafethumbnail (
-thumbnail_id integer not null,
+dc_id integer not null,
 thumbnail longblob,
-primary key (thumbnail_id)
+primary key (dc_id)
 ) engine=InnoDB;
 
 create table as_device (
@@ -285,7 +285,7 @@ references core_user (dc_id);
 
 alter table as_cloudsafethumbnail
 add constraint FK_CLOUDSAFE_THUMBNAIL
-foreign key (thumbnail_id)
+foreign key (dc_id)
 references as_cloudsafe (dc_id);
 
 alter table as_device

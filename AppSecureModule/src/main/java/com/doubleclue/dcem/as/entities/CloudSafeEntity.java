@@ -24,6 +24,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -37,6 +38,7 @@ import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
 import com.doubleclue.dcem.core.jpa.DbEncryptConverter;
+import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.compare.DcemCompare;
 import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -245,6 +247,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	String textExtract;
 	
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "cloudSafeEntity", fetch = FetchType.LAZY)
+	@PrimaryKeyJoinColumn
 	private CloudSafeThumbnailEntity thumbnailEntity;
 	
 	@Transient
@@ -597,6 +600,14 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	public void setThumbnailEntity(CloudSafeThumbnailEntity thumbnailEntity) {
 		this.thumbnailEntity = thumbnailEntity;
+	}
+	
+	
+	public byte[] getThumbnail() {
+		if (thumbnailEntity == null) {
+			return null;
+		}
+		return thumbnailEntity.getThumbnail();
 	}
 
 		
