@@ -1366,7 +1366,7 @@ public class DcemUtils {
 
 	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLenght, boolean force) throws DcemException {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(image.length);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024*4);
 		BufferedImage inputImage;
 		try {
 			inputImage = ImageIO.read(inputStream);
@@ -1384,7 +1384,7 @@ public class DcemUtils {
 		}
 		BufferedImage outputImage = resizeImage(inputImage, maxWidth, maxHeight);
 		try {
-			ImageIO.write(outputImage, "png", outputStream);
+			ImageIO.write(outputImage, "jpg", outputStream);
 		} catch (Exception e) {
 			logger.error("Couldn't resize image", e);
 		}

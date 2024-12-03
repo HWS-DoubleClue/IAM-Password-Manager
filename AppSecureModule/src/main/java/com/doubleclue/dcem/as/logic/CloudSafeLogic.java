@@ -550,9 +550,6 @@ public class CloudSafeLogic {
 				}
 			}
 		}
-		if (em.contains(originalDbEntity) == false) {
-			System.out.println("CloudSafeLogic.setCloudSafeStream() originalDbEntity  DETACHED");
-		}
 		try {
 			if (originalDbEntity == null) {
 				// can only be user owner for backward compatibility
