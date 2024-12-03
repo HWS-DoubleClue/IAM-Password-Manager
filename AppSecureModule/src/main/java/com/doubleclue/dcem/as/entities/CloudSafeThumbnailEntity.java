@@ -1,15 +1,11 @@
 package com.doubleclue.dcem.as.entities;
 
-import java.sql.Blob;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -28,25 +24,27 @@ import com.doubleclue.dcem.core.jpa.DbEncryptConverterBinary;
  */
 @Entity
 @Table(name = "as_cloudsafethumbnail")
-
+@NamedQueries({
+		@NamedQuery(name = CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_ID, query = "DELETE FROM CloudSafeThumbnailEntity c WHERE c.id = ?1"), })
 public class CloudSafeThumbnailEntity extends EntityInterface {
-	
+
+	public static final String DELETE_CLOUD_SAFE_THUMBNAIL_BY_ID = "CloudSafeThumbnailEntity.deleteCloudSafeThumbnailById";
+
 	public CloudSafeThumbnailEntity() {
 	}
 
 	@Id
 	@Column(name = "dc_id")
 	private Integer id;
-	
-    @MapsId 
-	@OneToOne(cascade = CascadeType.ALL, optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "dc_id", foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_THUMBNAIL"))
-    private CloudSafeEntity cloudSafeEntity;
 
+	@MapsId
+	@OneToOne(cascade = CascadeType.ALL, optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "dc_id", foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_THUMBNAIL"))
+	private CloudSafeEntity cloudSafeEntity;
 
 	@Lob
 	@Convert(converter = DbEncryptConverterBinary.class)
-	byte [] thumbnail;
+	byte[] thumbnail;
 
 	public CloudSafeThumbnailEntity(byte[] thumbnail2) {
 		this.thumbnail = thumbnail2;
@@ -77,7 +75,5 @@ public class CloudSafeThumbnailEntity extends EntityInterface {
 	public void setCloudSafeEntity(CloudSafeEntity cloudSafeEntity) {
 		this.cloudSafeEntity = cloudSafeEntity;
 	}
-
-	
 
 }
