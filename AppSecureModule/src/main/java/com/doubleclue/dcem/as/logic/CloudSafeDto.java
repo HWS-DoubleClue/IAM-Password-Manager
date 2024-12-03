@@ -6,6 +6,7 @@ public class CloudSafeDto {
 	
 	private int id;
 	private boolean isFolder;
+	int textLength;
 
 	public CloudSafeDto() {
 		super();
@@ -15,6 +16,13 @@ public class CloudSafeDto {
 		super();
 		this.id = id;
 		this.isFolder = isFolder;	
+	}
+	
+	public CloudSafeDto(int id, int textLength) {
+		super();
+		this.id = id;
+		this.isFolder = false;	
+		this.textLength = textLength;
 	}
 
 	public CloudSafeDto(CloudSafeEntity cloudSafeEntity) {

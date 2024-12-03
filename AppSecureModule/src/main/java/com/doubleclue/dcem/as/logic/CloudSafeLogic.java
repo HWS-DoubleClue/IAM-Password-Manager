@@ -1132,6 +1132,11 @@ public class CloudSafeLogic {
 	public void deleteCloudSafeFilesContent(List<CloudSafeDto> list) throws DcemException {
 		for (CloudSafeDto cloudSafeDto : list) {
 			cloudSafeContentI.delete(em, cloudSafeDto.getId());
+			if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
+				if (cloudSafeDto.textLength > 0) {
+					cloudSafeContentI.deleteS3Data(cloudSafeDto.getId(), OCR_TEXT);
+				}
+			}
 		}
 	}
 
@@ -1154,7 +1159,7 @@ public class CloudSafeLogic {
 				}
 				deleteCloudSafeFile(cloudSafeEntity.getId());
 				List<CloudSafeDto> list = new ArrayList<CloudSafeDto>(1);
-				list.add(new CloudSafeDto(cloudSafeEntity.getId(), false));
+				list.add(new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.getTextLength().intValue()));
 				return list;
 			}
 		} else {
