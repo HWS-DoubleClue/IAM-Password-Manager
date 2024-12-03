@@ -556,9 +556,12 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	}
 
 	public Long getTextLength() {
+		if (textLength == null) {
+			textLength = 0L;
+		}
 		return textLength;
 	}
-
+	
 	public void setTextLength(Long textLength) {
 		if (textLength == null) {
 			this.textLength = (long)0;
