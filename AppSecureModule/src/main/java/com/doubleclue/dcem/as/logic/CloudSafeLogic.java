@@ -487,10 +487,12 @@ public class CloudSafeLogic {
 			if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
 				if (ocrText == null || ocrText.isEmpty()) {
 					cloudSafeContentI.deleteS3Data(dbCloudSafeEntity.getId(), OCR_TEXT);
+					cloudSafeEntity.setTextLength(0L);
 				} else {
 					byte[] ocrData = ocrText.getBytes(StandardCharsets.UTF_8);
 					InputStream ocrStream = new ByteArrayInputStream(ocrData);
 					encryptedStream = getEncryptStream(dbCloudSafeEntity, ocrStream, password);
+					cloudSafeEntity.setTextLength((long) ocrData.length);
 					cloudSafeContentI.writeS3Data(dbCloudSafeEntity.getId(), OCR_TEXT, encryptedStream, ocrData.length + 16);
 				}
 			}
