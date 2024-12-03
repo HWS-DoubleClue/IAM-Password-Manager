@@ -208,6 +208,7 @@ public class CloudSafeLogic {
 	public byte[] getContentAsBytes(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser) throws DcemException {
 		return getContentAsBytes(cloudSafeEntity, password, auditUser, false);
 	}
+
 	/*
 	 *  Use this method for short entries only
 	 */
@@ -227,7 +228,7 @@ public class CloudSafeLogic {
 			}
 		}
 	}
-	
+
 	@DcemTransactional
 	public InputStream getCloudSafeContentAsStream(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser) throws DcemException {
 		return getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, false);
@@ -470,14 +471,14 @@ public class CloudSafeLogic {
 			cloudSafeEntity.setSalt(RandomUtils.getRandom(16));
 		}
 		cloudSafeEntity.setLength(length);
-//		if (em.contains(cloudSafeEntity) == false) {
-//			System.out.println("CloudSafeLogic.setCloudSafeStream()   DETACHED");
-//		}
+		// if (em.contains(cloudSafeEntity) == false) {
+		// System.out.println("CloudSafeLogic.setCloudSafeStream() DETACHED");
+		// }
 
 		CloudSafeEntity dbCloudSafeEntity = updateCloudSafeEntity(cloudSafeEntity, loggedInUser, true, originalDbCloudSafeEntity);
-//		if (em.contains(dbCloudSafeEntity) == false) {
-//			System.out.println("CloudSafeLogic.setCloudSafeStream() dbCloudSafeEntity  DETACHED");
-//		}
+		// if (em.contains(dbCloudSafeEntity) == false) {
+		// System.out.println("CloudSafeLogic.setCloudSafeStream() dbCloudSafeEntity DETACHED");
+		// }
 		long delta = validateCloudSafeContentChange(dbCloudSafeEntity, length);
 		dbCloudSafeEntity.setLength(length);
 		cloudSafeEntity.setId(dbCloudSafeEntity.getId());
@@ -700,6 +701,12 @@ public class CloudSafeLogic {
 	 */
 	private void deleteCloudSafeFile(int id) throws DcemException {
 		Query query = em.createNamedQuery(CloudSafeEntity.DELETE_CLOUD_SAFE_BY_ID);
+		query.setParameter(1, id);
+		query.executeUpdate();
+	}
+
+	private void deleteCloudSafeThumbnail(int id) throws DcemException {
+		Query query = em.createNamedQuery(CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_ID);
 		query.setParameter(1, id);
 		query.executeUpdate();
 	}
@@ -1144,6 +1151,10 @@ public class CloudSafeLogic {
 			if (cloudSafeEntity.isFolder()) {
 				return deleteCloudSafeFolder(cloudSafeEntity);
 			} else {
+				CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
+				if (thumbnailEntity != null) {
+					deleteCloudSafeThumbnail((int) thumbnailEntity.getId());
+				}
 				deleteCloudSafeFile(cloudSafeEntity.getId());
 				List<CloudSafeDto> list = new ArrayList<CloudSafeDto>(1);
 				list.add(new CloudSafeDto(cloudSafeEntity.getId(), false));
