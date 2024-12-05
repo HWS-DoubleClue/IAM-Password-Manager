@@ -526,6 +526,8 @@ public final class DcemConstants {
 
 	public static final String URL_VIEW = "?view=";
 	public static final String URL_PARAMS = "&params=";
+	
+	public static final String ICONS_16_PATH = "/META-INF/resources/pictures/icons/16x16/";
 
 	
 

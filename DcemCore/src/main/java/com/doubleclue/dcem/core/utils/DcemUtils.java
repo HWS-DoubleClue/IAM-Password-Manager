@@ -1384,7 +1384,7 @@ public class DcemUtils {
 		}
 		BufferedImage outputImage = resizeImage(inputImage, maxWidth, maxHeight);
 		try {
-			ImageIO.write(outputImage, "jpg", outputStream);
+			ImageIO.write(outputImage, "jpeg", outputStream);
 		} catch (Exception e) {
 			logger.error("Couldn't resize image", e);
 		}
@@ -1405,7 +1405,8 @@ public class DcemUtils {
 			imageHeight = (int) ((int) imageHeight / fact);
 		}
 		BufferedImageOp resampler = new ResampleOp(imageWidth, imageHeight);
-		BufferedImage outputImage = resampler.filter(inputImage, null);
+		BufferedImage destImage =  new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_RGB);
+		BufferedImage outputImage = resampler.filter(inputImage, destImage);
 		return outputImage; 
 	}
 	

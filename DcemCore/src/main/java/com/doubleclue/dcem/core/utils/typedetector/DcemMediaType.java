@@ -60,10 +60,10 @@ public enum DcemMediaType {
 	}
 	
 	public String getIconResource() {
-		return "icons/16x16/" + iconName;
+		return DcemConstants.ICONS_16_PATH + iconName;
 	}
-	public String getIconResource32() {
-		return "icons/32x32/" + iconName;
+	public String getIconResourcePath() {
+		return "icons/16x16/" + iconName;
 	}
 
 }

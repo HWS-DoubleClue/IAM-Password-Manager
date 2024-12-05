@@ -1222,7 +1222,8 @@ public class JsfUtils {
 		} catch (Exception e) {
 			return getEmptyImage();
 		}
-		final InputStream inputStream = new ByteArrayInputStream(data);
+	//	final InputStream inputStream = new ByteArrayInputStream(data);
+		final InputStream inputStream = JsfUtils.class.getResourceAsStream(DcemConstants.USER_DEFAULT_PROFILE_PHOTO_PATH);
 		return DefaultStreamedContent.builder().contentType("image/png").stream(() -> inputStream).build();
 	}
 
