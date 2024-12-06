@@ -1663,6 +1663,7 @@ public class CloudSafeLogic {
 
 	private List<CloudSafeDto> deleteSubdirectories(CloudSafeDto parentFolder, List<CloudSafeDto> cloudSafeToDeleteList, DcemUser dcemUser)
 			throws DcemException {
+
 		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, CloudSafeDto.class);
 		query.setParameter(1, parentFolder.getId());
 		query.setParameter(2, dcemUser);
@@ -1672,6 +1673,9 @@ public class CloudSafeLogic {
 			if (cloudSafeDto.isFolder()) {
 				deleteSubdirectories(cloudSafeDto, cloudSafeToDeleteList, dcemUser);
 			}
+			Query thumbnailQuery = em.createNamedQuery(CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_CLOUD_SAFE_ID);
+			thumbnailQuery.setParameter(1, cloudSafeDto.getId());
+			thumbnailQuery.executeUpdate();
 			deleteCloudSafeFile(cloudSafeDto.getId());
 		}
 		return cloudSafeToDeleteList;

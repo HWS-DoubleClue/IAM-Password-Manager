@@ -25,10 +25,12 @@ import com.doubleclue.dcem.core.jpa.DbEncryptConverterBinary;
 @Entity
 @Table(name = "as_cloudsafethumbnail")
 @NamedQueries({
-		@NamedQuery(name = CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_ID, query = "DELETE FROM CloudSafeThumbnailEntity c WHERE c.id = ?1"), })
+		@NamedQuery(name = CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_ID, query = "DELETE FROM CloudSafeThumbnailEntity c WHERE c.id = ?1"),
+		@NamedQuery(name = CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_CLOUD_SAFE_ID, query = "DELETE FROM CloudSafeThumbnailEntity c WHERE c.cloudSafeEntity.id = ?1"), })
 public class CloudSafeThumbnailEntity extends EntityInterface {
 
 	public static final String DELETE_CLOUD_SAFE_THUMBNAIL_BY_ID = "CloudSafeThumbnailEntity.deleteCloudSafeThumbnailById";
+	public static final String DELETE_CLOUD_SAFE_THUMBNAIL_BY_CLOUD_SAFE_ID = "CloudSafeThumbnailEntity.deleteCloudSafeThumbnailByCloudSafeId";
 
 	public CloudSafeThumbnailEntity() {
 	}
