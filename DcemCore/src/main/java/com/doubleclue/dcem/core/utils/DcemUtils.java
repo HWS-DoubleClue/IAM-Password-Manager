@@ -1,7 +1,6 @@
 package com.doubleclue.dcem.core.utils;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -1364,53 +1363,71 @@ public class DcemUtils {
 		return date;
 	}
 
-	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLenght, boolean force) throws DcemException {
+	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength, boolean force) throws DcemException {
+		return resizeImage(image, maxWidth, maxHeight, maxLength, force, true);
+	}
+
+	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength, boolean force, boolean center) throws DcemException {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024*4);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024 * 4);
 		BufferedImage inputImage;
 		try {
 			inputImage = ImageIO.read(inputStream);
 		} catch (IOException e1) {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, null, e1);
 		}
-		// check size of image
 		int imageWidth = inputImage.getWidth();
 		int imageHeight = inputImage.getHeight();
 		if (force == false && imageHeight <= maxHeight && imageWidth <= maxHeight) {
-			if (image.length > maxLenght) {
+			if (image.length > maxLength) {
 				throw new DcemException(DcemErrorCodes.IMAGE_TOO_BIG, "wrong widht or height");
 			}
 			return image;
 		}
-		BufferedImage outputImage = resizeImage(inputImage, maxWidth, maxHeight);
+		BufferedImage outputImage = resizeImage(inputImage, maxWidth, maxHeight, center);
 		try {
 			ImageIO.write(outputImage, "jpeg", outputStream);
 		} catch (Exception e) {
 			logger.error("Couldn't resize image", e);
 		}
-		if (outputStream.toByteArray().length > maxLenght) {
+		if (outputStream.toByteArray().length > maxLength) {
 			throw new DcemException(DcemErrorCodes.IMAGE_TOO_BIG, "wrong widht or height");
 		}
 		return outputStream.toByteArray();
 	}
-	
-	public static BufferedImage resizeImage(BufferedImage inputImage, int maxWidth, int maxHeight) throws DcemException {
+
+	public static BufferedImage resizeImage(BufferedImage inputImage, int targetWidth, int targetHeight, boolean center) throws DcemException {
 		int imageWidth = inputImage.getWidth();
 		int imageHeight = inputImage.getHeight();
-		if (imageWidth > maxWidth || imageHeight > maxHeight) {
-			float factx = (float) imageWidth / maxWidth;
-			float facty = (float) imageHeight / maxHeight;
-			float fact = (factx > facty) ? factx : facty;
-			imageWidth = (int) ((int) imageWidth / fact);
-			imageHeight = (int) ((int) imageHeight / fact);
+
+		double originalAspect = (double) imageWidth / imageHeight;
+		double targetAspect = (double) targetWidth / targetHeight;
+
+		int scaledWidth = imageWidth;
+		int scaledHeight = imageHeight;
+
+		if (originalAspect > targetAspect) {
+			// Image is wider than target, scale by height
+			scaledHeight = targetHeight;
+			scaledWidth = (int) (targetHeight * originalAspect);
+		} else {
+			// Image is taller than target, scale by width
+			scaledWidth = targetWidth;
+			scaledHeight = (int) (targetWidth / originalAspect);
 		}
-		BufferedImageOp resampler = new ResampleOp(imageWidth, imageHeight);
-		BufferedImage destImage =  new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_RGB);
-		BufferedImage outputImage = resampler.filter(inputImage, destImage);
-		return outputImage; 
+		ResampleOp resampleOp = new ResampleOp(scaledWidth, scaledHeight);
+		// Always use BufferedImage.TYPE_INT_RGB for JPEG output
+		BufferedImage destImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_RGB);
+		BufferedImage resizedImage = resampleOp.filter(inputImage, destImage);
+
+		// Crop the image from bottom and right side
+		int x = 0;
+		if (center) {
+			x = (scaledWidth - targetWidth) / 2; // Center the crop horizontally
+		}
+		int y = 0;
+		return resizedImage.getSubimage(x, y, targetWidth, targetHeight);
 	}
-	
-	
 
 	public static byte[] resizeImage(byte[] image, int maxLength) throws Exception {
 		try {
@@ -1512,7 +1529,7 @@ public class DcemUtils {
 		}
 		return list;
 	}
-	
+
 	public static String formatDate(Locale locale, LocalDate date) {
 		return Objects.isNull(date) == true ? "" : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(date);
 	}
@@ -1524,9 +1541,9 @@ public class DcemUtils {
 	public static String formatDateTime(Locale locale, LocalDateTime dateTime) {
 		return Objects.isNull(dateTime) == true ? "" : DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale).format(dateTime);
 	}
+
 	public static String formatDate(String locale, LocalDate date) {
 		return formatDate(new Locale(locale), date);
 	}
-
 
 }
