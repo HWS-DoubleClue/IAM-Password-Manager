@@ -400,7 +400,7 @@ public final class DcemConstants {
 
 	public static final String DEFAULT_FILE_ICON = "file.png";
 
-	public static final String DEFAULT_BIN_ICON = "bin.png";
+	public static final String DEFAULT_BIN_ICON = "bin.svg";
 
 	public static final String DEFAULT_FOLDER_ICON = "folder.png";
 
