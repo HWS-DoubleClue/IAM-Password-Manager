@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -45,6 +46,7 @@ import com.doubleclue.dcem.as.entities.CloudSafeEntity;
 import com.doubleclue.dcem.as.entities.CloudSafeEntity_;
 import com.doubleclue.dcem.as.entities.CloudSafeLimitEntity;
 import com.doubleclue.dcem.as.entities.CloudSafeShareEntity;
+import com.doubleclue.dcem.as.entities.CloudSafeTagEntity;
 import com.doubleclue.dcem.as.entities.CloudSafeThumbnailEntity;
 import com.doubleclue.dcem.as.entities.DeviceEntity;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentDb;
@@ -125,6 +127,9 @@ public class CloudSafeLogic {
 
 	@Inject
 	LicenceLogic licenceLogic;
+
+	@Inject
+	private CloudSafeTagLogic cloudSafeTagLogic;
 
 	CloudSafeContentI cloudSafeContentI;
 
@@ -452,7 +457,8 @@ public class CloudSafeLogic {
 	@DcemTransactional
 	public CloudSafeEntity setCloudSafeByteArray(CloudSafeEntity cloudSafeEntity, char[] password, byte[] content, DcemUser loggedInUser,
 			CloudSafeEntity originalDbCloudSafeEntity) throws DcemException {
-		return setCloudSafeStream(cloudSafeEntity, password, new ByteArrayInputStream(content), content.length, loggedInUser, originalDbCloudSafeEntity, null);
+		return setCloudSafeStream(cloudSafeEntity, password, new ByteArrayInputStream(content), content.length, loggedInUser, originalDbCloudSafeEntity, null,
+				null);
 	}
 
 	/**
@@ -466,7 +472,15 @@ public class CloudSafeLogic {
 	 * @throws DcemException
 	 */
 	private CloudSafeEntity setCloudSafeStream(CloudSafeEntity cloudSafeEntity, char[] password, InputStream inputStream, int length, DcemUser loggedInUser,
-			CloudSafeEntity originalDbCloudSafeEntity, String ocrText) throws DcemException {
+			CloudSafeEntity originalDbCloudSafeEntity, String ocrText, List<CloudSafeTagEntity> toBeAddedTags) throws DcemException {
+		cloudSafeTagLogic.addMultipleTags(toBeAddedTags);
+		Set<CloudSafeTagEntity> tags = new HashSet<CloudSafeTagEntity>(cloudSafeEntity.getTags());
+		tags.addAll(toBeAddedTags);
+		cloudSafeEntity.getTags().clear();
+		for (CloudSafeTagEntity cloudSafeTagEntity : tags) {
+			CloudSafeTagEntity managedTag = em.merge(cloudSafeTagEntity);
+			cloudSafeEntity.getTags().add(managedTag);
+		}
 		if (cloudSafeEntity.getSalt() == null) {
 			cloudSafeEntity.setSalt(RandomUtils.getRandom(16));
 		}
@@ -581,6 +595,7 @@ public class CloudSafeLogic {
 			originalDbEntity.setLength(cloudSafeEntity.getLength());
 			originalDbEntity.setThumbnailEntity(cloudSafeEntity.getThumbnailEntity());
 			originalDbEntity.setTextExtract(cloudSafeEntity.getTextExtract());
+			originalDbEntity.setTags(cloudSafeEntity.getTags());
 
 			CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
 			if (thumbnailEntity != null) {
@@ -1522,7 +1537,7 @@ public class CloudSafeLogic {
 				cloudSafeUploadedFile.cloudSafeEntity.setParent(getCloudSafeRoot());
 			}
 			CloudSafeEntity cloudSafeEntity = setCloudSafeStream(cloudSafeUploadedFile.cloudSafeEntity, (char[]) null,
-					new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser, null, null); // no OCR
+					new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser, null, null, null); // no OCR
 			hashSet.add(cloudSafeUploadedFile.fileName);
 			savedFiles.add(cloudSafeEntity);
 		}
@@ -1580,7 +1595,7 @@ public class CloudSafeLogic {
 				cloudSafeEntity.setOptions(CloudSafeOptions.ENC.name());
 			}
 			cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, filePassword == null ? null : filePassword.toCharArray(),
-					new FileInputStream(uploadedFile.file), (int) uploadedFile.file.length(), lastModifiedUser, null, null);
+					new FileInputStream(uploadedFile.file), (int) uploadedFile.file.length(), lastModifiedUser, null, null, null);
 			hashSet.add(uploadedFile.fileName);
 			savedFiles.add(cloudSafeEntity);
 		}
@@ -1588,8 +1603,9 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public CloudSafeEntity addDocument(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser dcemUser, File file, String ocrText) throws Exception {
-		return setCloudSafeStream(cloudSafeEntity, password, new FileInputStream(file), (int) file.length(), dcemUser, null, ocrText);
+	public CloudSafeEntity addDocument(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser dcemUser, File file, String ocrText,
+			List<CloudSafeTagEntity> toBeAddedTags) throws Exception {
+		return setCloudSafeStream(cloudSafeEntity, password, new FileInputStream(file), (int) file.length(), dcemUser, null, ocrText, toBeAddedTags);
 	}
 
 	@DcemTransactional
@@ -1632,20 +1648,20 @@ public class CloudSafeLogic {
 					byte[] randomByte = RandomUtils.getRandom(8);
 					byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 					InputStream is = new ByteArrayInputStream((content));
-					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null);
+					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null, null);
 				} else if (selectedFolder.isOption(CloudSafeOptions.ENC) && passwordProtected) {
 					cloudSafeEntity.setOptions(CloudSafeOptions.PWD.name());
 					byte[] randomByte = RandomUtils.getRandom(8);
 					byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 					InputStream is = new ByteArrayInputStream((content));
-					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null);
+					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null, null);
 				}
 			} else {
 				cloudSafeEntity.setOptions(CloudSafeOptions.PWD.name());
 				byte[] randomByte = RandomUtils.getRandom(8);
 				byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 				InputStream is = new ByteArrayInputStream((content));
-				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null);
+				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null, null);
 			}
 		} else if (encryptProtected) {
 			cloudSafeEntity.setOptions(CloudSafeOptions.ENC.name());
@@ -1747,7 +1763,7 @@ public class CloudSafeLogic {
 				fileOutputStream.close();
 				fileInputStreamTemp = new FileInputStream(tempFile);
 				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), fileInputStreamTemp, (int) cloudSafeEntity.getLength(),
-						loggedInUser, null, null);
+						loggedInUser, null, null, null);
 			} catch (Exception ex) {
 				throw new DcemException(DcemErrorCodes.CLOUD_SAFE_MOVE_FILE, "Could not move file " + cloudSafeEntity.getName(), ex);
 			} finally {
@@ -1961,4 +1977,11 @@ public class CloudSafeLogic {
 	public CloudSafeContentI getCloudSafeContentI() {
 		return cloudSafeContentI;
 	}
+
+	public List<CloudSafeEntity> getAllCloudsafesByTag(Set<CloudSafeTagEntity> cloudSafeTagEntity) {
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_BY_TAG, CloudSafeEntity.class);
+		query.setParameter(1, cloudSafeTagEntity);
+		return query.getResultList();
+	}
+
 }
