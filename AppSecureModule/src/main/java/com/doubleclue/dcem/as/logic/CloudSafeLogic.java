@@ -602,8 +602,6 @@ public class CloudSafeLogic {
 			originalDbEntity.setLength(cloudSafeEntity.getLength());
 			originalDbEntity.setThumbnailEntity(cloudSafeEntity.getThumbnailEntity());
 			originalDbEntity.setTextExtract(cloudSafeEntity.getTextExtract());
-==== BASE ====
-==== BASE ====
 
 			CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
 			if (thumbnailEntity != null) {
@@ -1613,7 +1611,7 @@ public class CloudSafeLogic {
 	@DcemTransactional
 	public CloudSafeEntity addDocument(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser dcemUser, File file, String ocrText, List<CloudSafeTagEntity> toBeAddedTags) throws Exception {
 		if (file == null) {
-			return setCloudSafeStream(cloudSafeEntity, password, null, -1, dcemUser, null, ocrText);
+			return setCloudSafeStream(cloudSafeEntity, password, null, -1, dcemUser, null, ocrText, toBeAddedTags);
 		}
 		return setCloudSafeStream(cloudSafeEntity, password, new FileInputStream(file), (int) file.length(), dcemUser, null, ocrText, toBeAddedTags);
 	}
