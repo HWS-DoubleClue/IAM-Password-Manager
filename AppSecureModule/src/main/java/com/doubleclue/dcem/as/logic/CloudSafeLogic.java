@@ -484,7 +484,9 @@ public class CloudSafeLogic {
 		if (cloudSafeEntity.getSalt() == null) {
 			cloudSafeEntity.setSalt(RandomUtils.getRandom(16));
 		}
-		cloudSafeEntity.setLength(length);
+		if (length >= 0) {
+			cloudSafeEntity.setLength(length);
+		}
 		// if (em.contains(cloudSafeEntity) == false) {
 		// System.out.println("CloudSafeLogic.setCloudSafeStream() DETACHED");
 		// }
@@ -493,26 +495,31 @@ public class CloudSafeLogic {
 		// if (em.contains(dbCloudSafeEntity) == false) {
 		// System.out.println("CloudSafeLogic.setCloudSafeStream() dbCloudSafeEntity DETACHED");
 		// }
-		long delta = validateCloudSafeContentChange(dbCloudSafeEntity, length);
-		dbCloudSafeEntity.setLength(length);
+		long delta = 0;
+		if (length >= 0) {
+			delta = validateCloudSafeContentChange(dbCloudSafeEntity, length);
+			dbCloudSafeEntity.setLength(length);
+		}
 		cloudSafeEntity.setId(dbCloudSafeEntity.getId());
 		if (cloudSafeEntity.isFolder() == false) {
-			InputStream encryptedStream = getEncryptStream(dbCloudSafeEntity, inputStream, password);
-			cloudSafeContentI.writeContentOutput(em, dbCloudSafeEntity, encryptedStream);
-			if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
-				if (ocrText == null || ocrText.isEmpty()) {
-					cloudSafeContentI.deleteS3Data(dbCloudSafeEntity.getId(), OCR_TEXT);
-					cloudSafeEntity.setTextLength(0L);
-				} else {
-					byte[] ocrData = ocrText.getBytes(StandardCharsets.UTF_8);
-					InputStream ocrStream = new ByteArrayInputStream(ocrData);
-					encryptedStream = getEncryptStream(dbCloudSafeEntity, ocrStream, password);
-					cloudSafeEntity.setTextLength((long) ocrData.length);
-					cloudSafeContentI.writeS3Data(dbCloudSafeEntity.getId(), OCR_TEXT, encryptedStream, ocrData.length + 16);
+			if (length >= 0) {
+				InputStream encryptedStream = getEncryptStream(dbCloudSafeEntity, inputStream, password);
+				cloudSafeContentI.writeContentOutput(em, dbCloudSafeEntity, encryptedStream);
+				if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
+					if (ocrText == null || ocrText.isEmpty()) {
+						cloudSafeContentI.deleteS3Data(dbCloudSafeEntity.getId(), OCR_TEXT);
+						cloudSafeEntity.setTextLength(0L);
+					} else {
+						byte[] ocrData = ocrText.getBytes(StandardCharsets.UTF_8);
+						InputStream ocrStream = new ByteArrayInputStream(ocrData);
+						encryptedStream = getEncryptStream(dbCloudSafeEntity, ocrStream, password);
+						cloudSafeEntity.setTextLength((long) ocrData.length);
+						cloudSafeContentI.writeS3Data(dbCloudSafeEntity.getId(), OCR_TEXT, encryptedStream, ocrData.length + 16);
+					}
 				}
-			}
-			if (dbCloudSafeEntity.getOwner() == CloudSafeOwner.USER) {
-				updateCloudSafeUsage(dbCloudSafeEntity.getUser().getId(), delta);
+				if (dbCloudSafeEntity.getOwner() == CloudSafeOwner.USER) {
+					updateCloudSafeUsage(dbCloudSafeEntity.getUser().getId(), delta);
+				}
 			}
 			if (loggedInUser != null && asModule.getPreferences().isEnableAuditUser() == true && cloudSafeEntity.getOwner() != CloudSafeOwner.DEVICE) {
 				DcemAction dcemAction = new DcemAction(asCloudSafeSubject, DcemConstants.ACTION_EDIT);
@@ -595,7 +602,8 @@ public class CloudSafeLogic {
 			originalDbEntity.setLength(cloudSafeEntity.getLength());
 			originalDbEntity.setThumbnailEntity(cloudSafeEntity.getThumbnailEntity());
 			originalDbEntity.setTextExtract(cloudSafeEntity.getTextExtract());
-			originalDbEntity.setTags(cloudSafeEntity.getTags());
+==== BASE ====
+==== BASE ====
 
 			CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
 			if (thumbnailEntity != null) {
@@ -1603,8 +1611,10 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public CloudSafeEntity addDocument(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser dcemUser, File file, String ocrText,
-			List<CloudSafeTagEntity> toBeAddedTags) throws Exception {
+	public CloudSafeEntity addDocument(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser dcemUser, File file, String ocrText, List<CloudSafeTagEntity> toBeAddedTags) throws Exception {
+		if (file == null) {
+			return setCloudSafeStream(cloudSafeEntity, password, null, -1, dcemUser, null, ocrText);
+		}
 		return setCloudSafeStream(cloudSafeEntity, password, new FileInputStream(file), (int) file.length(), dcemUser, null, ocrText, toBeAddedTags);
 	}
 

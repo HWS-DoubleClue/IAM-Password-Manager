@@ -13,16 +13,16 @@ public enum DcemMediaType {
 	
 	GZ("application/gzip", "zip-file.svg"),
 	EXE_MS("application/x-msdownload", "exe-file.svg"),
-	PDF("application/pdf", "pdf-file.svg"),
+	PDF("application/pdf", "pdf.svg"),
 	TAR("application/x-tar", "zip-file.svg"),
 	XML("application/xml", DcemConstants.DEFAULT_FILE_ICON),
 	ZIP("application/zip", "zip-file.svg"),
 	KEEPASS("application/octet-stream", "keepass-icon.png"),
 	BINARY("application/octet-stream", DcemConstants.DEFAULT_FILE_ICON),
 	
-	WORD("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "word-file.png"),
-	XLS("application/vnd.ms-excel", "excel-file.png"),
-	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "excel-file.png"),
+	WORD("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "microsoft-word.svg"),
+	XLS("application/vnd.ms-excel", "microsoft-excel.svg"),
+	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "microsoft-excel.svg"),
 	PPT("application/vnd.ms-powerpoint", "powerpoint-file.png"),
 	PPTX("application/vnd.openxmlformats-officedocument.presentationml.presentation", "powerpoint-file.png"),
 	ODT ("application/vnd.oasis.opendocument.text",  "word-file.png");
