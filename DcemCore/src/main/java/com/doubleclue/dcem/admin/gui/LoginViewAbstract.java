@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.faces.component.search.ComponentNotFoundException;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.PrimeFaces;
-import org.primefaces.expression.ComponentNotFoundException;
+
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.shaded.json.JSONObject;

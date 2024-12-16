@@ -254,7 +254,7 @@ public class WelcomeView extends DcemView {
 	private void addChartDataSet(ChartData chartData, BarChartDataSet barChartDataSet, HashMap<LocalDateTime, Long> userActivityList,
 			SelectedFormat selectedDateFormat) {
 		DateTimeFormatter dateTimeFormatter;
-		List<Number> values = new ArrayList<>();
+		List<Object> values = new ArrayList<>();
 		List<String> labels = new ArrayList<>();
 
 		Map<LocalDateTime, Long> sortedMap = new TreeMap<LocalDateTime, Long>(userActivityList);

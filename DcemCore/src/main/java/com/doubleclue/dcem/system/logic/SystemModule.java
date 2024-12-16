@@ -60,6 +60,7 @@ import com.doubleclue.dcem.core.logic.module.DcemModule;
 import com.doubleclue.dcem.core.logic.module.ModulePreferences;
 import com.doubleclue.dcem.core.tasks.MonitoringTask;
 import com.doubleclue.dcem.core.tasks.NightlyTask;
+import com.doubleclue.dcem.core.tasks.SystemReceiveMailTask;
 import com.doubleclue.dcem.core.tasks.TaskExecutor;
 import com.doubleclue.dcem.core.utils.JsonConverter;
 import com.doubleclue.dcem.core.utils.rest.ClientRestApi;
@@ -135,6 +136,7 @@ public class SystemModule extends DcemModule {
 
 	ScheduledFuture<?> monitorSchedule;
 	ScheduledFuture<?> nightlySchedule;
+	ScheduledFuture<?> receiveEmailSchedule;
 
 	// HashMap<String, SubjectAbs> subjects = new HashMap<String, SubjectAbs>();
 
@@ -158,6 +160,7 @@ public class SystemModule extends DcemModule {
 		emp.enableDbStatistics(getPreferences().enableDbStatistics);
 		updateMonitoring();
 		updateHttpProxy();
+		updateReceiveEmails();
 		SendEmail.setProperties(getPreferences());
 
 		try {
@@ -266,6 +269,9 @@ public class SystemModule extends DcemModule {
 			if ((previous.enableMonitoring != getPreferences().enableMonitoring) || (previous.monitoringInterval != getPreferences().monitoringInterval)) {
 				updateMonitoring();
 			}
+			if ((previous.eMailReceivePort != getPreferences().eMailReceivePort) || (previous.eMailReceiveInterval != getPreferences().eMailReceiveInterval)) {
+				updateReceiveEmails();
+			}
 			if (previous.nightlyTaskTime != getPreferences().nightlyTaskTime) {
 				updateNightlyTaskSchedule();
 			}
@@ -303,6 +309,20 @@ public class SystemModule extends DcemModule {
 				monitorSchedule.cancel(true);
 			}
 			monitorSchedule = null;
+		}
+	}
+	
+	private void updateReceiveEmails() {
+		if (getPreferences().geteMailReceivePort() > 0 && getPreferences().geteMailReceiveInterval() > 0) {
+			if (receiveEmailSchedule != null) {
+				receiveEmailSchedule.cancel(true);
+			}
+			receiveEmailSchedule = taskExecutor.scheduleAtFixedRate(new SystemReceiveMailTask(), 2, getPreferences().geteMailReceiveInterval(), TimeUnit.MINUTES);
+		} else {
+			if (receiveEmailSchedule != null) {
+				receiveEmailSchedule.cancel(true);
+			}
+			receiveEmailSchedule = null;
 		}
 	}
 

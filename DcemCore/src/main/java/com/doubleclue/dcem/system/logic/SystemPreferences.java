@@ -78,7 +78,7 @@ public class SystemPreferences extends ModulePreferences {
 	@Size(max = 128)
 	String httpProxyPassword;
 
-	@DcemGui(separator = "E-Mail SSL/TLS Configuration", help = "Leave empty if e-mail configuration is not required.", style = "width: 300px")
+	@DcemGui(separator = "Send E-Mail", help = "Leave empty if e-mail configuration is not required.", style = "width: 300px")
 	String eMailHostAddress;
 
 	@DcemGui(help = "'0' means no e-mail configuration is required.")
@@ -99,6 +99,24 @@ public class SystemPreferences extends ModulePreferences {
 
 	@DcemGui(help = "Protocl used for E-Mail sent.")
 	String eMailProtocol = "TLSv1.2";
+	
+	@DcemGui(separator = "Receive E-Mail", help = "Leave empty if e-mail configuration is not required.", style = "width: 300px")
+	String eMailReceiveHostAddress;
+	
+	@DcemGui(help = "'0' means no e-mail configuration is required.")
+	@Max(65535)
+	int eMailReceivePort = 0;
+	
+	@DcemGui(help = "Leave empty if e-mail configuration is not required.", style = "width: 300px")
+	String eMailReceiveAccount;
+	
+	@DcemGui(style = "width: 300px", password = true)
+	String eMailReceivePassword;
+	
+	@DcemGui(style = "width: 300px", help = "in Minutes.")
+	@Min(0)
+	int eMailReceiveInterval = 10;
+	
 
 	@DcemGui(separator = "SMS Configuration - Provider www.messagebird.com", password = true, help = "This field should be empty if no SMS is being used.", style = "width: 300px")
 	String smsProviderAccesKey;
@@ -369,6 +387,46 @@ public class SystemPreferences extends ModulePreferences {
 
 	public void setTraceRestApi(boolean traceRestApi) {
 		this.traceRestApi = traceRestApi;
+	}
+
+	public String geteMailReceiveHostAddress() {
+		return eMailReceiveHostAddress;
+	}
+
+	public void seteMailReceiveHostAddress(String eMailReceiveHostAddress) {
+		this.eMailReceiveHostAddress = eMailReceiveHostAddress;
+	}
+
+	public int geteMailReceivePort() {
+		return eMailReceivePort;
+	}
+
+	public void seteMailReceivePort(int eMailReceivePort) {
+		this.eMailReceivePort = eMailReceivePort;
+	}
+
+	public String geteMailReceiveAccount() {
+		return eMailReceiveAccount;
+	}
+
+	public void seteMailReceiveAccount(String eMailReceiveAccount) {
+		this.eMailReceiveAccount = eMailReceiveAccount;
+	}
+
+	public String geteMailReceivePassword() {
+		return eMailReceivePassword;
+	}
+
+	public void seteMailReceivePassword(String eMailReceivePassword) {
+		this.eMailReceivePassword = eMailReceivePassword;
+	}
+
+	public int geteMailReceiveInterval() {
+		return eMailReceiveInterval;
+	}
+
+	public void seteMailReceiveInterval(int eMailReceiveInterval) {
+		this.eMailReceiveInterval = eMailReceiveInterval;
 	}
 
 }
