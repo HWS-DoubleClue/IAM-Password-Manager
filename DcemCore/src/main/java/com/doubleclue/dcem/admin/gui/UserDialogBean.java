@@ -565,7 +565,7 @@ public class UserDialogBean extends DcemDialog {
 			return;
 		}
 		try {
-			photoProfile = DcemUtils.resizeImage(event.getFile().getContent(), DcemConstants.IMAGE_MAX);
+			photoProfile = DcemUtils.resizeImage(event.getFile().getContent(), DcemConstants.PHOTO_MAX);
 		} catch (DcemException e) {
 			JsfUtils.addErrorMessage(e.getLocalizedMessage());
 			logger.error("upload photo failed " + e.toString());

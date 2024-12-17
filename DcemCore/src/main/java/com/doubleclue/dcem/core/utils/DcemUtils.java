@@ -1363,11 +1363,11 @@ public class DcemUtils {
 		return date;
 	}
 
-	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength, boolean force) throws DcemException {
-		return resizeImage(image, maxWidth, maxHeight, maxLength, force, true);
+	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength) throws DcemException {
+		return resizeImage(image, maxWidth, maxHeight, maxLength, true);
 	}
 
-	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength, boolean force, boolean center) throws DcemException {
+	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength, boolean center) throws DcemException {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024 * 4);
 		BufferedImage inputImage;
@@ -1376,14 +1376,7 @@ public class DcemUtils {
 		} catch (IOException e1) {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, null, e1);
 		}
-		int imageWidth = inputImage.getWidth();
-		int imageHeight = inputImage.getHeight();
-		if (force == false && imageHeight <= maxHeight && imageWidth <= maxHeight) {
-			if (image.length > maxLength) {
-				throw new DcemException(DcemErrorCodes.IMAGE_TOO_BIG, "wrong widht or height");
-			}
-			return image;
-		}
+
 		BufferedImage outputImage = resizeImage(inputImage, maxWidth, maxHeight, center);
 		try {
 			ImageIO.write(outputImage, "jpeg", outputStream);
@@ -1430,14 +1423,11 @@ public class DcemUtils {
 	}
 
 	public static byte[] resizeImage(byte[] image, int maxLength) throws Exception {
-		try {
-			return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, DcemConstants.PHOTO_MAX, false);
-		} catch (DcemException exp) {
-			if (exp.getErrorCode() == DcemErrorCodes.IMAGE_TOO_BIG) {
-				return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH_MIN, DcemConstants.PHOTO_HEIGHT_MIN, DcemConstants.PHOTO_MAX, true);
-			}
-			throw exp;
+		if (maxLength != 0) {
+			return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, maxLength);
 		}
+		return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, DcemConstants.PHOTO_MAX);
+
 	}
 
 	public static TimeZone getTimeZoneFromCountry(String country) {
