@@ -38,7 +38,6 @@ import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
 import com.doubleclue.dcem.core.jpa.DbEncryptConverter;
-import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.compare.DcemCompare;
 import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -84,6 +83,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_CLOUDSAFE_FILE, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4"),
 		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_CLOUDSAFE_FILE_WITH_NULL_PARENT, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4"),
 		@NamedQuery(name = CloudSafeEntity.UPDATE_LAST_MODIFY_STATE_BY_USER, query = "UPDATE CloudSafeEntity c SET c.lastModifiedUser = NULL WHERE c.lastModifiedUser = ?1"),
+		@NamedQuery(name = CloudSafeEntity.GET_BY_TAG, query = "Select DISTINCT c FROM CloudSafeEntity c JOIN FETCH c.tags tag WHERE tag IN ?1"),
+		@NamedQuery(name = CloudSafeEntity.GET_ALL_TAGS, query = "Select c.tags FROM CloudSafeEntity c where c.id = ?1"),
 
 })
 public class CloudSafeEntity extends EntityInterface implements Cloneable {
@@ -117,6 +118,8 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String UPDATE_ENTRIES_TO_ROOT = "CloudSafeEntity.updateEntriesToRoot";
 	public static final String UPDATE_ENTRIES_TO_ROOT_DEVICE = "CloudSafeEntity.updateEntriesToRootDevice";
 	public static final String UPDATE_LAST_MODIFY_STATE_BY_USER = "CloudSafeShareEntity.updateLastMdoifyByUser";
+	public static final String GET_BY_TAG = "CloudSafeEntity.GetByTag";
+	public static final String GET_ALL_TAGS = "CloudSafeEntity.GetAllTags";
 
 	public CloudSafeEntity() {
 		super();
@@ -169,7 +172,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@Column(name = "dc_name", length = 255, nullable = false)
 	String name;
-	
+
 	@DcemGui
 	@Column(name = "dc_info", length = 255, nullable = true)
 	String info;
@@ -177,7 +180,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@Column(name = "dc_length")
 	long length;
-	
+
 	@DcemGui
 
 	@Column(name = "text_length")
@@ -189,14 +192,13 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_AS_PARENT_ID"), name = "dc_parent_id", nullable = true, insertable = true, updatable = true)
 	@JsonIgnore
 	private CloudSafeEntity parent;
-	
-	@Enumerated (EnumType.ORDINAL)
-	@DcemGui
-	@Column (nullable = true)
-	DcemMediaType dcemMediaType;
-	
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 
+	@Enumerated(EnumType.ORDINAL)
+	@DcemGui
+	@Column(nullable = true)
+	DcemMediaType dcemMediaType;
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "as_ref_cloudsafe_tag", joinColumns = @JoinColumn(name = "dc_id"), foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_TAG"))
 	private Set<CloudSafeTagEntity> tags;
 
@@ -205,7 +207,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_USER_MODIFIED"), nullable = true, insertable = true, updatable = true)
 	@JsonIgnore
 	private DcemUser lastModifiedUser;
-	
+
 	// @DcemGui
 	// boolean sign;
 
@@ -214,7 +216,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	@DcemGui
 	@Column(nullable = true)
-	LocalDateTime discardAfter;  // TODO to be removed
+	LocalDateTime discardAfter; // TODO to be removed
 
 	@JsonIgnore
 	String options;
@@ -240,16 +242,16 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Column(name = "recycled", nullable = false)
 	@JsonIgnore
 	boolean recycled = false;
-	
+
 	@Column(nullable = true, length = 256)
-	@DcemCompare (ignore = true) 
+	@DcemCompare(ignore = true)
 	@Convert(converter = DbEncryptConverter.class)
 	String textExtract;
-	
+
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "cloudSafeEntity", fetch = FetchType.LAZY)
 	@PrimaryKeyJoinColumn
 	private CloudSafeThumbnailEntity thumbnailEntity;
-	
+
 	@Transient
 	@JsonIgnore
 	String loginId;
@@ -350,8 +352,6 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.deviceName = deviceName;
 	}
 
-	
-
 	@Transient
 	@JsonIgnore
 	public long getDiscardAfterAsLong() {
@@ -383,7 +383,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		}
 		return this.options.contains(options.name());
 	}
-	
+
 	public byte[] getSalt() {
 		return salt;
 	}
@@ -504,7 +504,6 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public void setGroup(DcemGroup group) {
 		this.group = group;
 	}
-	
 
 	@Override
 	public int hashCode() {
@@ -544,9 +543,9 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public void setInfo(String info) {
 		this.info = info;
 	}
-	
+
 	@Transient
-	public String toString() { 
+	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("ID=");
 		sb.append(id);
@@ -561,10 +560,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		}
 		return textLength;
 	}
-	
+
 	public void setTextLength(Long textLength) {
 		if (textLength == null) {
-			this.textLength = (long)0;
+			this.textLength = (long) 0;
 		}
 		this.textLength = textLength;
 	}
@@ -604,8 +603,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public void setThumbnailEntity(CloudSafeThumbnailEntity thumbnailEntity) {
 		this.thumbnailEntity = thumbnailEntity;
 	}
-	
-	
+
 	public byte[] getThumbnail() {
 		if (thumbnailEntity == null) {
 			return null;
@@ -613,5 +611,4 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		return thumbnailEntity.getThumbnail();
 	}
 
-		
 }
