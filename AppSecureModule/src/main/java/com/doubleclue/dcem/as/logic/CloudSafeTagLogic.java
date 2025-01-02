@@ -35,11 +35,10 @@ public class CloudSafeTagLogic {
 	}
 
 	@DcemTransactional
-	public List<CloudSafeTagEntity> addMultipleTags(List<CloudSafeTagEntity> tags) {
+	public void addMultipleTags(List<CloudSafeTagEntity> tags) {
 		for (CloudSafeTagEntity tag : tags) {
 			em.persist(tag);
 		}
-		return tags;
 	}
 
 	public List<CloudSafeTagEntity> getAllTags() {

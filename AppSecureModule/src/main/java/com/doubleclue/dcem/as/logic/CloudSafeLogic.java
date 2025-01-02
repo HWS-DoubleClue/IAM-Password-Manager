@@ -495,12 +495,8 @@ public class CloudSafeLogic {
 			InputStream inputStream, int length, DcemUser loggedInUser, CloudSafeEntity originalDbCloudSafeEntity,
 			String ocrText, List<CloudSafeTagEntity> toBeAddedTags) throws DcemException {
 		cloudSafeTagLogic.addMultipleTags(toBeAddedTags);
-		Set<CloudSafeTagEntity> tags = new HashSet<CloudSafeTagEntity>(cloudSafeEntity.getTags());
-		tags.addAll(toBeAddedTags);
-		cloudSafeEntity.getTags().clear();
-		for (CloudSafeTagEntity cloudSafeTagEntity : tags) {
-			CloudSafeTagEntity managedTag = em.merge(cloudSafeTagEntity);
-			cloudSafeEntity.getTags().add(managedTag);
+		for (CloudSafeTagEntity cloudSafeTagEntity : toBeAddedTags) {
+			cloudSafeEntity.getTags().add(cloudSafeTagEntity);
 		}
 		if (cloudSafeEntity.getSalt() == null) {
 			cloudSafeEntity.setSalt(RandomUtils.getRandom(16));
@@ -508,16 +504,7 @@ public class CloudSafeLogic {
 		if (length >= 0) {
 			cloudSafeEntity.setLength(length);
 		}
-		// if (em.contains(cloudSafeEntity) == false) {
-		// System.out.println("CloudSafeLogic.setCloudSafeStream() DETACHED");
-		// }
-
-		CloudSafeEntity dbCloudSafeEntity = updateCloudSafeEntity(cloudSafeEntity, loggedInUser, true,
-				originalDbCloudSafeEntity);
-		// if (em.contains(dbCloudSafeEntity) == false) {
-		// System.out.println("CloudSafeLogic.setCloudSafeStream() dbCloudSafeEntity
-		// DETACHED");
-		// }
+		CloudSafeEntity dbCloudSafeEntity = updateCloudSafeEntity(cloudSafeEntity, loggedInUser, true, originalDbCloudSafeEntity);
 		long delta = 0;
 		if (length >= 0) {
 			delta = validateCloudSafeContentChange(dbCloudSafeEntity, length);
