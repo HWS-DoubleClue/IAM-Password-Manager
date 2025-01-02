@@ -117,6 +117,9 @@ public class SystemPreferences extends ModulePreferences {
 	@Min(0)
 	int eMailReceiveInterval = 10;
 	
+	@DcemGui(help = "Set enable ONLY for testing purposes")
+	boolean ignoreCertificates = false;
+	
 
 	@DcemGui(separator = "SMS Configuration - Provider www.messagebird.com", password = true, help = "This field should be empty if no SMS is being used.", style = "width: 300px")
 	String smsProviderAccesKey;
@@ -427,6 +430,14 @@ public class SystemPreferences extends ModulePreferences {
 
 	public void seteMailReceiveInterval(int eMailReceiveInterval) {
 		this.eMailReceiveInterval = eMailReceiveInterval;
+	}
+
+	public boolean isIgnoreCertificates() {
+		return ignoreCertificates;
+	}
+
+	public void setIgnoreCertificates(boolean ignoreCertificates) {
+		this.ignoreCertificates = ignoreCertificates;
 	}
 
 }

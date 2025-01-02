@@ -69,7 +69,7 @@ public class TenantDialog extends DcemDialog {
 
 	@Inject
 	DcemApplicationBean applicationBean;
-	
+
 	@Inject
 	AuditingLogic auditingLogic;
 
@@ -89,15 +89,13 @@ public class TenantDialog extends DcemDialog {
 	SupportedLanguage language;
 
 	public boolean actionOk() throws Exception {
-		if (!actionSuccessful) {
+		if (actionSuccessful == false) {
 			if (createActivationCode == true) {
 				if (superAdminPhone != null) {
 					superAdminPhone = superAdminPhone.trim();
 				}
-
 				superAdminEmail = superAdminEmail.trim();
 				superAdminPassword = superAdminPassword.trim();
-
 				if (superAdminSendBy != null) {
 					switch (superAdminSendBy) {
 					case EMAIL:
@@ -138,32 +136,34 @@ public class TenantDialog extends DcemDialog {
 			if (this.getAutoViewAction().getDcemAction().getAction().equals(DcemConstants.ACTION_ADD)) {
 				asModuleApi.onCreateTenant(tenantEntity);
 			}
-			Exception exception = DcemUtils.reloadTaskNodes(TenantLogic.class, TenantIdResolver.getCurrentTenantName());
-			if (exception != null) {
-				logger.warn("Couldn't reloadRaskNodes", exception);
-				JsfUtils.addErrorMessage(exception.toString());
-				return false;
-			}
-			if (createActivationCode == true) {
-				try {
-					String superAdminActivationCode = asModuleApi.onCreateActivationCodeTenant(tenantEntity, superAdminEmail, superAdminPhone, superAdminSendBy,
-							language, sendPasswordBySms, superAdminPassword, null, false);
-					actionSuccessful = true;
-					if (superAdminActivationCode != null) {
-						if (this.getAutoViewAction().getDcemAction().equals(DcemConstants.ACTION_ADD)) {
-							tenantCreatedMessage = JsfUtils.getMessageFromBundle(DcemConstants.CORE_RESOURCE, "tenant.tenantCreated", tenantEntity.getName(),
-									superAdminActivationCode);
+			if (tenantEntity.isDisabled() == false) {
+				Exception exception = DcemUtils.reloadTaskNodes(TenantLogic.class, TenantIdResolver.getCurrentTenantName());
+				if (exception != null) {
+					logger.warn("Couldn't reloadRaskNodes", exception);
+					JsfUtils.addErrorMessage(exception.toString());
+					return false;
+				}
+				if (createActivationCode == true) {
+					try {
+						String superAdminActivationCode = asModuleApi.onCreateActivationCodeTenant(tenantEntity, superAdminEmail, superAdminPhone,
+								superAdminSendBy, language, sendPasswordBySms, superAdminPassword, null, false);
+						actionSuccessful = true;
+						if (superAdminActivationCode != null) {
+							if (this.getAutoViewAction().getDcemAction().equals(DcemConstants.ACTION_ADD)) {
+								tenantCreatedMessage = JsfUtils.getMessageFromBundle(DcemConstants.CORE_RESOURCE, "tenant.tenantCreated",
+										tenantEntity.getName(), superAdminActivationCode);
+							} else {
+								tenantCreatedMessage = JsfUtils.getMessageFromBundle(DcemConstants.CORE_RESOURCE, "tenant.tenantEdited", tenantEntity.getName(),
+										superAdminActivationCode);
+							}
+							return false;
 						} else {
-							tenantCreatedMessage = JsfUtils.getMessageFromBundle(DcemConstants.CORE_RESOURCE, "tenant.tenantEdited", tenantEntity.getName(),
-									superAdminActivationCode);
+							return true;
 						}
-						return false;
-					} else {
-						return true;
+					} catch (Exception exp) {
+						logger.warn(exp);
+						throw new DcemException(DcemErrorCodes.EXCEPTION, "Failed to create Tenant and Activation Code", exp);
 					}
-				} catch (Exception exp) {
-					logger.warn(exp);
-					throw new DcemException(DcemErrorCodes.EXCEPTION, "Failed to create Tenant and Activation Code", exp);
 				}
 			}
 			if (sendPasswordBySms == true) {
@@ -216,14 +216,14 @@ public class TenantDialog extends DcemDialog {
 		try {
 			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			request.getSession().invalidate();
-			Thread.sleep(400);  // give time to tomcat to deactivate the session
-			request.getSession(true);  // create new Session
+			Thread.sleep(400); // give time to tomcat to deactivate the session
+			request.getSession(true); // create new Session
 			request.getSession().setAttribute(DcemConstants.URL_TENANT_PARAMETER, tenantEntity);
 			request.getSession().setAttribute(DcemConstants.URL_TENANT_SWITCH, tenantEntity);
 			HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-			response.sendRedirect("/dcem/mgt/index.xhtml" );
+			response.sendRedirect("/dcem/mgt/index.xhtml");
 			auditingLogic.addAudit(this.getAutoViewAction().getDcemAction(), tenantEntity.getName());
-		//	JsfUtils.getFacesContext().responseComplete();
+			// JsfUtils.getFacesContext().responseComplete();
 			return null;
 		} catch (Exception e) {
 			logger.warn("Coundn't swithc to tenant ", e);

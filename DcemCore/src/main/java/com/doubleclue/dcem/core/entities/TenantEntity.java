@@ -40,12 +40,11 @@ public class TenantEntity extends EntityInterface implements Serializable  {
 	 * 
 	 * 
 	 */
-	
-
 	@Id
 	@TableGenerator(name = "coreSeqStoreTenant", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "TENANT.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "coreSeqStoreTenant")
 	@Column(name = "dc_id")
+	@DcemGui (visible = false)
 	private Integer id;
 	
 	@Column(name = "dc_master", updatable = false)
@@ -121,13 +120,6 @@ public class TenantEntity extends EntityInterface implements Serializable  {
 		this.schema = schema;
 	}
 
-	public boolean isEnabled() {
-		return disabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.disabled = enabled;
-	}
 
 	@Override
 	public Number getId() {

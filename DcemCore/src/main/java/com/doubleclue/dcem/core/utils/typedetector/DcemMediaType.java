@@ -25,7 +25,8 @@ public enum DcemMediaType {
 	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "microsoft-excel.svg"),
 	PPT("application/vnd.ms-powerpoint", "powerpoint-file.png"),
 	PPTX("application/vnd.openxmlformats-officedocument.presentationml.presentation", "powerpoint-file.png"),
-	ODT ("application/vnd.oasis.opendocument.text",  "word-file.png");
+	ODT ("application/vnd.oasis.opendocument.text",  "word-file.png"),
+	MP4 ("video/mp4", "mp4.svg");
 
 	
 	

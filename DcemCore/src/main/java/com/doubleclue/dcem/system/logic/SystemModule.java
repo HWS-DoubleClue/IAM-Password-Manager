@@ -317,7 +317,7 @@ public class SystemModule extends DcemModule {
 			if (receiveEmailSchedule != null) {
 				receiveEmailSchedule.cancel(true);
 			}
-			receiveEmailSchedule = taskExecutor.scheduleAtFixedRate(new SystemReceiveMailTask(), 2, getPreferences().geteMailReceiveInterval(), TimeUnit.MINUTES);
+			receiveEmailSchedule = taskExecutor.scheduleAtFixedRate(new SystemReceiveMailTask(), 1, getPreferences().geteMailReceiveInterval(), TimeUnit.MINUTES);
 		} else {
 			if (receiveEmailSchedule != null) {
 				receiveEmailSchedule.cancel(true);

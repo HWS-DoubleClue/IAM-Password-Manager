@@ -16,15 +16,19 @@
 			<artifactId>messagebird-api</artifactId>
 			<version>3.0.17</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api -->
 		<dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>javax.mail</artifactId>
-			<version>1.6.2</version>
+			<groupId>jakarta.mail</groupId>
+			<artifactId>jakarta.mail-api</artifactId>
+			<version>2.1.3</version>
 		</dependency>
+
+		<!--
+		https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api -->
 		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-			<version>1.1.1</version>
+			<groupId>jakarta.activation</groupId>
+			<artifactId>jakarta.activation-api</artifactId>
+			<version>2.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>

@@ -20,6 +20,7 @@ import com.doubleclue.dcem.core.entities.UrlTokenEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.system.send.SendEmail;
 import com.doubleclue.utils.StringUtils;
 
@@ -37,6 +38,9 @@ public class UrlTokenLogic {
 	TemplateLogic templateLogic;
 
 	private static final Logger logger = LogManager.getLogger(UrlTokenLogic.class);
+
+	static final String MAIL_TOKEN_FORMAT_HASH = "%d.%s.%s.%s";
+	static final String MAIL_TOKEN_FORMAT = "{{%02x%s}}";
 
 	@DcemTransactional
 	public UrlTokenEntity addUrlTokenToDb(UrlTokenType urlTokenUsage, int validMinutes, String urlToken, String objectIdentifier) throws DcemException {
@@ -56,6 +60,30 @@ public class UrlTokenLogic {
 		entity.setUrlTokenType(urlTokenUsage);
 		em.persist(entity);
 		return entity;
+	}
+
+	@DcemTransactional
+	public String addMailUrlToken(String moduleId, LocalDateTime expiryDate, String objectIdentifier) throws DcemException {
+		UrlTokenEntity entity = new UrlTokenEntity();
+		String urlToken = java.util.UUID.randomUUID().toString();
+		entity.setUrlToken(urlToken);
+		entity.setExpiryDate(expiryDate);
+		entity.setObjectIdentifier(objectIdentifier);
+		entity.setUrlTokenType(UrlTokenType.EmailToken);
+		em.persist(entity);
+		return createEmailToken(entity, moduleId);
+
+	}
+
+	private String createEmailToken(UrlTokenEntity entity, String moduleId) {
+		int tenentId = 0;
+		if (TenantIdResolver.isCurrentTenantMaster() == false) {
+			tenentId = TenantIdResolver.getCurrentTenant().getId().intValue();
+		}
+		String tokenPart = String.format(MAIL_TOKEN_FORMAT_HASH, tenentId, moduleId, entity.getObjectIdentifier(),
+				entity.getUrlToken());
+		byte hash = (byte) (tokenPart.hashCode() & 0xFF);
+		return String.format(MAIL_TOKEN_FORMAT, hash, tokenPart);
 	}
 
 	public UrlTokenEntity verifyUrlToken(String urlToken, String type) throws DcemException {

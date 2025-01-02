@@ -78,10 +78,10 @@ public class DcemTrustManager extends X509ExtendedTrustManager {
 			throws CertificateException {
 		if (saveServerChainCertificates) {
 			serverChainCertificates = chain;
-			if (logger.isTraceEnabled() == true) {
+			if (logger.isDebugEnabled() == true) {
 				for (X509Certificate certificate : chain) {
-					logger.trace("Server Certificate: " + certificate.getSubjectDN().getName().toString());
-					logger.trace("-----BEGIN CERTIFICATE-----\n"
+					logger.debug("Server Certificate: " + certificate.getSubjectDN().getName().toString());
+					logger.debug("-----BEGIN CERTIFICATE-----\n"
 							+ java.util.Base64.getEncoder().encodeToString(certificate.getEncoded())
 							+ "\n-----END CERTIFICATE-----");
 				}
