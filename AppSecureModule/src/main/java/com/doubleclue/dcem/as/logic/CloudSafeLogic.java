@@ -89,8 +89,8 @@ public class CloudSafeLogic {
 	private static Logger logger = LogManager.getLogger(CloudSafeLogic.class);
 
 	final static int MAX_CIPHER_BUFFER = 1024 * 64;
-	public static final byte[] FOLDER_CONTENT_TO_ENCRYPT = { 0x01, 0x02, 0x3, 0x04, 0x01, 0x02, 0x3, 0x04, 0x01, 0x02,
-			0x3, 0x040, 0x01, 0x02, 0x3, 0x04, 0x01, 0x02, 0x3, 0x04, 0x01, 0x02, 0x3, 0x04 };
+	public static final byte[] FOLDER_CONTENT_TO_ENCRYPT = { 0x01, 0x02, 0x3, 0x04, 0x01, 0x02, 0x3, 0x04, 0x01, 0x02, 0x3, 0x040, 0x01, 0x02, 0x3, 0x04, 0x01,
+			0x02, 0x3, 0x04, 0x01, 0x02, 0x3, 0x04 };
 
 	final static String AUDIT_SHARED_BY = ", Shared By: ";
 	final static String OCR_TEXT = "ocr_text";
@@ -154,22 +154,20 @@ public class CloudSafeLogic {
 				cloudSafeContentI = new CloudSafeContentNas(file);
 				break;
 			case AwsS3:
-				cloudSafeContentI = new CloudSafeContentS3(clusterConfig.getName(), clusterConfig.getAwsS3Url(),
-						clusterConfig.getAwsS3AccesskeyId(), clusterConfig.getAwsS3SecretAccessKey());
+				cloudSafeContentI = new CloudSafeContentS3(clusterConfig.getName(), clusterConfig.getAwsS3Url(), clusterConfig.getAwsS3AccesskeyId(),
+						clusterConfig.getAwsS3SecretAccessKey());
 				break;
 			default:
-				reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM,
-						DcemErrorCodes.INVALID_CLOUDSTORAGE_TYPE, clusterConfig.getCloudSafeStorageType().name(),
-						AlertSeverity.ERROR, true);
+				reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.INVALID_CLOUDSTORAGE_TYPE,
+						clusterConfig.getCloudSafeStorageType().name(), AlertSeverity.ERROR, true);
 				break;
 			}
 
 		} catch (DcemException e) {
-			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, e.getErrorCode(), e.getMessage(),
-					AlertSeverity.ERROR, false);
+			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, e.getErrorCode(), e.getMessage(), AlertSeverity.ERROR, false);
 		} catch (Exception e) {
-			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.CLOUD_SAFE_NOT_FOUND,
-					e.getMessage(), AlertSeverity.ERROR, false);
+			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, e.getMessage(), AlertSeverity.ERROR,
+					false);
 		}
 	}
 
@@ -193,8 +191,7 @@ public class CloudSafeLogic {
 		}
 	}
 
-	public String getContentAsString(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser, boolean ocr)
-			throws DcemException {
+	public String getContentAsString(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser, boolean ocr) throws DcemException {
 		InputStream inputStream = null;
 		try {
 			inputStream = getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, ocr);
@@ -213,16 +210,14 @@ public class CloudSafeLogic {
 		}
 	}
 
-	public byte[] getContentAsBytes(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser)
-			throws DcemException {
+	public byte[] getContentAsBytes(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser) throws DcemException {
 		return getContentAsBytes(cloudSafeEntity, password, auditUser, false);
 	}
 
 	/*
 	 * Use this method for short entries only
 	 */
-	public byte[] getContentAsBytes(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser, boolean ocr)
-			throws DcemException {
+	public byte[] getContentAsBytes(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser, boolean ocr) throws DcemException {
 		InputStream inputStream = null;
 		try {
 			inputStream = getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, ocr);
@@ -240,26 +235,23 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public InputStream getCloudSafeContentAsStream(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser)
-			throws DcemException {
+	public InputStream getCloudSafeContentAsStream(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser) throws DcemException {
 		return getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, false);
 	}
 
 	@DcemTransactional
-	public InputStream getCloudSafeContentAsStream(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser,
-			boolean ocrText) throws DcemException {
+	public InputStream getCloudSafeContentAsStream(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser, boolean ocrText) throws DcemException {
 		if (cloudSafeEntity.getName().endsWith(AsConstants.EXTENSION_PASSWORD_SAFE)) {
 			if (passwordSafeEnabled(cloudSafeEntity.getUser()) == false) {
-				throw new DcemException(DcemErrorCodes.PASSWORD_SAFE_NOT_ENABLED,
-						"PasswordSafe is disabled for this user. Please contact your Administrator.");
+				throw new DcemException(DcemErrorCodes.PASSWORD_SAFE_NOT_ENABLED, "PasswordSafe is disabled for this user. Please contact your Administrator.");
 			}
 		}
 		if (cloudSafeEntity.getId() == null) {
 			if (cloudSafeEntity.getParent() == null) {
 				cloudSafeEntity.setParent(getCloudSafeRoot());
 			}
-			cloudSafeEntity = getCloudSafe(cloudSafeEntity.getOwner(), cloudSafeEntity.getName(),
-					cloudSafeEntity.getUser(), null, cloudSafeEntity.getParent().getId(), cloudSafeEntity.getGroup());
+			cloudSafeEntity = getCloudSafe(cloudSafeEntity.getOwner(), cloudSafeEntity.getName(), cloudSafeEntity.getUser(), null,
+					cloudSafeEntity.getParent().getId(), cloudSafeEntity.getGroup());
 		}
 		try {
 			InputStream inputStream;
@@ -272,21 +264,17 @@ public class CloudSafeLogic {
 				if (password == null || password.length == 0) {
 					throw new DcemException(DcemErrorCodes.PASSWORD_MISSING, cloudSafeEntity.getName());
 				}
-				inputStream = SecureServerUtils.getBufferCipherInputStream(password, true, cloudSafeEntity.getSalt(),
-						inputStream, cloudSafeEntity.isGcm());
+				inputStream = SecureServerUtils.getBufferCipherInputStream(password, true, cloudSafeEntity.getSalt(), inputStream, cloudSafeEntity.isGcm());
 			} else if (cloudSafeEntity.isOption(CloudSafeOptions.ENC)) {
-				inputStream = DbEncryption.getBlockCipherInputStream(false, cloudSafeEntity.getSalt(), inputStream,
-						cloudSafeEntity.isGcm());
+				inputStream = DbEncryption.getBlockCipherInputStream(false, cloudSafeEntity.getSalt(), inputStream, cloudSafeEntity.isGcm());
 				if (cloudSafeEntity.isGcm() == false) {
 					int seedLength = inputStream.read(new byte[4]);
 					if (seedLength != 4) {
-						throw new DcemException(DcemErrorCodes.CLOUD_SAFE_FILE_DECRYPTION,
-								"Wrong Seed Length " + cloudSafeEntity.getName());
+						throw new DcemException(DcemErrorCodes.CLOUD_SAFE_FILE_DECRYPTION, "Wrong Seed Length " + cloudSafeEntity.getName());
 					}
 				}
 			}
-			if (auditUser != null && cloudSafeEntity.getOwner() == CloudSafeOwner.USER
-					&& asModule.getModulePreferences().isEnableAuditUser() == true) {
+			if (auditUser != null && cloudSafeEntity.getOwner() == CloudSafeOwner.USER && asModule.getModulePreferences().isEnableAuditUser() == true) {
 				DcemAction dcemAction = new DcemAction(asCloudSafeSubject, DcemConstants.ACTION_VIEW);
 				String shareUser = "";
 				if (auditUser.getId() != cloudSafeEntity.getUser().getId()) {
@@ -322,8 +310,7 @@ public class CloudSafeLogic {
 	 * @return
 	 * @throws DcemException
 	 */
-	public CloudSafeEntity getOwnedOrSharedCloudSafeFromPath(DcemUser dcemUser, long cloudSafeFileId, String path)
-			throws DcemException {
+	public CloudSafeEntity getOwnedOrSharedCloudSafeFromPath(DcemUser dcemUser, long cloudSafeFileId, String path) throws DcemException {
 		CloudSafeEntity cloudSafeEntity = null;
 		if (cloudSafeFileId > 0) {
 			cloudSafeEntity = getCloudSafe((int) cloudSafeFileId, false);
@@ -362,18 +349,15 @@ public class CloudSafeLogic {
 		if (cloudSafeEntity.isRecycled()) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, "Path: " + path);
 		}
-		if (cloudSafeEntity.getDiscardAfter() != null
-				&& cloudSafeEntity.getDiscardAfter().isBefore(LocalDateTime.now())) {
+		if (cloudSafeEntity.getDiscardAfter() != null && cloudSafeEntity.getDiscardAfter().isBefore(LocalDateTime.now())) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, "file expired: " + path);
 		}
 		return cloudSafeEntity;
 	}
 
-	private CloudSafeShareEntity getCloudSafeShareFileByParentId(DcemUser dcemUser, CloudSafeEntity cloudSafeEntity)
-			throws DcemException {
+	private CloudSafeShareEntity getCloudSafeShareFileByParentId(DcemUser dcemUser, CloudSafeEntity cloudSafeEntity) throws DcemException {
 		List<DcemGroup> groups = groupLogic.getAllUserGroups(dcemUser);
-		TypedQuery<CloudSafeShareEntity> query = em
-				.createNamedQuery(CloudSafeShareEntity.GET_USER_SHARE_FILES_BY_PARENT_ID, CloudSafeShareEntity.class);
+		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_USER_SHARE_FILES_BY_PARENT_ID, CloudSafeShareEntity.class);
 		query.setParameter(1, dcemUser);
 		query.setParameter(2, groups.size() > 0 ? groups : null);
 		query.setParameter(3, cloudSafeEntity);
@@ -398,8 +382,8 @@ public class CloudSafeLogic {
 	 * @param device
 	 * @return
 	 */
-	public CloudSafeEntity getCloudSafe(CloudSafeOwner owner, String key, DcemUser user, DeviceEntity device,
-			Integer parentId, DcemGroup dcemGroup) throws DcemException {
+	public CloudSafeEntity getCloudSafe(CloudSafeOwner owner, String key, DcemUser user, DeviceEntity device, Integer parentId, DcemGroup dcemGroup)
+			throws DcemException {
 		TypedQuery<CloudSafeEntity> query = null;
 		if (parentId == null) {
 			parentId = getCloudSafeRoot().getId();
@@ -439,8 +423,7 @@ public class CloudSafeLogic {
 	}
 
 	public CloudSafeEntity getUserCloudSafe(String name, DcemUser user, int parentId) throws DcemException {
-		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDDATA,
-				CloudSafeEntity.class);
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDDATA, CloudSafeEntity.class);
 		query.setParameter(1, name);
 		query.setParameter(2, user);
 		query.setParameter(3, parentId);
@@ -454,31 +437,28 @@ public class CloudSafeLogic {
 
 	public List<CloudSafeEntity> getAllUserCloudSafe(DcemUser dcemUser, List<DcemGroup> groups) {
 		if (groups != null && groups.isEmpty() == false) {
-			TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_ALL_USER_CLOUDSAFE_WITH_GROUP,
-					CloudSafeEntity.class);
+			TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_ALL_USER_CLOUDSAFE_WITH_GROUP, CloudSafeEntity.class);
 			query.setParameter(1, dcemUser);
 			query.setParameter(2, groups);
 			return query.getResultList();
 		}
-		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_ALL_USER_CLOUDSAFE,
-				CloudSafeEntity.class);
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_ALL_USER_CLOUDSAFE, CloudSafeEntity.class);
 		query.setParameter(1, dcemUser);
 		return query.getResultList();
 	}
 
 	public List<CloudSafeEntity> getUserCloudSafeByName(DcemUser dcemUser) {
-		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDSAFE_BY_NAME,
-				CloudSafeEntity.class);
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDSAFE_BY_NAME, CloudSafeEntity.class);
 		query.setParameter(1, dcemUser);
 		query.setParameter(2, getCloudSafeRoot());
 		return query.getResultList();
 	}
 
 	@DcemTransactional
-	public CloudSafeEntity setCloudSafeByteArray(CloudSafeEntity cloudSafeEntity, char[] password, byte[] content,
-			DcemUser loggedInUser, CloudSafeEntity originalDbCloudSafeEntity) throws DcemException {
-		return setCloudSafeStream(cloudSafeEntity, password, new ByteArrayInputStream(content), content.length,
-				loggedInUser, originalDbCloudSafeEntity, null, null);
+	public CloudSafeEntity setCloudSafeByteArray(CloudSafeEntity cloudSafeEntity, char[] password, byte[] content, DcemUser loggedInUser,
+			CloudSafeEntity originalDbCloudSafeEntity) throws DcemException {
+		return setCloudSafeStream(cloudSafeEntity, password, new ByteArrayInputStream(content), content.length, loggedInUser, originalDbCloudSafeEntity, null,
+				null);
 	}
 
 	/**
@@ -491,13 +471,19 @@ public class CloudSafeLogic {
 	 * @return
 	 * @throws DcemException
 	 */
-	private CloudSafeEntity setCloudSafeStream(CloudSafeEntity cloudSafeEntity, char[] password,
-			InputStream inputStream, int length, DcemUser loggedInUser, CloudSafeEntity originalDbCloudSafeEntity,
-			String ocrText, List<CloudSafeTagEntity> toBeAddedTags) throws DcemException {
+	private CloudSafeEntity setCloudSafeStream(CloudSafeEntity cloudSafeEntity, char[] password, InputStream inputStream, int length, DcemUser loggedInUser,
+			CloudSafeEntity originalDbCloudSafeEntity, String ocrText, List<CloudSafeTagEntity> toBeAddedTags) throws DcemException {
 		cloudSafeTagLogic.addMultipleTags(toBeAddedTags);
 		for (CloudSafeTagEntity cloudSafeTagEntity : toBeAddedTags) {
 			cloudSafeEntity.getTags().add(cloudSafeTagEntity);
 		}
+		Set<CloudSafeTagEntity> tags = new HashSet<CloudSafeTagEntity>();
+		for (CloudSafeTagEntity cloudSafeTagEntity : cloudSafeEntity.getTags()) {
+			if (em.contains(cloudSafeTagEntity) == false) {	// attache all tags
+				tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId()));
+			}
+		}
+		cloudSafeEntity.setTags(tags);
 		if (cloudSafeEntity.getSalt() == null) {
 			cloudSafeEntity.setSalt(RandomUtils.getRandom(16));
 		}
@@ -516,7 +502,7 @@ public class CloudSafeLogic {
 				InputStream encryptedStream = getEncryptStream(dbCloudSafeEntity, inputStream, password);
 				long start = System.currentTimeMillis();
 				cloudSafeContentI.writeContentOutput(em, dbCloudSafeEntity, encryptedStream);
-				logger.debug("Write to Storage for Length " +  length + " took: " + (System.currentTimeMillis() - start) );
+				logger.debug("Write to Storage for Length " + length + " took: " + (System.currentTimeMillis() - start));
 				if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
 					if (ocrText == null || ocrText.isEmpty()) {
 						cloudSafeContentI.deleteS3Data(dbCloudSafeEntity.getId(), OCR_TEXT);
@@ -526,16 +512,14 @@ public class CloudSafeLogic {
 						InputStream ocrStream = new ByteArrayInputStream(ocrData);
 						encryptedStream = getEncryptStream(dbCloudSafeEntity, ocrStream, password);
 						cloudSafeEntity.setTextLength((long) ocrData.length);
-						cloudSafeContentI.writeS3Data(dbCloudSafeEntity.getId(), OCR_TEXT, encryptedStream,
-								ocrData.length + 16);
+						cloudSafeContentI.writeS3Data(dbCloudSafeEntity.getId(), OCR_TEXT, encryptedStream, ocrData.length + 16);
 					}
 				}
 				if (dbCloudSafeEntity.getOwner() == CloudSafeOwner.USER) {
 					updateCloudSafeUsage(dbCloudSafeEntity.getUser().getId(), delta);
 				}
 			}
-			if (loggedInUser != null && asModule.getPreferences().isEnableAuditUser() == true
-					&& cloudSafeEntity.getOwner() != CloudSafeOwner.DEVICE) {
+			if (loggedInUser != null && asModule.getPreferences().isEnableAuditUser() == true && cloudSafeEntity.getOwner() != CloudSafeOwner.DEVICE) {
 				DcemAction dcemAction = new DcemAction(asCloudSafeSubject, DcemConstants.ACTION_EDIT);
 				String passwordProtected = "";
 				if (password != null) {
@@ -545,25 +529,21 @@ public class CloudSafeLogic {
 				if (loggedInUser.getId() != cloudSafeEntity.getUser().getId()) {
 					shareUser = AUDIT_SHARED_BY + cloudSafeEntity.getUser().getDisplayNameOrLoginId();
 				}
-				auditingLogic.addAudit(dcemAction, loggedInUser,
-						"File: " + cloudSafeEntity.getName() + passwordProtected + shareUser);
+				auditingLogic.addAudit(dcemAction, loggedInUser, "File: " + cloudSafeEntity.getName() + passwordProtected + shareUser);
 			}
 		}
 		return dbCloudSafeEntity;
 	}
 
-	private InputStream getEncryptStream(CloudSafeEntity dbCloudSafeEntity, InputStream orgInputStream, char[] password)
-			throws DcemException {
+	private InputStream getEncryptStream(CloudSafeEntity dbCloudSafeEntity, InputStream orgInputStream, char[] password) throws DcemException {
 		if (dbCloudSafeEntity.isOption(CloudSafeOptions.PWD) || (dbCloudSafeEntity.isOption(CloudSafeOptions.FPD))) {
 			if (password == null || password.length == 0) {
 				throw new DcemException(DcemErrorCodes.PASSWORD_MISSING, dbCloudSafeEntity.getName());
 			}
-			return SecureServerUtils.getBufferCipherInputStream(password, false, dbCloudSafeEntity.getSalt(),
-					orgInputStream, dbCloudSafeEntity.isGcm());
+			return SecureServerUtils.getBufferCipherInputStream(password, false, dbCloudSafeEntity.getSalt(), orgInputStream, dbCloudSafeEntity.isGcm());
 		} else if (dbCloudSafeEntity.isOption(CloudSafeOptions.ENC)) {
 			try {
-				return DbEncryption.getBlockCipherInputStream(true, dbCloudSafeEntity.getSalt(), orgInputStream,
-						dbCloudSafeEntity.isGcm());
+				return DbEncryption.getBlockCipherInputStream(true, dbCloudSafeEntity.getSalt(), orgInputStream, dbCloudSafeEntity.isGcm());
 			} catch (Exception e) {
 				throw new DcemException(DcemErrorCodes.CLOUD_SAFE_FILE_DECRYPTION, dbCloudSafeEntity.getName());
 			}
@@ -573,8 +553,8 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public CloudSafeEntity updateCloudSafeEntity(CloudSafeEntity cloudSafeEntity, DcemUser loggedInUser,
-			boolean allowRecycled, CloudSafeEntity originalDbEntity) throws DcemException {
+	public CloudSafeEntity updateCloudSafeEntity(CloudSafeEntity cloudSafeEntity, DcemUser loggedInUser, boolean allowRecycled,
+			CloudSafeEntity originalDbEntity) throws DcemException {
 		if (StringUtils.isValidFileName(cloudSafeEntity.getName()) == false) {
 			throw new DcemException(DcemErrorCodes.FILE_NAME_WITH_SPECIAL_CHARACTERS, cloudSafeEntity.getName());
 		}
@@ -593,11 +573,8 @@ public class CloudSafeLogic {
 		try {
 			if (originalDbEntity == null) {
 				// can only be user owner for backward compatibility
-				originalDbEntity = getCloudSafe(cloudSafeEntity.getOwner(), cloudSafeEntity.getName(),
-						cloudSafeEntity.getUser(), cloudSafeEntity.getDevice(),
-						cloudSafeEntity.getParent() == null ? getCloudSafeRoot().getId()
-								: cloudSafeEntity.getParent().getId(),
-						cloudSafeEntity.getGroup());
+				originalDbEntity = getCloudSafe(cloudSafeEntity.getOwner(), cloudSafeEntity.getName(), cloudSafeEntity.getUser(), cloudSafeEntity.getDevice(),
+						cloudSafeEntity.getParent() == null ? getCloudSafeRoot().getId() : cloudSafeEntity.getParent().getId(), cloudSafeEntity.getGroup());
 			}
 			if (cloudSafeEntity.getLastModified() != null) {
 				// Check synchronization !!!
@@ -692,8 +669,7 @@ public class CloudSafeLogic {
 					if (cloudSafe.getDeviceName() == null) {
 						throw new DcemException(DcemErrorCodes.INVALID_CLOUDDATA_DEVICE, null);
 					}
-					DeviceEntity device = deviceLogic.getDeviceByName(cloudSafe.getUser(), cloudSafe.getDeviceName(),
-							DeviceState.Enabled);
+					DeviceEntity device = deviceLogic.getDeviceByName(cloudSafe.getUser(), cloudSafe.getDeviceName(), DeviceState.Enabled);
 					if (device == null) {
 						throw new DcemException(DcemErrorCodes.INVALID_CLOUDDATA_DEVICE, null);
 					}
@@ -710,8 +686,7 @@ public class CloudSafeLogic {
 	@DcemTransactional
 	public void deleteExpiredCloudSafe() {
 		deleteExpiredCloudShare();
-		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_EXPIRED_DATA,
-				CloudSafeEntity.class);
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_EXPIRED_DATA, CloudSafeEntity.class);
 		query.setParameter(1, LocalDateTime.now().minusDays(1));
 		List<CloudSafeEntity> list = query.getResultList();
 		for (CloudSafeEntity entity : list) {
@@ -729,8 +704,7 @@ public class CloudSafeLogic {
 	}
 
 	private void deleteExpiredCloudShare() {
-		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_DISCARDED,
-				CloudSafeShareEntity.class);
+		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_DISCARDED, CloudSafeShareEntity.class);
 		query.setParameter(1, LocalDateTime.now().minusDays(1));
 		List<CloudSafeShareEntity> list = query.getResultList();
 		for (CloudSafeShareEntity entity : list) {
@@ -774,8 +748,7 @@ public class CloudSafeLogic {
 
 		CloudSafeEntity rootEntity = getCloudSafeRoot();
 		CloudSafeDto rootDto = new CloudSafeDto(rootEntity);
-		List<CloudSafeDto> cloudSafeToDeleteList = deleteSubdirectories(rootDto, new ArrayList<CloudSafeDto>(),
-				dcemUser);
+		List<CloudSafeDto> cloudSafeToDeleteList = deleteSubdirectories(rootDto, new ArrayList<CloudSafeDto>(), dcemUser);
 		deleteCloudSafeFilesContent(cloudSafeToDeleteList);
 		CloudSafeLimitEntity cloudSafeLimitEntity = getCloudSafeLimitEntity(dcemUser.getId());
 		if (cloudSafeLimitEntity != null) {
@@ -800,8 +773,7 @@ public class CloudSafeLogic {
 	}
 
 	public CloudSafeEntity getCloudSafe(Integer id, boolean recycled) {
-		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_BY_ID_AND_RECYCLE_STATE,
-				CloudSafeEntity.class);
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_BY_ID_AND_RECYCLE_STATE, CloudSafeEntity.class);
 		query.setParameter(1, id);
 		query.setParameter(2, recycled);
 		try {
@@ -834,8 +806,7 @@ public class CloudSafeLogic {
 	// }
 
 	public CloudSafeShareEntity getCloudShareByShareId(int id) {
-		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_BY_SHARE_ID,
-				CloudSafeShareEntity.class);
+		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_BY_SHARE_ID, CloudSafeShareEntity.class);
 		query.setParameter(1, id);
 		try {
 			return query.getSingleResult();
@@ -849,8 +820,7 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public void addOrEditShareCloudSafeFile(CloudSafeShareEntity cloudSafeShareEntity, String userLoginId,
-			DcemGroup dcemGroup) throws DcemException {
+	public void addOrEditShareCloudSafeFile(CloudSafeShareEntity cloudSafeShareEntity, String userLoginId, DcemGroup dcemGroup) throws DcemException {
 		if (cloudSafeShareEntity == null) {
 			throw new DcemException(DcemErrorCodes.INVALID_PARAMETER, "AsApiShareCloudSafe");
 		}
@@ -878,10 +848,8 @@ public class CloudSafeLogic {
 		}
 	}
 
-	private CloudSafeShareEntity getCloudShare(CloudSafeEntity cloudSafeEntity, DcemUser user, DcemGroup group)
-			throws DcemException {
-		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE,
-				CloudSafeShareEntity.class);
+	private CloudSafeShareEntity getCloudShare(CloudSafeEntity cloudSafeEntity, DcemUser user, DcemGroup group) throws DcemException {
+		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE, CloudSafeShareEntity.class);
 		query.setParameter(1, cloudSafeEntity);
 		query.setParameter(2, user);
 		query.setParameter(3, group);
@@ -901,14 +869,12 @@ public class CloudSafeLogic {
 		em.remove(cloudSafeShareEntity);
 	}
 
-	public List<CloudSafeShareEntity> getUserCloudSafeShareEntities(DcemUser dcemUser, String nameFilter)
-			throws DcemException {
+	public List<CloudSafeShareEntity> getUserCloudSafeShareEntities(DcemUser dcemUser, String nameFilter) throws DcemException {
 		if (dcemUser == null) {
 			throw new DcemException(DcemErrorCodes.INVALID_USERID, null);
 		}
 		List<DcemGroup> groups = groupLogic.getAllUserGroups(dcemUser);
-		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_USER_SHARE_FILES,
-				CloudSafeShareEntity.class);
+		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_USER_SHARE_FILES, CloudSafeShareEntity.class);
 		query.setParameter(1, dcemUser);
 		query.setParameter(2, groups.size() > 0 ? groups : null);
 		query.setParameter(3, isNullOrEmpty(nameFilter) ? "%" : nameFilter);
@@ -928,14 +894,12 @@ public class CloudSafeLogic {
 		return new ArrayList<CloudSafeShareEntity>(sharedCloudSafeFilesMap.values());
 	}
 
-	public List<CloudSafeShareEntity> getCloudSafeShareEntities(DcemUser dcemUser, CloudSafeEntity cloudSafeEntity)
-			throws DcemException {
+	public List<CloudSafeShareEntity> getCloudSafeShareEntities(DcemUser dcemUser, CloudSafeEntity cloudSafeEntity) throws DcemException {
 		if (dcemUser == null) {
 			throw new DcemException(DcemErrorCodes.INVALID_USERID, "");
 		}
 		List<DcemGroup> groups = groupLogic.getAllUserGroups(dcemUser);
-		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_CLOUD_SHARE_FILES,
-				CloudSafeShareEntity.class);
+		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_CLOUD_SHARE_FILES, CloudSafeShareEntity.class);
 		query.setParameter(1, dcemUser);
 		query.setParameter(2, groups.size() > 0 ? groups : null);
 		query.setParameter(3, cloudSafeEntity);
@@ -948,19 +912,15 @@ public class CloudSafeLogic {
 	 * @return
 	 * @throws DcemException
 	 */
-	public List<CloudSafeShareEntity> getSharedCloudSafeUsersAccess(AsApiCloudSafeFile cloudSafeFile)
-			throws DcemException {
+	public List<CloudSafeShareEntity> getSharedCloudSafeUsersAccess(AsApiCloudSafeFile cloudSafeFile) throws DcemException {
 		CloudSafeEntity cloudSafeEntity = getCloudSafeEntity(cloudSafeFile);
-		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_ACCESS,
-				CloudSafeShareEntity.class);
+		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_ACCESS, CloudSafeShareEntity.class);
 		query.setParameter(1, cloudSafeEntity);
 		return query.getResultList();
 	}
 
-	public List<CloudSafeShareEntity> getSharedCloudSafeUsersAccess(CloudSafeEntity cloudSafeEntity)
-			throws DcemException {
-		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_ACCESS,
-				CloudSafeShareEntity.class);
+	public List<CloudSafeShareEntity> getSharedCloudSafeUsersAccess(CloudSafeEntity cloudSafeEntity) throws DcemException {
+		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_ACCESS, CloudSafeShareEntity.class);
 		query.setParameter(1, cloudSafeEntity);
 		return query.getResultList();
 	}
@@ -978,8 +938,7 @@ public class CloudSafeLogic {
 
 	@DcemTransactional
 	public void deleteUserShareData(DcemUser dcemUser) {
-		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_USER,
-				CloudSafeShareEntity.class);
+		TypedQuery<CloudSafeShareEntity> query = em.createNamedQuery(CloudSafeShareEntity.GET_SHARE_USER, CloudSafeShareEntity.class);
 		query.setParameter(1, dcemUser); // TODO Is this normal?
 		query.setParameter(2, dcemUser);
 
@@ -997,16 +956,15 @@ public class CloudSafeLogic {
 		query.executeUpdate();
 	}
 
-	public List<CloudSafeEntity> getCloudSafeAllFileList(int userId, String nameFilter, long modifiedFromEpoch,
-			CloudSafeOwner owner, boolean withShareFiles) throws DcemException {
+	public List<CloudSafeEntity> getCloudSafeAllFileList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, boolean withShareFiles)
+			throws DcemException {
 		DcemUser user = userLogic.getUser(userId);
 		if (user == null) {
 			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for Cloud Data Filenames.");
 		}
 		LocalDateTime modifiedFrom = DcemUtils.convertEpoch(modifiedFromEpoch);
 		String like = nameFilter == null || nameFilter.isEmpty() ? "%" : nameFilter;
-		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_OWNED_FILE_KEYS,
-				CloudSafeEntity.class);
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_OWNED_FILE_KEYS, CloudSafeEntity.class);
 		query.setParameter(1, like);
 		query.setParameter(2, LocalDateTime.now());
 		query.setParameter(3, user);
@@ -1022,8 +980,8 @@ public class CloudSafeLogic {
 		return cloudSafeEntities;
 	}
 
-	public List<SdkCloudSafe> getCloudSafeFileList(int userId, String nameFilter, long modifiedFromEpoch,
-			CloudSafeOwner owner, boolean withShareFiles, int libVersion) throws DcemException {
+	public List<SdkCloudSafe> getCloudSafeFileList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, boolean withShareFiles,
+			int libVersion) throws DcemException {
 		DcemUser user = userLogic.getUser(userId);
 		if (user == null) {
 			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for Cloud Data Filenames.");
@@ -1034,8 +992,7 @@ public class CloudSafeLogic {
 
 		List<DcemGroup> allUsersGroups = groupLogic.getAllUserGroups(user);
 
-		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_USER_FILE_LIST,
-				CloudSafeEntity.class);
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_USER_FILE_LIST, CloudSafeEntity.class);
 		query.setParameter(1, like);
 		query.setParameter(2, now);
 		query.setParameter(3, user);
@@ -1062,12 +1019,9 @@ public class CloudSafeLogic {
 				cloudSafeKey.setGroupName(cloudSafeEntity.getGroup().getName());
 				cloudSafeKey.setOwner(CloudSafeOwner.GROUP);
 			}
-			list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(),
-					cloudSafeEntity.getDiscardAfterAsLong(),
-					cloudSafeEntity.getLastModified() != null
-							? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000)
-							: 0,
-					null, cloudSafeEntity.getLength(), null, true, false));
+			list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
+					cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
+					cloudSafeEntity.getLength(), null, true, false));
 		}
 		if (withShareFiles) {
 			List<CloudSafeShareEntity> cloudSafeShareEntities = getUserCloudSafeShareEntities(user, like);
@@ -1087,30 +1041,21 @@ public class CloudSafeLogic {
 					}
 					SdkCloudSafeKey cloudSafeKey;
 					if (cloudSafeShareEntity.getCloudSafe().getOwner().equals(CloudSafeOwner.GROUP)) {
-						cloudSafeKey = new SdkCloudSafeKey(
-								(libVersion < AsConstants.LIB_VERION_2 ? CloudSafeOwner.USER : CloudSafeOwner.GROUP),
-								AsConstants.SHARE_BY_GROUP_START + cloudSafeShareEntity.getCloudSafe().getGroup()
-										+ AsConstants.SHARE_BY_GROUP_END + AsConstants.SHARE_BY_SEPERATOR
-										+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? ""
+						cloudSafeKey = new SdkCloudSafeKey((libVersion < AsConstants.LIB_VERION_2 ? CloudSafeOwner.USER : CloudSafeOwner.GROUP),
+								AsConstants.SHARE_BY_GROUP_START + cloudSafeShareEntity.getCloudSafe().getGroup() + AsConstants.SHARE_BY_GROUP_END
+										+ AsConstants.SHARE_BY_SEPERATOR + (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? ""
 												: cloudSafeEntity.getParent().getId() + "/")
 										+ cloudSafeEntity.getName());
 					} else {
-						cloudSafeKey = new SdkCloudSafeKey(owner,
-								cloudSafeShareEntity.getCloudSafe().getUser().getLoginId()
-										+ AsConstants.SHARE_BY_SEPERATOR
-										+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? ""
-												: cloudSafeEntity.getParent().getId() + "/")
-										+ cloudSafeEntity.getName());
+						cloudSafeKey = new SdkCloudSafeKey(owner, cloudSafeShareEntity.getCloudSafe().getUser().getLoginId() + AsConstants.SHARE_BY_SEPERATOR
+								+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? "" : cloudSafeEntity.getParent().getId() + "/")
+								+ cloudSafeEntity.getName());
 					}
 					cloudSafeKey.setDbId(cloudSafeEntity.getId());
 					// cloudSafeKey.setOwner(cloudSafeEntity.getOwner());
-					list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(),
-							cloudSafeEntity.getDiscardAfterAsLong(),
-							cloudSafeEntity.getLastModified() != null
-									? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000)
-									: 0,
-							null, cloudSafeEntity.getLength(),
-							cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null,
+					list.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
+							cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
+							cloudSafeEntity.getLength(), cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null,
 							cloudSafeShareEntity.isWriteAccess(), cloudSafeShareEntity.isRestrictDownload()));
 				}
 			}
@@ -1119,8 +1064,8 @@ public class CloudSafeLogic {
 		return list;
 	}
 
-	public List<SdkCloudSafe> getCloudSafeSharedFileList(int userId, String nameFilter, long modifiedFromEpoch,
-			CloudSafeOwner owner, int libVersion) throws DcemException {
+	public List<SdkCloudSafe> getCloudSafeSharedFileList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, int libVersion)
+			throws DcemException {
 		DcemUser user = userLogic.getUser(userId);
 		if (user == null) {
 			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for Cloud Data Filenames.");
@@ -1146,29 +1091,22 @@ public class CloudSafeLogic {
 				}
 				SdkCloudSafeKey cloudSafeKey;
 				if (cloudSafeShareEntity.getCloudSafe().getOwner().equals(CloudSafeOwner.GROUP)) {
-					cloudSafeKey = new SdkCloudSafeKey(
-							(libVersion < AsConstants.LIB_VERION_2 ? CloudSafeOwner.USER : CloudSafeOwner.GROUP),
-							AsConstants.SHARE_BY_GROUP_START + cloudSafeShareEntity.getCloudSafe().getGroup()
-									+ AsConstants.SHARE_BY_GROUP_END + AsConstants.SHARE_BY_SEPERATOR
-									+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? ""
-											: cloudSafeEntity.getParent().getId() + "/")
+					cloudSafeKey = new SdkCloudSafeKey((libVersion < AsConstants.LIB_VERION_2 ? CloudSafeOwner.USER : CloudSafeOwner.GROUP),
+							AsConstants.SHARE_BY_GROUP_START + cloudSafeShareEntity.getCloudSafe().getGroup() + AsConstants.SHARE_BY_GROUP_END
+									+ AsConstants.SHARE_BY_SEPERATOR
+									+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? "" : cloudSafeEntity.getParent().getId() + "/")
 									+ cloudSafeEntity.getName());
 				} else {
 					cloudSafeKey = new SdkCloudSafeKey(owner,
 							cloudSafeShareEntity.getCloudSafe().getUser().getLoginId() + AsConstants.SHARE_BY_SEPERATOR
-									+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? ""
-											: cloudSafeEntity.getParent().getId() + "/")
+									+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? "" : cloudSafeEntity.getParent().getId() + "/")
 									+ cloudSafeEntity.getName());
 				}
 				cloudSafeKey.setDbId(cloudSafeEntity.getId());
 				// cloudSafeKey.setOwner(cloudSafeEntity.getOwner());
-				result.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(),
-						cloudSafeEntity.getDiscardAfterAsLong(),
-						cloudSafeEntity.getLastModified() != null
-								? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000)
-								: 0,
-						null, cloudSafeEntity.getLength(),
-						cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null,
+				result.add(new SdkCloudSafe(cloudSafeKey, null, cloudSafeEntity.getOptions(), cloudSafeEntity.getDiscardAfterAsLong(),
+						cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
+						cloudSafeEntity.getLength(), cloudSafeShareEntity.getUser() != null ? cloudSafeShareEntity.getUser().getLoginId() : null,
 						cloudSafeShareEntity.isWriteAccess(), cloudSafeShareEntity.isRestrictDownload()));
 			}
 		}
@@ -1176,11 +1114,9 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public void renameCloudSafe(CloudSafeEntity cloudSafeEntity, String newName, DcemUser loggedInUser,
-			boolean allowRecycled) throws DcemException {
+	public void renameCloudSafe(CloudSafeEntity cloudSafeEntity, String newName, DcemUser loggedInUser, boolean allowRecycled) throws DcemException {
 		try {
-			if (cloudSafeEntity.getUser().getId().equals(loggedInUser.getId()) == false
-					&& cloudSafeEntity.getOwner().equals(CloudSafeOwner.GROUP) == false) {
+			if (cloudSafeEntity.getUser().getId().equals(loggedInUser.getId()) == false && cloudSafeEntity.getOwner().equals(CloudSafeOwner.GROUP) == false) {
 				throw new DcemException(DcemErrorCodes.CLOUD_SAFE_CANNOT_RENAME_SHARED_FILE, cloudSafeEntity.getName());
 			}
 			cloudSafeEntity.setName(newName);
@@ -1195,12 +1131,10 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public List<CloudSafeDto> deleteCloudSafeFiles(List<CloudSafeEntity> list, DcemUser loggedInUser,
-			boolean shouldRecycle) throws Exception {
+	public List<CloudSafeDto> deleteCloudSafeFiles(List<CloudSafeEntity> list, DcemUser loggedInUser, boolean shouldRecycle) throws Exception {
 		List<CloudSafeDto> allDeletedFiles = new ArrayList<CloudSafeDto>();
 		for (CloudSafeEntity cloudSafeEntity : list) {
-			if (loggedInUser != null && cloudSafeEntity.getOwner() == CloudSafeOwner.USER
-					&& asModule.getModulePreferences().isEnableAuditUser() == true
+			if (loggedInUser != null && cloudSafeEntity.getOwner() == CloudSafeOwner.USER && asModule.getModulePreferences().isEnableAuditUser() == true
 					&& cloudSafeEntity.isRecycled() == false) {
 				DcemAction dcemAction = new DcemAction(asCloudSafeSubject, DcemConstants.ACTION_DELETE);
 				String shareUser = "";
@@ -1237,8 +1171,7 @@ public class CloudSafeLogic {
 	 * @throws DcemException
 	 */
 	@DcemTransactional
-	public List<CloudSafeDto> deleteCloudSafe(CloudSafeEntity cloudSafeEntity, DcemUser loggedInUser,
-			boolean shouldRecycle) throws DcemException {
+	public List<CloudSafeDto> deleteCloudSafe(CloudSafeEntity cloudSafeEntity, DcemUser loggedInUser, boolean shouldRecycle) throws DcemException {
 		// Check if entity is within Recycling Bin
 		boolean recycled = checkEntityIsRecycled(cloudSafeEntity);
 		if (recycled == true || shouldRecycle == false) {
@@ -1273,8 +1206,7 @@ public class CloudSafeLogic {
 	private String getFullPath(int id, String path) {
 		CloudSafeNameDto cloudsafe;
 		if (fullPathCache.containsKey(id) == false) {
-			TypedQuery<CloudSafeNameDto> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_BY_ID,
-					CloudSafeNameDto.class);
+			TypedQuery<CloudSafeNameDto> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_BY_ID, CloudSafeNameDto.class);
 			query.setParameter(1, id);
 			cloudsafe = query.getSingleResult();
 			fullPathCache.put(id, new CloudSafeNameDto(id, cloudsafe.getName(), cloudsafe.getParentId()));
@@ -1299,11 +1231,9 @@ public class CloudSafeLogic {
 	 * @return
 	 * @throws DcemException
 	 */
-	public List<CloudSafeEntity> queryCloudSafeFiles(List<ApiFilterItem> filterItems, Integer offset,
-			Integer maxResults) throws DcemException {
+	public List<CloudSafeEntity> queryCloudSafeFiles(List<ApiFilterItem> filterItems, Integer offset, Integer maxResults) throws DcemException {
 
-		JpaSelectProducer<CloudSafeEntity> jpaSelectProducer = new JpaSelectProducer<CloudSafeEntity>(em,
-				CloudSafeEntity.class);
+		JpaSelectProducer<CloudSafeEntity> jpaSelectProducer = new JpaSelectProducer<CloudSafeEntity>(em, CloudSafeEntity.class);
 		int firstResult = 0;
 		if (offset != null) {
 			firstResult = offset.intValue();
@@ -1327,10 +1257,9 @@ public class CloudSafeLogic {
 		CriteriaQuery<CloudSafeEntity> fileQuery = builder.createQuery(CloudSafeEntity.class);
 		Root<CloudSafeEntity> fileRoot = fileQuery.from(CloudSafeEntity.class);
 		fileQuery.select(fileRoot).where(builder.equal(fileRoot.get("name"), parent),
-				user == null ? builder.isNull(fileRoot.get("user")) : builder.equal(fileRoot.get("user"), user),
-				builder.equal(fileRoot.get("isFolder"), false), builder.equal(fileRoot.get("owner"), owner),
-				device == null ? builder.equal(fileRoot.get("device"), getRootDevice())
-						: builder.equal(fileRoot.get("device"), device));
+				user == null ? builder.isNull(fileRoot.get("user")) : builder.equal(fileRoot.get("user"), user), builder.equal(fileRoot.get("isFolder"), false),
+				builder.equal(fileRoot.get("owner"), owner),
+				device == null ? builder.equal(fileRoot.get("device"), getRootDevice()) : builder.equal(fileRoot.get("device"), device));
 
 		if (dirs.length > 1) {
 
@@ -1341,15 +1270,12 @@ public class CloudSafeLogic {
 				Subquery<Integer> folderQuery = lastQuery.subquery(Integer.class);
 				Root<CloudSafeEntity> folderRoot = folderQuery.from(CloudSafeEntity.class);
 				folderQuery.select(folderRoot.get("id")).where(builder.equal(folderRoot.get("name"), dirs[i]),
-						user == null ? builder.isNull(fileRoot.get("user"))
-								: builder.equal(folderRoot.get("user"), user),
+						user == null ? builder.isNull(fileRoot.get("user")) : builder.equal(folderRoot.get("user"), user),
 						builder.equal(folderRoot.get("isFolder"), true), builder.equal(folderRoot.get("owner"), owner),
-						device == null ? builder.equal(fileRoot.get("device"), getRootDevice())
-								: builder.equal(fileRoot.get("device"), device));
+						device == null ? builder.equal(fileRoot.get("device"), getRootDevice()) : builder.equal(fileRoot.get("device"), device));
 
 				if (i == 0) {
-					folderQuery.where(folderQuery.getRestriction(),
-							builder.equal(folderRoot.get("parent"), getCloudSafeRoot()));
+					folderQuery.where(folderQuery.getRestriction(), builder.equal(folderRoot.get("parent"), getCloudSafeRoot()));
 				}
 
 				lastQuery.where(lastQuery.getRestriction(), lastRoot.get("parent").in(folderQuery));
@@ -1385,10 +1311,8 @@ public class CloudSafeLogic {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		CriteriaQuery<CloudSafeEntity> fileQuery = builder.createQuery(CloudSafeEntity.class);
 		Root<CloudSafeEntity> fileRoot = fileQuery.from(CloudSafeEntity.class);
-		fileQuery.select(fileRoot).where(builder.equal(fileRoot.get(CloudSafeEntity_.user), user),
-				builder.equal(fileRoot.get(CloudSafeEntity_.isFolder), true),
-				builder.equal(fileRoot.get(CloudSafeEntity_.owner), CloudSafeOwner.USER),
-				builder.equal(fileRoot.get(CloudSafeEntity_.name), dirRoot));
+		fileQuery.select(fileRoot).where(builder.equal(fileRoot.get(CloudSafeEntity_.user), user), builder.equal(fileRoot.get(CloudSafeEntity_.isFolder), true),
+				builder.equal(fileRoot.get(CloudSafeEntity_.owner), CloudSafeOwner.USER), builder.equal(fileRoot.get(CloudSafeEntity_.name), dirRoot));
 
 		if (dirs.length > 1) {
 			AbstractQuery<?> lastQuery = fileQuery;
@@ -1396,13 +1320,11 @@ public class CloudSafeLogic {
 			for (int i = dirs.length - 2; i >= 0; i--) {
 				Subquery<Integer> folderQuery = lastQuery.subquery(Integer.class);
 				Root<CloudSafeEntity> folderRoot = folderQuery.from(CloudSafeEntity.class);
-				folderQuery.select(folderRoot.get("id")).where(builder.equal(folderRoot.get("name"), dirs[i]),
-						builder.equal(folderRoot.get("user"), user), builder.equal(folderRoot.get("isFolder"), true),
-						builder.equal(folderRoot.get("owner"), CloudSafeOwner.USER));
+				folderQuery.select(folderRoot.get("id")).where(builder.equal(folderRoot.get("name"), dirs[i]), builder.equal(folderRoot.get("user"), user),
+						builder.equal(folderRoot.get("isFolder"), true), builder.equal(folderRoot.get("owner"), CloudSafeOwner.USER));
 
 				if (i == 0) {
-					folderQuery.where(folderQuery.getRestriction(),
-							builder.equal(folderRoot.get("parent"), getCloudSafeRoot()));
+					folderQuery.where(folderQuery.getRestriction(), builder.equal(folderRoot.get("parent"), getCloudSafeRoot()));
 				}
 
 				lastQuery.where(lastQuery.getRestriction(), lastRoot.get("parent").in(folderQuery));
@@ -1431,8 +1353,7 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public void setCloudSafeLimits(List<Integer> userIds, long limit, LocalDateTime expiryDate,
-			boolean passwordSafeEnabled) throws DcemException {
+	public void setCloudSafeLimits(List<Integer> userIds, long limit, LocalDateTime expiryDate, boolean passwordSafeEnabled) throws DcemException {
 
 		validateCloudSafeLimits(userIds, limit, expiryDate);
 
@@ -1448,8 +1369,7 @@ public class CloudSafeLogic {
 			TypedQuery<Integer> tQuery = em.createNamedQuery(CloudSafeLimitEntity.GET_EXISTING_USERS, Integer.class);
 			tQuery.setParameter(1, userIds);
 			List<Integer> existingUsers = tQuery.getResultList();
-			List<Integer> newUserIds = userIds.stream().filter(i -> !existingUsers.contains(i))
-					.collect(Collectors.toList());
+			List<Integer> newUserIds = userIds.stream().filter(i -> !existingUsers.contains(i)).collect(Collectors.toList());
 			List<DcemUser> newUsers = userLogic.getUsers(newUserIds);
 			for (DcemUser user : newUsers) {
 				CloudSafeLimitEntity entity = new CloudSafeLimitEntity(user, limit, 0, expiryDate, passwordSafeEnabled);
@@ -1458,8 +1378,7 @@ public class CloudSafeLogic {
 		}
 	}
 
-	private void validateCloudSafeLimits(List<Integer> userIds, long limit, LocalDateTime expiryDate)
-			throws DcemException {
+	private void validateCloudSafeLimits(List<Integer> userIds, long limit, LocalDateTime expiryDate) throws DcemException {
 
 		if (userIds == null || userIds.isEmpty()) {
 			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "No user is defined");
@@ -1473,15 +1392,13 @@ public class CloudSafeLogic {
 		LocalDateTime licenceExpiryDate = licenceKeyContent.getLdtExpiresOn();
 		if (expiryDate != null && expiryDate.isAfter(licenceExpiryDate)) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_LIMIT_EXCEEDS_GLOBAL,
-					"The expiry date " + getStringFromDate(expiryDate) + " exceeds the licence expiry date of "
-							+ getStringFromDate(licenceExpiryDate));
+					"The expiry date " + getStringFromDate(expiryDate) + " exceeds the licence expiry date of " + getStringFromDate(licenceExpiryDate));
 		}
 
 		long globalLimit = licenceKeyContent.getCloudSafeStoageMb() * (1024 * 1024);
 		if (limit > globalLimit) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_LIMIT_EXCEEDS_GLOBAL,
-					"The limit of " + DataUnit.getByteCountAsString(limit) + " exceeds the licence limit of "
-							+ DataUnit.getByteCountAsString(globalLimit));
+					"The limit of " + DataUnit.getByteCountAsString(limit) + " exceeds the licence limit of " + DataUnit.getByteCountAsString(globalLimit));
 		}
 	}
 
@@ -1495,8 +1412,7 @@ public class CloudSafeLogic {
 		// 2. Check if PasswordSafe file, then check against Billing table
 		if (cloudSafe.getName().endsWith(AsConstants.EXTENSION_PASSWORD_SAFE)) {
 			if (!passwordSafeEnabled(user)) {
-				throw new DcemException(DcemErrorCodes.PASSWORD_SAFE_NOT_ENABLED,
-						"PasswordSafe is disabled for this user. Please contact your Administrator.");
+				throw new DcemException(DcemErrorCodes.PASSWORD_SAFE_NOT_ENABLED, "PasswordSafe is disabled for this user. Please contact your Administrator.");
 			}
 		}
 	}
@@ -1515,16 +1431,15 @@ public class CloudSafeLogic {
 			if (cloudSafeEntity.getUser() == null) {
 				throw new DcemException(DcemErrorCodes.USER_IS_NULL, "No user specified for new CloudSafe content.");
 			} else {
-				// return validateUserCloudSafeContentChange(cloudSafeEntity, newLength);
-				return newLength;
+				return validateUserCloudSafeContentChange(cloudSafeEntity, newLength);
+				// return newLength;
 			}
 		} else { // do not check limits if Global or Device
 			return 0;
 		}
 	}
 
-	private long validateUserCloudSafeContentChange(CloudSafeEntity cloudSafeEntity, long newLength)
-			throws DcemException {
+	private long validateUserCloudSafeContentChange(CloudSafeEntity cloudSafeEntity, long newLength) throws DcemException {
 
 		LicenceKeyContent licenceKeyContent = licenceLogic.getLicenceKeyContent();
 		// In Bytes
@@ -1557,25 +1472,25 @@ public class CloudSafeLogic {
 			userUsedExcludingEntity = query.getSingleResult();
 		} catch (NoResultException e) {
 			userUsedExcludingEntity = 0;
+		} catch (Exception e) {
+			System.out.println("CloudSafeLogic.validateUserCloudSafeContentChange()");
+			throw e;
 		}
 		long newUserTotal = userUsedExcludingEntity + newLength;
 		long previousUserTotal = limitEntity != null ? limitEntity.getUsed() : 0;
 		long delta = newUserTotal - previousUserTotal;
 		if (newUserTotal >= userLimit) {
 			String errorMessage = previousUserTotal > userLimit
-					? "User's CloudSafe limit (" + DataUnit.getByteCountAsString(userLimit)
-							+ ") has already been reached."
-					: "Tried to add " + DataUnit.getByteCountAsString(delta) + " in " + user.getLoginId()
-							+ "'s CloudSafe when only " + DataUnit.getByteCountAsString(userLimit - previousUserTotal)
-							+ " are left.";
+					? "User's CloudSafe limit (" + DataUnit.getByteCountAsString(userLimit) + ") has already been reached."
+					: "Tried to add " + DataUnit.getByteCountAsString(delta) + " in " + user.getLoginId() + "'s CloudSafe when only "
+							+ DataUnit.getByteCountAsString(userLimit - previousUserTotal) + " are left.";
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_USER_LIMIT_REACHED, errorMessage);
 		}
 
 		// 3. Check against global Cloud Safe limit
 		if (globalUsed + delta >= globalLimit) {
 			String errorMessage = globalUsed > globalLimit
-					? "The Licence's CloudSafe limit (" + DataUnit.getByteCountAsString(globalLimit)
-							+ ") has already been reached."
+					? "The Licence's CloudSafe limit (" + DataUnit.getByteCountAsString(globalLimit) + ") has already been reached."
 					: "Tried to add " + DataUnit.getByteCountAsString(delta) + " in CloudSafe are left in the licence.";
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_GLOBAL_LIMIT_REACHED, errorMessage);
 		}
@@ -1629,8 +1544,7 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public List<CloudSafeEntity> saveMultipleFiles(List<CloudSafeUploadFile> uploadedFiles, DcemUser dcemUser)
-			throws Exception {
+	public List<CloudSafeEntity> saveMultipleFiles(List<CloudSafeUploadFile> uploadedFiles, DcemUser dcemUser) throws Exception {
 		HashSet<String> hashSet = new HashSet<>();
 		List<CloudSafeEntity> savedFiles = new ArrayList<>();
 		for (CloudSafeUploadFile cloudSafeUploadedFile : uploadedFiles) {
@@ -1641,8 +1555,7 @@ public class CloudSafeLogic {
 				cloudSafeUploadedFile.cloudSafeEntity.setParent(getCloudSafeRoot());
 			}
 			CloudSafeEntity cloudSafeEntity = setCloudSafeStream(cloudSafeUploadedFile.cloudSafeEntity, (char[]) null,
-					new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(),
-					dcemUser, null, null, null); // no OCR
+					new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser, null, null, null); // no OCR
 			hashSet.add(cloudSafeUploadedFile.fileName);
 			savedFiles.add(cloudSafeEntity);
 		}
@@ -1650,10 +1563,9 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public List<CloudSafeEntity> saveMultipleFiles(List<DcemUploadFile> uploadedFiles, DcemUser dcemUser,
-			String filePassword, LocalDateTime expiryDate, boolean passwordProtected, boolean encryptProtected,
-			CloudSafeEntity parent, DcemUser lastModifiedUser, DcemGroup groupOwner, CloudSafeOwner cloudSafeOwner)
-			throws Exception {
+	public List<CloudSafeEntity> saveMultipleFiles(List<DcemUploadFile> uploadedFiles, DcemUser dcemUser, String filePassword, LocalDateTime expiryDate,
+			boolean passwordProtected, boolean encryptProtected, CloudSafeEntity parent, DcemUser lastModifiedUser, DcemGroup groupOwner,
+			CloudSafeOwner cloudSafeOwner) throws Exception {
 		HashSet<String> hashSet = new HashSet<>();
 		List<CloudSafeEntity> savedFiles = new ArrayList<>();
 		for (DcemUploadFile uploadedFile : uploadedFiles) {
@@ -1700,9 +1612,8 @@ public class CloudSafeLogic {
 			} else {
 				cloudSafeEntity.setOptions(CloudSafeOptions.ENC.name());
 			}
-			cloudSafeEntity = setCloudSafeStream(cloudSafeEntity,
-					filePassword == null ? null : filePassword.toCharArray(), new FileInputStream(uploadedFile.file),
-					(int) uploadedFile.file.length(), lastModifiedUser, null, null, null);
+			cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, filePassword == null ? null : filePassword.toCharArray(),
+					new FileInputStream(uploadedFile.file), (int) uploadedFile.file.length(), lastModifiedUser, null, null, null);
 			hashSet.add(uploadedFile.fileName);
 			savedFiles.add(cloudSafeEntity);
 		}
@@ -1710,13 +1621,12 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public CloudSafeEntity addDocument(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser dcemUser, File file,
-			String ocrText, List<CloudSafeTagEntity> toBeAddedTags) throws Exception {
+	public CloudSafeEntity addDocument(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser dcemUser, File file, String ocrText,
+			List<CloudSafeTagEntity> toBeAddedTags) throws Exception {
 		if (file == null) {
 			return setCloudSafeStream(cloudSafeEntity, password, null, -1, dcemUser, null, ocrText, toBeAddedTags);
 		}
-		return setCloudSafeStream(cloudSafeEntity, password, new FileInputStream(file), (int) file.length(), dcemUser,
-				null, ocrText, toBeAddedTags);
+		return setCloudSafeStream(cloudSafeEntity, password, new FileInputStream(file), (int) file.length(), dcemUser, null, ocrText, toBeAddedTags);
 	}
 
 	@DcemTransactional
@@ -1731,9 +1641,8 @@ public class CloudSafeLogic {
 		}
 	}
 
-	public CloudSafeEntity createCloudSafeEntityFolder(CloudSafeEntity selectedFolder, DcemUser currentUser,
-			String folderName, boolean passwordProtected, boolean encryptProtected, String folderPassword)
-			throws DcemException {
+	public CloudSafeEntity createCloudSafeEntityFolder(CloudSafeEntity selectedFolder, DcemUser currentUser, String folderName, boolean passwordProtected,
+			boolean encryptProtected, String folderPassword) throws DcemException {
 		// if (selectedFolder == null) {
 		// throw new DcemException(DcemErrorCodes.INVALID_PARAMETER, "selectedFolder
 		// cannot be null");
@@ -1761,23 +1670,20 @@ public class CloudSafeLogic {
 					byte[] randomByte = RandomUtils.getRandom(8);
 					byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 					InputStream is = new ByteArrayInputStream((content));
-					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is,
-							content.length, null, null, null, null);
+					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null, null);
 				} else if (selectedFolder.isOption(CloudSafeOptions.ENC) && passwordProtected) {
 					cloudSafeEntity.setOptions(CloudSafeOptions.PWD.name());
 					byte[] randomByte = RandomUtils.getRandom(8);
 					byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 					InputStream is = new ByteArrayInputStream((content));
-					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is,
-							content.length, null, null, null, null);
+					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null, null);
 				}
 			} else {
 				cloudSafeEntity.setOptions(CloudSafeOptions.PWD.name());
 				byte[] randomByte = RandomUtils.getRandom(8);
 				byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 				InputStream is = new ByteArrayInputStream((content));
-				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length,
-						null, null, null, null);
+				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null, null);
 			}
 		} else if (encryptProtected) {
 			cloudSafeEntity.setOptions(CloudSafeOptions.ENC.name());
@@ -1787,18 +1693,16 @@ public class CloudSafeLogic {
 
 	private List<CloudSafeDto> deleteCloudSafeFolder(CloudSafeEntity cloudSafeEntity) throws DcemException {
 		CloudSafeDto cloudSafeFolder = new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.isFolder());
-		List<CloudSafeDto> cloudSafeToDelete = deleteSubdirectories(cloudSafeFolder, new ArrayList<CloudSafeDto>(),
-				cloudSafeEntity.getUser());
+		List<CloudSafeDto> cloudSafeToDelete = deleteSubdirectories(cloudSafeFolder, new ArrayList<CloudSafeDto>(), cloudSafeEntity.getUser());
 		deleteCloudSafeFile(cloudSafeEntity.getId());
 		cloudSafeToDelete.add(new CloudSafeDto(cloudSafeEntity));
 		return cloudSafeToDelete;
 	}
 
-	private List<CloudSafeDto> deleteSubdirectories(CloudSafeDto parentFolder, List<CloudSafeDto> cloudSafeToDeleteList,
-			DcemUser dcemUser) throws DcemException {
+	private List<CloudSafeDto> deleteSubdirectories(CloudSafeDto parentFolder, List<CloudSafeDto> cloudSafeToDeleteList, DcemUser dcemUser)
+			throws DcemException {
 
-		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE,
-				CloudSafeDto.class);
+		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, CloudSafeDto.class);
 		query.setParameter(1, parentFolder.getId());
 		query.setParameter(2, dcemUser);
 		List<CloudSafeDto> children = query.getResultList();
@@ -1807,8 +1711,7 @@ public class CloudSafeLogic {
 			if (cloudSafeDto.isFolder()) {
 				deleteSubdirectories(cloudSafeDto, cloudSafeToDeleteList, dcemUser);
 			}
-			Query thumbnailQuery = em
-					.createNamedQuery(CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_CLOUD_SAFE_ID);
+			Query thumbnailQuery = em.createNamedQuery(CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_CLOUD_SAFE_ID);
 			thumbnailQuery.setParameter(1, cloudSafeDto.getId());
 			thumbnailQuery.executeUpdate();
 			deleteCloudSafeFile(cloudSafeDto.getId());
@@ -1825,8 +1728,7 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public void moveCurrentEntry(CloudSafeEntity cloudSafeEntity, String folderPassword, Integer moveTo,
-			DcemUser loggedInUser) throws DcemException {
+	public void moveCurrentEntry(CloudSafeEntity cloudSafeEntity, String folderPassword, Integer moveTo, DcemUser loggedInUser) throws DcemException {
 		InputStream inputStream = null;
 		if (cloudSafeEntity.isRecycled()) {
 			if (moveTo == null) {
@@ -1863,17 +1765,14 @@ public class CloudSafeLogic {
 		}
 		// EG TODO folderPassword is not supported anymore
 		if (folderPassword != null && !cloudSafeEntity.isOption(CloudSafeOptions.FPD)) {
-			if (moveTo != null && (getCloudSafe(moveTo).isOption(CloudSafeOptions.PWD)
-					|| getCloudSafe(moveTo).isOption(CloudSafeOptions.FPD))) {
+			if (moveTo != null && (getCloudSafe(moveTo).isOption(CloudSafeOptions.PWD) || getCloudSafe(moveTo).isOption(CloudSafeOptions.FPD))) {
 				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, null, loggedInUser, false);
 				cloudSafeEntity.setOptions((CloudSafeOptions.FPD.name()));
-			} else if (moveTo == null || getCloudSafe(moveTo).isOption(CloudSafeOptions.ENC)
-					&& cloudSafeEntity.isOption(CloudSafeOptions.FPD)) {
-				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, folderPassword.toCharArray(), loggedInUser,
-						false);
+			} else if (moveTo == null || getCloudSafe(moveTo).isOption(CloudSafeOptions.ENC) && cloudSafeEntity.isOption(CloudSafeOptions.FPD)) {
+				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, folderPassword.toCharArray(), loggedInUser, false);
 				cloudSafeEntity.setOptions((CloudSafeOptions.PWD.name()));
-			} else if (getCloudSafe(moveTo).isOption(CloudSafeOptions.ENC)
-					&& cloudSafeEntity.isOption(CloudSafeOptions.ENC) && cloudSafeEntity.isFolder() == false) {
+			} else if (getCloudSafe(moveTo).isOption(CloudSafeOptions.ENC) && cloudSafeEntity.isOption(CloudSafeOptions.ENC)
+					&& cloudSafeEntity.isFolder() == false) {
 				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, null, loggedInUser, false);
 			}
 			File tempFile = null;
@@ -1885,11 +1784,10 @@ public class CloudSafeLogic {
 				KaraUtils.copyStream(inputStream, fileOutputStream, 1024 * 64);
 				fileOutputStream.close();
 				fileInputStreamTemp = new FileInputStream(tempFile);
-				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), fileInputStreamTemp,
-						(int) cloudSafeEntity.getLength(), loggedInUser, null, null, null);
+				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), fileInputStreamTemp, (int) cloudSafeEntity.getLength(),
+						loggedInUser, null, null, null);
 			} catch (Exception ex) {
-				throw new DcemException(DcemErrorCodes.CLOUD_SAFE_MOVE_FILE,
-						"Could not move file " + cloudSafeEntity.getName(), ex);
+				throw new DcemException(DcemErrorCodes.CLOUD_SAFE_MOVE_FILE, "Could not move file " + cloudSafeEntity.getName(), ex);
 			} finally {
 				if (fileInputStreamTemp != null || tempFile != null) {
 					try {
@@ -1901,8 +1799,7 @@ public class CloudSafeLogic {
 				}
 			}
 		}
-		if (moveTo == null || getCloudSafe(moveTo).isOption(CloudSafeOptions.ENC)
-				&& cloudSafeEntity.isOption(CloudSafeOptions.FPD)) {
+		if (moveTo == null || getCloudSafe(moveTo).isOption(CloudSafeOptions.ENC) && cloudSafeEntity.isOption(CloudSafeOptions.FPD)) {
 			cloudSafeEntity.setOptions((CloudSafeOptions.PWD.name()));
 		}
 		Query query = em.createNamedQuery(CloudSafeEntity.MOVE_ENTRY);
@@ -1925,8 +1822,7 @@ public class CloudSafeLogic {
 		return query.getResultList();
 	}
 
-	public List<CloudSafeEntity> getCloudSafeByUserAndParentId(Integer parentId, DcemUser user,
-			List<DcemGroup> allUsersGroups) throws DcemException {
+	public List<CloudSafeEntity> getCloudSafeByUserAndParentId(Integer parentId, DcemUser user, List<DcemGroup> allUsersGroups) throws DcemException {
 		TypedQuery<CloudSafeEntity> query;
 		query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, CloudSafeEntity.class);
 		query.setParameter(1, parentId);
@@ -1939,12 +1835,10 @@ public class CloudSafeLogic {
 		return query.getResultList();
 	}
 
-	public List<CloudSafeEntity> getCloudSafeSingleResult(String folderName, Integer parentId, boolean isFolder,
-			Integer userId) {
+	public List<CloudSafeEntity> getCloudSafeSingleResult(String folderName, Integer parentId, boolean isFolder, Integer userId) {
 		TypedQuery<CloudSafeEntity> query;
 		if (parentId == null || parentId == 0) {
-			query = em.createNamedQuery(CloudSafeEntity.GET_SINGLE_CLOUDSAFE_FILE_WITH_NULL_PARENT,
-					CloudSafeEntity.class);
+			query = em.createNamedQuery(CloudSafeEntity.GET_SINGLE_CLOUDSAFE_FILE_WITH_NULL_PARENT, CloudSafeEntity.class);
 			query.setParameter(1, folderName);
 			query.setParameter(2, getCloudSafeRoot().getId());
 			query.setParameter(3, isFolder);
@@ -1959,17 +1853,15 @@ public class CloudSafeLogic {
 		return query.getResultList();
 	}
 
-	private void addToRecyleBin(CloudSafeEntity cloudSafeEntity, int counter, DcemUser loggedInUser)
-			throws DcemException {
+	private void addToRecyleBin(CloudSafeEntity cloudSafeEntity, int counter, DcemUser loggedInUser) throws DcemException {
 		CloudSafeEntity recycleBinFolder = null;
 		try {
-			recycleBinFolder = getCloudSafe(cloudSafeEntity.getOwner(), DcemConstants.CLOUD_SAFE_RECYCLE_BIN,
-					cloudSafeEntity.getUser(), cloudSafeEntity.getDevice(), getCloudSafeRoot().getId(),
-					cloudSafeEntity.getGroup());
+			recycleBinFolder = getCloudSafe(cloudSafeEntity.getOwner(), DcemConstants.CLOUD_SAFE_RECYCLE_BIN, cloudSafeEntity.getUser(),
+					cloudSafeEntity.getDevice(), getCloudSafeRoot().getId(), cloudSafeEntity.getGroup());
 		} catch (DcemException e) {
 			if (e.getErrorCode() == DcemErrorCodes.CLOUD_SAFE_NOT_FOUND) {
-				recycleBinFolder = createCloudSafeEntityFolder(getCloudSafeRoot(), cloudSafeEntity.getUser(),
-						DcemConstants.CLOUD_SAFE_RECYCLE_BIN, false, false, null);
+				recycleBinFolder = createCloudSafeEntityFolder(getCloudSafeRoot(), cloudSafeEntity.getUser(), DcemConstants.CLOUD_SAFE_RECYCLE_BIN, false,
+						false, null);
 				addCloudSafeFolder(recycleBinFolder);
 			}
 		}
@@ -2002,8 +1894,7 @@ public class CloudSafeLogic {
 	@DcemTransactional
 	private boolean existsInRecycleBin(CloudSafeEntity cloudSafeEntity) {
 		try {
-			TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_IN_RECYCLEBIN,
-					CloudSafeEntity.class);
+			TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_IN_RECYCLEBIN, CloudSafeEntity.class);
 			query.setParameter(1, cloudSafeEntity.getName());
 			query.setParameter(2, cloudSafeEntity.getUser().getLoginId());
 			query.getSingleResult();
@@ -2018,8 +1909,7 @@ public class CloudSafeLogic {
 		CloudSafeEntity rootCloudSafeEntity = asModule.getTenantData().getCloudSafeRoot();
 		if (rootCloudSafeEntity == null) {
 			try {
-				TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_ROOT,
-						CloudSafeEntity.class);
+				TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_ROOT, CloudSafeEntity.class);
 				query.setParameter(1, DcemConstants.CLOUD_SAFE_ROOT);
 				query.setParameter(2, userLogic.getUser(DcemConstants.SUPER_ADMIN_OPERATOR));
 				rootCloudSafeEntity = query.getSingleResult();
@@ -2034,9 +1924,8 @@ public class CloudSafeLogic {
 					// em.flush();
 					updateToRootDevice(rootDevice);
 
-					rootCloudSafeEntity = createCloudSafeEntityFolder(null,
-							userLogic.getUser(DcemConstants.SUPER_ADMIN_OPERATOR), DcemConstants.CLOUD_SAFE_ROOT, false,
-							true, null);
+					rootCloudSafeEntity = createCloudSafeEntityFolder(null, userLogic.getUser(DcemConstants.SUPER_ADMIN_OPERATOR),
+							DcemConstants.CLOUD_SAFE_ROOT, false, true, null);
 
 					rootCloudSafeEntity.setGroup(dcemGroup);
 					addCloudSafeFolder(rootCloudSafeEntity); // Safe to Database
@@ -2073,8 +1962,8 @@ public class CloudSafeLogic {
 		try {
 			DeviceEntity rootDevice = asModule.getTenantData().getDeviceRoot();
 			if (rootDevice == null) {
-				rootDevice = deviceLogic.getDeviceByName(userLogic.getUser(DcemConstants.SUPER_ADMIN_OPERATOR),
-						DcemConstants.DEVICE_ROOT, DeviceState.Disabled);
+				rootDevice = deviceLogic.getDeviceByName(userLogic.getUser(DcemConstants.SUPER_ADMIN_OPERATOR), DcemConstants.DEVICE_ROOT,
+						DeviceState.Disabled);
 				asModule.getTenantData().setDeviceRoot(rootDevice);
 			}
 			return rootDevice;
@@ -2085,8 +1974,7 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public void changeOnwerShipCloudSafeEntity(CloudSafeEntity cloudSafeEntity, DcemGroup ownerGroup,
-			DcemUser auditUser) throws DcemException {
+	public void changeOnwerShipCloudSafeEntity(CloudSafeEntity cloudSafeEntity, DcemGroup ownerGroup, DcemUser auditUser) throws DcemException {
 		if (ownerGroup == null) {
 			cloudSafeEntity.setOwner(CloudSafeOwner.USER);
 			cloudSafeEntity.setGroup(groupLogic.getRootGroup());

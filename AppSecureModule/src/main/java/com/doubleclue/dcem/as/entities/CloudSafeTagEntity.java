@@ -13,6 +13,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
 
@@ -23,6 +26,7 @@ import com.doubleclue.dcem.core.gui.DcemGui;
 
 @Entity
 @Table(name = "as_cloudsafe_tag")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CloudSafeTagEntity extends EntityInterface implements Comparable<CloudSafeTagEntity> {
 
 	public static final String GET_ALL_TAGS = "GetAllTags";
