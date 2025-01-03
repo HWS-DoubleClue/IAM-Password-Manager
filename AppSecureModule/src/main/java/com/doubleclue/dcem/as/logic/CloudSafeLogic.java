@@ -514,7 +514,9 @@ public class CloudSafeLogic {
 		if (cloudSafeEntity.isFolder() == false) {
 			if (length >= 0) {
 				InputStream encryptedStream = getEncryptStream(dbCloudSafeEntity, inputStream, password);
+				long start = System.currentTimeMillis();
 				cloudSafeContentI.writeContentOutput(em, dbCloudSafeEntity, encryptedStream);
+				logger.debug("Write to Storage for Length " +  length + " took: " + (System.currentTimeMillis() - start) );
 				if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
 					if (ocrText == null || ocrText.isEmpty()) {
 						cloudSafeContentI.deleteS3Data(dbCloudSafeEntity.getId(), OCR_TEXT);
@@ -1513,7 +1515,8 @@ public class CloudSafeLogic {
 			if (cloudSafeEntity.getUser() == null) {
 				throw new DcemException(DcemErrorCodes.USER_IS_NULL, "No user specified for new CloudSafe content.");
 			} else {
-				return validateUserCloudSafeContentChange(cloudSafeEntity, newLength);
+				// return validateUserCloudSafeContentChange(cloudSafeEntity, newLength);
+				return newLength;
 			}
 		} else { // do not check limits if Global or Device
 			return 0;

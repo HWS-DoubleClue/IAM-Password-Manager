@@ -49,7 +49,6 @@ public class ProcessUtil {
 	* @throws Exception
 	*/
 	public static ProcessResult executeProcess(List<String> commandList, int timeoutSeconds) throws Exception {
-	//	File outputFile = null;
 		File outputFile = createOutputTempFile(".txt");
 		ProcessBuilder processBuilder = new ProcessBuilder(commandList);
 		processBuilder.command(commandList);
