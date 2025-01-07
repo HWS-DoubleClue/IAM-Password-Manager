@@ -2136,12 +2136,6 @@ body .ui-input-icon-right>.ui-inputfield {
 	height: 32px !important;
 }
 
-.ui-tooltip-bottom .ui-tooltip-arrow {
-	left: 80% !important;
-	margin-left: 1px !important;
-	margin-top: 2px !important;
-}
-
 ul.ui-menu-child {
 	white-space: nowrap;
 	width: 200px !important;
@@ -2406,6 +2400,7 @@ body .ui-breadcrumb .ui-breadcrumb-items li:not(.ui-breadcrumb-chevron):before
 	background-image: none !important;
 	margin: 0 0.5rem 0 0.5rem;
 	color: #495057;
+	font-size: small;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li:first-child:not(.ui-breadcrumb-chevron):before
