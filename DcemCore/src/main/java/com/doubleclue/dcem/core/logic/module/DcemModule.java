@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.core.logic.module;
 
+import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
 import java.security.KeyStore;
@@ -13,6 +14,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
 
 import javax.inject.Inject;
+import javax.mail.Message;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +23,7 @@ import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.admin.logic.DepartmentLogic;
 import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.as.DcemUploadFile;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemNode;
@@ -348,4 +351,9 @@ public abstract class DcemModule implements Serializable {
 	public void deleteUserFromDbPre(DcemUser dcemUser) throws DcemException {
 		return;
 	}
+
+	public void receiveMail(String subjectName, String identifier, File messageFile) throws Exception {
+		return;
+	}
+
 }

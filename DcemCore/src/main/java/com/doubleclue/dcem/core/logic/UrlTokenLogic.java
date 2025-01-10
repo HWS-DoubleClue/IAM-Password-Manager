@@ -22,6 +22,7 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.system.send.SendEmail;
+import com.doubleclue.utils.RandomUtils;
 import com.doubleclue.utils.StringUtils;
 
 @ApplicationScoped
@@ -65,14 +66,13 @@ public class UrlTokenLogic {
 	@DcemTransactional
 	public String addMailUrlToken(String moduleId, LocalDateTime expiryDate, String objectIdentifier) throws DcemException {
 		UrlTokenEntity entity = new UrlTokenEntity();
-		String urlToken = java.util.UUID.randomUUID().toString();
+		String urlToken = RandomUtils.generateRandomAlphaLowercaseNumericString(12);
 		entity.setUrlToken(urlToken);
 		entity.setExpiryDate(expiryDate);
 		entity.setObjectIdentifier(objectIdentifier);
 		entity.setUrlTokenType(UrlTokenType.EmailToken);
 		em.persist(entity);
 		return createEmailToken(entity, moduleId);
-
 	}
 
 	private String createEmailToken(UrlTokenEntity entity, String moduleId) {
@@ -102,7 +102,8 @@ public class UrlTokenLogic {
 		}
 		return entity;
 	}
-
+	
+	
 	@DcemTransactional
 	public void deleteUrlToken(UrlTokenEntity entity) {
 		UrlTokenEntity entity2 = em.find(UrlTokenEntity.class, entity.getUrlToken());
@@ -180,4 +181,6 @@ public class UrlTokenLogic {
 		query.setParameter(1, objectIdentifier);
 		return query.executeUpdate();
 	}
+
+	
 }

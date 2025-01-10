@@ -13,6 +13,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -68,10 +69,6 @@ import javax.faces.convert.LongConverter;
 import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.inject.Named;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMultipart;
 import javax.persistence.metamodel.Attribute;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -87,6 +84,7 @@ import org.primefaces.component.selectbooleancheckbox.SelectBooleanCheckbox;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
 
 import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.as.DcemUploadFile;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.EntityInterface;
@@ -104,7 +102,9 @@ import com.doubleclue.dcem.core.jpa.VariableType;
 import com.doubleclue.dcem.core.logic.LoginAuthenticator;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.tasks.ReloadTask;
+import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
 import com.doubleclue.utils.RandomUtils;
+import com.drew.lang.Charsets;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -115,6 +115,13 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.hazelcast.core.IExecutorService;
 import com.hazelcast.core.Member;
 import com.twelvemonkeys.image.ResampleOp;
+
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMultipart;
 
 public class DcemUtils {
 
@@ -1317,8 +1324,65 @@ public class DcemUtils {
 		return null;
 	}
 
-	public static String getMailBodyContent(Message message) throws MessagingException, IOException {
-		message.getContentType();
+//	public static List<DcemUploadFile> getMailContents(Message message) throws Exception {
+//
+//		if (message.isMimeType("text/plain") || message.isMimeType("text/html")) {
+//			File tempFile = File.createTempFile("dcem-", "-mail");
+//			Files.write(tempFile.toPath(), message.getContent().toString().getBytes(Charsets.UTF_8));
+//			List<DcemUploadFile> files = new ArrayList<>(1);
+//			DcemMediaType dcemMediaType = DcemMediaType.XHTML;
+//			if (message.isMimeType("text/plain")) {
+//				dcemMediaType = DcemMediaType.TEXT;
+//			}
+//			files.add(new DcemUploadFile("MailBody", tempFile, dcemMediaType));
+//			return files;
+//		} else if (message.isMimeType("multipart/*")) {
+//			Multipart multiPart = (Multipart) message.getContent();
+//			List<DcemUploadFile> files = new ArrayList<>(multiPart.getCount());
+//			File tempFile;
+//			DcemMediaType dcemMediaType = null;
+//			for (int i = 0; i < multiPart.getCount(); i++) {
+//				tempFile = File.createTempFile("dcem-", "-mail");
+//				MimeBodyPart bodyPart = (MimeBodyPart) multiPart.getBodyPart(i);
+//				if (bodyPart.getContentType().toLowerCase().startsWith("text/plain")) {
+//					dcemMediaType = DcemMediaType.TEXT;
+//				} else if (bodyPart.getContentType().toLowerCase().startsWith("text/html")) {
+//					dcemMediaType = DcemMediaType.XHTML;
+//				} else if (bodyPart.getContent() instanceof MimeMultipart) {
+//					System.out.println("DcemUtils.getMailContents()");
+//				} else {
+//					dcemMediaType = null;
+//				}
+//				bodyPart.saveFile(tempFile);
+//				files.add(new DcemUploadFile(bodyPart.getFileName(), tempFile, dcemMediaType));
+//			}
+//			return files;
+//		} else {
+//			return null;
+//		}
+//	}
+//	
+//	private static String getMimeMultipart(MimeMultipart mimeMultipart, List<DcemUploadFile> files) throws Exception {
+//		StringBuffer sb = new StringBuffer();
+//		int count = mimeMultipart.getCount();
+//		for (int i = 0; i < count; i++) {
+//			BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+//			if (bodyPart.isMimeType("text/plain")) {
+//				sb.append('\n');
+//				sb.append(bodyPart.getContent());
+//				break; // without break same text appears twice in my tests
+//			} else if (bodyPart.isMimeType("text/html")) {
+//				sb.append((String) bodyPart.getContent());
+//			} else if (bodyPart.getContent() instanceof MimeMultipart) {
+//				sb.append(getmMimeMultipart((MimeMultipart) bodyPart.getContent()));
+//			}
+//		}
+//		return sb.toString();
+//	}
+	
+	
+
+	public static String getMailBodyContent(Message message) throws Exception {
 		if (message.isMimeType("text/plain") || message.isMimeType("text/html")) {
 			return message.getContent().toString();
 		} else if (message.isMimeType("multipart/*")) {
@@ -1329,7 +1393,7 @@ public class DcemUtils {
 		}
 	}
 
-	private static String getTextFromMimeMultipart(MimeMultipart mimeMultipart) throws MessagingException, IOException {
+	private static String getTextFromMimeMultipart(MimeMultipart mimeMultipart) throws Exception {
 		StringBuffer sb = new StringBuffer();
 		int count = mimeMultipart.getCount();
 		for (int i = 0; i < count; i++) {

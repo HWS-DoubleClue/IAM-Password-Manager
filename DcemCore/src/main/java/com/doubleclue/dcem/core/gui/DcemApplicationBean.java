@@ -705,6 +705,18 @@ public class DcemApplicationBean implements Serializable {
 		}
 		return tenantMap.get(tenantName.toUpperCase());
 	}
+	
+	public TenantEntity getTenantById (int tenantId) {
+		if (tenantId == 0) {
+			return TenantIdResolver.getMasterTenant();
+		}
+		for (TenantEntity tenantEntity : tenantMap.values()) {
+			if (tenantEntity.getId().equals(tenantId)) {
+				return tenantEntity;
+			}
+		}	
+		return null;
+	}
 
 	public boolean isMultiTenant() {
 		return tenantMap.size() > 1;
