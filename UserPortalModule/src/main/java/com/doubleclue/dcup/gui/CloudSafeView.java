@@ -428,7 +428,7 @@ public class CloudSafeView extends AbstractPortalView {
 			parentId = root.getId();
 		}
 		try {
-			result = cloudSafeLogic.getCloudSafeByUserAndParentId(parentId, user, allUsersGroups);
+			result = cloudSafeLogic.getCloudSafeByUserAndParentId(parentId, user, allUsersGroups, false);
 		} catch (Exception e) {
 			logger.warn("", e);
 			JsfUtils.addErrorMessage(e.toString());
