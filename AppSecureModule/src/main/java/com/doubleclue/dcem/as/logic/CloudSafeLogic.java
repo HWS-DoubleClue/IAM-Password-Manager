@@ -1188,7 +1188,10 @@ public class CloudSafeLogic {
 				return list;
 			}
 		} else {
-			addToRecyleBin(cloudSafeEntity, 0, loggedInUser);
+			cloudSafeEntity.setDiscardAfter(LocalDateTime.now().plusDays(30));
+			cloudSafeEntity.setRecycled(true);
+			em.merge(cloudSafeEntity);
+//			addToRecyleBin(cloudSafeEntity, 0, loggedInUser);
 			return new ArrayList<CloudSafeDto>(0);
 		}
 	}
@@ -1822,7 +1825,7 @@ public class CloudSafeLogic {
 		return query.getResultList();
 	}
 
-	public List<CloudSafeEntity> getCloudSafeByUserAndParentId(Integer parentId, DcemUser user, List<DcemGroup> allUsersGroups) throws DcemException {
+	public List<CloudSafeEntity> getCloudSafeByUserAndParentId(Integer parentId, DcemUser user, List<DcemGroup> allUsersGroups, boolean recycled) throws DcemException {
 		TypedQuery<CloudSafeEntity> query;
 		query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, CloudSafeEntity.class);
 		query.setParameter(1, parentId);
@@ -1832,6 +1835,7 @@ public class CloudSafeLogic {
 		} else {
 			query.setParameter(3, allUsersGroups);
 		}
+		query.setParameter(4, recycled);
 		return query.getResultList();
 	}
 
