@@ -479,7 +479,7 @@ public class CloudSafeLogic {
 		}
 		Set<CloudSafeTagEntity> tags = new HashSet<CloudSafeTagEntity>();
 		for (CloudSafeTagEntity cloudSafeTagEntity : cloudSafeEntity.getTags()) {
-			if (em.contains(cloudSafeTagEntity) == false) {	// attache all tags
+			if (em.contains(cloudSafeTagEntity) == false) { // attache all tags
 				tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId()));
 			}
 		}
@@ -1188,11 +1188,38 @@ public class CloudSafeLogic {
 				return list;
 			}
 		} else {
-			cloudSafeEntity.setDiscardAfter(LocalDateTime.now().plusDays(30));
-			cloudSafeEntity.setRecycled(true);
-			em.merge(cloudSafeEntity);
-//			addToRecyleBin(cloudSafeEntity, 0, loggedInUser);
+			setCloudSafeToRecycled(cloudSafeEntity);
+			// addToRecyleBin(cloudSafeEntity, 0, loggedInUser);
 			return new ArrayList<CloudSafeDto>(0);
+		}
+	}
+
+	@DcemTransactional
+	private void setCloudSafeToRecycled(CloudSafeEntity cloudSafeEntity) throws DcemException {
+		cloudSafeEntity.setDiscardAfter(LocalDateTime.now().plusDays(30));
+		cloudSafeEntity.setRecycled(true);
+		CloudSafeDto cloudSafeFolder = new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.isFolder());
+		if (cloudSafeEntity.isFolder()) {
+			recycleSubDirectories(cloudSafeFolder, new ArrayList<CloudSafeDto>(), cloudSafeEntity.getUser());
+		}
+		em.merge(cloudSafeEntity);
+	}
+
+	@DcemTransactional
+	private void recycleSubDirectories(CloudSafeDto parentFolder, List<CloudSafeDto> toRecycleFiles, DcemUser dcemUser) throws DcemException {
+		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, CloudSafeDto.class);
+		query.setParameter(1, parentFolder.getId());
+		query.setParameter(2, dcemUser);
+		List<CloudSafeDto> children = query.getResultList();
+		toRecycleFiles.addAll(children);
+		for (CloudSafeDto cloudSafeDto : children) {
+			if (cloudSafeDto.isFolder()) {
+				recycleSubDirectories(cloudSafeDto, toRecycleFiles, dcemUser);
+			}
+			CloudSafeEntity toRecycleCloudSafe = getCloudSafe(cloudSafeDto.getId());
+			toRecycleCloudSafe.setDiscardAfter(LocalDateTime.now().plusDays(30));
+			toRecycleCloudSafe.setRecycled(true);
+			em.merge(toRecycleCloudSafe);
 		}
 	}
 
@@ -1825,7 +1852,8 @@ public class CloudSafeLogic {
 		return query.getResultList();
 	}
 
-	public List<CloudSafeEntity> getCloudSafeByUserAndParentId(Integer parentId, DcemUser user, List<DcemGroup> allUsersGroups, boolean recycled) throws DcemException {
+	public List<CloudSafeEntity> getCloudSafeByUserAndParentId(Integer parentId, DcemUser user, List<DcemGroup> allUsersGroups, boolean recycled)
+			throws DcemException {
 		TypedQuery<CloudSafeEntity> query;
 		query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, CloudSafeEntity.class);
 		query.setParameter(1, parentId);
