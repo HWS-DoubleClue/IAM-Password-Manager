@@ -479,7 +479,7 @@ public class CloudSafeLogic {
 		}
 		Set<CloudSafeTagEntity> tags = new HashSet<CloudSafeTagEntity>();
 		for (CloudSafeTagEntity cloudSafeTagEntity : cloudSafeEntity.getTags()) {
-			if (em.contains(cloudSafeTagEntity) == false) {	// attache all tags
+			if (em.contains(cloudSafeTagEntity) == false) { // attache all tags
 				tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId()));
 			}
 		}
@@ -1835,6 +1835,18 @@ public class CloudSafeLogic {
 		return query.getResultList();
 	}
 
+	public List<CloudSafeEntity> getCloudSafeByUserFlat(DcemUser user, List<DcemGroup> allUsersGroups) throws DcemException {
+		TypedQuery<CloudSafeEntity> query;
+		query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDSAFE_DATA_FLAT, CloudSafeEntity.class);
+		query.setParameter(1, user);
+		if (allUsersGroups == null || allUsersGroups.isEmpty() == true) {
+			query.setParameter(2, null);
+		} else {
+			query.setParameter(2, allUsersGroups);
+		}
+		return query.getResultList();
+	}
+
 	public List<CloudSafeEntity> getCloudSafeSingleResult(String folderName, Integer parentId, boolean isFolder, Integer userId) {
 		TypedQuery<CloudSafeEntity> query;
 		if (parentId == null || parentId == 0) {
@@ -2004,6 +2016,41 @@ public class CloudSafeLogic {
 		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_BY_TAG, CloudSafeEntity.class);
 		query.setParameter(1, cloudSafeTagEntity);
 		return query.getResultList();
+	}
+
+	public List<CloudSafeEntity> getPathList(CloudSafeEntity cloudSafeEntity) {
+		cloudSafeEntity = em.find (CloudSafeEntity.class, cloudSafeEntity.getId());
+		CloudSafeEntity cloudSafeRoot = getCloudSafeRoot();
+		List<CloudSafeEntity> list = new ArrayList<CloudSafeEntity>();
+		CloudSafeEntity parent = cloudSafeEntity;
+		if (cloudSafeEntity.isFolder() == false) {
+			parent = cloudSafeEntity.getParent();
+		} 
+		while (parent.getId() != cloudSafeRoot.getId()) {
+			list.addFirst(parent);
+			parent = parent.getParent();
+		}
+		return list;
+	}
+
+	public String getPath(CloudSafeEntity cloudSafeEntity) {
+		try {
+			List<CloudSafeEntity> list = getPathList(cloudSafeEntity);
+			return getPathString(list);
+		} catch (Exception e) {
+			return "?Lazy";
+		}
+	}
+
+	public String getPathString(List<CloudSafeEntity> list) {
+		StringBuilder sb = new StringBuilder();
+		for (CloudSafeEntity cloudSafeEntity : list) {
+			if (sb.isEmpty() == false) {
+				sb.append("/");
+			}
+			sb.append(cloudSafeEntity.getName());
+		}
+		return sb.toString();
 	}
 
 }

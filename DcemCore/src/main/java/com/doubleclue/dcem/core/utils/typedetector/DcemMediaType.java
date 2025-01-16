@@ -26,7 +26,8 @@ public enum DcemMediaType {
 	PPT("application/vnd.ms-powerpoint", "powerpoint-file.png"),
 	PPTX("application/vnd.openxmlformats-officedocument.presentationml.presentation", "powerpoint-file.png"),
 	ODT ("application/vnd.oasis.opendocument.text",  "word-file.png"),
-	MP4 ("video/mp4", "mp4.svg");
+	MP4 ("video/mp4", "mp4.svg"),
+	QuickTime ("video/quicktime", "mp4.svg");
 
 	
 	
@@ -53,7 +54,7 @@ public enum DcemMediaType {
 				return dcemMediaType;
 			}
 		}
-		return DcemMediaType.BINARY;
+		return null;
 	}
 
 	public String getIconName() {

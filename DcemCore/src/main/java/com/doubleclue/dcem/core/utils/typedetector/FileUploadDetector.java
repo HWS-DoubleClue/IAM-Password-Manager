@@ -40,15 +40,6 @@ public class FileUploadDetector {
 		return tika.parse(file, metadata);
 	}
 
-	public static DcemMediaType detectDcemMediaType(File file) throws Exception {
-		Metadata metadata = new Metadata();
-		FileInputStream fileInputStream = new FileInputStream(file);
-		String mediaType = tika.detect(fileInputStream, metadata);
-		DcemMediaType dcemMediaType = DcemMediaType.getDcemMediaType(mediaType);
-		fileInputStream.close();
-		return dcemMediaType;
-	}
-
 	public static String parseFile(File file, Metadata metadata) throws Exception {
 		Reader reader = tika.parse(file, metadata);
 		String targetString = IOUtils.toString(reader);
@@ -60,7 +51,7 @@ public class FileUploadDetector {
 		return tika.parseToString(file);
 	}
 
-	public static String detectMediaType(InputStream inputStream) throws Exception {
+	private static String detectMediaType(InputStream inputStream) throws Exception {
 		return tika.detect(inputStream);
 	}
 

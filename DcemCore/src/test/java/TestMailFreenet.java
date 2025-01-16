@@ -1,15 +1,11 @@
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.search.FlagTerm;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -24,12 +20,21 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 
+import com.doubleclue.dcem.core.as.DcemUploadFile;
 import com.doubleclue.dcem.core.utils.DcemTrustManager;
+import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.drew.lang.Charsets;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class TestMail {
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.mail.search.FlagTerm;
+
+public class TestMailFreenet {
 
 	static boolean ignoreCertificats = true;
 	static boolean setMarkSeen = false;
@@ -112,7 +117,7 @@ public class TestMail {
 //			});
 			emailStore = emailSession.getStore("imap");
 
-			emailStore.connect("outlook.office365.com", 993, "svc_doubleclue_smtp_exo@hws-gruppe.de", "Ha1AGAAkGdLjCivOFb5Q");
+			emailStore.connect("mx.freenet.de", 993, "doubleclue@freenet.de", "freenet123");
 			// emailStore.connect("imap.gmail.com", );
 			
 
@@ -123,7 +128,6 @@ public class TestMail {
 			inbox.open(Folder.READ_ONLY);
 			Message[] messages;
 			messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
-
 			for (Message message : messages) {
 				String subject = message.getSubject();
 				// check token
@@ -137,7 +141,11 @@ public class TestMail {
 				}
 				String token = subject.substring(ind + 2, endInd);
 				System.out.println(token);
-
+				File tempFile = File.createTempFile("dcem-", ".eml");
+				message.writeTo(new FileOutputStream("c:\\Temp\\message.eml"));
+			//	List<DcemUploadFile> files = DcemUtils.getMailContents(message);
+				System.out.println("TestMailFreenet.receiveEmail()");
+			
 			}
 			// logger.info("Receiving E-Mails from: " + prefs.getEmailReceiveAccountName() + " Messages: " + messages.length);
 
