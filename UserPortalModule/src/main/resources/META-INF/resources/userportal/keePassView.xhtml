@@ -131,7 +131,7 @@
 					emptyMessage="#{DcupMsg['message.noEntries']}" rowKey="#{keePassData.uuid}" selection="#{keePassView.selectedKeePassEntries}" class="borderless">
 					<p:ajax event="rowReorder" listener="#{keePassEntryView.moveRow}" update="@this" />
 
-					<p:column selectionMode="multiple" style="width:16px; text-align:left" />
+					<p:column selectionMode="multiple" style="width:16px; text-align:left" selectionBox="true"/>
 					<p:column headerText="#{DcupMsg['columnTitle.title']}">
 						<p:graphicImage id="groupIcon" value="#{keePassView.getEntryIcon(keePassData)}" stream="false" style="vertical-align:middle" height="16px" width="16px" />
 						<p:spacer width="4" />
