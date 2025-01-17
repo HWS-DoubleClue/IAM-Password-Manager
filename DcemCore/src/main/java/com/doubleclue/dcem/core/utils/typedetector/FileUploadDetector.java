@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.core.utils.typedetector;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,20 +15,29 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 
 import com.doubleclue.dcem.core.as.DcemUploadFile;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.utils.StreamUtils;
 import com.doubleclue.utils.KaraUtils;
-import com.google.common.io.CharStreams;
 
 public class FileUploadDetector {
-	
+
 	static Tika tika = new Tika();
 
 	public static String detectMediaType(File file) throws Exception {
 		return tika.detect(file);
+	}
+
+	public static MediaType detectMediaType (File file, Metadata metadata) throws Exception {
+		InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+		MediaType mediaType =  tika.getDetector().detect(inputStream, metadata);
+		try {
+			inputStream.close();
+		} catch (Exception e) {}			
+		return mediaType;
 	}
 
 	public static DcemMediaType detectDcemMediaType(InputStream inputStream) throws Exception {
@@ -46,8 +56,8 @@ public class FileUploadDetector {
 		reader.close();
 		return targetString;
 	}
-	
-	public static String parseFileToString (File file) throws Exception {
+
+	public static String parseFileToString(File file) throws Exception {
 		return tika.parseToString(file);
 	}
 
