@@ -147,7 +147,7 @@
 							<!-- <p:ajax event="rowUnselectCheckbox" /> -->
 							<!-- 	<p:ajax event="rowSelect" /> -->
 
-							<p:column selectionMode="multiple" style="width:6em !important;">
+							<p:column selectionMode="multiple" style="width:6em !important;" selectionBox="true">
 								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.encrypted']}" library="pictures" name="key.png"
 									rendered="#{cloudSafeFile.options == 'PWD' }" />
 								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.encrypted']}" library="pictures" name="lockF.png"
@@ -247,7 +247,7 @@
 
 							<p:ajax event="rowSelect" update="sharedCloudSafeTable" listener="#{cloudSafeView.onClickShareFolder}" />
 
-							<p:column selectionMode="multiple" style="width:4em;">
+							<p:column selectionMode="multiple" style="width:4em;" selectionBox="true">
 								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.encrypted']}" library="pictures" name="key.png"
 									rendered="#{cloudSafeFile.cloudSafeEntity.options == 'PWD' }" />
 								<p:graphicImage styleClass="viewFileImage" title="#{DcupMsg['cloudSafe.encrypted']}" library="pictures" name="lockF.png"

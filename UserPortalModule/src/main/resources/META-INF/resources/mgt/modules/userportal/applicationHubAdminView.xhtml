@@ -206,7 +206,7 @@
 							rowKey="#{appStep.index}" draggableRows="true"
 							styleClass="borderless"
 							emptyMessage="#{DcupMsg['message.emptyTable']}">
-							<p:column selectionMode="multiple"
+							<p:column selectionMode="multiple" selectionBox="true"
 								style="width:16px; text-align:center" />
 							<p:ajax event="rowSelect" update="actionsTable" />
 							<p:column headerText="#{DcupMsg['appHubAdmin.type']}">

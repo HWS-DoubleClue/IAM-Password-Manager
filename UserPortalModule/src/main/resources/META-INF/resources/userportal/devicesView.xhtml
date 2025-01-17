@@ -51,7 +51,7 @@
 				<p />
 				<p:dataTable id="deviceTable" reflow="true" var="device" value="#{devicesView.devices}" emptyMessage="#{DcupMsg['message.emptyTable']}"
 					selection="#{devicesView.selectedDevices}" rowKey="#{device.id}" class="borderless" style="margin-bottom: 2%">
-					<p:column required="true" selectionMode="multiple" style="width:2em; text-align:center;" />
+					<p:column required="true" selectionMode="multiple" style="width:2em; text-align:center;" selectionBox="true"/>
 					<p:column headerText="#{DcupMsg['columnTitle.name']}">
 						<h:outputText value="#{device.name}" />
 					</p:column>
@@ -108,7 +108,7 @@
 				<p:dataTable reflow="true" class="borderless" var="hardwareToken" id="hardwareTokenTable" value="#{devicesView.otpTokens}"
 					emptyMessage="#{DcupMsg['message.emptyTable']}" selection="#{devicesView.selectedOtpTokens}" rowKey="#{hardwareToken.serialNumber}"
 					style="margin-bottom: 2%">
-					<p:column selectionMode="multiple" style="width:2em; text-align:center" />
+					<p:column selectionMode="multiple" style="width:2em; text-align:center" selectionBox="true"/>
 					<p:column headerText="#{DcupMsg['columnTitle.otpType']}">
 						<h:outputText value="#{hardwareToken.otpType}" />
 					</p:column>
@@ -150,7 +150,7 @@
 				<p />
 				<p:dataTable reflow="true" var="fidoAuthenticator" value="#{devicesView.fidoAuthenticators}" emptyMessage="#{DcupMsg['message.emptyTable']}"
 					selection="#{devicesView.selectedFidoAuthenticators}" rowKey="#{fidoAuthenticator.id}" class="borderless">
-					<p:column selectionMode="multiple" style="width:2em; text-align:center" />
+					<p:column selectionMode="multiple" style="width:2em; text-align:center" selectionBox="true"/>
 					<p:column headerText="#{DcupMsg['columnTitle.displayName']}">
 						<h:outputText value="#{fidoAuthenticator.displayName}" />
 					</p:column>
