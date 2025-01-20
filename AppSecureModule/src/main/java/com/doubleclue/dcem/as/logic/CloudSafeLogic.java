@@ -32,6 +32,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
@@ -195,9 +196,7 @@ public class CloudSafeLogic {
 		InputStream inputStream = null;
 		try {
 			inputStream = getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, ocr);
-			StringWriter writer = new StringWriter();
-			KaraUtils.copyStream(inputStream, writer);
-			return writer.toString();
+			return IOUtils.toString(inputStream, StandardCharsets.UTF_8.name());
 		} catch (Exception exp) {
 			throw new DcemException(DcemErrorCodes.INVALID_CLOUDDATA_ID, "");
 		} finally {

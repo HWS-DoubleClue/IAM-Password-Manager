@@ -468,7 +468,7 @@ public class DcemMain {
 					case USER_PORTAL:
 						addServlet(standardContext, DcemConstants.USERPORTAL_SERVLET_NAME, DcemConstants.USERPORTAL_SERVLET_CLASS,
 								DcemConstants.USERPORTAL_SERVLET_PATH);
-						addServlet(standardContext, DcemConstants.WEBDAV_SERVLET_NAME, DcemConstants.WEBDAV_SERVLET_CLASS, DcemConstants.WEBDAV_SERVLET_PATH);
+		//				addServlet(standardContext, DcemConstants.WEBDAV_SERVLET_NAME, DcemConstants.WEBDAV_SERVLET_CLASS, DcemConstants.WEBDAV_SERVLET_PATH);
 						addServlet(standardContext, DcemConstants.TEST_SP_SERVLET_NAME, DcemConstants.TEST_SP_SERVLET_CLASS,
 								DcemConstants.TEST_SP_SERVLET_PATH);
 						addServlet(standardContext, DcemConstants.LICENCE_SERVLET_NAME, DcemConstants.LICENCE_SERVLET_CLASS,
