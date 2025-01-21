@@ -84,6 +84,8 @@ import com.doubleclue.utils.StringUtils;
 import com.google.common.primitives.Bytes;
 import com.hazelcast.core.IAtomicLong;
 
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+
 @ApplicationScoped
 public class CloudSafeLogic {
 
@@ -284,6 +286,8 @@ public class CloudSafeLogic {
 			return inputStream;
 		} catch (DcemException exp) {
 			throw exp;
+		} catch (NoSuchKeyException exp) {
+			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, cloudSafeEntity.getName() + ocrText);
 		} catch (Exception exp) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_FILE_DECRYPTION, cloudSafeEntity.getName());
 		}
