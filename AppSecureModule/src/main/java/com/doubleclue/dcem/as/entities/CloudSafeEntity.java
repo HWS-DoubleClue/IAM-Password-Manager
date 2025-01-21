@@ -89,7 +89,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.UPDATE_LAST_MODIFY_STATE_BY_USER, query = "UPDATE CloudSafeEntity c SET c.lastModifiedUser = NULL WHERE c.lastModifiedUser = ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_BY_TAG, query = "Select DISTINCT c FROM CloudSafeEntity c JOIN FETCH c.tags tag WHERE tag IN ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_ALL_TAGS, query = "Select c.tags FROM CloudSafeEntity c where c.id = ?1"),
-
+		@NamedQuery(name = CloudSafeEntity.GET_BY_IDS, query = "SELECT c FROM CloudSafeEntity c WHERE c.id IN :ids")
 })
 public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
@@ -125,6 +125,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String UPDATE_LAST_MODIFY_STATE_BY_USER = "CloudSafeShareEntity.updateLastMdoifyByUser";
 	public static final String GET_BY_TAG = "CloudSafeEntity.GetByTag";
 	public static final String GET_ALL_TAGS = "CloudSafeEntity.GetAllTags";
+	public static final String GET_BY_IDS = "CloudSafeEntity.getByIds";
 
 	public CloudSafeEntity() {
 		super();
@@ -617,7 +618,4 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		}
 		return thumbnailEntity.getThumbnail();
 	}
-	
-	
-
 }
