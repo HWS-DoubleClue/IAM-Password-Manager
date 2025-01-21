@@ -61,7 +61,7 @@ public class FileUploadDetector {
 		return tika.parseToString(file);
 	}
 
-	private static String detectMediaType(InputStream inputStream) throws Exception {
+	public static String detectMediaType(InputStream inputStream) throws Exception {
 		return tika.detect(inputStream);
 	}
 
