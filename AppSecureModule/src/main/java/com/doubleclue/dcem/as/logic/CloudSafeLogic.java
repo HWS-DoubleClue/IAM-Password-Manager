@@ -1157,6 +1157,20 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
+	public void recoverCloudSafeFiles(List<CloudSafeEntity> filesToRecover) throws DcemException {
+		for (CloudSafeEntity cloudSafeEntity : filesToRecover) {
+			cloudSafeEntity.setDiscardAfter(null);
+			cloudSafeEntity.setRecycled(false);
+			CloudSafeDto cloudSafeFolder = new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.isFolder());
+			if (cloudSafeEntity.isFolder()) {
+				recoverSubDirectories(cloudSafeFolder, new ArrayList<CloudSafeDto>(), cloudSafeEntity.getUser());
+			}
+			em.merge(cloudSafeEntity);
+		}
+
+	}
+
+	@DcemTransactional
 	public void deleteCloudSafeFilesContent(List<CloudSafeDto> list) throws DcemException {
 		for (CloudSafeDto cloudSafeDto : list) {
 			cloudSafeContentI.delete(em, cloudSafeDto.getId());
@@ -1222,6 +1236,24 @@ public class CloudSafeLogic {
 			CloudSafeEntity toRecycleCloudSafe = getCloudSafe(cloudSafeDto.getId());
 			toRecycleCloudSafe.setDiscardAfter(LocalDateTime.now().plusDays(30));
 			toRecycleCloudSafe.setRecycled(true);
+			em.merge(toRecycleCloudSafe);
+		}
+	}
+
+	@DcemTransactional
+	private void recoverSubDirectories(CloudSafeDto parentFolder, List<CloudSafeDto> toRecoverFiles, DcemUser dcemUser) throws DcemException {
+		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, CloudSafeDto.class);
+		query.setParameter(1, parentFolder.getId());
+		query.setParameter(2, dcemUser);
+		List<CloudSafeDto> children = query.getResultList();
+		toRecoverFiles.addAll(children);
+		for (CloudSafeDto cloudSafeDto : children) {
+			if (cloudSafeDto.isFolder()) {
+				recoverSubDirectories(cloudSafeDto, toRecoverFiles, dcemUser);
+			}
+			CloudSafeEntity toRecycleCloudSafe = getCloudSafe(cloudSafeDto.getId());
+			toRecycleCloudSafe.setDiscardAfter(null);
+			toRecycleCloudSafe.setRecycled(false);
 			em.merge(toRecycleCloudSafe);
 		}
 	}
