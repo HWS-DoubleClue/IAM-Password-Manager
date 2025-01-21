@@ -456,6 +456,15 @@ public class CloudSafeLogic {
 		query.setParameter(2, getCloudSafeRoot());
 		return query.getResultList();
 	}
+	
+	public List<CloudSafeEntity> getCloudSafeEntitiesByIds(List<Integer> ids) throws DcemException {
+	    if (ids == null || ids.isEmpty()) {
+	        return new ArrayList<>();
+	    }
+	    TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_BY_IDS, CloudSafeEntity.class);
+	    query.setParameter("ids", ids);
+	    return query.getResultList();
+	}
 
 	@DcemTransactional
 	public CloudSafeEntity setCloudSafeByteArray(CloudSafeEntity cloudSafeEntity, char[] password, byte[] content, DcemUser loggedInUser,
