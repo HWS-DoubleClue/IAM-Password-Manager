@@ -1167,7 +1167,6 @@ public class CloudSafeLogic {
 			}
 			em.merge(cloudSafeEntity);
 		}
-
 	}
 
 	@DcemTransactional
