@@ -287,6 +287,7 @@ public class CloudSafeLogic {
 		} catch (DcemException exp) {
 			throw exp;
 		} catch (NoSuchKeyException exp) {
+			exp.printStackTrace();
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, cloudSafeEntity.getName() + ocrText);
 		} catch (Exception exp) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_FILE_DECRYPTION, cloudSafeEntity.getName());
@@ -491,9 +492,7 @@ public class CloudSafeLogic {
 		}
 		Set<CloudSafeTagEntity> tags = new HashSet<CloudSafeTagEntity>();
 		for (CloudSafeTagEntity cloudSafeTagEntity : cloudSafeEntity.getTags()) {
-			if (em.contains(cloudSafeTagEntity) == false) { // attache all tags
-				tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId()));
-			}
+			tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId()));
 		}
 		cloudSafeEntity.setTags(tags);
 		if (cloudSafeEntity.getSalt() == null) {
@@ -515,20 +514,20 @@ public class CloudSafeLogic {
 				long start = System.currentTimeMillis();
 				cloudSafeContentI.writeContentOutput(em, dbCloudSafeEntity, encryptedStream);
 				logger.debug("Write to Storage for Length " + length + " took: " + (System.currentTimeMillis() - start));
-				if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
-					if (ocrText == null || ocrText.isEmpty()) {
-						cloudSafeContentI.deleteS3Data(dbCloudSafeEntity.getId(), OCR_TEXT);
-						cloudSafeEntity.setTextLength(0L);
-					} else {
-						byte[] ocrData = ocrText.getBytes(StandardCharsets.UTF_8);
-						InputStream ocrStream = new ByteArrayInputStream(ocrData);
-						encryptedStream = getEncryptStream(dbCloudSafeEntity, ocrStream, password);
-						cloudSafeEntity.setTextLength((long) ocrData.length);
-						cloudSafeContentI.writeS3Data(dbCloudSafeEntity.getId(), OCR_TEXT, encryptedStream, ocrData.length + 16);
-					}
-				}
 				if (dbCloudSafeEntity.getOwner() == CloudSafeOwner.USER) {
 					updateCloudSafeUsage(dbCloudSafeEntity.getUser().getId(), delta);
+				}
+			}
+			if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
+				if (ocrText == null || ocrText.isEmpty()) {
+					cloudSafeContentI.deleteS3Data(dbCloudSafeEntity.getId(), OCR_TEXT);
+					dbCloudSafeEntity.setTextLength(0L);
+				} else {
+					byte[] ocrData = ocrText.getBytes(StandardCharsets.UTF_8);
+					InputStream ocrStream = new ByteArrayInputStream(ocrData);
+					InputStream encryptedStream = getEncryptStream(dbCloudSafeEntity, ocrStream, password);
+					dbCloudSafeEntity.setTextLength((long) ocrData.length);
+					cloudSafeContentI.writeS3Data(dbCloudSafeEntity.getId(), OCR_TEXT, encryptedStream, ocrData.length + 16);
 				}
 			}
 			if (loggedInUser != null && asModule.getPreferences().isEnableAuditUser() == true && cloudSafeEntity.getOwner() != CloudSafeOwner.DEVICE) {
@@ -615,6 +614,7 @@ public class CloudSafeLogic {
 			originalDbEntity.setThumbnailEntity(cloudSafeEntity.getThumbnailEntity());
 			originalDbEntity.setTextExtract(cloudSafeEntity.getTextExtract());
 			originalDbEntity.setTags(cloudSafeEntity.getTags());
+			originalDbEntity.setTextLength(cloudSafeEntity.getTextLength());
 			CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
 			if (thumbnailEntity != null) {
 				if (thumbnailEntity.getId() == null) {

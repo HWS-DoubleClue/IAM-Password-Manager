@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import com.doubleclue.dcem.as.entities.CloudSafeEntity;
@@ -59,15 +60,30 @@ public class CloudSafeTagLogic {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<CloudSafeTagEntity> getAllTagsFromCloudSafe(CloudSafeEntity cloudSafeEntity) {
+//	@SuppressWarnings({ "unchecked", "rawtypes" })
+//	public List<CloudSafeTagEntity> getAllTagsFromCloudSafe(CloudSafeEntity cloudSafeEntity) {
+//		try {
+//			TypedQuery<CloudSafeTagEntity> query = em.createNamedQuery(CloudSafeTagEntity.GET_ALL_TAGS_BY_CLOUDSAFE, CloudSafeTagEntity.class);
+//			query.setParameter(1, cloudSafeEntity.getId());
+//			return query.getResultList();
+//		} catch (Exception e) {
+//			return null;
+//		}
+//	}
+
+	public CloudSafeTagEntity getTagById(int id) {
+		return em.find(CloudSafeTagEntity.class, id);
+	}
+
+	public CloudSafeTagEntity getTagByName(String name) {
+		TypedQuery<CloudSafeTagEntity> query = em.createNamedQuery(CloudSafeTagEntity.GET_TAG_BY_NAME, CloudSafeTagEntity.class);
+		query.setParameter(1, name);
 		try {
-			TypedQuery<CloudSafeTagEntity> query = em.createNamedQuery(CloudSafeTagEntity.GET_ALL_TAGS_BY_CLOUDSAFE, CloudSafeTagEntity.class);
-			query.setParameter(1, cloudSafeEntity.getId());
-			return query.getResultList();
-		} catch (Exception e) {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
 			return null;
 		}
+		
 	}
 
 }

@@ -1599,5 +1599,26 @@ public class DcemUtils {
 	public static String formatDate(String locale, LocalDate date) {
 		return formatDate(new Locale(locale), date);
 	}
+	
+	public static String decideFontColor(String hexColor) {
+		int[] rgb = hexToRGB(hexColor);
+		double luminance = calculateLuminance(rgb[0], rgb[1], rgb[2]);
+		return (luminance > 0.5) ? "black" : "white";
+	}
+
+	private static int[] hexToRGB(String hexColor) {
+		hexColor = hexColor.replace("#", "");
+		int r = Integer.parseInt(hexColor.substring(0, 2), 16);
+		int g = Integer.parseInt(hexColor.substring(2, 4), 16);
+		int b = Integer.parseInt(hexColor.substring(4, 6), 16);
+		return new int[] { r, g, b };
+	}
+
+	private static double calculateLuminance(int red, int green, int blue) {
+		double r = red / 255.0;
+		double g = green / 255.0;
+		double b = blue / 255.0;
+		return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+	}
 
 }

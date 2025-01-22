@@ -12,25 +12,31 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.doubleclue.dcem.core.entities.EntityInterface;
 import com.doubleclue.dcem.core.gui.DcemGui;
+import com.doubleclue.dcem.core.utils.DcemUtils;
+
 
 @NamedQueries({ @NamedQuery(name = CloudSafeTagEntity.GET_ALL_TAGS, query = "SELECT ct FROM CloudSafeTagEntity ct "),
-		@NamedQuery(name = CloudSafeTagEntity.GET_ALL_TAGS_BY_CLOUDSAFE, query = "Select c FROM CloudSafeTagEntity c "
-				+ "JOIN c.cloudSafes cs "
-				+ "WHERE cs.id = ?1"), })
+//		@NamedQuery(name = CloudSafeTagEntity.GET_ALL_TAGS_BY_CLOUDSAFE, query = "Select c FROM CloudSafeTagEntity c " + "JOIN c.cloudSafes cs "
+//				+ "WHERE cs.id = ?1"),
+		@NamedQuery(name = CloudSafeTagEntity.GET_TAG_BY_NAME, query = "Select c FROM CloudSafeTagEntity c WHERE c.name = ?1"),
+
+})
 
 @Entity
-@Table(name = "as_cloudsafe_tag")
+@Table(name = "as_cloudsafe_tag", uniqueConstraints = @UniqueConstraint(name = "UK_DM_TAG_NAME", columnNames = { "dc_name"}))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CloudSafeTagEntity extends EntityInterface implements Comparable<CloudSafeTagEntity> {
 
-	public static final String GET_ALL_TAGS = "GetAllTags";
-	public static final String GET_ALL_TAGS_BY_CLOUDSAFE = "GetAllTagsByCloudsafe";
+	public static final String GET_ALL_TAGS = "CloudSafeTagEntity.GetAllTags";
+//	public static final String GET_ALL_TAGS_BY_CLOUDSAFE = "GetAllTagsByCloudsafe";
+	public static final String GET_TAG_BY_NAME = "CloudSafeTagEntity.GetByName";
 
 	@Id
 	@Column(name = "dc_id")
@@ -89,6 +95,10 @@ public class CloudSafeTagEntity extends EntityInterface implements Comparable<Cl
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public String getForegroundColor() {
+		return DcemUtils.decideFontColor(getColor());
 	}
 
 	@Override
