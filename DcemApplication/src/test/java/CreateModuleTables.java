@@ -142,11 +142,6 @@ public class CreateModuleTables {
 				System.err.println("\n!!!!!!!!!!!!        CreateModuleTables EXIT with ERROR        !!!!!!!!!!!!!!!!!!!");
 				System.exit(-1);
 			}
-
-			if (result.getLength() == 0) {
-				continue;
-			}
-
 			Node node = module.item(0);
 			if (node == null) {
 				System.out.println("ERROR:  No Module Defined in " + persistencePath);
@@ -154,6 +149,9 @@ public class CreateModuleTables {
 			}
 			moduleName = module.item(0).getNodeValue();
 			System.out.println("Module Name " + moduleName);
+//			if (result.getLength() == 0) {
+//				continue;
+//			}
 			for (int i = 0; i < result.getLength(); i++) {
 				String className = result.item(i).getNodeValue();
 				classesMap.add(className);

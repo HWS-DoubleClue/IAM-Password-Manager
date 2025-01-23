@@ -194,6 +194,8 @@ create unique index UK_AUTHAPP_NAME on as_authApp (dc_name);
 
 create unique index UK_AS_CLOUDDATA on as_cloudsafe (dc_name, owner, user_dc_id, device_dc_id, dc_parent_id, group_dc_id);
 
+create unique index UK_DM_TAG_NAME on as_cloudsafe_tag (dc_name);
+
 create index IDX_DEVICE_LAST_LOGIN on as_device (lastLogin, dc_state);
 
 create index IDX_DEVICE_USER on as_device (userId);
