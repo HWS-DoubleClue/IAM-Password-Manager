@@ -22,10 +22,11 @@ public class DcemUploadFile {
 		this.info = info;
 	}
 	
-	public DcemUploadFile(String fileName, File file, DcemMediaType dcemMediaType) {
+	public DcemUploadFile(String fileName, File file, DcemMediaType dcemMediaType, String info) {
 		this.fileName = fileName;
 		this.file = file;
 		this.dcemMediaType = dcemMediaType;
+		this.info = info;
 	}
 
 }

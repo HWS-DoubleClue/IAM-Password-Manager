@@ -13,7 +13,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -103,8 +102,8 @@ import com.doubleclue.dcem.core.logic.LoginAuthenticator;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.tasks.ReloadTask;
 import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
+import com.doubleclue.dcem.core.utils.typedetector.FileUploadDetector;
 import com.doubleclue.utils.RandomUtils;
-import com.drew.lang.Charsets;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -1323,6 +1322,24 @@ public class DcemUtils {
 		}
 		return null;
 	}
+	
+	static public List<DcemUploadFile> getEmailAttachments(Message message) throws Exception {
+	    List<DcemUploadFile> downloadedAttachments = new ArrayList<DcemUploadFile>();
+	    Multipart multiPart = (Multipart) message.getContent();
+	    int numberOfParts = multiPart.getCount();
+	    for (int partCount = 0; partCount < numberOfParts; partCount++) {
+	        MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+	        if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+	            File tempFile = File.createTempFile("dcem-", "-mail");
+	            part.saveFile(tempFile);
+	            String mediaType = FileUploadDetector.detectMediaType(tempFile);
+	            DcemMediaType dcemMediaType = DcemMediaType.getDcemMediaType(mediaType);
+	            downloadedAttachments.add(new DcemUploadFile(part.getFileName(), tempFile, dcemMediaType, mediaType));
+	            
+	        }
+	    }
+	    return downloadedAttachments;
+	}  
 
 //	public static List<DcemUploadFile> getMailContents(Message message) throws Exception {
 //
