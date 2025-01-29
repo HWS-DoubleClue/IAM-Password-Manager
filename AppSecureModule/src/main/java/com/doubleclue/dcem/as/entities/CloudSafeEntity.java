@@ -51,11 +51,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "as_cloudsafe", uniqueConstraints = @UniqueConstraint(name = "UK_AS_CLOUDDATA", columnNames = { "dc_name", "owner", "user_dc_id", "device_dc_id",
-		"dc_parent_id", "group_dc_id" }))
+		"dc_parent_id", "group_dc_id", "recycled"}))
 @NamedQueries({
 		@NamedQuery(name = CloudSafeEntity.GET_GLOBAL_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GLOBAL AND c.name=?1"),
-		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.user=?2 AND c.parent.id=?3"),
-		@NamedQuery(name = CloudSafeEntity.GET_GROUP_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.name=?1 AND c.group=?2 AND c.parent.id=?3"),
+		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.user=?2 AND c.parent.id=?3 AND c.recycled=?4"),
+		@NamedQuery(name = CloudSafeEntity.GET_GROUP_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.name=?1 AND c.group=?2 AND c.parent.id=?3 AND c.recycled=?4"),
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_ROOT, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.user=?2 AND c.parent = c.id"),
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_IN_RECYCLEBIN, query = "SELECT c FROM CloudSafeEntity c WHERE c.name=?1 AND c.user.loginId=?2 AND c.recycled=true"),
 		@NamedQuery(name = CloudSafeEntity.GET_DEVICE_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.DEVICE AND c.name=?1 AND c.device=?2"),

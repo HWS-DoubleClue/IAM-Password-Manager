@@ -252,7 +252,7 @@ public class CloudSafeLogic {
 				cloudSafeEntity.setParent(getCloudSafeRoot());
 			}
 			cloudSafeEntity = getCloudSafe(cloudSafeEntity.getOwner(), cloudSafeEntity.getName(), cloudSafeEntity.getUser(), null,
-					cloudSafeEntity.getParent().getId(), cloudSafeEntity.getGroup());
+					cloudSafeEntity.getParent().getId(), cloudSafeEntity.getGroup(), cloudSafeEntity.isRecycled());
 		}
 		try {
 			InputStream inputStream;
@@ -386,45 +386,52 @@ public class CloudSafeLogic {
 	 * @param device
 	 * @return
 	 */
-	public CloudSafeEntity getCloudSafe(CloudSafeOwner owner, String key, DcemUser user, DeviceEntity device, Integer parentId, DcemGroup dcemGroup)
-			throws DcemException {
-		TypedQuery<CloudSafeEntity> query = null;
-		if (parentId == null) {
-			parentId = getCloudSafeRoot().getId();
-		}
-		switch (owner) {
-		case GLOBAL:
-			query = em.createNamedQuery(CloudSafeEntity.GET_GLOBAL_CLOUDDATA, CloudSafeEntity.class);
-			query.setParameter(1, key);
-			break;
-		case USER:
-			query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDDATA, CloudSafeEntity.class);
-			query.setParameter(1, key);
-			query.setParameter(2, user);
-			query.setParameter(3, parentId);
-			break;
-		case DEVICE:
-			query = em.createNamedQuery(CloudSafeEntity.GET_DEVICE_CLOUDDATA, CloudSafeEntity.class);
-			query.setParameter(1, key);
-			query.setParameter(2, device);
-			break;
-		case GROUP:
-			query = em.createNamedQuery(CloudSafeEntity.GET_GROUP_CLOUDDATA, CloudSafeEntity.class);
-			query.setParameter(1, key);
-			query.setParameter(2, dcemGroup);
-			query.setParameter(3, parentId);
-			break;
-		default:
-			new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, key);
-			break;
-		}
-		try {
-			CloudSafeEntity cloudSafeEntity = query.getSingleResult();
-			return cloudSafeEntity;
-		} catch (NoResultException exp) {
-			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, key);
-		}
+	public CloudSafeEntity getCloudSafe(CloudSafeOwner owner, String key, DcemUser user, DeviceEntity device, Integer parentId, DcemGroup dcemGroup, boolean recycled)
+	        throws DcemException {
+	    TypedQuery<CloudSafeEntity> query = null;
+	    if (parentId == null) {
+	        parentId = getCloudSafeRoot().getId();
+	    }
+	    switch (owner) {
+	        case GLOBAL:
+	            query = em.createNamedQuery(CloudSafeEntity.GET_GLOBAL_CLOUDDATA, CloudSafeEntity.class);
+	            query.setParameter(1, key);
+	            break;
+	        case USER:
+	            query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDDATA, CloudSafeEntity.class);
+	            query.setParameter(1, key);
+	            query.setParameter(2, user);
+	            query.setParameter(3, parentId);
+	            query.setParameter(4, recycled);
+	            break;
+	        case DEVICE:
+	            query = em.createNamedQuery(CloudSafeEntity.GET_DEVICE_CLOUDDATA, CloudSafeEntity.class);
+	            query.setParameter(1, key);
+	            query.setParameter(2, device);
+	            break;
+	        case GROUP:
+	            query = em.createNamedQuery(CloudSafeEntity.GET_GROUP_CLOUDDATA, CloudSafeEntity.class);
+	            query.setParameter(1, key);
+	            query.setParameter(2, dcemGroup);
+	            query.setParameter(3, parentId);
+	            query.setParameter(4, recycled);
+	            break;
+	        default:
+	            throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, key);
+	    }
+	    try {
+	        CloudSafeEntity cloudSafeEntity = query.getSingleResult();
+	        return cloudSafeEntity;
+	    } catch (NoResultException exp) {
+	        throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, key);
+	    }
 	}
+	
+	public CloudSafeEntity getCloudSafe(CloudSafeOwner owner, String key, DcemUser user, DeviceEntity device, Integer parentId, DcemGroup dcemGroup)
+	        throws DcemException {
+	    return getCloudSafe(owner, key, user, device, parentId, dcemGroup, false);
+	}
+
 
 	public CloudSafeEntity getUserCloudSafe(String name, DcemUser user, int parentId) throws DcemException {
 		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDDATA, CloudSafeEntity.class);
@@ -1940,6 +1947,8 @@ public class CloudSafeLogic {
 		}
 		return query.getResultList();
 	}
+	
+	
 
 	private void addToRecyleBin(CloudSafeEntity cloudSafeEntity, int counter, DcemUser loggedInUser) throws DcemException {
 		CloudSafeEntity recycleBinFolder = null;
