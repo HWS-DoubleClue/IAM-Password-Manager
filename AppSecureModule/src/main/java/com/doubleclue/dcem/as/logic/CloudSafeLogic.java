@@ -1215,13 +1215,15 @@ public class CloudSafeLogic {
 					deleteCloudSafeThumbnail((int) thumbnailEntity.getId());
 				}
 				deleteCloudSafeFile(cloudSafeEntity.getId());
+				CloudSafeLimitEntity cloudSafeLimitEntity = getCloudSafeLimitEntity(cloudSafeEntity.getUser().getId());
+				cloudSafeLimitEntity.setUsed(cloudSafeLimitEntity.getUsed() - cloudSafeEntity.getLength());
+				em.merge(cloudSafeLimitEntity);
 				List<CloudSafeDto> list = new ArrayList<CloudSafeDto>(1);
 				list.add(new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.getTextLength().intValue()));
 				return list;
 			}
 		} else {
 			setCloudSafeToRecycled(cloudSafeEntity);
-			// addToRecyleBin(cloudSafeEntity, 0, loggedInUser);
 			return new ArrayList<CloudSafeDto>(0);
 		}
 	}
