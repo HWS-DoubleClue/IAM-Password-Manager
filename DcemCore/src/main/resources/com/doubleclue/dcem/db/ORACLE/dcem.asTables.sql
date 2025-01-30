@@ -194,7 +194,7 @@ alter table as_authApp
 add constraint UK_AUTHAPP_NAME unique (dc_name);
 
 alter table as_cloudsafe
-add constraint UK_AS_CLOUDDATA unique (dc_name, owner, user_dc_id, device_dc_id, dc_parent_id, group_dc_id);
+add constraint UK_AS_CLOUDDATA unique (dc_name, owner, user_dc_id, device_dc_id, dc_parent_id, group_dc_id, recycled);
 
 alter table as_cloudsafe_tag
 add constraint UK_DM_TAG_NAME unique (dc_name);
