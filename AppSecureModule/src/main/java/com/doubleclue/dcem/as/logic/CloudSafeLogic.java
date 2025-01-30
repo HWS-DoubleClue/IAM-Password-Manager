@@ -389,52 +389,51 @@ public class CloudSafeLogic {
 	 * @param device
 	 * @return
 	 */
-	public CloudSafeEntity getCloudSafe(CloudSafeOwner owner, String key, DcemUser user, DeviceEntity device, Integer parentId, DcemGroup dcemGroup, boolean recycled)
-	        throws DcemException {
-	    TypedQuery<CloudSafeEntity> query = null;
-	    if (parentId == null) {
-	        parentId = getCloudSafeRoot().getId();
-	    }
-	    switch (owner) {
-	        case GLOBAL:
-	            query = em.createNamedQuery(CloudSafeEntity.GET_GLOBAL_CLOUDDATA, CloudSafeEntity.class);
-	            query.setParameter(1, key);
-	            break;
-	        case USER:
-	            query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDDATA, CloudSafeEntity.class);
-	            query.setParameter(1, key);
-	            query.setParameter(2, user);
-	            query.setParameter(3, parentId);
-	            query.setParameter(4, recycled);
-	            break;
-	        case DEVICE:
-	            query = em.createNamedQuery(CloudSafeEntity.GET_DEVICE_CLOUDDATA, CloudSafeEntity.class);
-	            query.setParameter(1, key);
-	            query.setParameter(2, device);
-	            break;
-	        case GROUP:
-	            query = em.createNamedQuery(CloudSafeEntity.GET_GROUP_CLOUDDATA, CloudSafeEntity.class);
-	            query.setParameter(1, key);
-	            query.setParameter(2, dcemGroup);
-	            query.setParameter(3, parentId);
-	            query.setParameter(4, recycled);
-	            break;
-	        default:
-	            throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, key);
-	    }
-	    try {
-	        CloudSafeEntity cloudSafeEntity = query.getSingleResult();
-	        return cloudSafeEntity;
-	    } catch (NoResultException exp) {
-	        throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, key);
-	    }
-	}
-	
-	public CloudSafeEntity getCloudSafe(CloudSafeOwner owner, String key, DcemUser user, DeviceEntity device, Integer parentId, DcemGroup dcemGroup)
-	        throws DcemException {
-	    return getCloudSafe(owner, key, user, device, parentId, dcemGroup, false);
+	public CloudSafeEntity getCloudSafe(CloudSafeOwner owner, String key, DcemUser user, DeviceEntity device, Integer parentId, DcemGroup dcemGroup,
+			boolean recycled) throws DcemException {
+		TypedQuery<CloudSafeEntity> query = null;
+		if (parentId == null) {
+			parentId = getCloudSafeRoot().getId();
+		}
+		switch (owner) {
+		case GLOBAL:
+			query = em.createNamedQuery(CloudSafeEntity.GET_GLOBAL_CLOUDDATA, CloudSafeEntity.class);
+			query.setParameter(1, key);
+			break;
+		case USER:
+			query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDDATA, CloudSafeEntity.class);
+			query.setParameter(1, key);
+			query.setParameter(2, user);
+			query.setParameter(3, parentId);
+			query.setParameter(4, recycled);
+			break;
+		case DEVICE:
+			query = em.createNamedQuery(CloudSafeEntity.GET_DEVICE_CLOUDDATA, CloudSafeEntity.class);
+			query.setParameter(1, key);
+			query.setParameter(2, device);
+			break;
+		case GROUP:
+			query = em.createNamedQuery(CloudSafeEntity.GET_GROUP_CLOUDDATA, CloudSafeEntity.class);
+			query.setParameter(1, key);
+			query.setParameter(2, dcemGroup);
+			query.setParameter(3, parentId);
+			query.setParameter(4, recycled);
+			break;
+		default:
+			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, key);
+		}
+		try {
+			CloudSafeEntity cloudSafeEntity = query.getSingleResult();
+			return cloudSafeEntity;
+		} catch (NoResultException exp) {
+			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, key);
+		}
 	}
 
+	public CloudSafeEntity getCloudSafe(CloudSafeOwner owner, String key, DcemUser user, DeviceEntity device, Integer parentId, DcemGroup dcemGroup)
+			throws DcemException {
+		return getCloudSafe(owner, key, user, device, parentId, dcemGroup, false);
+	}
 
 	public CloudSafeEntity getUserCloudSafe(String name, DcemUser user, int parentId) throws DcemException {
 		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDDATA, CloudSafeEntity.class);
@@ -482,8 +481,8 @@ public class CloudSafeLogic {
 			CloudSafeEntity originalDbCloudSafeEntity) throws DcemException {
 		return setCloudSafeStream(cloudSafeEntity, password, new ByteArrayInputStream(content), content.length, loggedInUser, originalDbCloudSafeEntity, null);
 	}
-	
-	public SortedSet<CloudSafeTagEntity> getTagsSafely (CloudSafeEntity entity) {
+
+	public SortedSet<CloudSafeTagEntity> getTagsSafely(CloudSafeEntity entity) {
 		if (Persistence.getPersistenceUtil().isLoaded(entity, CloudSafeEntity_.TAGS) == true) {
 			return entity.getTags();
 		}
@@ -1163,7 +1162,25 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public List<CloudSafeDto> deleteCloudSafeFiles(List<CloudSafeEntity> list, DcemUser loggedInUser, boolean shouldRecycle) throws Exception {
+	public List<CloudSafeDto> trashFiles(List<CloudSafeEntity> list, DcemUser loggedInUser) throws Exception {
+		List<CloudSafeDto> allDeletedFiles = new ArrayList<CloudSafeDto>();
+		for (CloudSafeEntity cloudSafeEntity : list) {
+			if (loggedInUser != null && cloudSafeEntity.getOwner() == CloudSafeOwner.USER && asModule.getModulePreferences().isEnableAuditUser() == true
+					&& cloudSafeEntity.isRecycled() == false) {
+				DcemAction dcemAction = new DcemAction(asCloudSafeSubject, DcemConstants.ACTION_TRASH);
+				String shareUser = "";
+				if (loggedInUser.getId() != cloudSafeEntity.getUser().getId()) {
+					shareUser = AUDIT_SHARED_BY + cloudSafeEntity.getUser().getDisplayNameOrLoginId();
+				}
+				auditingLogic.addAudit(dcemAction, loggedInUser, "File: " + cloudSafeEntity.getName() + shareUser);
+			}
+			allDeletedFiles.addAll(trashFile(cloudSafeEntity));
+		}
+		return allDeletedFiles;
+	}
+	
+	@DcemTransactional
+	public List<CloudSafeDto> deleteFiles(List<CloudSafeEntity> list, DcemUser loggedInUser) throws Exception {
 		List<CloudSafeDto> allDeletedFiles = new ArrayList<CloudSafeDto>();
 		for (CloudSafeEntity cloudSafeEntity : list) {
 			if (loggedInUser != null && cloudSafeEntity.getOwner() == CloudSafeOwner.USER && asModule.getModulePreferences().isEnableAuditUser() == true
@@ -1175,27 +1192,25 @@ public class CloudSafeLogic {
 				}
 				auditingLogic.addAudit(dcemAction, loggedInUser, "File: " + cloudSafeEntity.getName() + shareUser);
 			}
-			if (cloudSafeEntity.getOwner() == CloudSafeOwner.GROUP) {
-				cloudSafeEntity.setDiscardAfter(LocalDateTime.now().plusWeeks(1));
-				em.merge(cloudSafeEntity);
-			} else {
-				allDeletedFiles.addAll(deleteCloudSafe(cloudSafeEntity, loggedInUser, shouldRecycle));
-			}
+			allDeletedFiles.addAll(deleteFile(cloudSafeEntity));
 		}
 		return allDeletedFiles;
 	}
 
 	@DcemTransactional
-	public void recoverCloudSafeFiles(List<CloudSafeEntity> filesToRecover) throws DcemException {
+	public List<CloudSafeDto> recoverCloudSafeFiles(List<CloudSafeEntity> filesToRecover) throws DcemException {
+		List<CloudSafeDto> recoverdFiles = new ArrayList<CloudSafeDto>();
 		for (CloudSafeEntity cloudSafeEntity : filesToRecover) {
 			cloudSafeEntity.setDiscardAfter(null);
 			cloudSafeEntity.setRecycled(false);
 			CloudSafeDto cloudSafeFolder = new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.isFolder());
 			if (cloudSafeEntity.isFolder()) {
-				recoverSubDirectories(cloudSafeFolder, new ArrayList<CloudSafeDto>(), cloudSafeEntity.getUser());
+				recoverSubDirectories(cloudSafeFolder, recoverdFiles, cloudSafeEntity.getUser());
 			}
 			em.merge(cloudSafeEntity);
+			recoverdFiles.add(new CloudSafeDto(cloudSafeEntity));
 		}
+		return recoverdFiles;
 	}
 
 	@DcemTransactional
@@ -1216,33 +1231,8 @@ public class CloudSafeLogic {
 	 * @throws DcemException
 	 */
 	@DcemTransactional
-	public List<CloudSafeDto> deleteCloudSafe(CloudSafeEntity cloudSafeEntity, DcemUser loggedInUser, boolean shouldRecycle) throws DcemException {
-		// Check if entity is within Recycling Bin
-		boolean recycled = checkEntityIsRecycled(cloudSafeEntity);
-		if (recycled == true || shouldRecycle == false) {
-			if (cloudSafeEntity.isFolder()) {
-				return deleteCloudSafeFolder(cloudSafeEntity);
-			} else {
-				CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
-				if (thumbnailEntity != null) {
-					deleteCloudSafeThumbnail((int) thumbnailEntity.getId());
-				}
-				deleteCloudSafeFile(cloudSafeEntity.getId());
-				CloudSafeLimitEntity cloudSafeLimitEntity = getCloudSafeLimitEntity(cloudSafeEntity.getUser().getId());
-				cloudSafeLimitEntity.setUsed(cloudSafeLimitEntity.getUsed() - cloudSafeEntity.getLength());
-				em.merge(cloudSafeLimitEntity);
-				List<CloudSafeDto> list = new ArrayList<CloudSafeDto>(1);
-				list.add(new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.getTextLength().intValue()));
-				return list;
-			}
-		} else {
-			setCloudSafeToRecycled(cloudSafeEntity);
-			return new ArrayList<CloudSafeDto>(0);
-		}
-	}
-
-	@DcemTransactional
-	private void setCloudSafeToRecycled(CloudSafeEntity cloudSafeEntity) throws DcemException {
+	public List<CloudSafeDto> trashFile(CloudSafeEntity cloudSafeEntity) throws DcemException {
+		// Recycle to bin
 		cloudSafeEntity.setDiscardAfter(LocalDateTime.now().plusDays(30));
 		cloudSafeEntity.setRecycled(true);
 		CloudSafeDto cloudSafeFolder = new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.isFolder());
@@ -1250,6 +1240,32 @@ public class CloudSafeLogic {
 			recycleSubDirectories(cloudSafeFolder, new ArrayList<CloudSafeDto>(), cloudSafeEntity.getUser());
 		}
 		em.merge(cloudSafeEntity);
+		return new ArrayList<CloudSafeDto>(0);
+
+	}
+
+	/**
+	 * @param cloudSafeEntity
+	 * @return the realy DB deleted files
+	 * @throws DcemException
+	 */
+	@DcemTransactional
+	public List<CloudSafeDto> deleteFile(CloudSafeEntity cloudSafeEntity) throws DcemException {
+		if (cloudSafeEntity.isFolder()) {
+			return deleteCloudSafeFolder(cloudSafeEntity);
+		} else {
+			CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
+			if (thumbnailEntity != null) {
+				deleteCloudSafeThumbnail((int) thumbnailEntity.getId());
+			}
+			deleteCloudSafeFile(cloudSafeEntity.getId());
+			CloudSafeLimitEntity cloudSafeLimitEntity = getCloudSafeLimitEntity(cloudSafeEntity.getUser().getId());
+			cloudSafeLimitEntity.setUsed(cloudSafeLimitEntity.getUsed() - cloudSafeEntity.getLength());
+			em.merge(cloudSafeLimitEntity);
+			List<CloudSafeDto> list = new ArrayList<CloudSafeDto>(1);
+			list.add(new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.getTextLength().intValue()));
+			return list;
+		}
 	}
 
 	@DcemTransactional
@@ -1270,7 +1286,6 @@ public class CloudSafeLogic {
 		}
 	}
 
-	@DcemTransactional
 	private void recoverSubDirectories(CloudSafeDto parentFolder, List<CloudSafeDto> toRecoverFiles, DcemUser dcemUser) throws DcemException {
 		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, CloudSafeDto.class);
 		query.setParameter(1, parentFolder.getId());
@@ -1286,16 +1301,6 @@ public class CloudSafeLogic {
 			toRecycleCloudSafe.setRecycled(false);
 			em.merge(toRecycleCloudSafe);
 		}
-	}
-
-	private boolean checkEntityIsRecycled(CloudSafeEntity entity) {
-		if (DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(entity.getName())) {
-			return true;
-		}
-		if (entity.isRecycled()) {
-			return true;
-		}
-		return false;
 	}
 
 	private String getFullPath(int id, String path) {
@@ -1795,7 +1800,6 @@ public class CloudSafeLogic {
 
 	private List<CloudSafeDto> deleteSubdirectories(CloudSafeDto parentFolder, List<CloudSafeDto> cloudSafeToDeleteList, DcemUser dcemUser)
 			throws DcemException {
-
 		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, CloudSafeDto.class);
 		query.setParameter(1, parentFolder.getId());
 		query.setParameter(2, dcemUser);
@@ -1983,8 +1987,6 @@ public class CloudSafeLogic {
 		query.setParameter(3, groupId);
 		return query.getSingleResult();
 	}
-	
-	
 
 	private void addToRecyleBin(CloudSafeEntity cloudSafeEntity, int counter, DcemUser loggedInUser) throws DcemException {
 		CloudSafeEntity recycleBinFolder = null;

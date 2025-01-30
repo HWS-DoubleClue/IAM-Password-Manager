@@ -469,9 +469,9 @@ public class CloudSafeView extends AbstractPortalView {
 			// delete files in one transaction
 			List<CloudSafeDto> deletedDbFiles;
 			if (listView == true) {
-				deletedDbFiles = cloudSafeLogic.deleteCloudSafeFiles(selectedCloudSafeFiles, loggedInUser, true);
+				deletedDbFiles = cloudSafeLogic.deleteFiles(selectedCloudSafeFiles, loggedInUser);
 			} else {
-				deletedDbFiles = cloudSafeLogic.deleteCloudSafeFiles(selectedCloudSafeEntity, loggedInUser, true);
+				deletedDbFiles = cloudSafeLogic.deleteFiles(selectedCloudSafeEntity, loggedInUser);
 			}
 			cloudSafeLogic.deleteCloudSafeFilesContent(deletedDbFiles);
 		} catch (Exception e) {

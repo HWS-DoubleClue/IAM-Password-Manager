@@ -82,6 +82,7 @@ public final class DcemConstants {
 	public static final String ACTION_STOP_HEALTHCHECK = "stopHealthCheck";
 	public static final String ACTION_AZURE_MIGRATION = "azureMigration";
 	public final static String ACTION_DELETE_ALL = "deleteAll";
+	public final static String ACTION_TRASH = "trash";
 
 	public final static String AUTO_DIALOG_ID = "AUTO_DIALOG";
 
