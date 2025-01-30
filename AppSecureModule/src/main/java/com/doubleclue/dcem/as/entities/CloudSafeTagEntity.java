@@ -41,6 +41,7 @@ public class CloudSafeTagEntity extends EntityInterface implements Comparable<Cl
 	@Id
 	@Column(name = "dc_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@DcemGui (visible = false)
 	private Integer id;
 
 	@DcemGui
@@ -91,7 +92,7 @@ public class CloudSafeTagEntity extends EntityInterface implements Comparable<Cl
 	public int compareTo(CloudSafeTagEntity cloudSafeTagEntity) {
 		return name.compareTo(cloudSafeTagEntity.getName());
 	}
-
+	
 	@Override
 	public String toString() {
 		return name;

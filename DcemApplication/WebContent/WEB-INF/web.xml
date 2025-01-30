@@ -30,7 +30,7 @@
 	</context-param>
 	<context-param>
 		<param-name>primefaces.CSP_POLICY</param-name>
-		<param-value>script-src 'self' https: *.googleapis.com</param-value>
+		<param-value>script-src 'unsafe-eval' 'self' https: *.googleapis.com</param-value>
 	</context-param>
 	<!-- <context-param> <param-name>primefaces.FONT_AWESOME</param-name> <param-value>true</param-value> </context-param> -->
 
@@ -177,6 +177,11 @@
 		<extension>eot</extension>
 		<mime-type>application/vnd.ms-fontobject</mime-type>
 	</mime-mapping>
+	<mime-mapping>
+		<extension>svg</extension>
+		<mime-type>image/svg+xml</mime-type>
+	</mime-mapping>
+
 
 	<error-page>
 		<exception-type>org.jboss.weld.context.NonexistentConversationException</exception-type>

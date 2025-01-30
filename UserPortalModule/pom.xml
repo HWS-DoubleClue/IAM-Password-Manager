@@ -29,8 +29,7 @@
 			<groupId>de.slackspace</groupId>
 			<artifactId>openkeepass</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-core -->
-		
+
 
 	</dependencies>
 	<build>

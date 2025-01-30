@@ -68,7 +68,7 @@ public class ProcessReceiveMailTask extends CoreTask {
 	 */
 
 	public ProcessReceiveMailTask(TenantEntity tenantEntity, DcemModule dcemModule, String subjectName, String identifier, String token, File emlFile) {
-		super (NightlyTaskTenant.class.getSimpleName(), tenantEntity);
+		super (ProcessReceiveMailTask.class.getSimpleName(), tenantEntity);
 		this.tenantEntity = tenantEntity;
 		this.dcemModule = dcemModule;
 		this.identifier = identifier;
@@ -88,11 +88,13 @@ public class ProcessReceiveMailTask extends CoreTask {
 			logger.error("Invalid EMail Token from " + from + ", cause: " + e.toString());
 			return;
 		}
-		
 		try {
-			dcemModule.receiveMail (subjectName, identifier, emlFile);
+			String report = dcemModule.receiveMail (subjectName, identifier, emlFile);
+			// TODO send E-Mail with error
 		} catch (Exception e) {
-			logger.error("Invalid EMail from " + from + ", cause" + e.getMessage());
+			logger.error("Invalid EMail from " + from + ", cause" + e.getMessage(), e);
+			// TODO send E-Mail with error
 		}
+		emlFile.delete();
 	}
 }

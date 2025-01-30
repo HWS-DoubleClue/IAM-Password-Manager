@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
@@ -26,11 +27,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.SortNatural;
 
 import com.doubleclue.comm.thrift.CloudSafeOptions;
 import com.doubleclue.comm.thrift.CloudSafeOwner;
@@ -84,11 +88,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.GET_IDS, query = "SELECT c.id FROM CloudSafeEntity c"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA_FLAT, query = "SELECT c FROM CloudSafeEntity c WHERE ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2)) AND c.isFolder=false AND c.recycled = ?3 ORDER BY c.name ASC" ),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = ?4 ORDER BY c.isFolder DESC, c.name ASC"),
-		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_CLOUDSAFE_FILE, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4"),
-		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_CLOUDSAFE_FILE_WITH_NULL_PARENT, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4"),
+		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_USER, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4"),
+		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_GROUP, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=false AND c.group.id=?3"),
+
 		@NamedQuery(name = CloudSafeEntity.UPDATE_LAST_MODIFY_STATE_BY_USER, query = "UPDATE CloudSafeEntity c SET c.lastModifiedUser = NULL WHERE c.lastModifiedUser = ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_BY_TAG, query = "Select DISTINCT c FROM CloudSafeEntity c JOIN FETCH c.tags tag WHERE tag IN ?1"),
-		@NamedQuery(name = CloudSafeEntity.GET_ALL_TAGS, query = "Select c.tags FROM CloudSafeEntity c where c.id = ?1"),
+		@NamedQuery(name = CloudSafeEntity.GET_ALL_TAGS, query = "Select c.tags FROM CloudSafeEntity c where c.id = ?1" ),
 		@NamedQuery(name = CloudSafeEntity.GET_BY_IDS, query = "SELECT c FROM CloudSafeEntity c WHERE c.id IN :ids")
 })
 public class CloudSafeEntity extends EntityInterface implements Cloneable {
@@ -118,8 +123,8 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String GET_IDS = "CloudSafeEntity.getIds";
 	public static final String GET_USER_CLOUDSAFE_DATA = "CloudSafeEntity.getUserCloudsafeData";
 	public static final String GET_USER_CLOUDSAFE_DATA_FLAT = "CloudSafeEntity.getUserCloudsafeDataFlat";
-	public static final String GET_SINGLE_CLOUDSAFE_FILE = "CloudSafeEntity.getSingleCloudsafeFile";
-	public static final String GET_SINGLE_CLOUDSAFE_FILE_WITH_NULL_PARENT = "CloudSafeEntity.getSingleCloudsafeFileWithNullParent";
+	public static final String GET_SINGLE_USER = "CloudSafeEntity.getSingleUser";
+	public static final String GET_SINGLE_GROUP = "CloudSafeEntity.getSingleGroup";
 	public static final String UPDATE_ENTRIES_TO_ROOT = "CloudSafeEntity.updateEntriesToRoot";
 	public static final String UPDATE_ENTRIES_TO_ROOT_DEVICE = "CloudSafeEntity.updateEntriesToRootDevice";
 	public static final String UPDATE_LAST_MODIFY_STATE_BY_USER = "CloudSafeShareEntity.updateLastMdoifyByUser";
@@ -206,7 +211,9 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "as_ref_cloudsafe_tag", joinColumns = @JoinColumn(name = "dc_id"), foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_TAG"))
-	private Set<CloudSafeTagEntity> tags;
+//	@OrderBy ("dc_name ASC")
+ 	@SortNatural
+	private SortedSet<CloudSafeTagEntity> tags;
 
 	@DcemGui(name = "last_Modified_User", subClass = "loginId")
 	@ManyToOne
@@ -576,11 +583,11 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.textLength = textLength;
 	}
 
-	public Set<CloudSafeTagEntity> getTags() {
+	public SortedSet<CloudSafeTagEntity> getTags() {
 		return tags;
 	}
 	
-	public void setTags(Set<CloudSafeTagEntity> tags) {
+	public void setTags(SortedSet<CloudSafeTagEntity> tags) {
 		this.tags = tags;
 	}
 

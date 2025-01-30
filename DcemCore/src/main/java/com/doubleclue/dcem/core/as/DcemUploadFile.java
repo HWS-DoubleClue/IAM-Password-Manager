@@ -8,7 +8,7 @@ public class DcemUploadFile {
 
 	public String fileName;
 	public File file;
-	DcemMediaType dcemMediaType;
+	public DcemMediaType dcemMediaType;
 	public String info;
 
 	public DcemUploadFile(String fileName, File file) {

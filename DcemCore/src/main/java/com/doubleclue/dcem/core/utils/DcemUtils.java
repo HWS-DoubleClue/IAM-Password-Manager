@@ -83,7 +83,6 @@ import org.primefaces.component.selectbooleancheckbox.SelectBooleanCheckbox;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
 
 import com.doubleclue.dcem.core.DcemConstants;
-import com.doubleclue.dcem.core.as.DcemUploadFile;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.EntityInterface;
@@ -101,8 +100,6 @@ import com.doubleclue.dcem.core.jpa.VariableType;
 import com.doubleclue.dcem.core.logic.LoginAuthenticator;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.tasks.ReloadTask;
-import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
-import com.doubleclue.dcem.core.utils.typedetector.FileUploadDetector;
 import com.doubleclue.utils.RandomUtils;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -117,9 +114,6 @@ import com.twelvemonkeys.image.ResampleOp;
 
 import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
-import jakarta.mail.Multipart;
-import jakarta.mail.Part;
-import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMultipart;
 
 public class DcemUtils {
@@ -1323,23 +1317,7 @@ public class DcemUtils {
 		return null;
 	}
 	
-	static public List<DcemUploadFile> getEmailAttachments(Message message) throws Exception {
-	    List<DcemUploadFile> downloadedAttachments = new ArrayList<DcemUploadFile>();
-	    Multipart multiPart = (Multipart) message.getContent();
-	    int numberOfParts = multiPart.getCount();
-	    for (int partCount = 0; partCount < numberOfParts; partCount++) {
-	        MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
-	        if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
-	            File tempFile = File.createTempFile("dcem-", "-mail");
-	            part.saveFile(tempFile);
-	            String mediaType = FileUploadDetector.detectMediaType(tempFile);
-	            DcemMediaType dcemMediaType = DcemMediaType.getDcemMediaType(mediaType);
-	            downloadedAttachments.add(new DcemUploadFile(part.getFileName(), tempFile, dcemMediaType, mediaType));
-	            
-	        }
-	    }
-	    return downloadedAttachments;
-	}  
+	 
 
 //	public static List<DcemUploadFile> getMailContents(Message message) throws Exception {
 //

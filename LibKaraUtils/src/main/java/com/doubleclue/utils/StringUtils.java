@@ -280,6 +280,20 @@ public class StringUtils {
 		}
 		return true;
 	}
+	
+	public static String removeInvalidCharacters (String name) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < name.length(); i++) {
+			if (name.charAt(i) == '\\') {
+				continue;
+			}
+			if (specialCharactersFileName.contains(name.subSequence(i, i + 1))) {
+				continue;
+			}
+			sb.append(name.charAt(i));
+		}
+		return sb.toString();
+	}
 
 //	public static void wipeString(String secret) {
 //		if (secret == null) {

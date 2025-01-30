@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +26,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.AbstractQuery;
@@ -457,21 +460,32 @@ public class CloudSafeLogic {
 		query.setParameter(2, getCloudSafeRoot());
 		return query.getResultList();
 	}
-	
+
 	public List<CloudSafeEntity> getCloudSafeEntitiesByIds(List<Integer> ids) throws DcemException {
-	    if (ids == null || ids.isEmpty()) {
-	        return new ArrayList<>();
-	    }
-	    TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_BY_IDS, CloudSafeEntity.class);
-	    query.setParameter("ids", ids);
-	    return query.getResultList();
+		if (ids == null || ids.isEmpty()) {
+			return new ArrayList<>();
+		}
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_BY_IDS, CloudSafeEntity.class);
+		query.setParameter("ids", ids);
+		return query.getResultList();
 	}
 
 	@DcemTransactional
 	public CloudSafeEntity setCloudSafeByteArray(CloudSafeEntity cloudSafeEntity, char[] password, byte[] content, DcemUser loggedInUser,
 			CloudSafeEntity originalDbCloudSafeEntity) throws DcemException {
-		return setCloudSafeStream(cloudSafeEntity, password, new ByteArrayInputStream(content), content.length, loggedInUser, originalDbCloudSafeEntity, null,
-				null);
+		return setCloudSafeStream(cloudSafeEntity, password, new ByteArrayInputStream(content), content.length, loggedInUser, originalDbCloudSafeEntity, null);
+	}
+	
+	public SortedSet<CloudSafeTagEntity> getTagsSafely (CloudSafeEntity entity) {
+		if (Persistence.getPersistenceUtil().isLoaded(entity, CloudSafeEntity_.TAGS) == true) {
+			return entity.getTags();
+		}
+		Query query = em.createNamedQuery(CloudSafeEntity.GET_ALL_TAGS);
+		query.setParameter(1, entity.getId());
+		List<CloudSafeTagEntity> list = query.getResultList();
+		SortedSet<CloudSafeTagEntity> sortedSet = new TreeSet<>(list);
+		entity.setTags(sortedSet);
+		return sortedSet;
 	}
 
 	/**
@@ -485,16 +499,15 @@ public class CloudSafeLogic {
 	 * @throws DcemException
 	 */
 	private CloudSafeEntity setCloudSafeStream(CloudSafeEntity cloudSafeEntity, char[] password, InputStream inputStream, int length, DcemUser loggedInUser,
-			CloudSafeEntity originalDbCloudSafeEntity, String ocrText, List<CloudSafeTagEntity> toBeAddedTags) throws DcemException {
-		cloudSafeTagLogic.addMultipleTags(toBeAddedTags);
-		for (CloudSafeTagEntity cloudSafeTagEntity : toBeAddedTags) {
-			cloudSafeEntity.getTags().add(cloudSafeTagEntity);
+			CloudSafeEntity originalDbCloudSafeEntity, String ocrText) throws DcemException {
+
+		SortedSet<CloudSafeTagEntity> tags = new TreeSet<CloudSafeTagEntity>();
+		if (cloudSafeEntity.getTags() != null) {
+			for (CloudSafeTagEntity cloudSafeTagEntity : cloudSafeEntity.getTags()) {
+				tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId())); // attach tags
+			}
+			cloudSafeEntity.setTags(tags);
 		}
-		Set<CloudSafeTagEntity> tags = new HashSet<CloudSafeTagEntity>();
-		for (CloudSafeTagEntity cloudSafeTagEntity : cloudSafeEntity.getTags()) {
-			tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId()));
-		}
-		cloudSafeEntity.setTags(tags);
 		if (cloudSafeEntity.getSalt() == null) {
 			cloudSafeEntity.setSalt(RandomUtils.getRandom(16));
 		}
@@ -1628,7 +1641,7 @@ public class CloudSafeLogic {
 				cloudSafeUploadedFile.cloudSafeEntity.setParent(getCloudSafeRoot());
 			}
 			CloudSafeEntity cloudSafeEntity = setCloudSafeStream(cloudSafeUploadedFile.cloudSafeEntity, (char[]) null,
-					new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser, null, null, null); // no OCR
+					new FileInputStream(cloudSafeUploadedFile.file), (int) cloudSafeUploadedFile.file.length(), dcemUser, null, null); // no OCR
 			hashSet.add(cloudSafeUploadedFile.fileName);
 			savedFiles.add(cloudSafeEntity);
 		}
@@ -1686,7 +1699,7 @@ public class CloudSafeLogic {
 				cloudSafeEntity.setOptions(CloudSafeOptions.ENC.name());
 			}
 			cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, filePassword == null ? null : filePassword.toCharArray(),
-					new FileInputStream(uploadedFile.file), (int) uploadedFile.file.length(), lastModifiedUser, null, null, null);
+					new FileInputStream(uploadedFile.file), (int) uploadedFile.file.length(), lastModifiedUser, null, null);
 			hashSet.add(uploadedFile.fileName);
 			savedFiles.add(cloudSafeEntity);
 		}
@@ -1694,12 +1707,11 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public CloudSafeEntity addDocument(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser dcemUser, File file, String ocrText,
-			List<CloudSafeTagEntity> toBeAddedTags) throws Exception {
+	public CloudSafeEntity addDocument(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser dcemUser, File file, String ocrText) throws Exception {
 		if (file == null) {
-			return setCloudSafeStream(cloudSafeEntity, password, null, -1, dcemUser, null, ocrText, toBeAddedTags);
+			return setCloudSafeStream(cloudSafeEntity, password, null, -1, dcemUser, null, ocrText);
 		}
-		return setCloudSafeStream(cloudSafeEntity, password, new FileInputStream(file), (int) file.length(), dcemUser, null, ocrText, toBeAddedTags);
+		return setCloudSafeStream(cloudSafeEntity, password, new FileInputStream(file), (int) file.length(), dcemUser, null, ocrText);
 	}
 
 	@DcemTransactional
@@ -1743,20 +1755,20 @@ public class CloudSafeLogic {
 					byte[] randomByte = RandomUtils.getRandom(8);
 					byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 					InputStream is = new ByteArrayInputStream((content));
-					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null, null);
+					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null);
 				} else if (selectedFolder.isOption(CloudSafeOptions.ENC) && passwordProtected) {
 					cloudSafeEntity.setOptions(CloudSafeOptions.PWD.name());
 					byte[] randomByte = RandomUtils.getRandom(8);
 					byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 					InputStream is = new ByteArrayInputStream((content));
-					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null, null);
+					cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null);
 				}
 			} else {
 				cloudSafeEntity.setOptions(CloudSafeOptions.PWD.name());
 				byte[] randomByte = RandomUtils.getRandom(8);
 				byte[] content = Bytes.concat(randomByte, FOLDER_CONTENT_TO_ENCRYPT);
 				InputStream is = new ByteArrayInputStream((content));
-				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null, null);
+				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), is, content.length, null, null, null);
 			}
 		} else if (encryptProtected) {
 			cloudSafeEntity.setOptions(CloudSafeOptions.ENC.name());
@@ -1858,7 +1870,7 @@ public class CloudSafeLogic {
 				fileOutputStream.close();
 				fileInputStreamTemp = new FileInputStream(tempFile);
 				cloudSafeEntity = setCloudSafeStream(cloudSafeEntity, folderPassword.toCharArray(), fileInputStreamTemp, (int) cloudSafeEntity.getLength(),
-						loggedInUser, null, null, null);
+						loggedInUser, null, null);
 			} catch (Exception ex) {
 				throw new DcemException(DcemErrorCodes.CLOUD_SAFE_MOVE_FILE, "Could not move file " + cloudSafeEntity.getName(), ex);
 			} finally {
@@ -1923,22 +1935,44 @@ public class CloudSafeLogic {
 		return query.getResultList();
 	}
 
-	public List<CloudSafeEntity> getCloudSafeSingleResult(String folderName, Integer parentId, boolean isFolder, Integer userId) {
+	// public List<CloudSafeEntity> getCloudSafeResults(String name, Integer parentId, boolean isFolder, Integer userId) {
+	// if (parentId == null || parentId == 0) {
+	// parentId = getCloudSafeRoot().getId();
+	// }
+	// TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_SINGLE_USER, CloudSafeEntity.class);
+	// query.setParameter(1, name);
+	// query.setParameter(2, parentId);
+	// query.setParameter(3, isFolder);
+	// query.setParameter(4, userId);
+	// return query.getResultList();
+	// }
+
+	public CloudSafeEntity getCloudSafeUserSingleResult(String name, Integer parentId, boolean isFolder, Integer userId) {
 		TypedQuery<CloudSafeEntity> query;
 		if (parentId == null || parentId == 0) {
-			query = em.createNamedQuery(CloudSafeEntity.GET_SINGLE_CLOUDSAFE_FILE_WITH_NULL_PARENT, CloudSafeEntity.class);
-			query.setParameter(1, folderName);
-			query.setParameter(2, getCloudSafeRoot().getId());
-			query.setParameter(3, isFolder);
-			query.setParameter(4, userId);
-		} else {
-			query = em.createNamedQuery(CloudSafeEntity.GET_SINGLE_CLOUDSAFE_FILE, CloudSafeEntity.class);
-			query.setParameter(1, folderName);
-			query.setParameter(2, parentId);
-			query.setParameter(3, isFolder);
-			query.setParameter(4, userId);
+			parentId = getCloudSafeRoot().getId();
 		}
-		return query.getResultList();
+		query = em.createNamedQuery(CloudSafeEntity.GET_SINGLE_USER, CloudSafeEntity.class);
+		query.setParameter(1, name);
+		query.setParameter(2, parentId);
+		query.setParameter(3, isFolder);
+		query.setParameter(4, userId);
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public CloudSafeEntity getCloudSafeGroupSingleResult(String name, Integer parentId, Integer groupId) {
+		if (parentId == null || parentId == 0) {
+			parentId = getCloudSafeRoot().getId();
+		}
+		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_SINGLE_GROUP, CloudSafeEntity.class);
+		query.setParameter(1, name);
+		query.setParameter(2, parentId);
+		query.setParameter(3, groupId);
+		return query.getSingleResult();
 	}
 
 	private void addToRecyleBin(CloudSafeEntity cloudSafeEntity, int counter, DcemUser loggedInUser) throws DcemException {
@@ -2095,13 +2129,13 @@ public class CloudSafeLogic {
 	}
 
 	public List<CloudSafeEntity> getPathList(CloudSafeEntity cloudSafeEntity) {
-		cloudSafeEntity = em.find (CloudSafeEntity.class, cloudSafeEntity.getId());
+		cloudSafeEntity = em.find(CloudSafeEntity.class, cloudSafeEntity.getId());
 		CloudSafeEntity cloudSafeRoot = getCloudSafeRoot();
 		List<CloudSafeEntity> list = new ArrayList<CloudSafeEntity>();
 		CloudSafeEntity parent = cloudSafeEntity;
 		if (cloudSafeEntity.isFolder() == false) {
 			parent = cloudSafeEntity.getParent();
-		} 
+		}
 		while (parent.getId() != cloudSafeRoot.getId()) {
 			list.addFirst(parent);
 			parent = parent.getParent();

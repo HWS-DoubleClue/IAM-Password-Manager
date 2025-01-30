@@ -1202,18 +1202,7 @@ public class CloudSafeView extends AbstractPortalView {
 	}
 
 	private boolean fileOrFolderExists(String folderName, Integer parentId, boolean isFolder) throws DcemApiException, Exception {
-		try {
-			List<CloudSafeEntity> cse = cloudSafeLogic.getCloudSafeSingleResult(folderName, parentId, isFolder, loggedInUser.getId());
-			if (cse.size() > 0) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (Exception e) {
-			logger.warn(e);
-			JsfUtils.addErrorMessage(e.toString());
-			return false;
-		}
+		return cloudSafeLogic.getCloudSafeUserSingleResult(folderName, parentId, isFolder, loggedInUser.getId()) != null;
 	}
 
 	public void onDropFile(DragDropEvent<?> event) {

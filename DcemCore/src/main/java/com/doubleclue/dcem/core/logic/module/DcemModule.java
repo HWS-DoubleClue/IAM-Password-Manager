@@ -302,7 +302,6 @@ public abstract class DcemModule implements Serializable {
 	}
 
 	public void initializeTenant(TenantEntity tenantEntity, ModuleTenantData tenantData) throws DcemException {
-
 		moduleTenantMap.put(tenantEntity.getName(), tenantData);
 		if (this.getDefaultPreferences() != null) {
 			try {
@@ -352,8 +351,8 @@ public abstract class DcemModule implements Serializable {
 		return;
 	}
 
-	public void receiveMail(String subjectName, String identifier, File messageFile) throws Exception {
-		return;
+	public String receiveMail(String subjectName, String identifier, File messageFile) throws Exception {
+		return null;
 	}
 
 }

@@ -1,9 +1,6 @@
 package com.doubleclue.dcem.core.gui;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,12 +12,10 @@ import java.util.TreeSet;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -324,6 +319,9 @@ public class ViewNavigator implements Serializable {
 			if (adminModule.isSwitchUserPortal() == false && dcemModule.getName().equals("UserPortal")) {
 				continue;
 			}
+//			if (dcemModule.getId().equals("dm")) {
+//				System.out.println("ViewNavigator.getMenuModel()");
+//			}
 			if (operatorSessionBean.isModulePermission(dcemModule.getId()) == false) {
 				continue; // ignore if role has no module View or Manage Action.
 			}
