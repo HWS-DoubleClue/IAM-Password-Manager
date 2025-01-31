@@ -770,14 +770,6 @@ public class ApplicationHubAdminView extends DcemView {
 
 	}
 
-	void showDialog(String id) {
-		PrimeFaces.current().executeScript("PF('" + id + "').show();");
-	}
-
-	void hideDialog(String id) {
-		PrimeFaces.current().executeScript("PF('" + id + "').hide();");
-	}
-
 	public void actionCloseAddDialog() {
 		PrimeFaces.current().ajax().update("addAppsForm:tabView:actionsTable");
 		hideDialog("addAppDlg");

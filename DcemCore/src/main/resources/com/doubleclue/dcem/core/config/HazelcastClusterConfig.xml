@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <hazelcast
 	xmlns="http://www.hazelcast.com/schema/config" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance">
+	
+	<properties>
+        <property name="hazelcast.health.monitoring.level">OFF</property>
+    </properties>
 	<network>
 		<port auto-increment="false" port-count="100">5701</port>
 		<outbound-ports>

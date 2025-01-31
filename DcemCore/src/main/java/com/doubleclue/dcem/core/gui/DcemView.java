@@ -680,6 +680,14 @@ public abstract class DcemView implements JpaPredicate, Serializable {
 		}
 		return manageAction;
 	}
+	
+	public void showDialog(String id) {
+		PrimeFaces.current().executeScript("PF('" + id + "').show();");
+	}
+
+	public void hideDialog(String id) {
+		PrimeFaces.current().executeScript("PF('" + id + "').hide();");
+	}
 
 	@Override
 	public List<Predicate> getPredicates(CriteriaBuilder criteriaBuilder, Root<?> root) {

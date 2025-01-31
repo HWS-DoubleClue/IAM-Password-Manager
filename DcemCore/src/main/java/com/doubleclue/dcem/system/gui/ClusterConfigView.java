@@ -90,14 +90,6 @@ public class ClusterConfigView extends DcemView {
 		return s == null || s.isEmpty();
 	}
 
-	private void showDialog(String widgetVar) {
-		PrimeFaces.current().executeScript("PF('" + widgetVar + "').show();");
-	}
-
-	private void hideDialog(String widgetVar) {
-		PrimeFaces.current().executeScript("PF('" + widgetVar + "').hide();");
-	}
-
 	public void actionEdit() {
 		if (selectedService == null) {
 			JsfUtils.addErrorMessage(DcemConstants.CORE_RESOURCE, "clusterConfig.selectRow");

@@ -55,7 +55,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "as_cloudsafe", uniqueConstraints = @UniqueConstraint(name = "UK_AS_CLOUDDATA", columnNames = { "dc_name", "owner", "user_dc_id", "device_dc_id",
-		"dc_parent_id", "group_dc_id", "recycled"}))
+		"dc_parent_id", "group_dc_id", "recycled" }))
 @NamedQueries({
 		@NamedQuery(name = CloudSafeEntity.GET_GLOBAL_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GLOBAL AND c.name=?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.user=?2 AND c.parent.id=?3 AND c.recycled=?4"),
@@ -86,16 +86,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_ID, query = "SELECT NEW com.doubleclue.dcem.as.logic.CloudSafeNameDto(cs.id, cs.name, cs.parent.id) FROM CloudSafeEntity cs WHERE cs.id=?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_ID_AND_RECYCLE_STATE, query = "SELECT cs FROM CloudSafeEntity cs WHERE cs.id=?1 AND cs.recycled=?2"),
 		@NamedQuery(name = CloudSafeEntity.GET_IDS, query = "SELECT c.id FROM CloudSafeEntity c"),
-		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA_FLAT, query = "SELECT c FROM CloudSafeEntity c WHERE ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2)) AND c.isFolder=false AND c.recycled = ?3 ORDER BY c.name ASC" ),
+		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA_FLAT, query = "SELECT c FROM CloudSafeEntity c WHERE ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2)) AND c.isFolder=false AND c.recycled = ?3 ORDER BY c.name ASC"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = ?4 ORDER BY c.isFolder DESC, c.name ASC"),
 		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_USER, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4"),
 		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_GROUP, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=false AND c.group.id=?3"),
 
 		@NamedQuery(name = CloudSafeEntity.UPDATE_LAST_MODIFY_STATE_BY_USER, query = "UPDATE CloudSafeEntity c SET c.lastModifiedUser = NULL WHERE c.lastModifiedUser = ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_BY_TAG, query = "Select DISTINCT c FROM CloudSafeEntity c JOIN FETCH c.tags tag WHERE tag IN ?1"),
-		@NamedQuery(name = CloudSafeEntity.GET_ALL_TAGS, query = "Select c.tags FROM CloudSafeEntity c where c.id = ?1" ),
-		@NamedQuery(name = CloudSafeEntity.GET_BY_IDS, query = "SELECT c FROM CloudSafeEntity c WHERE c.id IN :ids")
-})
+		@NamedQuery(name = CloudSafeEntity.GET_ALL_TAGS, query = "Select c.tags FROM CloudSafeEntity c where c.id = ?1"),
+		@NamedQuery(name = CloudSafeEntity.GET_BY_IDS, query = "SELECT c FROM CloudSafeEntity c WHERE c.id IN :ids") })
 public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	public final static String GET_GLOBAL_CLOUDDATA = "CloudSafeEntity.getGlobalProperty";
@@ -154,37 +153,34 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Column(name = "dc_id")
 	@TableGenerator(name = "asmSeqStoreCloudData", table = "core_seq", pkColumnName = "seq_name", pkColumnValue = "AS_CLOUDDATA.ID", valueColumnName = "seq_value", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "asmSeqStoreCloudData")
+	@DcemGui(visible = false)
 	private Integer id;
-
-	@DcemGui
-	@Enumerated(EnumType.ORDINAL)
-	@Column
-	@JsonIgnore
-	CloudSafeOwner owner;
-
-	@DcemGui(name = "user", subClass = "loginId")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_USER"), nullable = false, insertable = true, updatable = true)
-	@JsonIgnore
-	private DcemUser user;
-
-	@DcemGui(name = "device", subClass = "name")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_DEVICE"), nullable = false, insertable = true, updatable = false)
-	@JsonIgnore
-	private DeviceEntity device;
-
-	@DcemGui(name = "group", subClass = "name")
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_GROUP"), name = "group_dc_id", nullable = true, insertable = true, updatable = true)
-	@JsonIgnore
-	private DcemGroup group;
 
 	@DcemGui
 	@Column(name = "dc_name", length = 255, nullable = false)
 	String name;
 
-	@DcemGui
+	@Enumerated(EnumType.ORDINAL)
+	@Column
+	@JsonIgnore
+	CloudSafeOwner owner;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_USER"), nullable = false, insertable = true, updatable = true)
+	@JsonIgnore
+	private DcemUser user;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_DEVICE"), nullable = false, insertable = true, updatable = false)
+	@JsonIgnore
+	private DeviceEntity device;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_GROUP"), name = "group_dc_id", nullable = true, insertable = true, updatable = true)
+	@JsonIgnore
+	private DcemGroup group;
+
+	@DcemGui(visible = false)
 	@Column(name = "dc_info", length = 255, nullable = true)
 	String info;
 
@@ -192,13 +188,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Column(name = "dc_length")
 	long length;
 
-	@DcemGui
-
 	@Column(name = "text_length")
 	Long textLength = (long) 0;
 
 	@Nullable
-	@DcemGui
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(referencedColumnName = "dc_id", foreignKey = @ForeignKey(name = "FK_AS_PARENT_ID"), name = "dc_parent_id", nullable = true, insertable = true, updatable = true)
 	@JsonIgnore
@@ -211,11 +204,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "as_ref_cloudsafe_tag", joinColumns = @JoinColumn(name = "dc_id"), foreignKey = @ForeignKey(name = "FK_CLOUDSAFE_TAG"))
-//	@OrderBy ("dc_name ASC")
- 	@SortNatural
+	@SortNatural
 	private SortedSet<CloudSafeTagEntity> tags;
 
-	@DcemGui(name = "last_Modified_User", subClass = "loginId")
+	@DcemGui(name = "last_Modified_User", subClass = "loginId", visible = false)
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_USER_MODIFIED"), nullable = true, insertable = true, updatable = true)
 	@JsonIgnore
@@ -246,12 +238,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Column(name = "dc_is_folder", nullable = false, updatable = false)
 	boolean isFolder = false;
 
-	@DcemGui
 	@Column(name = "dc_gcm", nullable = false)
 	@JsonIgnore
 	Boolean isGcm = true;
 
-	@DcemGui
 	@Column(name = "recycled", nullable = false)
 	@JsonIgnore
 	boolean recycled = false;
@@ -291,7 +281,12 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	@Transient
 	@JsonIgnore
+	@DcemGui
 	String path;
+
+	@DcemGui
+	@Transient
+	String groupOwner;
 
 	public String getPath() {
 		return path;
@@ -427,21 +422,20 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Transient
 	@JsonIgnore
 	public String getLengthKb() {
-	    if (isFolder) {
-	        return "-";
-	    } else if (length > 0) {
-	        long sizeInKb = (length + 1024 - 1) / 1024;
-	        if (sizeInKb >= 1024) {
-	            double sizeInMb = sizeInKb / 1024.0;
-	            return String.format("%.2f MB", sizeInMb); // Größe in MB mit 2 Dezimalstellen
-	        } else {
-	            return sizeInKb + " KB"; // Größe in KB
-	        }
-	    } else {
-	        return "0 KB"; // Standardwert für ungültige Größen
-	    }
+		if (isFolder) {
+			return "-";
+		} else if (length > 0) {
+			long sizeInKb = (length + 1024 - 1) / 1024;
+			if (sizeInKb >= 1024) {
+				double sizeInMb = sizeInKb / 1024.0;
+				return String.format("%.2f MB", sizeInMb); // Größe in MB mit 2 Dezimalstellen
+			} else {
+				return sizeInKb + " KB"; // Größe in KB
+			}
+		} else {
+			return "0 KB"; // Standardwert für ungültige Größen
+		}
 	}
-
 
 	public CloudSafeEntity getParent() {
 		return parent;
@@ -586,7 +580,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public SortedSet<CloudSafeTagEntity> getTags() {
 		return tags;
 	}
-	
+
 	public void setTags(SortedSet<CloudSafeTagEntity> tags) {
 		this.tags = tags;
 	}
@@ -625,4 +619,24 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		}
 		return thumbnailEntity.getThumbnail();
 	}
+
+	public String getGroupOwner() {
+		if (groupOwner != null) {
+			return groupOwner;
+		}
+		if (owner == CloudSafeOwner.GROUP) {
+			groupOwner = getGroup().getName();
+		} else {
+			groupOwner = "";
+		}
+		return groupOwner;
+	}
+	
+	public String getLocation() {
+		if (parent.getName().equals(DcemConstants.CLOUD_SAFE_ROOT)) {
+			return null;
+		}
+		return parent.getName();
+	}
+
 }
