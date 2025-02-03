@@ -799,8 +799,7 @@ public class CloudSafeLogic {
 	}
 
 	public CloudSafeEntity getCloudSafe(Integer id) {
-		CloudSafeEntity cloudSafeEntity = em.find(CloudSafeEntity.class, id);
-		return cloudSafeEntity;
+		return em.find(CloudSafeEntity.class, id);
 	}
 
 	public CloudSafeEntity getCloudSafe(Integer id, boolean recycled) {
@@ -1178,7 +1177,7 @@ public class CloudSafeLogic {
 		}
 		return allDeletedFiles;
 	}
-	
+
 	@DcemTransactional
 	public List<CloudSafeDto> deleteFiles(List<CloudSafeEntity> list, DcemUser loggedInUser) throws Exception {
 		List<CloudSafeDto> allDeletedFiles = new ArrayList<CloudSafeDto>();
@@ -1838,23 +1837,8 @@ public class CloudSafeLogic {
 				cloudSafeEntity.setParent(getCloudSafeRoot());
 			} else {
 				CloudSafeEntity moveToFile = getCloudSafe(moveTo);
-				boolean movedInRecycleBin = false;
-				if (DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(moveToFile.getName())) {
-					cloudSafeEntity.setRecycled(true);
-				} else {
-					while (moveToFile.getParent().getId() != moveToFile.getId()) {
-						moveToFile = moveToFile.getParent();
-						if (DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(moveToFile.getName())) {
-							movedInRecycleBin = true;
-							break;
-						}
-					}
-					if (movedInRecycleBin == false) {
-						cloudSafeEntity.setRecycled(false);
-						cloudSafeEntity.setDiscardAfter(null);
-					} else {
-						cloudSafeEntity.setRecycled(true);
-					}
+				while (moveToFile.getParent().getId() != moveToFile.getId()) {
+					moveToFile = moveToFile.getParent();
 				}
 			}
 			cloudSafeEntity.setLastModified(LocalDateTime.now());
@@ -1985,44 +1969,10 @@ public class CloudSafeLogic {
 		query.setParameter(1, name);
 		query.setParameter(2, parentId);
 		query.setParameter(3, groupId);
-		return query.getSingleResult();
-	}
-
-	private void addToRecyleBin(CloudSafeEntity cloudSafeEntity, int counter, DcemUser loggedInUser) throws DcemException {
-		CloudSafeEntity recycleBinFolder = null;
 		try {
-			recycleBinFolder = getCloudSafe(cloudSafeEntity.getOwner(), DcemConstants.CLOUD_SAFE_RECYCLE_BIN, cloudSafeEntity.getUser(),
-					cloudSafeEntity.getDevice(), getCloudSafeRoot().getId(), cloudSafeEntity.getGroup());
-		} catch (DcemException e) {
-			if (e.getErrorCode() == DcemErrorCodes.CLOUD_SAFE_NOT_FOUND) {
-				recycleBinFolder = createCloudSafeEntityFolder(getCloudSafeRoot(), cloudSafeEntity.getUser(), DcemConstants.CLOUD_SAFE_RECYCLE_BIN, false,
-						false, null);
-				addCloudSafeFolder(recycleBinFolder);
-			}
-		}
-		if (existsInRecycleBin(cloudSafeEntity)) {
-			counter++;
-			String newName;
-			String prevName = cloudSafeEntity.getName();
-			if (cloudSafeEntity.getName().contains(".")) {
-				String fileName = cloudSafeEntity.getName().substring(0, cloudSafeEntity.getName().lastIndexOf('.'));
-				String ext = cloudSafeEntity.getName().substring(cloudSafeEntity.getName().lastIndexOf('.'));
-				newName = fileName + "(" + counter + ")" + ext;
-			} else {
-				newName = cloudSafeEntity.getName() + "(" + counter + ")";
-			}
-
-			cloudSafeEntity.setName(newName);
-			if (existsInRecycleBin(cloudSafeEntity)) {
-				cloudSafeEntity.setName(prevName);
-			}
-
-			addToRecyleBin(cloudSafeEntity, counter, loggedInUser);
-		} else {
-			cloudSafeEntity.setDiscardAfter(LocalDateTime.now().plusDays(30));
-			cloudSafeEntity.setRecycled(true);
-			em.merge(cloudSafeEntity);
-			moveCurrentEntry(cloudSafeEntity, null, recycleBinFolder.getId(), loggedInUser);
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
 		}
 	}
 

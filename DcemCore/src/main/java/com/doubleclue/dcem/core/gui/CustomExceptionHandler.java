@@ -47,14 +47,17 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 				} else {
 					if (throwable instanceof IllegalStateException) {
 						logger.debug("JSF Exception " + throwable.toString());
+					} else if (throwable instanceof javax.el.ELException) {
+						logger.warn("JSF Exception " + throwable.toString());
+						request.getSession().setMaxInactiveInterval(1);
 					} else {
-						logger.debug("JSF Exception " , throwable);
-//						Map<String, Object> requestMap = context.getExternalContext().getRequestMap();
-//						NavigationHandler nav = context.getApplication().getNavigationHandler();
-//						requestMap.put("error-message", throwable.getMessage());
-//						request.getSession().invalidate();
-//						nav.handleNavigation(context, null, "ERROR");
-//						context.renderResponse();
+						logger.debug("JSF Exception ", throwable);
+						// Map<String, Object> requestMap = context.getExternalContext().getRequestMap();
+						// NavigationHandler nav = context.getApplication().getNavigationHandler();
+						// requestMap.put("error-message", throwable.getMessage());
+						// request.getSession().invalidate();
+						// nav.handleNavigation(context, null, "ERROR");
+						// context.renderResponse();
 					}
 				}
 			} finally {
@@ -62,8 +65,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 			}
 		}
 	}
-	
-	private Throwable getRootCauseThrowable (Throwable exception, String findExpStartWith) {
+
+	private Throwable getRootCauseThrowable(Throwable exception, String findExpStartWith) {
 		Throwable cause = exception;
 		while (cause.getCause() != null) {
 			cause = cause.getCause();

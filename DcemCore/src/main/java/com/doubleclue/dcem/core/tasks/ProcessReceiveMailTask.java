@@ -1,40 +1,22 @@
 package com.doubleclue.dcem.core.tasks;
 
 import java.io.File;
-import java.util.Date;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.search.AndTerm;
-import javax.mail.search.ComparisonTerm;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.ReceivedDateTerm;
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.doubleclue.dcem.core.as.DcemUploadFile;
-import com.doubleclue.dcem.core.cluster.DcemCluster;
+import com.doubleclue.dcem.admin.logic.AlertSeverity;
+import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
+import com.doubleclue.dcem.admin.logic.ReportAction;
+import com.doubleclue.dcem.core.entities.DcemReporting;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
-import com.doubleclue.dcem.core.exceptions.DcemException;
-import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.logic.UrlTokenLogic;
 import com.doubleclue.dcem.core.logic.UrlTokenType;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
-import com.doubleclue.dcem.core.utils.DcemTrustManager;
 import com.doubleclue.dcem.core.weld.CdiUtils;
-import com.doubleclue.dcem.system.logic.SystemModule;
-import com.doubleclue.dcem.system.logic.SystemPreferences;
-import com.doubleclue.utils.StringUtils;
+
+import jakarta.mail.Address;
 
 public class ProcessReceiveMailTask extends CoreTask {
 
@@ -46,6 +28,7 @@ public class ProcessReceiveMailTask extends CoreTask {
 	String token;
 	String subjectName;
 	File emlFile;
+	Address addressFrom;
 	/*
 	 * 
 	 *  Every E-Mial must have an email token in subject. 
@@ -67,7 +50,7 @@ public class ProcessReceiveMailTask extends CoreTask {
 	 * 
 	 */
 
-	public ProcessReceiveMailTask(TenantEntity tenantEntity, DcemModule dcemModule, String subjectName, String identifier, String token, File emlFile) {
+	public ProcessReceiveMailTask(TenantEntity tenantEntity, DcemModule dcemModule, String subjectName, String identifier, String token, File emlFile, Address address) {
 		super (ProcessReceiveMailTask.class.getSimpleName(), tenantEntity);
 		this.tenantEntity = tenantEntity;
 		this.dcemModule = dcemModule;
@@ -75,26 +58,35 @@ public class ProcessReceiveMailTask extends CoreTask {
 		this.token = token;
 		this.emlFile = emlFile;
 		this.subjectName = subjectName;
+		this.addressFrom = address;
 	}
+
+	
 
 	@Override
 	public void runTask() {
+		
 		UrlTokenLogic urlTokenLogic = CdiUtils.getReference(UrlTokenLogic.class);
-		String from = "?";
 		try {
-		//	from = message.getFrom()[0].toString();
 			urlTokenLogic.verifyUrlToken(token, UrlTokenType.EmailToken.name());
 		} catch (Exception e) {
-			logger.error("Invalid EMail Token from " + from + ", cause: " + e.toString());
+			DcemReportingLogic dcemReportingLogic = CdiUtils.getReference(DcemReportingLogic.class);
+			DcemReporting asReporting = new DcemReporting(dcemModule.getName(), ReportAction.Invalid_Email_Received, (DcemUser)null, e.getMessage(), null,
+					"From: " + addressFrom, AlertSeverity.FAILURE);
+			dcemReportingLogic.addReporting(asReporting);
+			logger.error("Invalid EMail Token from " + addressFrom + ", cause: " + e.toString());
+			emlFile.delete();
 			return;
 		}
 		try {
 			String report = dcemModule.receiveMail (subjectName, identifier, emlFile);
-			// TODO send E-Mail with error
 		} catch (Exception e) {
-			logger.error("Invalid EMail from " + from + ", cause" + e.getMessage(), e);
-			// TODO send E-Mail with error
-		}
+			logger.error("Invalid EMail from " + addressFrom + ", cause: " + e.toString(), e);
+			DcemReportingLogic dcemReportingLogic = CdiUtils.getReference(DcemReportingLogic.class);
+			DcemReporting asReporting = new DcemReporting(dcemModule.getName(), ReportAction.Invalid_Email_Received, (DcemUser)null, e.toString(), null,
+					"From: " + addressFrom, AlertSeverity.FAILURE);
+			dcemReportingLogic.addReporting(asReporting);
+		} 
 		emlFile.delete();
 	}
 }

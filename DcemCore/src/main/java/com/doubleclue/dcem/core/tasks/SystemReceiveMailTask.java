@@ -14,7 +14,12 @@ import javax.net.ssl.TrustManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.doubleclue.dcem.admin.logic.AlertSeverity;
+import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
+import com.doubleclue.dcem.admin.logic.ReportAction;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
+import com.doubleclue.dcem.core.entities.DcemReporting;
+import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
@@ -161,10 +166,14 @@ public class SystemReceiveMailTask extends CoreTask {
 						File tempFile = File.createTempFile("dcem-", ".eml");
 						message.writeTo(new FileOutputStream(tempFile));
 						TaskExecutor taskExecutor = CdiUtils.getReference(TaskExecutor.class);
-						taskExecutor.execute(new ProcessReceiveMailTask(tenantEntity, dcemModule, subject, components[2], components[3], tempFile));
+						taskExecutor.execute(new ProcessReceiveMailTask(tenantEntity, dcemModule, subject, components[2], components[3], tempFile, message.getFrom()[0]));
 	 					message.setFlag(Flags.Flag.SEEN, true);
 					} catch (Exception e) {
 						logger.error("Received Mails: from: " + message.getFrom()[0] + " Cause:" + e.getMessage());
+						DcemReportingLogic dcemReportingLogic = CdiUtils.getReference(DcemReportingLogic.class);
+						DcemReporting asReporting = new DcemReporting(SystemReceiveMailTask.class.getSimpleName(), ReportAction.Invalid_Email_Received, (DcemUser)null, e.getMessage(), null,
+								"From: " +  message.getFrom()[0], AlertSeverity.FAILURE);
+						dcemReportingLogic.addReporting(asReporting);
 						message.setFlag(Flags.Flag.DELETED, true);
 						continue;
 					}

@@ -173,16 +173,7 @@ public class CloudSafeShareEntity extends EntityInterface {
 	public void setCloudSafe(CloudSafeEntity cloudSafe) {
 		this.cloudSafe = cloudSafe;
 	}
-
-	@Transient
-	public CloudSafeEntity getCloudSafeEntity() {
-		return cloudSafe;
-	}
-
-	public void setCloudSafeEntity(CloudSafeEntity cloudSafe) {
-		this.cloudSafe = cloudSafe;
-	}
-
+	
 	@Override
 	public String toString() {
 		return "CloudSafeShareEntity [id=" + id + ", user=" + user + ", group=" + group + ", cloudSafe=" + cloudSafe + ", writeAccess=" + writeAccess

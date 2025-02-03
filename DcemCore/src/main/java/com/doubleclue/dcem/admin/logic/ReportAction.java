@@ -39,5 +39,5 @@ public enum ReportAction {
 	AuthConnect,
 	Licence,
 	Login_reconnect,
-	Authenticate_NetworkBypass,
+	Authenticate_NetworkBypass, Invalid_Email_Received,
 }

@@ -453,7 +453,7 @@ public final class DcemConstants {
 
 	public final static String PDF_EXT = ".pdf";
 
-	public final static String CLOUD_SAFE_RECYCLE_BIN = "Recycle Bin";
+//	public final static String CLOUD_SAFE_RECYCLE_BIN = "Recycle Bin";
 
 	public final static String CLOUD_SAFE_ROOT = "_ROOT_";
 

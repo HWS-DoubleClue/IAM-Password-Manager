@@ -274,14 +274,11 @@ public class CloudSafeView extends AbstractPortalView {
 		CloudSafeEntity parent;
 		if (uploadingSharedFile) {
 			selectedSharedCloudSafeFile = cloudSafeLogic.getCloudShareByShareId((int) selectedSharedCloudSafeFile.getId());
-			parent = selectedSharedCloudSafeFile.getCloudSafeEntity().getParent();
+			parent = selectedSharedCloudSafeFile.getCloudSafe().getParent();
 		} else {
 			parent = (selectedFolder == null || selectedFolder.getId() == 0) ? cloudSafeRoot : selectedFolder;
 		}
-		if (parent.isRecycled() || parent.getName().toString().equals(DcemConstants.CLOUD_SAFE_RECYCLE_BIN)) {
-			JsfUtils.addErrorMessage(JsfUtils.getStringSafely(portalSessionBean.getResourceBundle(), "message.notAllowToUploadFile"));
-			return;
-		}
+
 		if (uploadedFiles == null || uploadedFiles.isEmpty()) {
 			JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("message.uploadFile"));
 			return;
@@ -363,7 +360,7 @@ public class CloudSafeView extends AbstractPortalView {
 	public void actionUploadCopy() {
 		CloudSafeEntity parent;
 		if (uploadingSharedFile) {
-			parent = selectedSharedCloudSafeFile.getCloudSafeEntity().getParent();
+			parent = selectedSharedCloudSafeFile.getCloudSafe().getParent();
 		} else {
 			parent = selectedFolder == null || selectedFolder.getId() == 0 ? cloudSafeRoot : selectedFolder;
 		}
@@ -459,7 +456,7 @@ public class CloudSafeView extends AbstractPortalView {
 
 	public boolean isPermanentDelete() {
 		if (selectedCloudSafeFiles.size() > 0) {
-			return selectedCloudSafeFiles.get(0).isRecycled() || DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(selectedCloudSafeFiles.get(0).getName());
+			return selectedCloudSafeFiles.get(0).isRecycled();
 		}
 		return false;
 	}
@@ -619,8 +616,7 @@ public class CloudSafeView extends AbstractPortalView {
 			zipOutputStream.close();
 			outputStream.close();
 			FileInputStream fileInputStream = new FileInputStream(downloadTempFile);
-			return DefaultStreamedContent.builder().contentType("application/zip").name(MY_DOUBLE_CLUE_FILE_ZIP)
-					.stream(() -> fileInputStream).build();
+			return DefaultStreamedContent.builder().contentType("application/zip").name(MY_DOUBLE_CLUE_FILE_ZIP).stream(() -> fileInputStream).build();
 		} catch (InvalidCipherTextIOException ex) {
 			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.corruptedFile");
 			logger.error("Could not download file or folder verify your password for User : " + currentUser);
@@ -689,37 +685,36 @@ public class CloudSafeView extends AbstractPortalView {
 		InputStream inputStream;
 		ZipEntry zipEntry;
 		BufferedInputStream bis;
-			List<CloudSafeEntity> childernSubFolder = getAsApiCloudSafeFiles(cloudSafeEntity != null ? cloudSafeEntity.getId() : null,
-					cloudSafeEntity.getUser());
-			if (childernSubFolder.size() == 0 && cloudSafeEntity.isFolder()) {
-				zipEntry = new ZipEntry(cloudSafeEntity.getName() + "/");
-				zipOutputStream.putNextEntry(zipEntry);
-			} else if (cloudSafeEntity.isFolder() == false) {
-				inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, password, loggedInUser);
+		List<CloudSafeEntity> childernSubFolder = getAsApiCloudSafeFiles(cloudSafeEntity != null ? cloudSafeEntity.getId() : null, cloudSafeEntity.getUser());
+		if (childernSubFolder.size() == 0 && cloudSafeEntity.isFolder()) {
+			zipEntry = new ZipEntry(cloudSafeEntity.getName() + "/");
+			zipOutputStream.putNextEntry(zipEntry);
+		} else if (cloudSafeEntity.isFolder() == false) {
+			inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, password, loggedInUser);
+			bis = new BufferedInputStream(inputStream);
+			zipEntry = new ZipEntry(cloudSafeEntity.getName());
+			zipOutputStream.putNextEntry(zipEntry);
+			while ((length = bis.read(buffer)) != -1) {
+				zipOutputStream.write(buffer, 0, length);
+			}
+		}
+		for (CloudSafeEntity child : childernSubFolder) {
+			if (child.isFolder() == false) {
+				if (child.isOption(CloudSafeOptions.PWD)) {
+					continue;
+				}
+				inputStream = cloudSafeLogic.getCloudSafeContentAsStream(child, password, loggedInUser);
 				bis = new BufferedInputStream(inputStream);
-				zipEntry = new ZipEntry(cloudSafeEntity.getName());
+				zipEntry = new ZipEntry(path + "/" + child.getName());
 				zipOutputStream.putNextEntry(zipEntry);
 				while ((length = bis.read(buffer)) != -1) {
 					zipOutputStream.write(buffer, 0, length);
 				}
+			} else {
+				zipFoldersOrFiles(path + "/" + child.getName(), zipOutputStream, output, child, password);
 			}
-			for (CloudSafeEntity child : childernSubFolder) {
-				if (child.isFolder() == false) {
-					if (child.isOption(CloudSafeOptions.PWD)) {
-						continue;
-					}
-					inputStream = cloudSafeLogic.getCloudSafeContentAsStream(child, password, loggedInUser);
-					bis = new BufferedInputStream(inputStream);
-					zipEntry = new ZipEntry(path + "/" + child.getName());
-					zipOutputStream.putNextEntry(zipEntry);
-					while ((length = bis.read(buffer)) != -1) {
-						zipOutputStream.write(buffer, 0, length);
-					}
-				} else {
-					zipFoldersOrFiles(path + "/" + child.getName(), zipOutputStream, output, child, password);
-				}
-				zipOutputStream.closeEntry();
-			}
+			zipOutputStream.closeEntry();
+		}
 	}
 
 	public boolean isDownloadMultipleProtectedFilesOrFolders() {
@@ -851,21 +846,10 @@ public class CloudSafeView extends AbstractPortalView {
 				JsfUtils.addWarnMessage(portalSessionBean.getResourceBundle().getString("message.recycledFileCannotBeShared"));
 				return;
 			}
-			boolean recycleBinExists = false;
-			for (CloudSafeEntity cloudSafeEntity : selectedCloudSafeFiles) {
-				if (cloudSafeEntity.getName().equals(DcemConstants.CLOUD_SAFE_RECYCLE_BIN)) {
-					recycleBinExists = true;
-					break;
-				}
-			}
-			if (recycleBinExists == false) {
-				cloudSafeShareDialog.onOpenDialog();
-				showDialog("shareDlg");
-				PrimeFaces.current().ajax().update("shareForm:shareDlg");
+			cloudSafeShareDialog.onOpenDialog();
+			showDialog("shareDlg");
+			PrimeFaces.current().ajax().update("shareForm:shareDlg");
 
-			} else {
-				JsfUtils.addWarnMessage(portalSessionBean.getResourceBundle().getString("message.recycleBinCannotBeShared"));
-			}
 		} else {
 			JsfUtils.addWarnMessage(portalSessionBean.getResourceBundle().getString("message.selectOnlyOneFile"));
 		}
@@ -1054,10 +1038,7 @@ public class CloudSafeView extends AbstractPortalView {
 				}
 			}
 			CloudSafeEntity cloudSafeEntity = selectedCloudSafeFiles.get(0);
-			if (DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(cloudSafeEntity.getName())) {
-				JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.unableTochangeOwnerRecycleBin");
-				return;
-			}
+			
 			if (getExistingFileGroup(cloudSafeEntity, currentOwnerGroup)) {
 				JsfUtils.addErrorMessageToComponentId(portalSessionBean.getResourceBundle().getString("message.fileGroupExist"), "changeOwerShipMsg");
 				PrimeFaces.current().ajax().update("changeOwnerShipForm:changeOwerShipMsg");
@@ -1098,10 +1079,7 @@ public class CloudSafeView extends AbstractPortalView {
 			}
 			validateFileOrFolderName(selectedFileName);
 			CloudSafeEntity cloudSafeEntity = selectedCloudSafeFiles.get(0);
-			if (DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(cloudSafeEntity.getName())) {
-				JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.unableToRenameRecycleBin");
-				return;
-			}
+			
 			CloudSafeEntity clonedCloudSafeEntity = (CloudSafeEntity) cloudSafeEntity.clone();
 			clonedCloudSafeEntity.setName(selectedFileName);
 			cloudSafeEntity = cloudSafeLogic.updateCloudSafeEntity(clonedCloudSafeEntity, loggedInUser, true, null);
@@ -1222,11 +1200,7 @@ public class CloudSafeView extends AbstractPortalView {
 			JsfUtils.addWarningMessage(UserPortalModule.RESOURCE_NAME, "error.notPossibleToMoeIntoProtectedFolder");
 			return;
 		}
-		if (selectedMoveEntry.isOption(CloudSafeOptions.PWD) && moveTo.getName().equals(DcemConstants.CLOUD_SAFE_RECYCLE_BIN) == false
-				&& moveTo.isOption(CloudSafeOptions.ENC) == false) {
-			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.notPossibleToMove");
-			return;
-		}
+		
 		if (moveTo.isFolder() == false) {
 			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.DROP_IN_FOLDER");
 			return;
@@ -1258,16 +1232,8 @@ public class CloudSafeView extends AbstractPortalView {
 
 		try {
 			for (CloudSafeEntity selectedCloudSafeFile : selectedCloudSafeFiles) {
-				if (DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(selectedCloudSafeFile.getName())) {
-					JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.unableToMoveRecycleBin");
-					return;
-				}
-				if (selectedCloudSafeFile.isOption(CloudSafeOptions.ENC) && moveToFolder.getName().equals(DcemConstants.CLOUD_SAFE_RECYCLE_BIN)) {
-					deleteCloudSafeFiles();
-					selectedCloudSafeFiles.clear();
-					PrimeFaces.current().executeScript("PF('moveEntryConfirmationDialog').hide();");
-					return;
-				}
+				
+				
 				if (!fileOrFolderExists(selectedCloudSafeFile.getName(), moveToFolder.getId(), false)) {
 					cloudSafeLogic.moveCurrentEntry(selectedCloudSafeFile, passwordToEncryptContent, moveToFolder.getId(), loggedInUser);
 					cloudSafeEntityFiles.remove(selectedCloudSafeFile);
@@ -1359,11 +1325,9 @@ public class CloudSafeView extends AbstractPortalView {
 			return;
 		}
 		try {
-			if (toOpenFileorFolder.isOption(CloudSafeOptions.ENC) || DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(toOpenFileorFolder.getName())) {
-				processFileFolderClick(cloudSafeEntity, null);
-			} else {
+
 				processFileFolderClick(cloudSafeEntity, passwordToEncryptContent.toCharArray());
-			}
+
 		} catch (Exception e) {
 			logger.error("Something went wrong!", e);
 			JsfUtils.addErrorMessage(e.toString());
@@ -1512,10 +1476,7 @@ public class CloudSafeView extends AbstractPortalView {
 			selectedFolder = new CloudSafeEntity(null, null, null, "MyFiles", null, null, true, null, null);
 			selectedFolder.setId(0);
 		}
-		if (DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(selectedFolder.getName())) {
-			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.unableToAddInRecycleBin");
-			return;
-		}
+		
 		String folderName = getAddFolderName();
 		if (folderName.trim().isEmpty()) {
 			JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.missingName");
@@ -1657,12 +1618,8 @@ public class CloudSafeView extends AbstractPortalView {
 		}
 		if (selectedCloudSafeFiles != null && selectedCloudSafeFiles.isEmpty() == false) {
 			for (CloudSafeEntity cloudSafeEntity : selectedCloudSafeFiles) {
-				if (DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(cloudSafeEntity.getName())) {
-					JsfUtils.addErrorMessage(UserPortalModule.RESOURCE_NAME, "error.unableToMoveRecycleBin");
-					return;
-				} else {
+				
 					selectedFilesToCut.add(cloudSafeEntity);
-				}
 			}
 			PrimeFaces.current().ajax().update("cloudSafeForm:nodeContextMenu");
 		} else {
@@ -1784,9 +1741,8 @@ public class CloudSafeView extends AbstractPortalView {
 		String iconName;
 		String fileName = cloudSafeEntity.getName();
 		if (cloudSafeEntity.isFolder()) {
-			if (DcemConstants.CLOUD_SAFE_RECYCLE_BIN.equals(fileName)) {
-				iconName = DcemConstants.DEFAULT_BIN_ICON;
-			} else if (listView == false && cloudSafeEntity.isOption(CloudSafeOptions.PWD)) {
+
+			if (listView == false && cloudSafeEntity.isOption(CloudSafeOptions.PWD)) {
 				iconName = DcemConstants.DEFAULT_FOLDER_LOOK_ICON;
 			} else {
 				iconName = DcemConstants.DEFAULT_FOLDER_ICON;
