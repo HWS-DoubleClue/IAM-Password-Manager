@@ -167,11 +167,11 @@ public class SystemReceiveMailTask extends CoreTask {
 						message.writeTo(new FileOutputStream(tempFile));
 						TaskExecutor taskExecutor = CdiUtils.getReference(TaskExecutor.class);
 						taskExecutor.execute(new ProcessReceiveMailTask(tenantEntity, dcemModule, subject, components[2], components[3], tempFile, message.getFrom()[0]));
-	 					message.setFlag(Flags.Flag.SEEN, true);
+	 					message.setFlag(Flags.Flag.DELETED, true);
 					} catch (Exception e) {
 						logger.error("Received Mails: from: " + message.getFrom()[0] + " Cause:" + e.getMessage());
 						DcemReportingLogic dcemReportingLogic = CdiUtils.getReference(DcemReportingLogic.class);
-						DcemReporting asReporting = new DcemReporting(SystemReceiveMailTask.class.getSimpleName(), ReportAction.Invalid_Email_Received, (DcemUser)null, e.getMessage(), null,
+						DcemReporting asReporting = new DcemReporting(SystemReceiveMailTask.class.getSimpleName(), ReportAction.Invalid_Email_Received, (DcemUser)null, e.toString(), null,
 								"From: " +  message.getFrom()[0], AlertSeverity.FAILURE);
 						dcemReportingLogic.addReporting(asReporting);
 						message.setFlag(Flags.Flag.DELETED, true);

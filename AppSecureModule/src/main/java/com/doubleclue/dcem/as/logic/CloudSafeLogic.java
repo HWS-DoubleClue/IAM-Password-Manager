@@ -1234,12 +1234,14 @@ public class CloudSafeLogic {
 		// Recycle to bin
 		cloudSafeEntity.setDiscardAfter(LocalDateTime.now().plusDays(30));
 		cloudSafeEntity.setRecycled(true);
-		CloudSafeDto cloudSafeFolder = new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.isFolder());
+		CloudSafeDto cloudSafeDto = new CloudSafeDto(cloudSafeEntity.getId(), cloudSafeEntity.isFolder());
+		List<CloudSafeDto> cloudSafeDtos = new ArrayList<CloudSafeDto>(0);
 		if (cloudSafeEntity.isFolder()) {
-			recycleSubDirectories(cloudSafeFolder, new ArrayList<CloudSafeDto>(), cloudSafeEntity.getUser());
+			recycleSubDirectories(cloudSafeDto, cloudSafeDtos, cloudSafeEntity.getUser());
 		}
 		em.merge(cloudSafeEntity);
-		return new ArrayList<CloudSafeDto>(0);
+		cloudSafeDtos.add (cloudSafeDto);
+		return cloudSafeDtos;
 
 	}
 
@@ -1267,7 +1269,7 @@ public class CloudSafeLogic {
 		}
 	}
 
-	@DcemTransactional
+
 	private void recycleSubDirectories(CloudSafeDto parentFolder, List<CloudSafeDto> toRecycleFiles, DcemUser dcemUser) throws DcemException {
 		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, CloudSafeDto.class);
 		query.setParameter(1, parentFolder.getId());
@@ -1312,9 +1314,7 @@ public class CloudSafeLogic {
 		} else {
 			cloudsafe = fullPathCache.get(id);
 		}
-
 		path = path == null ? cloudsafe.getName() : cloudsafe.getName() + "/" + path;
-
 		if (getCloudSafeRoot().getId().equals(cloudsafe.getParentId()) == false && cloudsafe.getParentId() != null
 				&& cloudsafe.getParentId() != cloudsafe.getId()) {
 			return getFullPath(cloudsafe.getParentId(), path);
@@ -1932,17 +1932,6 @@ public class CloudSafeLogic {
 		return query.getResultList();
 	}
 
-	// public List<CloudSafeEntity> getCloudSafeResults(String name, Integer parentId, boolean isFolder, Integer userId) {
-	// if (parentId == null || parentId == 0) {
-	// parentId = getCloudSafeRoot().getId();
-	// }
-	// TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_SINGLE_USER, CloudSafeEntity.class);
-	// query.setParameter(1, name);
-	// query.setParameter(2, parentId);
-	// query.setParameter(3, isFolder);
-	// query.setParameter(4, userId);
-	// return query.getResultList();
-	// }
 
 	public CloudSafeEntity getCloudSafeUserSingleResult(String name, Integer parentId, boolean isFolder, Integer userId) {
 		TypedQuery<CloudSafeEntity> query;

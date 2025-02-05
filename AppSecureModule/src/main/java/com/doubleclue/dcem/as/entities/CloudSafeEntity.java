@@ -86,9 +86,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_ID, query = "SELECT NEW com.doubleclue.dcem.as.logic.CloudSafeNameDto(cs.id, cs.name, cs.parent.id) FROM CloudSafeEntity cs WHERE cs.id=?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_ID_AND_RECYCLE_STATE, query = "SELECT cs FROM CloudSafeEntity cs WHERE cs.id=?1 AND cs.recycled=?2"),
 		@NamedQuery(name = CloudSafeEntity.GET_IDS, query = "SELECT c.id FROM CloudSafeEntity c"),
-		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA_FLAT, query = "SELECT c FROM CloudSafeEntity c WHERE ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2)) AND c.isFolder=false AND c.recycled = ?3 ORDER BY c.name ASC"),
+		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA_FLAT, query = "SELECT c FROM CloudSafeEntity c WHERE ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2))  AND c.recycled = ?3 ORDER BY c.name ASC"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = ?4 ORDER BY c.isFolder DESC, c.name ASC"),
-		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_USER, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4"),
+		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_USER, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4 AND recycled=false"),
 		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_GROUP, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=false AND c.group.id=?3"),
 
 		@NamedQuery(name = CloudSafeEntity.UPDATE_LAST_MODIFY_STATE_BY_USER, query = "UPDATE CloudSafeEntity c SET c.lastModifiedUser = NULL WHERE c.lastModifiedUser = ?1"),
@@ -278,6 +278,11 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Transient
 	@JsonIgnore
 	boolean newEntity = false;
+	
+	@Transient
+	@JsonIgnore
+	boolean selected = false;
+	
 
 	@Transient
 	@JsonIgnore
@@ -632,11 +637,27 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		return groupOwner;
 	}
 	
+	public String getNameWithExtension () {
+		if (dcemMediaType == null || name.contains(".")) {
+			return name;
+		}
+		return name + "." + dcemMediaType.getNameExtension();
+	}
+	
 	public String getLocation() {
 		if (parent.getName().equals(DcemConstants.CLOUD_SAFE_ROOT)) {
-			return null;
+			return "";
 		}
 		return parent.getName();
 	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
 
 }

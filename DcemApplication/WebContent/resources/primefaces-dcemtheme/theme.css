@@ -1294,8 +1294,8 @@ body {
 	margin-top: 7px !important;
 }
 
-.ui-growl-warm {
-	background: #f5de0e;
+.ui-growl-warn {
+	background: #f58e0e;
 	font-weight: normal !important;
 	border-radius: 5px !important;
 }
@@ -1329,12 +1329,11 @@ body {
 }
 
 .ui-chkbox-box.ui-state-hover, .ui-radiobutton-box.ui-state-hover {
-	background-color: transparent !important;
-	border-color: #777777;
+	box-shadow: 0 0 0 .2rem rgb(140.5,204.8732718894,255);
 }
 
 .ui-chkbox-box.ui-state-focus {
-	background-color: transparent !important;
+	box-shadow: 0 0 0 .2rem rgb(140.5,204.8732718894,255);
 }
 
 .ui-state-default.ui-button {
@@ -2439,3 +2438,74 @@ body .ui-breadcrumb .ui-breadcrumb-items li:last-child .ui-menuitem-link .ui-men
 	color: #6c757d;
 }
 /*End of BreadCrumb*/
+body .ui-tag {
+	color: var(--header-link-text-color);
+	background-color: var(--primary-background-color);
+	border: 1px solid var(--button-border-color);
+	padding: 0;
+	font-size: .7rem;
+	padding: .2rem .2rem;
+	border-radius: 3px
+}
+
+body .ui-tag:not(.ui-widget) {
+	display: inline-block;
+	text-align: center;
+	line-height: 0.8
+}
+
+body .ui-tag.ui-tag-success {
+	background: #aed581;
+	color: #212529
+}
+
+body .ui-tag.ui-tag-info {
+	background: #4fc3f7;
+	color: #212529
+}
+
+body .ui-tag.ui-tag-warning {
+	background: #ffb74d;
+	color: #212529
+}
+
+body .ui-tag.ui-tag-danger {
+	background: #e57373;
+	color: #212529
+}
+
+body .ui-tag .ui-tag-icon {
+	margin-right: .25rem;
+	font-size: .75rem
+}
+
+/*Start divider*/
+body .ui-divider .ui-divider-content {
+	background-color: var(--primary-background-color);
+}
+
+body .ui-divider.ui-divider-horizontal {
+	margin: 0.2rem 0;
+	padding: 0 0.5rem
+}
+
+body .ui-divider.ui-divider-horizontal:before {
+	border-top: 1px #C0C0C0
+}
+
+body .ui-divider.ui-divider-horizontal .ui-divider-content {
+	padding: 0 .2rem
+}
+
+body .ui-divider.ui-divider-vertical {
+	margin: 0 1rem;
+	padding: 1rem 0
+}
+
+body .ui-divider.ui-divider-vertical:before {
+	border-left: 1px #4b4b4b
+}
+
+body .ui-divider.ui-divider-vertical .ui-divider-content {
+	padding: .5rem 0
+}

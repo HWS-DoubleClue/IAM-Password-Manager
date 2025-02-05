@@ -1,14 +1,19 @@
 package com.doubleclue.dcem.core.gui;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.faces.FacesException;
+import javax.faces.application.FacesMessage;
+import javax.faces.application.NavigationHandler;
 import javax.faces.context.ExceptionHandler;
 import javax.faces.context.ExceptionHandlerWrapper;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.faces.event.ExceptionQueuedEvent;
 import javax.faces.event.ExceptionQueuedEventContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,8 +42,9 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 		while (queue.hasNext()) {
 			ExceptionQueuedEvent item = queue.next();
 			ExceptionQueuedEventContext exceptionQueuedEventContext = (ExceptionQueuedEventContext) item.getSource();
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+		 	HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			try {
 				Throwable throwable = exceptionQueuedEventContext.getException();
 				if (getRootCauseThrowable(throwable, null) instanceof InvalidCipherTextException) {
@@ -47,23 +53,40 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 				} else {
 					if (throwable instanceof IllegalStateException) {
 						logger.debug("JSF Exception " + throwable.toString());
-					} else if (throwable instanceof javax.el.ELException) {
-						logger.warn("JSF Exception " + throwable.toString());
-						request.getSession().setMaxInactiveInterval(1);
-					} else {
-						logger.debug("JSF Exception ", throwable);
-						// Map<String, Object> requestMap = context.getExternalContext().getRequestMap();
-						// NavigationHandler nav = context.getApplication().getNavigationHandler();
-						// requestMap.put("error-message", throwable.getMessage());
-						// request.getSession().invalidate();
-						// nav.handleNavigation(context, null, "ERROR");
+
+					} else if (throwable instanceof org.primefaces.csp.CspException) {
+						logger.debug("CSPException " + throwable.toString());
+						// } else if (throwable instanceof javax.el.ELException) {
+						// logger.warn("JSF Exception " + throwable.toString());
+						// request.getSession().setMaxInactiveInterval(2);
+						// //request.getSession().invalidate();
+						// try {
+						// context.getApplication().getNavigationHandler().handleNavigation(fc, null, "/dcem/error_.xhtml");
 						// context.renderResponse();
+						// } catch (Exception e) {
+						// e.printStackTrace();
+						// }
+					} else {
+						logger.error("JSF Exception ", throwable);
+ 						request.setAttribute("error-message", throwable);
+						try {
+							 NavigationHandler navigationHandler = facesContext.getApplication().getNavigationHandler();
+							 navigationHandler.handleNavigation(facesContext, null, "/error_.xhtml");
+							 facesContext.renderResponse();
+//							response.sendRedirect("/dcem/DcemExceptionHandler");
+//							response.setStatus(9000);
+//							facesContext.responseComplete();
+//							 System.out.println("CustomExceptionHandler.handle() " + throwable.toString());
+						} catch (Throwable e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			} finally {
 				queue.remove();
 			}
 		}
+		getWrapped().handle();
 	}
 
 	private Throwable getRootCauseThrowable(Throwable exception, String findExpStartWith) {

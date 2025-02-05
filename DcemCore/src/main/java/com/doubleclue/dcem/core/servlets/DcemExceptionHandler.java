@@ -49,8 +49,8 @@ public class DcemExceptionHandler extends HttpServlet {
 		if (servletName == null) {
 			servletName = "Unknown";
 		}
-		
-		request.getAttributeNames();
+
+	 	request.getParameterMap();
 		String requestUri = (String) request.getAttribute("javax.servlet.error.request_uri");
 		if (requestUri == null) {
 			requestUri = "Unknown";
@@ -60,41 +60,50 @@ public class DcemExceptionHandler extends HttpServlet {
 			return;
 		}
 		String error = "Unexpected ERROR";
-		switch (statusCode) {
-		case 500:
-			error = "Internal Server Error";
-			request.getSession().invalidate();
-			break;
-		case 404:
-			if (uri.startsWith(DcemConstants.DEFAULT_WEB_NAME)) {
-				try {
-					userPortalModuleApi.getUserPortalConfig();
-				} catch (DcemException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (module.isSwitchUserPortal() == false) {
-					response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + DcemConstants.DEFAULT_WEB_NAME
-							+ DcemConstants.WEB_MGT_CONTEXT);
+		String attribute = (String) request.getAttribute("error-message");
+
+		if (statusCode != null) {
+
+			switch (statusCode) {
+			case 500:
+				error = "Internal Server Error";
+				request.getSession().invalidate();
+				break;
+			case 404:
+				if (uri.startsWith(DcemConstants.DEFAULT_WEB_NAME)) {
+					try {
+						userPortalModuleApi.getUserPortalConfig();
+					} catch (DcemException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (module.isSwitchUserPortal() == false) {
+						response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+								+ DcemConstants.DEFAULT_WEB_NAME + DcemConstants.WEB_MGT_CONTEXT);
+						return;
+					}
+					response.sendRedirect(
+							request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + DcemConstants.USER_PORTAL_WELCOME);
 					return;
 				}
-				response.sendRedirect(
-						request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + DcemConstants.USER_PORTAL_WELCOME);
+				error = "Page Not Found";
+				break;
+			case 401:
+				// request.getSession().invalidate();
+				error = "Unauthorized";
 				return;
+			// break;
+			case HttpServletResponse.SC_SERVICE_UNAVAILABLE:
+				request.getSession().invalidate();
+				error = "Service is unavailable";
+				break;
+			case 9000:
+				request.getSession().invalidate();
+				error = "Service is unavailablexxxxxxxxxxxxxxx";
+				break;
+			default:
+				request.getSession().invalidate();
 			}
-			error = "Page Not Found";
-			break;
-		case 401:
-			// request.getSession().invalidate();
-			error = "Unauthorized";
-			return;
-		// break;
-		case HttpServletResponse.SC_SERVICE_UNAVAILABLE:
-			request.getSession().invalidate();
-			error = "Service is unavailable";
-			break;
-		default:
-			request.getSession().invalidate();
 		}
 
 		response.setContentType("text/html");

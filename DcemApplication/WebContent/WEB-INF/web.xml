@@ -102,7 +102,10 @@
 		<servlet-name>DcemExceptionHandler</servlet-name>
 		<url-pattern>/DcemExceptionHandler</url-pattern>
 	</servlet-mapping>
-
+	<error-page>
+		<exception-type>javax.el.ELException</exception-type>
+		<location>/dcem/errors_.xhtml</location>
+	</error-page>
 	<error-page>
 		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
 		<location>/dcem/mgt/expired_.xhtml</location>
@@ -183,8 +186,5 @@
 	</mime-mapping>
 
 
-	<error-page>
-		<exception-type>org.jboss.weld.context.NonexistentConversationException</exception-type>
-		<location>/userportal/expired_.xhtml</location>
-	</error-page>
+	<!-- <error-page> <exception-type>org.jboss.weld.context.NonexistentConversationException</exception-type> <location>/userportal/expired_.xhtml</location> </error-page> -->
 </web-app>

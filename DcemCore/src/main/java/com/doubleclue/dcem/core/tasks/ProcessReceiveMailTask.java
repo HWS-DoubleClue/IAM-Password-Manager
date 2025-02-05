@@ -71,7 +71,7 @@ public class ProcessReceiveMailTask extends CoreTask {
 			urlTokenLogic.verifyUrlToken(token, UrlTokenType.EmailToken.name());
 		} catch (Exception e) {
 			DcemReportingLogic dcemReportingLogic = CdiUtils.getReference(DcemReportingLogic.class);
-			DcemReporting asReporting = new DcemReporting(dcemModule.getName(), ReportAction.Invalid_Email_Received, (DcemUser)null, e.getMessage(), null,
+			DcemReporting asReporting = new DcemReporting(dcemModule.getName(), ReportAction.Invalid_Email_Received, (DcemUser)null, e.toString(), null,
 					"From: " + addressFrom, AlertSeverity.FAILURE);
 			dcemReportingLogic.addReporting(asReporting);
 			logger.error("Invalid EMail Token from " + addressFrom + ", cause: " + e.toString());
