@@ -262,15 +262,15 @@ public final class DcemConstants {
 	public static final String SAML_SERVLET_FILTER_NAME = "SamlWebFilter";
 	public static final String SAML_SERVLET_FILTER_CLASS = "com.doubleclue.dcem.saml.servlets.SamlWebFilter";
 
-	public static final String WEBDAV_SERVLET_NAME = "WebDAV";
-	public static final String WEBDAV_SERVLET_PATH = "/webdav/*";
-	public static final String WEBDAV_SERVLET_CLASS = "com.doubleclue.dcem.userportal.servlets.DcWebDavServlet";
+//	public static final String WEBDAV_SERVLET_NAME = "WebDAV";
+//	public static final String WEBDAV_SERVLET_PATH = "/webdav/*";
+//	public static final String WEBDAV_SERVLET_CLASS = "com.doubleclue.dcem.userportal.servlets.DcWebDavServlet";
 
 	// OAuth
 	public static final String OAUTH_SERVLET_CLASS = "com.doubleclue.dcem.oauth.servlets.OAuthServlet";
 	public static final String OAUTH_SERVLET_NAME = "oauthAuthServer";
 	public static final String OAUTH_SERVLET_PATH = "/oauth";
-	public static final String OAUTH_OPERATOR_NAME = "OAuthOperator";
+//	public static final String OAUTH_OPERATOR_NAME = "OAuthOperator";
 	public static final String OAUTH_SERVLET_FILTER_NAME = "OAuthWebFilter";
 	public static final String OAUTH_SERVLET_FILTER_CLASS = "com.doubleclue.dcem.oauth.servlets.OAuthWebFilter";
 

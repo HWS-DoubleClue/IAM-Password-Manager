@@ -161,15 +161,15 @@ public class OAuthModule extends DcemModule {
 		return policyAppEntities;
 	}
 
-	public DcemUser getOperator() throws DcemException {
-		if (dcemUser == null) {
-			dcemUser = userLogic.getUser(DcemConstants.OAUTH_OPERATOR_NAME);
-			if (dcemUser == null) {
-				DcemRole role = roleLogic.getDcemRole(DcemConstants.SYSTEM_ROLE_ADMIN);
-				dcemUser = new DcemUser(DcemConstants.OAUTH_OPERATOR_NAME, null, DcemConstants.OAUTH_OPERATOR_NAME, role);
-				userLogic.addOrUpdateUserWoAuditing(dcemUser);
-			}
-		}
-		return dcemUser;
-	}
+//	public DcemUser getOperator() throws DcemException {
+//		if (dcemUser == null) {
+//			dcemUser = userLogic.getUser(DcemConstants.OAUTH_OPERATOR_NAME);
+//			if (dcemUser == null) {
+//				DcemRole role = roleLogic.getDcemRole(DcemConstants.SYSTEM_ROLE_ADMIN);
+//				dcemUser = new DcemUser(DcemConstants.OAUTH_OPERATOR_NAME, null, DcemConstants.OAUTH_OPERATOR_NAME, role);
+//				userLogic.addOrUpdateUserWoAuditing(dcemUser);
+//			}
+//		}
+//		return dcemUser;
+//	}
 }
