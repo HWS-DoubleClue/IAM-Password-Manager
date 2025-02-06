@@ -428,17 +428,9 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@JsonIgnore
 	public String getLengthKb() {
 		if (isFolder) {
-			return "-";
-		} else if (length > 0) {
-			long sizeInKb = (length + 1024 - 1) / 1024;
-			if (sizeInKb >= 1024) {
-				double sizeInMb = sizeInKb / 1024.0;
-				return String.format("%.2f MB", sizeInMb); // Größe in MB mit 2 Dezimalstellen
-			} else {
-				return sizeInKb + " KB"; // Größe in KB
-			}
+			return "";
 		} else {
-			return "0 KB"; // Standardwert für ungültige Größen
+			return DataUnit.getByteCountAsString(length);
 		}
 	}
 

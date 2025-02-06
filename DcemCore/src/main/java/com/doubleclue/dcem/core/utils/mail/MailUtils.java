@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,8 +20,10 @@ import com.doubleclue.dcem.core.as.DcemUploadFile;
 import com.doubleclue.dcem.core.utils.typedetector.DcemMediaType;
 import com.doubleclue.dcem.core.utils.typedetector.FileUploadDetector;
 
+import jakarta.mail.Address;
 import jakarta.mail.Multipart;
 import jakarta.mail.Part;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 
@@ -31,13 +34,16 @@ public class MailUtils {
 	private static final Pattern HTML_META_CHARSET_REGEX = Pattern.compile("(<meta(?!\\s*(?:name|value)\\s*=)[^>]*?charset\\s*=[\\s\"']*)([^\\s\"'/>]*)",
 			Pattern.DOTALL);
 	private static final String HTML_WRAPPER_TEMPLATE = "<!DOCTYPE html><html><head><style>body{font-size: 0.5cm;}</style><meta charset=\"%s\"><title>title</title></head><body>%s</body></html>";
-	static final String MAIL_INFO = "<div><h2>EMAIL</h2>\nFrom: %s<br></br>Encoded: %s</div>";
+//	static final String MAIL_INFO = "<div><h2>EMAIL</h2>\nFrom: %s<br></br>Encoded: %s</div>";
 
 	private static final Logger logger = LogManager.getLogger(MailUtils.class);
 
-	public static List<DcemUploadFile> processReceivedMail(File emlFile) throws Exception {
+	public static List<DcemUploadFile> processReceivedMail(File emlFile, ResourceBundle resourceBundle) throws Exception {
+		String mailInfoTemplate = resourceBundle.getString("email.infoTemplate");
 		MimeMessage message = new MimeMessage(null, new FileInputStream(emlFile));
 		String from = message.getHeader("From", null);
+		Address[] froms = message.getFrom();
+		String fromEmail = froms == null ? null : ((InternetAddress) froms[0]).getAddress();
 		MimeObjectEntry<String> bodyEntry = MimeMessageParser.findBodyPart(message);
 		final String charsetName = bodyEntry.getContentType().getParameter("charset");
 		final HashMap<String, MimeObjectEntry<String>> inlineImageMap = MimeMessageParser.getInlineImageMap(message);
@@ -101,15 +107,14 @@ public class MailUtils {
 				});
 			}
 		}
-		File tempFile = File.createTempFile("dcem-", "-mail");
-		Files.write(tempFile.toPath(), htmlBody.getBytes(StandardCharsets.UTF_8));
+		File tempFileBody = File.createTempFile("dcem-", "-mail");
+		Files.write(tempFileBody.toPath(), htmlBody.getBytes(StandardCharsets.UTF_8));
 		List<DcemUploadFile> emailFiles = new ArrayList<DcemUploadFile>();
-
-		emailFiles.add(new DcemUploadFile("Body.html", tempFile, DcemMediaType.XHTML, String.format(MAIL_INFO, from, MediaType.TEXT_HTML.toString())));
 		Object content = message.getContent();
 		if (content instanceof Multipart) {
+			File tempFile;
 			Multipart multiPart = (Multipart)content;
-			int numberOfParts = multiPart.getCount();
+			int numberOfParts = numberOfParts = multiPart.getCount();
 			for (int partCount = 0; partCount < numberOfParts; partCount++) {
 				MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
 				if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
@@ -121,6 +126,8 @@ public class MailUtils {
 				}
 			}
 		}
+		DcemUploadFile dcemUploadFile = new DcemUploadFile("Body.html", tempFileBody, DcemMediaType.XHTML, String.format(mailInfoTemplate, fromEmail, from, emailFiles.size(), MediaType.TEXT_HTML.toString()));
+		emailFiles.addFirst(dcemUploadFile);
 		return emailFiles;
 	}
 }
