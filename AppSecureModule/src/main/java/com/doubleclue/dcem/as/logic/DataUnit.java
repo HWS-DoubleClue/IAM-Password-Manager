@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 
 public enum DataUnit {
 
-	BYTE("B"), KILOBYTE("kB"), MEGABYTE("MB"), GIGABYTE("GB"), TERABYTE("TB"), PETABYTE("PB");
+	BYTE("By"), KILOBYTE("KB"), MEGABYTE("MB"), GIGABYTE("GB"), TERABYTE("TB"), PETABYTE("PB");
 
 	private static final DecimalFormat df = new DecimalFormat("#.##");
 	private static final int multiplier = 1024;
