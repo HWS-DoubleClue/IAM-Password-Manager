@@ -61,7 +61,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.user=?2 AND c.parent.id=?3 AND c.recycled=?4"),
 		@NamedQuery(name = CloudSafeEntity.GET_GROUP_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.name=?1 AND c.group=?2 AND c.parent.id=?3 AND c.recycled=?4"),
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_ROOT, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.user=?2 AND c.parent = c.id"),
-		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_IN_RECYCLEBIN, query = "SELECT c FROM CloudSafeEntity c WHERE c.name=?1 AND c.user.loginId=?2 AND c.recycled=true"),
 		@NamedQuery(name = CloudSafeEntity.GET_DEVICE_CLOUDDATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.DEVICE AND c.name=?1 AND c.device=?2"),
 		@NamedQuery(name = CloudSafeEntity.GET_DEVICE_LIST, query = "SELECT cloudData FROM CloudSafeEntity cloudData WHERE cloudData.device=?1"),
 
@@ -88,6 +87,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.GET_IDS, query = "SELECT c.id FROM CloudSafeEntity c"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA_FLAT, query = "SELECT c FROM CloudSafeEntity c WHERE ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2))  AND c.recycled = ?3 ORDER BY c.name ASC"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = ?4 ORDER BY c.isFolder DESC, c.name ASC"),
+		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DOCUMENTS, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = false AND c.isFolder = false ORDER BY c.name ASC"),
+
 		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_USER, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4 AND recycled=false"),
 		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_GROUP, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=false AND c.group.id=?3"),
 
@@ -101,7 +102,6 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public final static String GET_USER_CLOUDDATA = "CloudSafeEntity.getUserProperty";
 	public final static String GET_GROUP_CLOUDDATA = "CloudSafeEntity.getGroupProperty";
 	public final static String GET_CLOUDSAFE_ROOT = "CloudSafeEntity.getRoot";
-	public final static String GET_CLOUDSAFE_IN_RECYCLEBIN = "CloudSafeEntity.getCloudSafeInRecycleBin";
 	public final static String GET_DEVICE_CLOUDDATA = "CloudSafeEntity.getDeviceProperty";
 	public static final String GET_DEVICES_CLOUDDATA_IN = "CloudSafeEntity.getDevicePropertyValue";
 	public static final String GET_OWNED_FILE_KEYS = "CloudSafeEntity.getOwnedFileKeys";
@@ -130,6 +130,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String GET_BY_TAG = "CloudSafeEntity.GetByTag";
 	public static final String GET_ALL_TAGS = "CloudSafeEntity.GetAllTags";
 	public static final String GET_BY_IDS = "CloudSafeEntity.getByIds";
+	public static final String GET_USER_CLOUDSAFE_DOCUMENTS = "CloudSafeEntity.userDocuments";
 
 	public CloudSafeEntity() {
 		super();
@@ -283,6 +284,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@JsonIgnore
 	boolean selected = false;
 	
+	@Transient
+	@JsonIgnore
+	CloudSafeShareEntity cloudSafeShareEntity;
+	
 
 	@Transient
 	@JsonIgnore
@@ -291,7 +296,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	@DcemGui
 	@Transient
-	String groupOwner;
+	String ownerName;
 
 	public String getPath() {
 		return path;
@@ -522,10 +527,8 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
 		CloudSafeEntity other = (CloudSafeEntity) obj;
-		return Objects.equals(id, other.id);
+		return Objects.equals(this.getId(), other.getId());
 	}
 
 	public boolean isFile() {
@@ -617,16 +620,16 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		return thumbnailEntity.getThumbnail();
 	}
 
-	public String getGroupOwner() {
-		if (groupOwner != null) {
-			return groupOwner;
+	public String getOwnerName() {
+		if (ownerName != null) {
+			return ownerName;
 		}
 		if (owner == CloudSafeOwner.GROUP) {
-			groupOwner = getGroup().getName();
-		} else {
-			groupOwner = "";
+			ownerName = getGroup().getName();
+		} else if (owner == CloudSafeOwner.USER) {
+			ownerName = getUser().getDisplayName();
 		}
-		return groupOwner;
+		return ownerName;
 	}
 	
 	public String getNameWithExtension () {
@@ -649,6 +652,14 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+
+	public CloudSafeShareEntity getCloudSafeShareEntity() {
+		return cloudSafeShareEntity;
+	}
+
+	public void setCloudSafeShareEntity(CloudSafeShareEntity cloudSafeShareEntity) {
+		this.cloudSafeShareEntity = cloudSafeShareEntity;
 	}
 
 

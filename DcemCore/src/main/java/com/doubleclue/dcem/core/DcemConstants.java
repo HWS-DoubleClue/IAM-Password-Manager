@@ -404,7 +404,7 @@ public final class DcemConstants {
 
 	public static final String DEFAULT_BIN_ICON = "bin.svg";
 
-	public static final String DEFAULT_FOLDER_ICON = "folder.png";
+	public static final String DEFAULT_FOLDER_ICON = "folder-svgrepo-com.svg";
 
 	public static final String DEFAULT_FOLDER_LOOK_ICON = "folder_lock.png";
 

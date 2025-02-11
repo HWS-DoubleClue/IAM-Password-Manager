@@ -336,8 +336,6 @@ public class ViewNavigator implements Serializable {
 						.isPermission(new DcemAction(dcemModule.getId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE))
 						|| operatorSessionBean.isPermission(new DcemAction(dcemModule.getId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_VIEW));
 				for (SubjectAbs subject : subjects) {
-
-					// List<DcemAction> actions = subject.getDcemActions();
 					if (subject.isHiddenMenu() == true) {
 						continue;
 					}

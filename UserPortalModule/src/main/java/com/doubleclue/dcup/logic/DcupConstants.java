@@ -36,8 +36,7 @@ public class DcupConstants {
 	public static final String FATAL_ERROR_PAGE = "error_.xhtml";
     public static final String REGISTER_DOM_USER = "registerDomUser_.xhtml";
     public static final String SUCCESS_REGISTRATION_PAGE = "successRegistrationView_.xhtml";
-    public static final String CLOUD_SAFE_VIEW = "cloudSafeView.xhtml";
-    public static final String PASSWORD_SAFE_VIEW = "keePassView.xhtml";
+     public static final String PASSWORD_SAFE_VIEW = "keePassView.xhtml";
     public static final String DEVICES_VIEW = "devicesView.xhtml";
     public static final String USER_PROFILE_VIEW = "userProfileView.xhtml";
     public static final String CHANGE_PASSWORD_VIEW = "changePasswordView.xhtml";

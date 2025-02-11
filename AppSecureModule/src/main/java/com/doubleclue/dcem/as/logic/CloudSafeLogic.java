@@ -634,6 +634,7 @@ public class CloudSafeLogic {
 			originalDbEntity.setTextExtract(cloudSafeEntity.getTextExtract());
 			originalDbEntity.setTags(cloudSafeEntity.getTags());
 			originalDbEntity.setTextLength(cloudSafeEntity.getTextLength());
+			originalDbEntity.setInfo(cloudSafeEntity.getInfo());
 			CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
 			if (thumbnailEntity != null) {
 				if (thumbnailEntity.getId() == null) {
@@ -680,6 +681,7 @@ public class CloudSafeLogic {
 		}
 	}
 
+	// TODO is this neccessary??
 	public void verifyCloudSafe(CloudSafeEntity cloudSafe) throws Exception {
 		if (cloudSafe.getOwner() == null) {
 			throw new DcemException(DcemErrorCodes.INVALID_CLOUDDATA_OWNER, null);
@@ -850,16 +852,9 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public void addOrEditShareCloudSafeFile(CloudSafeShareEntity cloudSafeShareEntity, String userLoginId, DcemGroup dcemGroup) throws DcemException {
+	public void addOrEditShareCloudSafeFile(CloudSafeShareEntity cloudSafeShareEntity, DcemUser user, DcemGroup dcemGroup) throws DcemException {
 		if (cloudSafeShareEntity == null) {
 			throw new DcemException(DcemErrorCodes.INVALID_PARAMETER, "AsApiShareCloudSafe");
-		}
-		DcemUser user = null;
-		if (dcemGroup == null) {
-			user = userLogic.getUser(userLoginId);
-			if (user == null) {
-				throw new DcemException(DcemErrorCodes.INVALID_USERID, "Invalid User Id");
-			}
 		}
 		if (cloudSafeShareEntity.getId() == null) {
 			CloudSafeShareEntity entityFromDb = getCloudShare(cloudSafeShareEntity.getCloudSafe(), user, dcemGroup);
@@ -1918,6 +1913,20 @@ public class CloudSafeLogic {
 		query.setParameter(4, recycled);
 		return query.getResultList();
 	}
+	
+	public List<CloudSafeEntity> getByUserAndParentIdDocuments(Integer parentId, DcemUser user, List<DcemGroup> allUsersGroups)
+			throws DcemException {
+		TypedQuery<CloudSafeEntity> query;
+		query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDSAFE_DOCUMENTS, CloudSafeEntity.class);
+		query.setParameter(1, parentId);
+		query.setParameter(2, user);
+		if (allUsersGroups == null || allUsersGroups.isEmpty() == true) {
+			query.setParameter(3, null);
+		} else {
+			query.setParameter(3, allUsersGroups);
+		}
+		return query.getResultList();
+	}
 
 	public List<CloudSafeEntity> getCloudSafeByUserFlat(DcemUser user, List<DcemGroup> allUsersGroups, boolean recycled) throws DcemException {
 		TypedQuery<CloudSafeEntity> query;
@@ -1931,8 +1940,8 @@ public class CloudSafeLogic {
 		query.setParameter(3, recycled);
 		return query.getResultList();
 	}
-
-
+	
+	
 	public CloudSafeEntity getCloudSafeUserSingleResult(String name, Integer parentId, boolean isFolder, Integer userId) {
 		TypedQuery<CloudSafeEntity> query;
 		if (parentId == null || parentId == 0) {
@@ -1965,19 +1974,7 @@ public class CloudSafeLogic {
 		}
 	}
 
-	@DcemTransactional
-	private boolean existsInRecycleBin(CloudSafeEntity cloudSafeEntity) {
-		try {
-			TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_IN_RECYCLEBIN, CloudSafeEntity.class);
-			query.setParameter(1, cloudSafeEntity.getName());
-			query.setParameter(2, cloudSafeEntity.getUser().getLoginId());
-			query.getSingleResult();
-			return true;
-		} catch (NoResultException e) {
-			return false;
-		}
-	}
-
+	
 	@DcemTransactional
 	public CloudSafeEntity getCloudSafeRoot() {
 		CloudSafeEntity rootCloudSafeEntity = asModule.getTenantData().getCloudSafeRoot();

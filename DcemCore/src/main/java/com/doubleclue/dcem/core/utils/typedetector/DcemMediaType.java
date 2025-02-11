@@ -29,7 +29,10 @@ public enum DcemMediaType {
 	MP4 ("video/mp4", "mp4.svg", "mp4"),
 	QuickTime ("video/quicktime", "mp4.svg", "quicktime"),
 	SVG ("image/svg+xml", "svg-svgrepo-com.svg", "svg"),
-	Unknown ("", "file-unknow-svgrepo-com.svg", "");	
+	Unknown ("", "file-unknow-svgrepo-com.svg", ""),
+	Folder ("", "folder-svgrepo-com.svg", ""),
+	Mail ("", "mail-svgrepo-com.svg", "eml");
+	
 	
 	private String mediaType;
 	private String iconName;

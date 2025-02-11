@@ -131,9 +131,6 @@ public class KeePassView extends AbstractPortalView {
 	private PortalSessionBean portalSessionBean;
 
 	@Inject
-	CloudSafeView cloudSafeView;
-
-	@Inject
 	CloudSafeLogic cloudSafeLogic;
 
 	@Inject

@@ -1,14 +1,12 @@
 package com.doubleclue.dcem.userportal.servlets;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ResourceBundle;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.doubleclue.comm.thrift.CloudSafeOptions;
-import com.doubleclue.dcem.as.entities.CloudSafeEntity;
 import com.doubleclue.dcem.as.logic.CloudSafeLogic;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
@@ -26,18 +22,15 @@ import com.doubleclue.dcem.core.entities.UrlTokenEntity;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
-import com.doubleclue.dcem.core.logic.FileContentType;
 import com.doubleclue.dcem.core.logic.UrlTokenLogic;
 import com.doubleclue.dcem.core.logic.UrlTokenType;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.userportal.logic.UserPortalModule;
-import com.doubleclue.dcup.gui.CloudSafeView;
 import com.doubleclue.dcup.gui.EndMessageView;
 import com.doubleclue.dcup.gui.ForgotPasswordView;
 import com.doubleclue.dcup.gui.PortalSessionBean;
 import com.doubleclue.dcup.gui.RegisterView;
 import com.doubleclue.dcup.logic.DcupConstants;
-import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ResourceBundleUtf8Control;
 
 @WebServlet(name = "DcupServlet")
@@ -66,9 +59,6 @@ public class DcupServlet extends HttpServlet {
 
 	@Inject
 	private EndMessageView forgotPasswordErrorView;
-
-	@Inject
-	CloudSafeView cloudSafeView;
 
 	@Inject
 	CloudSafeLogic cloudSafeLogic;
@@ -102,46 +92,7 @@ public class DcupServlet extends HttpServlet {
 			TenantEntity tenantEntity = applicationBean.getTenantFromRequest(request);
 			TenantIdResolver.setCurrentTenant(tenantEntity);
 			if (tokenType.equals(UrlTokenType.ShowFile)) {
-				ServletOutputStream servletOutputStream = null;
-				InputStream inputStream;
-				try {
-					CloudSafeEntity cloudSafeEntity = cloudSafeView.getCloudSafeEntityForShow();
-					if (cloudSafeEntity == null) {
-						logger.warn("Could not show pdf file, Session is not valid ");
-						String errorMessage = resourceBundle.getString("error.ErrorMessageshowFileInBrwser");
-						redirectToErrorPage(request, response, resourceBundle.getString("title.showFileInBroswer"), errorMessage);
-						return;
-					}
-					if (cloudSafeEntity.isOption(CloudSafeOptions.ENC) == false) {
-						inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, cloudSafeView.getPasswordToEncryptContent().toCharArray(),
-								portalSessionBean.getDcemUser());
-					} else {
-						inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, null, portalSessionBean.getDcemUser());
-					}
-					String fileName = cloudSafeEntity.getName();
-					String extention = fileName.toLowerCase().substring(fileName.lastIndexOf(".") + 1);
-					String contentType = FileContentType.txt.getValue();
-					try {
-						FileContentType fileContentType = FileContentType.valueOf(extention);
-						contentType = fileContentType.getValue();
-					} catch (Exception exp) {
-					}
-					response.setContentType(contentType);
-					response.addHeader("Content-Disposition", "inline; filename=" + cloudSafeEntity.getName() + ";");
-					servletOutputStream = response.getOutputStream();
-					KaraUtils.copyStream(inputStream, servletOutputStream);
-					servletOutputStream.flush();
-				} catch (DcemException e) {
-					logger.error("Something went wrong wiht showing file", e);
-					String errorMessage = resourceBundle.getString("error.ErrorMessageshowFileInBrwser");
-					redirectToErrorPage(request, response, resourceBundle.getString("title.showFileInBroswer"), errorMessage);
-				} catch (IOException e) {
-					logger.error("Something went wrong wiht showing file", e);
-					String error = resourceBundle.getString("error.SOMETHING_WENT_WRONG");
-					redirectToErrorPage(request, response, resourceBundle.getString("title.showFileInBroswer"), error);
-				} finally {
-					servletOutputStream.close();
-				}
+				
 			} else {
 				String token = request.getParameter("token");
 				if (token == null) {

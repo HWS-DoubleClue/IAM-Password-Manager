@@ -43,11 +43,7 @@
 						<f:param name="currentTab" value="1" />
 					</p:menuitem>
 
-					<p:menuitem id="cloudsafeID" value="#{DcupMsg['title.cloudSafe']}" rendered="#{portalSessionBean.isViewVisible('CLOUD_DATA_VIEW')}"
-						action="#{portalSessionBean.gotoView('cloudSafeView')}" update="viewPart menuForm:hbPanelMenu" icon="cloudStorage"
-						actionListener="#{portalSessionBean.changeCurrentIndex(2)}" style="outline:0px">
-						<f:param name="currentTab" value="2" />
-					</p:menuitem>
+
 					<p:menuitem id="passwordSafeID" value="#{DcupMsg['title.keepass']}" action="#{portalSessionBean.gotoView('keePassView')}"
 						update="viewPart menuForm:hbPanelMenu" icon="keepassIcon" rendered="#{portalSessionBean.isViewVisible('PASSWORD_MANAGER_DEPRECATED')}"
 						actionListener="#{portalSessionBean.changeCurrentIndex(3)}" style="outline:0px">
