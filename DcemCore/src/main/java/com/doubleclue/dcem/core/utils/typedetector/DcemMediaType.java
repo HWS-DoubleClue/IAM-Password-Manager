@@ -31,7 +31,7 @@ public enum DcemMediaType {
 	SVG ("image/svg+xml", "svg-svgrepo-com.svg", "svg"),
 	Unknown ("", "file-unknow-svgrepo-com.svg", ""),
 	Folder ("", "folder-svgrepo-com.svg", ""),
-	Mail ("", "mail-svgrepo-com.svg", "eml");
+	MAIL ("", "mail-svgrepo-com.svg", "eml");
 	
 	
 	private String mediaType;
