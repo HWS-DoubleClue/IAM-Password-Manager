@@ -1218,6 +1218,24 @@ public class CloudSafeLogic {
 			}
 		}
 	}
+	
+	public boolean updateNameIfDoubleName(CloudSafeEntity cloudSafeEntity) {
+		CloudSafeEntity cloudSafeEntityExists = null;
+		if (cloudSafeEntity.getOwner() == CloudSafeOwner.USER) {
+			cloudSafeEntityExists = getCloudSafeUserSingleResult(cloudSafeEntity.getName(), cloudSafeEntity.getParent().getId(), false,
+					cloudSafeEntity.getUser().getId(), cloudSafeEntity.isRecycled());
+		} else {
+			cloudSafeEntityExists = getCloudSafeGroupSingleResult(cloudSafeEntity.getName(), cloudSafeEntity.getParent().getId(), cloudSafeEntity.getGroup().getId(), cloudSafeEntity.isRecycled());
+			cloudSafeEntity.setUser(userLogic.getSuperAdmin());
+		}
+		if (cloudSafeEntityExists != null) {
+			cloudSafeEntity.setName(cloudSafeEntity.getName() + LocalDateTime.now().format(DcemConstants.DATE_TIME_FORMATTER_EXIST));
+			return true;
+
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * @param cloudSafeEntity
@@ -1234,6 +1252,7 @@ public class CloudSafeLogic {
 		if (cloudSafeEntity.isFolder()) {
 			recycleSubDirectories(cloudSafeDto, cloudSafeDtos, cloudSafeEntity.getUser());
 		}
+		updateNameIfDoubleName (cloudSafeEntity);
 		em.merge(cloudSafeEntity);
 		cloudSafeDtos.add (cloudSafeDto);
 		return cloudSafeDtos;
@@ -1942,7 +1961,7 @@ public class CloudSafeLogic {
 	}
 	
 	
-	public CloudSafeEntity getCloudSafeUserSingleResult(String name, Integer parentId, boolean isFolder, Integer userId) {
+	public CloudSafeEntity getCloudSafeUserSingleResult(String name, Integer parentId, boolean isFolder, Integer userId, boolean recycled) {
 		TypedQuery<CloudSafeEntity> query;
 		if (parentId == null || parentId == 0) {
 			parentId = getCloudSafeRoot().getId();
@@ -1952,6 +1971,7 @@ public class CloudSafeLogic {
 		query.setParameter(2, parentId);
 		query.setParameter(3, isFolder);
 		query.setParameter(4, userId);
+		query.setParameter(5, recycled);
 		try {
 			return query.getSingleResult();
 		} catch (NoResultException e) {
@@ -1959,7 +1979,7 @@ public class CloudSafeLogic {
 		}
 	}
 
-	public CloudSafeEntity getCloudSafeGroupSingleResult(String name, Integer parentId, Integer groupId) {
+	public CloudSafeEntity getCloudSafeGroupSingleResult(String name, Integer parentId, Integer groupId, boolean recycled) {
 		if (parentId == null || parentId == 0) {
 			parentId = getCloudSafeRoot().getId();
 		}
@@ -1967,6 +1987,7 @@ public class CloudSafeLogic {
 		query.setParameter(1, name);
 		query.setParameter(2, parentId);
 		query.setParameter(3, groupId);
+		query.setParameter(4, recycled);
 		try {
 			return query.getSingleResult();
 		} catch (NoResultException e) {

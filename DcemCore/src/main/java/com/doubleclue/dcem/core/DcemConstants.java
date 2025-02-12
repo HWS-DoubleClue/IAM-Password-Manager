@@ -1,6 +1,7 @@
 package com.doubleclue.dcem.core;
 
 import java.nio.charset.Charset;
+import java.time.format.DateTimeFormatter;
 
 public final class DcemConstants {
 
@@ -10,6 +11,8 @@ public final class DcemConstants {
 			+ "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA, TLS_RSA_WITH_AES_256_CBC_SHA";
 
 	public static final String SSL_PROTOCOLS = "TLSv1.2, TLSv1.3";
+	
+	public static DateTimeFormatter DATE_TIME_FORMATTER_EXIST = DateTimeFormatter.ofPattern("(dd-MM-yyyy HH-mm)");
 
 	public static final String LOG_FILE_NAME = "dcem.log";
 	public static final String LOG_FILE_NAME_1 = "dcem-1.log";

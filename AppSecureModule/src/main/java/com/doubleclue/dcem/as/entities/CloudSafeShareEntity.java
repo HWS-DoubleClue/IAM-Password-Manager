@@ -137,7 +137,6 @@ public class CloudSafeShareEntity extends EntityInterface {
 				group.getName();
 			}
 		} catch (Exception exp) {
-			System.out.println("CloudSafeShareEntity.getGroup() " + exp);
 			return null;
 		}
 		return group;
@@ -145,6 +144,13 @@ public class CloudSafeShareEntity extends EntityInterface {
 
 	public void setGroup(DcemGroup group) {
 		this.group = group;
+	}
+	
+	public String getOwnerName () {
+		if (user != null) {
+			return user.getDisplayName();
+		}
+		return group.getName();
 	}
 
 	public boolean isWriteAccess() {

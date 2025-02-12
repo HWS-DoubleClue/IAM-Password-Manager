@@ -89,8 +89,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = ?4 ORDER BY c.isFolder DESC, c.name ASC"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DOCUMENTS, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = false AND c.isFolder = false ORDER BY c.name ASC"),
 
-		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_USER, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4 AND recycled=false"),
-		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_GROUP, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=false AND c.group.id=?3"),
+		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_USER, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=?3 AND c.user.id=?4 AND recycled=?5"),
+		@NamedQuery(name = CloudSafeEntity.GET_SINGLE_GROUP, query = "SELECT c FROM CloudSafeEntity c WHERE c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.name=?1 AND c.parent.id=?2 AND c.isFolder=false AND c.group.id=?3 AND recycled=?4"),
 
 		@NamedQuery(name = CloudSafeEntity.UPDATE_LAST_MODIFY_STATE_BY_USER, query = "UPDATE CloudSafeEntity c SET c.lastModifiedUser = NULL WHERE c.lastModifiedUser = ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_BY_TAG, query = "Select DISTINCT c FROM CloudSafeEntity c JOIN FETCH c.tags tag WHERE tag IN ?1"),
@@ -286,7 +286,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	
 	@Transient
 	@JsonIgnore
-	CloudSafeShareEntity cloudSafeShareEntity;
+	String sharedTo;
 	
 
 	@Transient
@@ -654,13 +654,14 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.selected = selected;
 	}
 
-	public CloudSafeShareEntity getCloudSafeShareEntity() {
-		return cloudSafeShareEntity;
+	public String getSharedTo() {
+		return sharedTo;
 	}
 
-	public void setCloudSafeShareEntity(CloudSafeShareEntity cloudSafeShareEntity) {
-		this.cloudSafeShareEntity = cloudSafeShareEntity;
+	public void setSharedTo(String sharedTo) {
+		this.sharedTo = sharedTo;
 	}
 
+	
 
 }
