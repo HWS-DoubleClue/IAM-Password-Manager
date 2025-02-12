@@ -17,6 +17,6 @@
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<finalName>libDcThrift</finalName>
+		<!--<finalName>libDcThrift</finalName>-->
 	</build>
 </project>

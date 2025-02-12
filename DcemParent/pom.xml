@@ -41,6 +41,7 @@
 			scm:git:git://gitlab.hws-gruppe.de/DoubleClue/dcem.git</developerConnection>
 	</scm>
 	<properties>
+		<copy-dependencies>runtime</copy-dependencies>
 		<weld-servlet.version>2.4.8.Final</weld-servlet.version>
 		<skipTests>true</skipTests>
 		<skipIntegrationTests>true</skipIntegrationTests>
@@ -547,11 +548,7 @@
 			<artifactId>arquillian-junit-container</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-jpamodelgen</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
+
 		<!-- <dependency> <groupId>org.jboss.arquillian.testenricher</groupId> 
 			<artifactId>arquillian-testenricher-cdi</artifactId> <scope>test</scope> 
 			</dependency> <dependency> <groupId>org.jboss.arquillian.container</groupId> 
@@ -652,7 +649,7 @@
 			<dependency>
 				<groupId>com.microsoft.azure</groupId>
 				<artifactId>msal4j</artifactId>
-				<version>1.13.0</version>
+				<version>1.19.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
@@ -1222,8 +1219,18 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
-
+			<dependency>
+				<groupId>
+					com.googlecode.owasp-java-html-sanitizer
+				</groupId>
+				<artifactId>owasp-java-html-sanitizer</artifactId>
+				<version>20220608.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-jpamodelgen</artifactId>
+				<version>${hibernate.version}</version>
+			</dependency>
 		</dependencies>
 
 

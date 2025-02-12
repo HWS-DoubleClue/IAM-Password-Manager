@@ -30,24 +30,21 @@ import com.doubleclue.dcem.otp.logic.OtpTypes;
  * 
  */
 @Entity
-@Table(name = "otp_token", uniqueConstraints= @UniqueConstraint(name="UK_OTP_SERIAL", columnNames={"serialNumber"}))
+@Table(name = "otp_token", uniqueConstraints = @UniqueConstraint(name = "UK_OTP_SERIAL", columnNames = {
+		"serialNumber" }))
 @NamedQueries({
-	@NamedQuery(name=OtpTokenEntity.GET_TOKEN_BY_SERIAL_NO,
-			query="SELECT ot FROM OtpTokenEntity ot where ot.serialNumber = ?1"),
-	@NamedQuery(name=OtpTokenEntity.GET_USER_TOKENS,
-	query="SELECT ot FROM OtpTokenEntity ot where ot.user = ?1 AND ot.disabled = false"),
-	@NamedQuery(name=OtpTokenEntity.GET_ALL_USER_TOKENS,
-	query="SELECT ot FROM OtpTokenEntity ot where ot.user =?1"),
-	@NamedQuery(name=OtpTokenEntity.GET_DISABLED_USER_TOKENS,
-	query="SELECT ot FROM OtpTokenEntity ot where ot.user = ?1 AND ot.disabled = true" ),
-	
+		@NamedQuery(name = OtpTokenEntity.GET_TOKEN_BY_SERIAL_NO, query = "SELECT ot FROM OtpTokenEntity ot where ot.serialNumber = ?1"),
+		@NamedQuery(name = OtpTokenEntity.GET_USER_TOKENS, query = "SELECT ot FROM OtpTokenEntity ot where ot.user = ?1 AND ot.disabled = false"),
+		@NamedQuery(name = OtpTokenEntity.GET_ALL_USER_TOKENS, query = "SELECT ot FROM OtpTokenEntity ot where ot.user =?1"),
+		@NamedQuery(name = OtpTokenEntity.GET_DISABLED_USER_TOKENS, query = "SELECT ot FROM OtpTokenEntity ot where ot.user = ?1 AND ot.disabled = true"),
+
 //	@NamedQuery(name = OtpTokenEntity.GET_TOKEN_COUNT, query = 
 //			"SELECT COUNT(*) FROM OtpTokenEntity d WHERE d.lastUsed > ?1"),
-	
+
 })
 
 public class OtpTokenEntity extends EntityInterface {
-	
+
 	public final static String GET_TOKEN_BY_SERIAL_NO = "OtpTokenEntity.getTokenBySerialNo";
 	public final static String GET_USER_TOKENS = "OtpTokenEntity.getUserTokens";
 	public final static String GET_ALL_USER_TOKENS = "OtpTokenEntitiy.getAllUserTokens";
@@ -57,17 +54,13 @@ public class OtpTokenEntity extends EntityInterface {
 	public OtpTokenEntity() {
 
 	}
-	
-	
-	
+
 	public OtpTokenEntity(OtpTypes otpType, String serialNumber, byte[] secretKey) {
 		super();
 		this.otpType = otpType;
 		this.serialNumber = serialNumber;
 		this.secretKey = secretKey;
 	}
-
-
 
 	@Id
 	@Column(name = "dc_id")
@@ -79,16 +72,16 @@ public class OtpTokenEntity extends EntityInterface {
 	@Enumerated(EnumType.ORDINAL)
 	@Column(nullable = false)
 	private OtpTypes otpType;
-	
+
 	@DcemGui
 	@Column(nullable = false)
 	String serialNumber;
-	
+
 	@DcemGui(name = "assignedTo", subClass = "loginId")
 	@ManyToOne
-	@JoinColumn(nullable = true, name="userId", foreignKey = @ForeignKey(name = "FK_OTP_TOKEN_USER"), insertable = true, updatable = true)
+	@JoinColumn(nullable = true, name = "userId", foreignKey = @ForeignKey(name = "FK_OTP_TOKEN_USER"), insertable = true, updatable = true)
 	private DcemUser user;
-	
+
 	@DcemGui
 	@Column(name = "dc_disabled")
 	boolean disabled;
@@ -96,12 +89,12 @@ public class OtpTokenEntity extends EntityInterface {
 	@Column(length = 255, nullable = true)
 	@DcemGui
 	private String info;
-	
-	int counter;		// incase of HOTP
-	
+
+	int counter; // incase of HOTP
+
 	@Column(nullable = false)
 	@Convert(converter = DbEncryptConverterBinary.class)
-	byte [] secretKey;
+	byte[] secretKey;
 
 	@Override
 	public Integer getId() {
@@ -110,7 +103,7 @@ public class OtpTokenEntity extends EntityInterface {
 
 	@Override
 	public void setId(Number id) {
-		this.id = (Integer) id;		
+		this.id = (Integer) id;
 	}
 
 	public OtpTypes getOtpType() {
@@ -128,7 +121,6 @@ public class OtpTokenEntity extends EntityInterface {
 	public void setSerialNumber(String serialNumber) {
 		this.serialNumber = serialNumber;
 	}
-
 
 	public boolean isDisabled() {
 		return disabled;
@@ -162,25 +154,17 @@ public class OtpTokenEntity extends EntityInterface {
 		this.secretKey = secretKey;
 	}
 
-
 	@Override
 	public String toString() {
 		return "OtpTokenEntity [otpType=" + otpType + ", serialNumber=" + serialNumber + ", dcemUser=" + user + "]";
 	}
 
-
-
 	public DcemUser getUser() {
 		return user;
 	}
 
-
-
 	public void setUser(DcemUser assignedTo) {
 		this.user = assignedTo;
 	}
-
-
-	
 
 }

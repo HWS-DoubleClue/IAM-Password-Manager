@@ -27,7 +27,7 @@ public enum DcemMediaType {
 	PPTX("application/vnd.openxmlformats-officedocument.presentationml.presentation", "powerpoint-file.png", "pttx"),
 	ODT ("application/vnd.oasis.opendocument.text",  "word-file.png", "odt"),
 	MP4 ("video/mp4", "mp4.svg", "mp4"),
-	QuickTime ("video/quicktime", "mp4.svg", "quicktime"),
+	QT ("video/quicktime", "mp4.svg", "quicktime"),
 	SVG ("image/svg+xml", "svg-svgrepo-com.svg", "svg"),
 	Unknown ("", "file-unknow-svgrepo-com.svg", ""),
 	Folder ("", "folder-svgrepo-com.svg", ""),
