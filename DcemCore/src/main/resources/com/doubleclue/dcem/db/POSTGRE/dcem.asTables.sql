@@ -29,6 +29,7 @@ primary key (dc_id)
 
 create table as_cloudsafe (
 dc_id int4 not null,
+createdOn timestamp,
 dcemMediaType int4,
 discardAfter timestamp,
 dc_info varchar(255),
