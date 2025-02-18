@@ -125,16 +125,16 @@ body {
 
 .ui-dialog-titlebar {
 	background-color: var(--primary-background-color) !important;
-	margin: 15px 0px 0px 10px !important;
+	margin: 5px 0px 0px 10px !important;
 }
 
 .ui-dialog .ui-dialog-titlebar {
-	margin-top: 0.5em !important;
-	padding-top: 0.5em !important;
+	margin-top: 0.1em !important;
+	padding-top: 0.0em !important;
 }
 
 .ui-dialog-content {
-	padding: 10px 10px 0px 25px !important;
+	padding: 0px 10px 0px 25px !important;
 }
 
 .ui-dialog .ui-dialog-title {
@@ -2234,9 +2234,10 @@ textarea:hover, textarea:active, textarea:focus, select:hover, select:active,
 	display: inline-block;
 }
 
-/* BreadCrumb  Beginn */
+/* ---------   BreadCrumb  Beginn  -----------------*/
 body .ui-breadcrumb {
 	background: none;
+	height: 1.4em;
 }
 
 body .ui-breadcrumb ul li {
@@ -2290,7 +2291,6 @@ body .ui-breadcrumb ul li:not(.ui-breadcrumb-chevron) {
 body .ui-breadcrumb ul li:not(.ui-breadcrumb-chevron):before {
 	content: "";
 	font-family: 'primeicons' !important;
-	speak: none;
 	font-style: normal;
 	font-weight: normal;
 	font-variant: normal;
@@ -2304,8 +2304,7 @@ body .ui-breadcrumb ul li:not(.ui-breadcrumb-chevron):before {
 	color: #ffffff;
 }
 
-body .ui-breadcrumb ul li:first-child:not(.ui-breadcrumb-chevron):before
-	{
+body .ui-breadcrumb ul li:first-child:not(.ui-breadcrumb-chevron):before {
 	display: none;
 }
 
@@ -2327,19 +2326,16 @@ body .ui-breadcrumb ul li:first-child a.ui-icon-home span {
 	display: none;
 }
 
-body .ui-breadcrumb ul li:last-child .ui-menuitem-link .ui-menuitem-text
-	{
+body .ui-breadcrumb ul li:last-child .ui-menuitem-link .ui-menuitem-text  {
 	color: #495057;
 }
 
-body .ui-breadcrumb ul li:last-child .ui-menuitem-link .ui-menuitem-icon
-	{
+body .ui-breadcrumb ul li:last-child .ui-menuitem-link .ui-menuitem-icon {
 	color: #6c757d;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link {
-	transition: background-color 0.2s, color 0.2s, border-color 0.2s,
-		box-shadow 0.2s;
+	transition: background-color 0.2s, color 0.2s, border-color 0.2s,	box-shadow 0.2s;
 	border-radius: 4px;
 	margin: 0;
 }
@@ -2350,13 +2346,22 @@ body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link:focus {
 	box-shadow: 0 0 0 0.2rem #a6d5fa;
 }
 
-body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link .ui-menuitem-text
+body .ui-breadcrumb .ui-breadcrumb-items li li:last-child .ui-menuitem-link .ui-menuitem-text
 	{
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 1.2em;
 	color: #495057;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link .ui-menuitem-icon
 	{
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 0.2rem;
+	width: 1.2em;
+	height: 1.2em;
+	font-size: 1.0em;
 	color: #6c757d;
 }
 
@@ -2370,8 +2375,7 @@ body .ui-breadcrumb .ui-breadcrumb-items li.ui-breadcrumb-chevron {
 	color: #ffffff;
 }
 
-body .ui-breadcrumb .ui-breadcrumb-items li.ui-breadcrumb-chevron:before
-	{
+body .ui-breadcrumb .ui-breadcrumb-items li.ui-breadcrumb-chevron:before 	{
 	content: "";
 }
 
@@ -2387,7 +2391,6 @@ body .ui-breadcrumb .ui-breadcrumb-items li:not(.ui-breadcrumb-chevron):before
 	{
 	content: "";
 	font-family: 'primeicons' !important;
-	speak: none;
 	font-style: normal;
 	font-weight: normal;
 	font-variant: normal;
@@ -2399,17 +2402,15 @@ body .ui-breadcrumb .ui-breadcrumb-items li:not(.ui-breadcrumb-chevron):before
 	background-image: none !important;
 	margin: 0 0.5rem 0 0.5rem;
 	color: #495057;
-	font-size: small;
 }
 
-body .ui-breadcrumb .ui-breadcrumb-items li:first-child:not(.ui-breadcrumb-chevron):before
-	{
+body .ui-breadcrumb .ui-breadcrumb-items li:first-child:not(.ui-breadcrumb-chevron):before 	{
 	display: none;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li:first-child a.ui-icon-home {
 	font-family: 'primeicons' !important;
-	font-style: normal;
+/* 	font-style: normal; */
 	font-weight: normal;
 	display: inline-block;
 	background: none;
@@ -2417,27 +2418,16 @@ body .ui-breadcrumb .ui-breadcrumb-items li:first-child a.ui-icon-home {
 	margin: 0;
 }
 
-body .ui-breadcrumb .ui-breadcrumb-items li:first-child a.ui-icon-home:before
-	{
+body .ui-breadcrumb .ui-breadcrumb-items li:first-child a.ui-icon-home:before {
 	content: "";
 	color: red !important
 }
 
-body .ui-breadcrumb .ui-breadcrumb-items li:first-child a.ui-icon-home span
-	{
+body .ui-breadcrumb .ui-breadcrumb-items li:first-child a.ui-icon-home span	{
 	display: none;
 }
 
-body .ui-breadcrumb .ui-breadcrumb-items li:last-child .ui-menuitem-link .ui-menuitem-text
-	{
-	color: #495057;
-}
-
-body .ui-breadcrumb .ui-breadcrumb-items li:last-child .ui-menuitem-link .ui-menuitem-icon
-	{
-	color: #6c757d;
-}
-/*End of BreadCrumb*/
+/* ----------------------     End of BreadCrumb   -----------------*/
 body .ui-tag {
 	color: var(--header-link-text-color);
 	background-color: var(--primary-background-color);

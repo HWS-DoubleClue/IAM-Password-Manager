@@ -201,10 +201,15 @@ public class SystemModule extends DcemModule {
 	public ModulePreferences getDefaultPreferences() {
 		return new SystemPreferences();
 	}
-
+	
 	public SystemPreferences getPreferences() {
-		return (SystemPreferences) super.getModulePreferences();
+		return (SystemPreferences) getModulePreferences();
 	}
+
+	public SystemPreferences getPreferences(TenantEntity tenantEntity) {
+		return (SystemPreferences) getModuleTenantData(tenantEntity).getModulePreferences();
+	}
+	
 
 	@Override
 	public void preferencesValidation(ModulePreferences modulePreferences) throws DcemException {
@@ -512,10 +517,6 @@ public class SystemModule extends DcemModule {
 	}
 
 	public int getDbVersion() {
-		// return 5; // set to 5 for DCEM 2.2
-		// return 6; // set to 6 for DCEM 2.3
-		// return 7; // set to 7 for DCEM 2.4
-		// return 8; // set to 7 for DCEM 2.4.4
 		return DATABASE_VERSION; // set to 8 for DCEM 2.5
 	}
 	

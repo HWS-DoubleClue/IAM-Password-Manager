@@ -8,17 +8,14 @@
 <ui:include src="/mgt/modules/dialogHead.xhtml" />
 
 <f:view locale="#{operatorSession.locale}">
-
 	<h:body class="dialogBody">
-		<!-- 		<h:outputLabel value="#{viewNavigator.dialogTitle}" styleClass="dialogTitle" /> -->
-		<h:form id="userForm" style="padding-bottom: 100px">
-
+		<h:form id="userForm" style="padding-bottom: 50px">
 			<p:messages showSummary="true" showDetail="false" closable="true">
 				<p:autoUpdate />
 			</p:messages>
 			<p:tabView>
 				<p:tab title="#{CoreMsg['dialog.general']}">
-					<h:panelGrid columns="2" cellpadding="4" cellspacing="2" width="90%">
+					<h:panelGrid columns="2" cellpadding="4" cellspacing="1" width="100%">
 						<h:panelGroup id="profileFoto">
 							<p:graphicImage cache="false" styleClass="imageProfileUser" value="#{userDialog.photoUserProfile}" />
 						</h:panelGroup>
@@ -86,6 +83,12 @@
 							rendered="#{userDialog.userProfile == false}">
 							<f:selectItems value="#{userDialog.availableRoles}" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel value="#{AdminMsg['AUTO_ACTION.memberOf']} " rendered="#{userDialog.userProfile == true}" />
+						<p:scrollPanel style="height: 5em; width: 95%; border: 1px lightgrey solid" mode="native"  rendered="#{userDialog.userProfile == true}">
+							<p:outputLabel value="#{userDialog.memberOf}" />
+						</p:scrollPanel>
+						
 
 					</h:panelGrid>
 				</p:tab>

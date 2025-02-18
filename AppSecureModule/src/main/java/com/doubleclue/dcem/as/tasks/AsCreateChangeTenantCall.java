@@ -101,6 +101,7 @@ public class AsCreateChangeTenantCall implements Callable<AsCreateChangeTenantCa
 					}
 				} catch (DcemException e) {
 					logger.warn("Error while creating Activation Code for SuperAdmin", e);
+					result.setException(e);
 				}
 				break;
 			case RECOVER_SUPERADMIN_ACCESS:

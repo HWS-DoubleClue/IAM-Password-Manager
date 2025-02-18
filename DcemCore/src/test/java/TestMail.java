@@ -4,12 +4,12 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.search.FlagTerm;
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.mail.search.FlagTerm;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -112,7 +112,7 @@ public class TestMail {
 //			});
 			emailStore = emailSession.getStore("imap");
 
-			emailStore.connect("outlook.office365.com", 993, "svc_doubleclue_smtp_exo@hws-gruppe.de", "Ha1AGAAkGdLjCivOFb5Q");
+			emailStore.connect("outlook.office365.com", 993, "svc_doubleclue_smtp_exo@hws-gruppe.de", "xx");
 			// emailStore.connect("imap.gmail.com", );
 			
 

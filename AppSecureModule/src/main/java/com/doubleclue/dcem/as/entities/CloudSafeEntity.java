@@ -70,6 +70,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 				+ "AND c.user=?3 AND c.owner=?4 AND (c.lastModified IS NULL OR c.lastModified>?5)"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_FILE_LIST, query = "SELECT c FROM CloudSafeEntity c WHERE c.name LIKE ?1 AND (c.discardAfter IS NULL OR c.discardAfter > ?2) AND c.name != 'Recycle Bin' AND c.recycled = false "
 				+ "AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?3) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?4)) AND (c.lastModified IS NULL OR c.lastModified>?5) AND c.isFolder=?6"),
+		
 		@NamedQuery(name = CloudSafeEntity.GET_EXPIRED_DATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.discardAfter < ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_ALL_USER_CLOUDSAFE_WITH_GROUP, query = "SELECT c FROM CloudSafeEntity c WHERE c.name!='_ROOT_' AND (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2) ORDER BY c.isFolder DESC, c.name ASC "),
 		@NamedQuery(name = CloudSafeEntity.GET_ALL_USER_CLOUDSAFE, query = "SELECT c FROM CloudSafeEntity c WHERE c.name!='_ROOT_' AND (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) ORDER BY c.isFolder DESC, c.name ASC "),
@@ -83,8 +84,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.UPDATE_ENTRIES_TO_ROOT, query = "UPDATE CloudSafeEntity c SET c.parent = ?1 WHERE c.parent IS NULL"),
 		@NamedQuery(name = CloudSafeEntity.UPDATE_ENTRIES_TO_ROOT_DEVICE, query = "UPDATE CloudSafeEntity c SET c.device = ?1 WHERE c.device IS NULL"),
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_ID, query = "SELECT NEW com.doubleclue.dcem.as.logic.CloudSafeNameDto(cs.id, cs.name, cs.parent.id) FROM CloudSafeEntity cs WHERE cs.id=?1"),
+		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_PARENT, query = "SELECT cs FROM CloudSafeEntity cs WHERE cs.parent=?1 AND cs.recycled=false AND cs.isFolder=false"),
+
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_ID_AND_RECYCLE_STATE, query = "SELECT cs FROM CloudSafeEntity cs WHERE cs.id=?1 AND cs.recycled=?2"),
-		@NamedQuery(name = CloudSafeEntity.GET_IDS, query = "SELECT c.id FROM CloudSafeEntity c"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA_FLAT, query = "SELECT c FROM CloudSafeEntity c WHERE ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2))  AND c.recycled = ?3 ORDER BY c.name ASC"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = ?4 ORDER BY c.isFolder DESC, c.name ASC"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DOCUMENTS, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = false AND c.isFolder = false ORDER BY c.name ASC"),
@@ -95,6 +97,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.UPDATE_LAST_MODIFY_STATE_BY_USER, query = "UPDATE CloudSafeEntity c SET c.lastModifiedUser = NULL WHERE c.lastModifiedUser = ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_BY_TAG, query = "Select DISTINCT c FROM CloudSafeEntity c JOIN FETCH c.tags tag WHERE tag IN ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_ALL_TAGS, query = "Select c.tags FROM CloudSafeEntity c where c.id = ?1"),
+		
 		@NamedQuery(name = CloudSafeEntity.GET_BY_IDS, query = "SELECT c FROM CloudSafeEntity c WHERE c.id IN :ids") })
 public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
@@ -108,9 +111,9 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String GET_USER_FILE_LIST = "CloudSafeEntity.getUserFileList";
 	public static final String GET_DEVICE_LIST = "CloudSafeEntity.getDeviceList";
 	public static final String GET_EXPIRED_DATA = "CloudSafeEntity.getExpiredData";
-	public static final String GET_ALL_USER_CLOUDSAFE_WITH_GROUP = "CloudSafeEntity.getAllUserCloudSafeWithGroup";
+	public static final String GET_ALL_USER_CLOUDSAFE_WITH_GROUP = "CloudSafeEntity.allUserCloudSafeWithGroup";
 	public static final String GET_ALL_USER_CLOUDSAFE = "CloudSafeEntity.getAllUserCloudSafe";
-	public static final String GET_USER_CLOUDSAFE_BY_NAME = "CloudSafeEntity.getUserCloudSafeByName";
+	public static final String GET_USER_CLOUDSAFE_BY_NAME = "CloudSafeEntity.userCloudSafeByName";
 	public static final String GET_USER_TOTAL_EXCLUDING_ENTITY = "CloudSafeEntity.getUserTotalExcludingEntity";
 	public static final String DELETE_CLOUD_SAFE_BY_ID = "CloudSafeEntity.deleteCloudSafeById";
 	public static final String DELETE_CLOUD_SAFE_BY_OWNER_GROUP = "CloudSafeEntity.deleteCloudSafeByGroupOwnerId";
@@ -118,8 +121,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String SET_FOLDER_NAME = "CloudSafeEntity.setFolderName";
 	public static final String MOVE_ENTRY = "CloudSafeEntity.moveEntry";
 	public static final String GET_CLOUDSAFE_BY_ID = "CloudSafeEntity.getParentById";
-	public static final String GET_CLOUDSAFE_BY_ID_AND_RECYCLE_STATE = "CloudSafeEntity.getParentByIdAndRecycleState ";
-	public static final String GET_IDS = "CloudSafeEntity.getIds";
+	public static final String GET_CLOUDSAFE_BY_ID_AND_RECYCLE_STATE = "CloudSafeEntity.parentByIdAndRecycleState ";
 	public static final String GET_USER_CLOUDSAFE_DATA = "CloudSafeEntity.getUserCloudsafeData";
 	public static final String GET_USER_CLOUDSAFE_DATA_FLAT = "CloudSafeEntity.getUserCloudsafeDataFlat";
 	public static final String GET_SINGLE_USER = "CloudSafeEntity.getSingleUser";
@@ -131,6 +133,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String GET_ALL_TAGS = "CloudSafeEntity.GetAllTags";
 	public static final String GET_BY_IDS = "CloudSafeEntity.getByIds";
 	public static final String GET_USER_CLOUDSAFE_DOCUMENTS = "CloudSafeEntity.userDocuments";
+	public static final String GET_CLOUDSAFE_BY_PARENT = "CloudSafeEntity.cloudSafeByParent";
 
 	public CloudSafeEntity() {
 		super();

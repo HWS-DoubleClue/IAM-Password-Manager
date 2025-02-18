@@ -160,6 +160,9 @@ public class TenantDialog extends DcemDialog {
 						} else {
 							return true;
 						}
+					} catch (DcemException exp) {	
+						JsfUtils.addWarnMessage(exp.getLocalizedMessageWithMessage());
+						return false;
 					} catch (Exception exp) {
 						logger.warn(exp);
 						throw new DcemException(DcemErrorCodes.EXCEPTION, "Failed to create Tenant and Activation Code", exp);
@@ -220,6 +223,8 @@ public class TenantDialog extends DcemDialog {
 			request.getSession(true); // create new Session
 			request.getSession().setAttribute(DcemConstants.URL_TENANT_PARAMETER, tenantEntity);
 			request.getSession().setAttribute(DcemConstants.URL_TENANT_SWITCH, tenantEntity);
+			request.getSession().setAttribute(DcemConstants.SESSION_TIMEZONE, operatorSessionBean.getDcemUser().getTimeZone());
+
 			HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
 			response.sendRedirect("/dcem/mgt/index.xhtml");
 			auditingLogic.addAudit(this.getAutoViewAction().getDcemAction(), tenantEntity.getName());

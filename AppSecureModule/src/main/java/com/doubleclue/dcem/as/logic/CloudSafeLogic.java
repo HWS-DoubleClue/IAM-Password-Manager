@@ -1218,14 +1218,15 @@ public class CloudSafeLogic {
 			}
 		}
 	}
-	
+
 	public boolean updateNameIfDoubleName(CloudSafeEntity cloudSafeEntity) {
 		CloudSafeEntity cloudSafeEntityExists = null;
 		if (cloudSafeEntity.getOwner() == CloudSafeOwner.USER) {
 			cloudSafeEntityExists = getCloudSafeUserSingleResult(cloudSafeEntity.getName(), cloudSafeEntity.getParent().getId(), false,
 					cloudSafeEntity.getUser().getId(), cloudSafeEntity.isRecycled());
 		} else {
-			cloudSafeEntityExists = getCloudSafeGroupSingleResult(cloudSafeEntity.getName(), cloudSafeEntity.getParent().getId(), cloudSafeEntity.getGroup().getId(), cloudSafeEntity.isRecycled());
+			cloudSafeEntityExists = getCloudSafeGroupSingleResult(cloudSafeEntity.getName(), cloudSafeEntity.getParent().getId(),
+					cloudSafeEntity.getGroup().getId(), cloudSafeEntity.isRecycled());
 			cloudSafeEntity.setUser(userLogic.getSuperAdmin());
 		}
 		if (cloudSafeEntityExists != null) {
@@ -1252,9 +1253,9 @@ public class CloudSafeLogic {
 		if (cloudSafeEntity.isFolder()) {
 			recycleSubDirectories(cloudSafeDto, cloudSafeDtos, cloudSafeEntity.getUser());
 		}
-		updateNameIfDoubleName (cloudSafeEntity);
+		updateNameIfDoubleName(cloudSafeEntity);
 		em.merge(cloudSafeEntity);
-		cloudSafeDtos.add (cloudSafeDto);
+		cloudSafeDtos.add(cloudSafeDto);
 		return cloudSafeDtos;
 
 	}
@@ -1282,7 +1283,6 @@ public class CloudSafeLogic {
 			return list;
 		}
 	}
-
 
 	private void recycleSubDirectories(CloudSafeDto parentFolder, List<CloudSafeDto> toRecycleFiles, DcemUser dcemUser) throws DcemException {
 		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, CloudSafeDto.class);
@@ -1913,8 +1913,10 @@ public class CloudSafeLogic {
 		}
 	}
 
-	public List<Integer> getIdsOfEntries() {
-		TypedQuery<Integer> query = em.createNamedQuery(CloudSafeEntity.GET_IDS, Integer.class);
+	public List<CloudSafeEntity> getByParentId(CloudSafeEntity cloudSafeEntity) throws DcemException {
+		TypedQuery<CloudSafeEntity> query;
+		query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_BY_PARENT, CloudSafeEntity.class);
+		query.setParameter(1, cloudSafeEntity);
 		return query.getResultList();
 	}
 
@@ -1932,9 +1934,8 @@ public class CloudSafeLogic {
 		query.setParameter(4, recycled);
 		return query.getResultList();
 	}
-	
-	public List<CloudSafeEntity> getByUserAndParentIdDocuments(Integer parentId, DcemUser user, List<DcemGroup> allUsersGroups)
-			throws DcemException {
+
+	public List<CloudSafeEntity> getByUserAndParentIdDocuments(Integer parentId, DcemUser user, List<DcemGroup> allUsersGroups) throws DcemException {
 		TypedQuery<CloudSafeEntity> query;
 		query = em.createNamedQuery(CloudSafeEntity.GET_USER_CLOUDSAFE_DOCUMENTS, CloudSafeEntity.class);
 		query.setParameter(1, parentId);
@@ -1959,8 +1960,7 @@ public class CloudSafeLogic {
 		query.setParameter(3, recycled);
 		return query.getResultList();
 	}
-	
-	
+
 	public CloudSafeEntity getCloudSafeUserSingleResult(String name, Integer parentId, boolean isFolder, Integer userId, boolean recycled) {
 		TypedQuery<CloudSafeEntity> query;
 		if (parentId == null || parentId == 0) {
@@ -1995,7 +1995,6 @@ public class CloudSafeLogic {
 		}
 	}
 
-	
 	@DcemTransactional
 	public CloudSafeEntity getCloudSafeRoot() {
 		CloudSafeEntity rootCloudSafeEntity = asModule.getTenantData().getCloudSafeRoot();
@@ -2015,17 +2014,12 @@ public class CloudSafeLogic {
 					DcemGroup dcemGroup = groupLogic.getRootGroup();
 					// em.flush();
 					updateToRootDevice(rootDevice);
-
 					rootCloudSafeEntity = createCloudSafeEntityFolder(null, userLogic.getUser(DcemConstants.SUPER_ADMIN_OPERATOR),
 							DcemConstants.CLOUD_SAFE_ROOT, false, true, null);
-
 					rootCloudSafeEntity.setGroup(dcemGroup);
 					addCloudSafeFolder(rootCloudSafeEntity); // Safe to Database
 					rootCloudSafeEntity.setParent(rootCloudSafeEntity);
-					// em.merge(rootCloudSafeEntity);
-
 					updateToRoot(rootCloudSafeEntity);
-
 					asModule.getTenantData().setCloudSafeRoot(rootCloudSafeEntity);
 
 				} catch (Exception e1) {

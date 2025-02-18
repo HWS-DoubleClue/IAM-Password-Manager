@@ -584,6 +584,17 @@ public class UserDialogBean extends DcemDialog {
 			viewNavigator.actionCloseDialog();
 		}
 	}
+	
+	public String getMemberOf () {
+		StringBuilder sb = new StringBuilder();
+		for (DcemGroup dcemGroup : operatorSessionBean.getUserGroups()) {
+			if (sb.isEmpty() == false) {
+				sb.append(", ");
+			}
+			sb.append(dcemGroup.getShortName());
+		}
+		return sb.toString();
+	}
 
 	public String getNewPassword() {
 		return newPassword;

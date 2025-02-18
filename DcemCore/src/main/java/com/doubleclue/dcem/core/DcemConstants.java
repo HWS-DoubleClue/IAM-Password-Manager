@@ -415,7 +415,7 @@ public final class DcemConstants {
 
 	public static final String LDAP_URL_TYPE = "ldaps://";
 
-	public static final Object SESSION_TIMEZONE = "Timezone";
+	public static final String SESSION_TIMEZONE = "Timezone";
 
 	public static final String HTTPS_PROTOCOL = "https";
 	public static final String SECURE_WEB_SCOKET_PROTOCOL = "wss://";

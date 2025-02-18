@@ -11,7 +11,7 @@ package com.doubleclue.comm.thrift;
 public enum CloudSafeOptions implements org.apache.thrift.TEnum {
   ENC(0),
   PWD(1),
-  FPD(2);
+  FPD(2);  // deprecated
 
   private final int value;
 

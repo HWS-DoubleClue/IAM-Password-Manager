@@ -196,7 +196,7 @@ public class AutoDialogBean implements Serializable {
 				JsfUtils.addErrorMessage("Verification Error: " + dcemExp.getMessage());
 				return;
 			default:
-				JsfUtils.addErrorMessage("Something went wrong. Cause: " + dcemExp.getMessage());
+				JsfUtils.addErrorMessage("Something went wrong. Cause: " + dcemExp.getLocalizedMessage());
 				return;
 			}
 

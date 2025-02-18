@@ -49,7 +49,6 @@ import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
-import com.sun.mail.imap.protocol.Item;
 
 public class DomainLdap implements DomainApi {
 

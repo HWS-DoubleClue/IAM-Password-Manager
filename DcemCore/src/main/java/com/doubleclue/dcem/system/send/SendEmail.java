@@ -4,22 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.mail.AuthenticationFailedException;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.angus.mail.smtp.SMTPSendFailedException;
+import org.eclipse.angus.mail.smtp.SMTPTransport;
 
 import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
@@ -31,8 +19,22 @@ import com.doubleclue.dcem.core.weld.WeldContextUtils;
 import com.doubleclue.dcem.core.weld.WeldRequestContext;
 import com.doubleclue.dcem.system.logic.SystemModule;
 import com.doubleclue.dcem.system.logic.SystemPreferences;
-import com.sun.mail.smtp.SMTPSendFailedException;
-import com.sun.mail.smtp.SMTPTransport;
+
+import jakarta.activation.DataHandler;
+import jakarta.mail.AuthenticationFailedException;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.util.ByteArrayDataSource;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.Multipart;
+
+
 
 public class SendEmail {
 
@@ -192,10 +194,8 @@ public class SendEmail {
 				msg.addRecipient(Message.RecipientType.TO, new InternetAddress(reciever));
 			}
 			msg.setSubject(subject);
-
 			Multipart multipart = new MimeMultipart("related");
-
-			BodyPart messageBodyPart = new MimeBodyPart();
+			MimeBodyPart messageBodyPart = new MimeBodyPart();
 			messageBodyPart.setContent(body, "text/html; charset=utf-8");
 			multipart.addBodyPart(messageBodyPart);
 
@@ -229,7 +229,7 @@ public class SendEmail {
 	}
 }
 
-class SmtpAuthenticator extends javax.mail.Authenticator {
+class SmtpAuthenticator extends Authenticator {
 	String user;
 	String password;
 
