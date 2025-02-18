@@ -63,12 +63,10 @@ public class CallCloudSafeStorageCopy implements Callable<Exception> {
 	 */
 	private void copyStorage(CloudSafeContentI source, CloudSafeContentI destination) throws Exception {
 		CloudSafeLogic cloudSafeLogic = CdiUtils.getReference(CloudSafeLogic.class);
-		List<Integer> list = cloudSafeLogic.getIdsOfEntries();
+		List<Integer> list = cloudSafeLogic.getIdsOfAllEntries();
 		CloudSafeEntity cloudSafeEntity;
 		InputStream inputStream = null;
 		EntityManager em = CdiUtils.getReference(EntityManager.class);
-
-		File fileDir = new File("c:\\Temp\\Doubleclue");
 		for (Integer id : list) {
 			cloudSafeEntity = cloudSafeLogic.getCloudSafe(id);
 //			File file = new File(fileDir, cloudSafeEntity.getName());

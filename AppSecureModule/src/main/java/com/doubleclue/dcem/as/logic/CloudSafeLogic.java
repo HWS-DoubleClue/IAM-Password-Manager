@@ -2127,4 +2127,9 @@ public class CloudSafeLogic {
 		return sb.toString();
 	}
 
+	public List<Integer> getIdsOfAllEntries() {
+		TypedQuery<Integer> query = em.createNamedQuery(CloudSafeEntity.GET_ALL_IDS, Integer.class);
+		return query.getResultList();
+	}
+
 }

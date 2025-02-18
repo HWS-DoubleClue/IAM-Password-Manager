@@ -2,10 +2,7 @@ package com.doubleclue.dcem.as.entities;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.SortedSet;
 
 import javax.annotation.Nullable;
@@ -27,7 +24,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -97,7 +93,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.UPDATE_LAST_MODIFY_STATE_BY_USER, query = "UPDATE CloudSafeEntity c SET c.lastModifiedUser = NULL WHERE c.lastModifiedUser = ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_BY_TAG, query = "Select DISTINCT c FROM CloudSafeEntity c JOIN FETCH c.tags tag WHERE tag IN ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_ALL_TAGS, query = "Select c.tags FROM CloudSafeEntity c where c.id = ?1"),
-		
+		@NamedQuery(name = CloudSafeEntity.GET_ALL_IDS, query = "SELECT c.id FROM CloudSafeEntity c"),
 		@NamedQuery(name = CloudSafeEntity.GET_BY_IDS, query = "SELECT c FROM CloudSafeEntity c WHERE c.id IN :ids") })
 public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
@@ -134,6 +130,8 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String GET_BY_IDS = "CloudSafeEntity.getByIds";
 	public static final String GET_USER_CLOUDSAFE_DOCUMENTS = "CloudSafeEntity.userDocuments";
 	public static final String GET_CLOUDSAFE_BY_PARENT = "CloudSafeEntity.cloudSafeByParent";
+	public static final String GET_ALL_IDS = "CloudSafeEntity.allIds";
+
 
 	public CloudSafeEntity() {
 		super();
@@ -226,13 +224,13 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@Column(nullable = true)
 	LocalDateTime discardAfter; // TODO to be removed
+	
+	@DcemGui
+	@Column(nullable = true, updatable = false)
+	LocalDateTime createdOn; 
 
 	@JsonIgnore
 	String options;
-
-	// @Column(name = "dc_signature")
-	// @Convert(converter = DbEncryptConverterBinary.class)
-	// byte[] signature;
 
 	@Column(name = "dc_salt", length = 32)
 	@JsonIgnore
@@ -663,6 +661,14 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 
 	public void setSharedTo(String sharedTo) {
 		this.sharedTo = sharedTo;
+	}
+
+	public LocalDateTime getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(LocalDateTime createdOn) {
+		this.createdOn = createdOn;
 	}
 
 	
