@@ -8,12 +8,12 @@
 	--button-hover-background-color: #0e4f77;
 	--button-hover-text-color: #ffffff;
 	--button-border-color: #0e4f77;
-	--side-bar-background-color: #f7f7f7;
+	--side-bar-background-color: #f0f0f0;
 	--side-bar-link-hover-background-color: #dedede;
 	--side-bar-info-bottom-background-color: #f2f2f2;
 	--inputfield-background-color: #ffffff;
 	--inputfield-text-color: #555555;
-	--table-head-background-color: #f7f7f7;
+	--table-head-background-color: #f0f0f0;
 	--state-default-text-color: #595955;
 	--state-active-text-color: #000000;
 	--state-hover-background-color: #d0ebf8;
@@ -1467,20 +1467,6 @@ body .ui-datatable tbody tr, body .ui-treetable tbody tr {
 /* .ui-datatable.borderless tbody tr:nth-child(even) { */
 /* 	background-color: #f7f7f7; */
 /* } */
-.ui-paginator .ui-paginator-current, .ui-paginator .ui-paginator-rpp-options
-	{
-	color: val(--primary-text-color);
-	background-color: var(--inputfield-background-color);
-	border-radius: 3px;
-}
-
-.ui-paginator .ui-paginator-current {
-	background-color: transparent;
-}
-
-.ui-paginator.ui-paginator-bottom {
-	padding: 10px 0;
-}
 
 /* body .ui-datatable thead th, body .ui-datatable tbody td, body .ui-datatable tfoot td, */
 /* 	body .ui-datatable tfoot th { */
@@ -2499,3 +2485,201 @@ body .ui-divider.ui-divider-vertical:before {
 body .ui-divider.ui-divider-vertical .ui-divider-content {
 	padding: .5rem 0
 }
+
+/*   PAGINATOR  */
+body .ui-paginator {
+    background: #fff;
+    border: solid #e9ecef;
+    border-width: 0;
+    padding: 1rem
+}
+
+    body .ui-paginator .ui-paginator-first, body .ui-paginator .ui-paginator-prev, body .ui-paginator .ui-paginator-next, body .ui-paginator .ui-paginator-last {
+        color: #6c757d;
+        width: 2.286em;
+        height: 2.286em;
+        margin: 0 .125em;
+        border: 1px solid rgba(0,0,0,0);
+        vertical-align: top;
+        padding: 0;
+        border-radius: 50%;
+        transition: background-color .2s,color .2s,border-color .2s,box-shadow .2s,opacity .2s
+    }
+
+        body .ui-paginator .ui-paginator-first span, body .ui-paginator .ui-paginator-prev span, body .ui-paginator .ui-paginator-next span, body .ui-paginator .ui-paginator-last span {
+            display: none
+        }
+
+        body .ui-paginator .ui-paginator-first.ui-state-hover, body .ui-paginator .ui-paginator-prev.ui-state-hover, body .ui-paginator .ui-paginator-next.ui-state-hover, body .ui-paginator .ui-paginator-last.ui-state-hover {
+            background: #e9ecef;
+            color: #495057;
+            border-color: rgba(0,0,0,0)
+        }
+
+        body .ui-paginator .ui-paginator-first.ui-state-focus, body .ui-paginator .ui-paginator-prev.ui-state-focus, body .ui-paginator .ui-paginator-next.ui-state-focus, body .ui-paginator .ui-paginator-last.ui-state-focus {
+            outline: 0 none;
+            outline-offset: 0;
+            box-shadow: 0 0 0 .2rem rgb(166.2,213,250.2)
+        }
+
+        body .ui-paginator .ui-paginator-first:before, body .ui-paginator .ui-paginator-prev:before, body .ui-paginator .ui-paginator-next:before, body .ui-paginator .ui-paginator-last:before {
+            position: relative;
+            line-height: inherit;
+            top: -1px
+        }
+
+    body .ui-paginator .ui-paginator-first {
+        font-family: "primeicons" !important;
+        font-style: normal;
+        font-weight: normal;
+        display: inline-block;
+        background: none;
+        line-height: 2.286em
+    }
+
+        body .ui-paginator .ui-paginator-first:before {
+            content: ""
+        }
+
+        body .ui-paginator .ui-paginator-first:before {
+            position: relative
+        }
+
+    body .ui-paginator .ui-paginator-prev {
+        font-family: "primeicons" !important;
+        font-style: normal;
+        font-weight: normal;
+        display: inline-block;
+        background: none;
+        line-height: 2.286em
+    }
+
+        body .ui-paginator .ui-paginator-prev:before {
+            content: ""
+        }
+
+        body .ui-paginator .ui-paginator-prev:before {
+            position: relative
+        }
+
+    body .ui-paginator .ui-paginator-next {
+        font-family: "primeicons" !important;
+        font-style: normal;
+        font-weight: normal;
+        display: inline-block;
+        background: none;
+        line-height: 2.286em
+    }
+
+        body .ui-paginator .ui-paginator-next:before {
+            content: ""
+        }
+
+        body .ui-paginator .ui-paginator-next:before {
+            position: relative
+        }
+
+    body .ui-paginator .ui-paginator-last {
+        font-family: "primeicons" !important;
+        font-style: normal;
+        font-weight: normal;
+        display: inline-block;
+        background: none;
+        line-height: 2.286em
+    }
+
+        body .ui-paginator .ui-paginator-last:before {
+            content: ""
+        }
+
+        body .ui-paginator .ui-paginator-last:before {
+            position: relative
+        }
+
+    body .ui-paginator .ui-paginator-current {
+        color: #6c757d
+    }
+
+    body .ui-paginator .ui-paginator-pages {
+        padding: 0;
+        display: inline-block
+    }
+
+        body .ui-paginator .ui-paginator-pages .ui-paginator-page {
+            padding: 0;
+            border: 1px solid rgba(0,0,0,0);
+            text-align: center;
+            line-height: 2.286em;
+            min-width: 2.286em;
+            height: 2.286em;
+            color: #6c757d;
+            margin: 0 .125em;
+            border-radius: 50%;
+            transition: background-color .2s,color .2s,border-color .2s,box-shadow .2s,opacity .2s
+        }
+
+            body .ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-active {
+                background: #e3f2fd;
+                color: #495057
+            }
+
+            body .ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-hover {
+                background: #e9ecef;
+                color: #495057;
+                border-color: rgba(0,0,0,0)
+            }
+
+            body .ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-focus {
+                outline: 0 none;
+                outline-offset: 0;
+                box-shadow: 0 0 0 .2rem rgb(166.2,213,250.2)
+            }
+
+    body .ui-paginator .ui-paginator-current, body .ui-paginator .ui-paginator-rpp-options {
+        margin: .5rem;
+        display: inline-block;
+        vertical-align: middle
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

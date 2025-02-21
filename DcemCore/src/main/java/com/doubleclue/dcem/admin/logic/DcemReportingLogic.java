@@ -187,7 +187,6 @@ public class DcemReportingLogic {
 		if (title != null && title.isEmpty() == false) {
 			message = title + " : " + message;
 		}
-
 		DcemReporting alertMessage = new DcemReporting();
 		alertMessage.setSource(category);
 		alertMessage.setInfo(message);

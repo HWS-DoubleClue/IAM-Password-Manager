@@ -717,23 +717,12 @@ public class CloudSafeLogic {
 	}
 
 	@DcemTransactional
-	public void deleteExpiredCloudSafe() {
+	public void deleteExpiredCloudSafe() throws Exception {
 		deleteExpiredCloudShare();
 		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_EXPIRED_DATA, CloudSafeEntity.class);
 		query.setParameter(1, LocalDateTime.now().minusDays(1));
 		List<CloudSafeEntity> list = query.getResultList();
-		for (CloudSafeEntity entity : list) {
-			try {
-				if (entity.isFolder()) {
-					deleteCloudSafeFolder(entity);
-				} else {
-					em.remove(entity);
-				}
-				cloudSafeContentI.delete(em, entity.getId());
-			} catch (Exception e) {
-				logger.warn("Couln't delete cloudsafe entity. " + entity.toString(), e);
-			}
-		}
+		deleteFiles(list, null);
 	}
 
 	private void deleteExpiredCloudShare() {

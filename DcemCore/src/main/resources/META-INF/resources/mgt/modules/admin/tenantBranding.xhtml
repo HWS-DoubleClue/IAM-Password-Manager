@@ -138,8 +138,10 @@
 
 						<br></br>
 						<p:fileUpload listener="#{tenantBrandingView.fileLogoListener}" label="#{CoreMsg['choose']}" value="#{tenantBrandingView.fileLogo}" mode="advanced"
-							skinSimple="true" auto="true" multiple="false" update="fileLogo" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" fileLimit="1" sizeLimit="10240"
-							invalidSizeMessage="#{AdminMsg['tenantBranding.invalidFileSizeLogoMsg']}" />
+							skinSimple="true" auto="true" multiple="false" update="fileLogo" 
+							invalidSizeMessage="#{AdminMsg['tenantBranding.invalidFileSizeLogoMsg']}" >
+							<p:validateFile allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" fileLimit="1" sizeLimit="20000" />
+							</p:fileUpload>
 						<h:outputText value="#{tenantBrandingView.logoName}" style="margin-left: 1em;" />
 					</h:panelGroup>
 
@@ -160,8 +162,10 @@
 						<br></br>
 						<p:fileUpload customUI="true" listener="#{tenantBrandingView.fileBackgroundListener}" label="#{CoreMsg['choose']}"
 							value="#{tenantBrandingView.fileBackgroundImage}" mode="advanced" skinSimple="true" auto="true" immediate="true" required="true" multiple="false"
-							update="fileBackground" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG|JPG|GIF|JPEG)$/" fileLimit="1" sizeLimit="307200"
-							invalidSizeMessage="#{AdminMsg['tenantBranding.invalidFileSizeBackgroundMsg']}" />
+							update="fileBackground" 
+							invalidSizeMessage="#{AdminMsg['tenantBranding.invalidFileSizeBackgroundMsg']}" >
+							<p:validateFile fileLimit="1" sizeLimit="307200" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG|JPG|GIF|JPEG)$/"  />
+							</p:fileUpload>
 						<h:outputText value="#{tenantBrandingView.backgroundFileName}" />
 					</h:panelGroup>
 

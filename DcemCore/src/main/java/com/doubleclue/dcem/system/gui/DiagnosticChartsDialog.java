@@ -16,11 +16,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.primefaces.event.SlideEndEvent;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.line.LineChartDataSet;
-import org.primefaces.model.charts.line.LineChartModel;
-import org.primefaces.model.charts.line.LineChartOptions;
-import org.primefaces.model.charts.optionconfig.title.Title;
 
 import com.doubleclue.dcem.core.gui.AutoViewAction;
 import com.doubleclue.dcem.core.gui.DcemDialog;
@@ -29,6 +24,12 @@ import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.logic.DcemChartData;
 import com.doubleclue.dcem.core.logic.DiagnosticLogic;
 import com.doubleclue.dcem.system.logic.StatisticValueHelper;
+
+import software.xdev.chartjs.model.charts.LineChart;
+import software.xdev.chartjs.model.data.LineData;
+import software.xdev.chartjs.model.dataset.LineDataset;
+import software.xdev.chartjs.model.options.LineOptions;
+import software.xdev.chartjs.model.options.Plugins;
 
 @Named("diagnosticsChartsDialog")
 @SessionScoped
@@ -45,7 +46,8 @@ public class DiagnosticChartsDialog extends DcemDialog {
 	@Inject
 	private DiagnosticsView diagnosticsView;
 
-	private List<LineChartModel> lineChartModelsList;
+	private List<String> lineChartModelsList;
+	
 
 	private String timeFrom;
 
@@ -73,42 +75,41 @@ public class DiagnosticChartsDialog extends DcemDialog {
 	static final String COUNTER_AVERAGE_TIME = "Average Time";
 	static final String COUNTER_TIME = "Longest Time";
 
-	public List<LineChartModel> getLineChartModelsList() {
+	public List<String> getLineChartModelsList() {
 		if (lineChartModelsList == null) {
 			lineChartModelsList = new ArrayList<>();
 		}
 		lineChartModelsList.addAll(getValueChart());
-		lineChartModelsList.addAll(getCounterChart());
+//		lineChartModelsList.addAll(getCounterChart());
 		return lineChartModelsList;
 	}
 
 	/**
 	 * @return
 	 */
-	private List<LineChartModel> getValueChart() {
+	private List<String> getValueChart() {
 		HashSet<String> valuesSelected = new HashSet<>();
 		for (StatisticValueHelper helper : diagnosticsView.getValues()) {
 			if (helper.isChecked()) {
 				valuesSelected.add(helper.getName());
 			}
 		}
-		List<LineChartModel> lineChartModels = new ArrayList<>();
+		List<String> lineChartModels = new ArrayList<>();
 		Map<String, List<DcemChartData>> diagnostics;
 		try {
-			
 			diagnostics = diagnosticLogic.getChartValues(valuesSelected, timeFrom, timeTo);
 			for (Map.Entry<String, List<DcemChartData>> entry : diagnostics.entrySet()) {
-				LineChartModel lineChartModel = new LineChartModel();
-				ChartData chartData = new ChartData();
+				LineChart lineChartModel = new LineChart();
+				LineData chartData = new LineData();
 				List<String> labels = new ArrayList<>();
 				List<DcemChartData> listChartData = entry.getValue();
-				HashMap<String, List<Object>> map = new HashMap<>();
+				HashMap<String, List<Number>> map = new HashMap<>();
 				for (DcemChartData dcemChartData : listChartData) {
 					labels.add(localDateTimeToString(dcemChartData.getDate()));
 					for (Entry<String, Number> mapEntry : dcemChartData.getMap().entrySet()) {
-						List<Object> lineNumbers = map.get(mapEntry.getKey());
+						List<Number> lineNumbers = map.get(mapEntry.getKey());
 						if (lineNumbers == null) {
-							lineNumbers = new ArrayList<Object>();
+							lineNumbers = new ArrayList<Number>();
 							lineNumbers.add(mapEntry.getValue());
 							map.put(mapEntry.getKey(), lineNumbers);
 						} else {
@@ -117,23 +118,23 @@ public class DiagnosticChartsDialog extends DcemDialog {
 					}
 				}
 				int i = 0;
-				for (Entry<String, List<Object>> mapEntry : map.entrySet()) {
-					LineChartDataSet dataSet = new LineChartDataSet();
+				for (Entry<String, List<Number>> mapEntry : map.entrySet()) {
+					LineDataset dataSet = new LineDataset();
 					dataSet.setLabel(mapEntry.getKey());
 					dataSet.setData(mapEntry.getValue());
 					dataSet.setBorderColor(chartColor[i & 0x01]);
-					chartData.addChartDataSet(dataSet);
+					chartData.addDataset(dataSet);
 					i++;
 				}
 				chartData.setLabels(labels);
-				LineChartOptions options = new LineChartOptions();
-				Title title = new Title();
-				title.setDisplay(true);
-				title.setText(entry.getKey());
-				options.setTitle(title);
+				LineOptions options = new LineOptions();
+				options.setPlugins(new Plugins()
+                        .setTitle(new software.xdev.chartjs.model.options.Title()
+                                .setDisplay(true)
+                                .setText(entry.getKey())));
 				lineChartModel.setOptions(options);
 				lineChartModel.setData(chartData);
-				lineChartModels.add(lineChartModel);
+				lineChartModels.add(lineChartModel.toJson());
 			}
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage(e.toString());
@@ -146,65 +147,9 @@ public class DiagnosticChartsDialog extends DcemDialog {
 		return localDateTime.format(dateTimeFormatter);
 	}
 
-	private List<LineChartModel> getCounterChart() {
+	
 
-		List<LineChartModel> list = new ArrayList<>();
-		// List<String> countersSelected = new ArrayList<>();
-		// for (StatisticCounterHelper helper : diagnosticsView.getCounters()) {
-		// if (helper.isChecked()) {
-		// countersSelected.add(helper.getName());
-		// }
-		// }
-		// Map<String, List<ChartCountersData>> diagnostics;
-		// try {
-		// diagnostics = diagnosticLogic.getChartCounters(countersSelected, "", timeFrom, timeTo);
-		// for (Map.Entry<String, List<ChartCountersData>> entry : diagnostics.entrySet()) {
-		// LineChartModel model = new LineChartModel();
-		// ChartSeries chartSeriesCount = new ChartSeries();
-		// // ChartSeries chartSeriesExTime = new ChartSeries();
-		// ChartSeries chartSeriesAverage = new ChartSeries();
-		// ChartSeries chartSeriesLongest = new ChartSeries();
-		// chartSeriesCount.setLabel("Count");
-		// // chartSeriesExTime.setLabel("Execution Time");
-		// chartSeriesAverage.setLabel("Average Time");
-		// chartSeriesLongest.setLabel("Longest Time");
-		// List<ChartCountersData> listChartCountersData = entry.getValue();
-		//
-		// for (ChartCountersData chartCountersData : entry.getValue()) {
-		// chartSeriesCount.set(chartCountersData.getDate().toString(), chartCountersData.getStatisticCounter().getCount());
-		// // chartSeriesExTime.set(entry1.getKey().toString(),
-		// // entry1.getValue().getExecutionTime());
-		// chartSeriesAverage.set(chartCountersData.getDate().toString(), chartCountersData.getStatisticCounter().getAveTime());
-		// chartSeriesLongest.set(chartCountersData.getDate().toString(), chartCountersData.getStatisticCounter().getLongestTime());
-		// }
-		// model.addSeries(chartSeriesCount);
-		// // model.addSeries(chartSeriesExTime);
-		// model.addSeries(chartSeriesAverage);
-		// model.addSeries(chartSeriesLongest);
-		// model.setTitle(entry.getKey());
-		// model.setZoom(true);
-		// model.setShowPointLabels(true);
-		// model.setLegendPosition("e");
-		// model.getAxes().put(AxisType.X, new CategoryAxis(""));
-		// model.getAxis(AxisType.Y);
-		// Axis yAxis = model.getAxis(AxisType.Y);
-		// yAxis.setLabel("");
-		//
-		// DateAxis xAxis = new DateAxis("");
-		// xAxis.setTickAngle(-50);
-		// xAxis.setMin(listChartCountersData.get(0).getDate().toString());
-		// xAxis.setMax(listChartCountersData.get(listChartCountersData.size() - 1).getDate().toString());
-		// xAxis.setTickFormat("%m-%#d %H:%M");
-		// model.getAxes().put(AxisType.X, xAxis);
-		// lineChartModelsList.add(model);
-		// }
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		return list;
-	}
-
-	public void setLineChartModelsList(List<LineChartModel> lineChartModelsList) {
+	public void setLineChartModelsList(List<String> lineChartModelsList) {
 		this.lineChartModelsList = lineChartModelsList;
 	}
 

@@ -1,5 +1,7 @@
 package com.doubleclue.dcem.admin.gui;
 
+import java.awt.Color;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,10 +20,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.primefaces.event.ItemSelectEvent;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.bar.BarChartDataSet;
-import org.primefaces.model.charts.bar.BarChartModel;
-import org.primefaces.model.charts.pie.PieChartModel;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
@@ -39,6 +37,14 @@ import com.doubleclue.dcem.core.jpa.FilterOperator;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.logic.module.DcemModule;
+
+import software.xdev.chartjs.model.charts.BarChart;
+import software.xdev.chartjs.model.data.BarData;
+import software.xdev.chartjs.model.dataset.BarDataset;
+import software.xdev.chartjs.model.options.BarOptions;
+import software.xdev.chartjs.model.options.Plugins;
+import software.xdev.chartjs.model.options.Title;
+import software.xdev.chartjs.model.options.scale.Scales;
 
 @SuppressWarnings("serial")
 @Named("welcomeView")
@@ -62,28 +68,28 @@ public class WelcomeView extends DcemView {
 
 	@Inject
 	ReportingView reportingView;
-	
+
 	@Inject
 	DcemReportingLogic dcemReportingLogic;
-	
+
 	@Inject
 	UserDialogBean userDialog;
-	
+
 	@Inject
 	UserPasswordDialog userPasswordDialog;
-	
+
 	@Inject
 	UserLogic userLogic;
-	
+
 	private static final String RESOURCE_PREFIX = "dashboardLogic.";
 
 	private ResourceBundle resourceBundle;
 
-	private BarChartModel userActivityBarChart;
-	
+	private String userActivityBarModel;
+
 	private SelectedFormat selectedDateFormat = SelectedFormat.MONTH;
 	private LocalDate currentDate = LocalDate.now();
-	
+
 	public enum Action {
 		NEXT, PREVIOUS
 	};
@@ -91,13 +97,12 @@ public class WelcomeView extends DcemView {
 	public enum SelectedFormat {
 		DAY, MONTH, YEAR;
 	};
-	
+
 	@PostConstruct
 	private void init() {
 		subject = welcomeSubject;
 		resourceBundle = JsfUtils.getBundle(AdminModule.RESOURCE_NAME, operatorSessionBean.getLocale());
 	}
-	
 
 	public LocalDate getCurrentDate() {
 		return currentDate;
@@ -120,7 +125,7 @@ public class WelcomeView extends DcemView {
 	}
 
 	public String getChosenDate() {
-		DateTimeFormatter  dateTimeFormatter;
+		DateTimeFormatter dateTimeFormatter;
 		if (selectedDateFormat == SelectedFormat.DAY) {
 			return currentDate.format(DateTimeFormatter.ofPattern("dd MMM", operatorSessionBean.getLocale()));
 		} else if (selectedDateFormat == SelectedFormat.YEAR) {
@@ -156,11 +161,11 @@ public class WelcomeView extends DcemView {
 		viewVariable.setFilterValue(listValues);
 		DcemModule dcemModule = viewNavigator.getActiveModule();
 		viewNavigator.setActiveView(dcemModule.getId() + DcemConstants.MODULE_VIEW_SPLITTER + "reportingView");
-	}	
+	}
 
 	private void setUpCharts() {
 		selectedDateFormat = SelectedFormat.MONTH;
-		userActivityBarChart = getUserActivityBarChart(currentDate.atStartOfDay(), SelectedFormat.MONTH, resourceBundle);
+		userActivityBarModel = getUserActivityBarChart(currentDate.atStartOfDay(), SelectedFormat.MONTH, resourceBundle);
 	}
 
 	@Override
@@ -173,17 +178,10 @@ public class WelcomeView extends DcemView {
 				operatorSessionBean.getRolesText(), DcemCluster.getInstance().getDcemNode().getName());
 	}
 
-	public BarChartModel getUserActivityBarChart() {
-		if (userActivityBarChart == null) {
-			setUpCharts();
-		}
-		return userActivityBarChart;
-	}
-
 	public boolean isPrivilegedForDeletingAlerts() {
 		return operatorSessionBean.isPermission(new DcemAction(subject, DcemConstants.ACTION_DELETE));
 	}
-	
+
 	public boolean isPermissionView() {
 		return operatorSessionBean.isPermission(welcomeSubject.getDcemActions());
 	}
@@ -191,7 +189,7 @@ public class WelcomeView extends DcemView {
 	public void changeDateSelection(SelectedFormat format) {
 		selectedDateFormat = format;
 		currentDate = LocalDate.now();
-		userActivityBarChart = getUserActivityBarChart(currentDate.atStartOfDay(), format, resourceBundle);
+		userActivityBarModel = getUserActivityBarChart(currentDate.atStartOfDay(), format, resourceBundle);
 	}
 
 	public void changeFormatSelection(Action selectedAction) {
@@ -223,38 +221,39 @@ public class WelcomeView extends DcemView {
 			}
 			break;
 		}
-		userActivityBarChart = getUserActivityBarChart(currentDate.atStartOfDay(), selectedFormat, resourceBundle);
+		userActivityBarModel = getUserActivityBarChart(currentDate.atStartOfDay(), selectedFormat, resourceBundle);
 	}
-	
-	private BarChartModel getUserActivityBarChart(LocalDateTime startDate, SelectedFormat selectedDateFormat, ResourceBundle resourceBundle) {
+
+	private String getUserActivityBarChart(LocalDateTime startDate, SelectedFormat selectedDateFormat, ResourceBundle resourceBundle) {
 		try {
 			HashMap<LocalDateTime, Long> userActivityList = dcemReportingLogic.getUserActivityData(startDate, selectedDateFormat, true);
 			HashMap<LocalDateTime, Long> userFailedAuthenticationList = dcemReportingLogic.getUserActivityData(startDate, selectedDateFormat, false);
+			BarChart barChart = new BarChart();
+			barChart.setOptions(new BarOptions().setResponsive(true).setMaintainAspectRatio(false));
 
-			BarChartModel barChartModel = new BarChartModel();
-			BarChartDataSet dataSetLogin = new BarChartDataSet();
-			dataSetLogin.setLabel(JsfUtils.getStringSafely(resourceBundle, RESOURCE_PREFIX + "successfulLogins"));
-			dataSetLogin.setBackgroundColor("rgb(30, 166, 224)");
-			BarChartDataSet dataSetLoginFailed = new BarChartDataSet();
-			dataSetLoginFailed.setLabel(JsfUtils.getStringSafely(resourceBundle, RESOURCE_PREFIX + "noOfUserLogins"));
-			dataSetLoginFailed.setBackgroundColor("rgb(255, 166, 124)");
+			BarData barData = new BarData();
+			BarDataset barDatasetLogin = new BarDataset();
+			barDatasetLogin.setBackgroundColor("rgb(30, 166, 224)");
+			barDatasetLogin.setLabel(JsfUtils.getStringSafely(resourceBundle, RESOURCE_PREFIX + "successfulLogins"));
 			
-			ChartData chartData = new ChartData();
-			addChartDataSet(chartData, dataSetLogin, userActivityList, selectedDateFormat);
-			addChartDataSet(chartData, dataSetLoginFailed, userFailedAuthenticationList, selectedDateFormat);
-			barChartModel.setData(chartData);
-			return barChartModel;
+			BarDataset barDatasetFailed = new BarDataset();
+			barDatasetFailed.setBackgroundColor("rgb(255, 166, 124)");
+			barDatasetFailed.setLabel(JsfUtils.getStringSafely(resourceBundle, RESOURCE_PREFIX + "noOfUserLogins"));
+			addChartDataSet (barData, barDatasetLogin, userActivityList, selectedDateFormat);	
+			addChartDataSet (barData, barDatasetFailed, userFailedAuthenticationList, selectedDateFormat);	
+			barChart.setData(barData);
+			return barChart.toJson();
 		} catch (Exception exp) {
 			JsfUtils.addErrorMessage(AdminModule.RESOURCE_NAME, RESOURCE_PREFIX + "barChartFailed");
 			logger.warn("Dashboard Bar chart Filed to load. ", exp);
-			return new BarChartModel();
+			return null;
 		}
 	}
-	
-	private void addChartDataSet(ChartData chartData, BarChartDataSet barChartDataSet, HashMap<LocalDateTime, Long> userActivityList,
+
+	private void addChartDataSet(BarData barData, BarDataset barDataset, HashMap<LocalDateTime, Long> userActivityList,
 			SelectedFormat selectedDateFormat) {
 		DateTimeFormatter dateTimeFormatter;
-		List<Object> values = new ArrayList<>();
+		List<Number> values = new ArrayList<>();
 		List<String> labels = new ArrayList<>();
 
 		Map<LocalDateTime, Long> sortedMap = new TreeMap<LocalDateTime, Long>(userActivityList);
@@ -269,19 +268,31 @@ public class WelcomeView extends DcemView {
 			labels.add(set.getKey().format(dateTimeFormatter));
 			values.add(set.getValue());
 		}
-		chartData.setLabels(labels);
-		barChartDataSet.setData(values);
-		chartData.addChartDataSet(barChartDataSet);
+		barData.setLabels(labels);
+		barDataset.setData(values);
+		barDataset.setData(values);
+		barData.addDataset(barDataset);
 		return;
 	}
 
 	public void leavingView() {
-		userActivityBarChart = null;
+		userActivityBarModel = null;
 	}
 
 	@Override
 	public void reload() {
 		setUpCharts();
 		super.reload();
+	}
+
+	public String getUserActivityBarModel() {
+		if (userActivityBarModel == null) {
+			setUpCharts();
+		}
+		return userActivityBarModel;
+	}
+
+	public void setUserActivityBarModel(String userActivityBarModel) {
+		this.userActivityBarModel = userActivityBarModel;
 	}
 }

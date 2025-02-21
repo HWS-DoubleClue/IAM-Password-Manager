@@ -20,7 +20,9 @@
 							<p:graphicImage cache="false" styleClass="imageProfileUser" value="#{userDialog.photoUserProfile}" />
 						</h:panelGroup>
 						<p:fileUpload listener="#{userDialog.photoProfileListener}" label="#{CoreMsg['profilePhoto']}" value="#{userDialog.uploadPhotoProfile}" mode="simple"
-							skinSimple="true" immediate="true" auto="true" multiple="false" update="profileFoto" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" fileLimit="1" />
+							skinSimple="true" immediate="true" auto="true" multiple="false" update="profileFoto" >
+							<p:validateFile  allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" fileLimit="1" />
+							</p:fileUpload>
 
 						<p:outputLabel value="#{AdminMsg['type.localDomain']} " rendered="#{userDialog.userProfile == false}" />
 						<p:selectOneRadio id="console" value="#{userDialog.userType}" disabled="#{viewNavigator.editAction}" rendered="#{userDialog.userProfile == false}">

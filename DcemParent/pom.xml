@@ -49,7 +49,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- testing -->
 		<mockito.version>1.9.5</mockito.version>
-	
+
 		<!-- persistence -->
 		<hibernate.version>5.6.15.Final</hibernate.version>
 		<hibernate-validator.version>5.6.15.Final</hibernate-validator.version>
@@ -543,7 +543,7 @@
 		<!-- <dependency> <groupId>org.jboss.shrinkwrap.resolver</groupId>
 		<artifactId>shrinkwrap-resolver-impl-maven</artifactId> 
 			<scope>test</scope> </dependency> -->
-		
+
 
 		<!-- <dependency> <groupId>org.jboss.arquillian.testenricher</groupId> 
 			<artifactId>arquillian-testenricher-cdi</artifactId> <scope>test</scope> 
@@ -1049,7 +1049,7 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
-		
+
 			<dependency>
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
@@ -1130,8 +1130,15 @@
 			<dependency>
 				<groupId>org.primefaces</groupId>
 				<artifactId>primefaces</artifactId>
-				<version>14.0.11</version>
+				<version>15.0.0</version>
 			</dependency>
+
+			<dependency>
+				<groupId>software.xdev</groupId>
+				<artifactId>chartjs-java-model</artifactId>
+				<version>2.7.0</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.webjars.npm</groupId>
 				<artifactId>primeflex</artifactId>

@@ -90,7 +90,7 @@ public class DiagnosticsView extends DcemView {
 		addAutoViewAction(DcemConstants.ACTION_RESET_COUNTERS, resourceBundle, diagnosticsResetDialog, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);	
 		addAutoViewAction(DcemConstants.ACTION_DOWNLOAD_LOG_FILE, resourceBundle, null, null);
 		addAutoViewAction(DcemConstants.ACTION_DOWNLOAD_DIAGNOSTIC_FILE, resourceBundle, null, null);
-		addAutoViewAction(DcemConstants.ACTION_SHOW_DIAGNOSTIC_CHARTS, resourceBundle, diagnosticsChartsDialog, CHARTS_DIALOG);
+ 		addAutoViewAction(DcemConstants.ACTION_SHOW_DIAGNOSTIC_CHARTS, resourceBundle, diagnosticsChartsDialog, CHARTS_DIALOG);
 	}
 
 	@Override

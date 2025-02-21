@@ -27,8 +27,9 @@
 							<p:graphicImage cache="false" styleClass="imageProfileUser" value="#{userProfileView.photoUserProfile}" />
 						</h:panelGroup>
 						<p:fileUpload listener="#{userProfileView.photoProfileListener}" label="#{DcupMsg['uploadAndChange']}" value="#{userProfileView.uploadPhotoProfile}"
-							mode="simple" skinSimple="true" immediate="true" auto="true" multiple="false" update="profileFoto" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/"
-							fileLimit="1" />
+							mode="simple" skinSimple="true" immediate="true" auto="true" multiple="false" update="profileFoto" >
+							<p:validateFile allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" 	fileLimit="1" />
+						</p:fileUpload>
 
 						<h:outputLabel value="#{DcupMsg['label.userLoginId']}" rendered="#{userProfileView.user.domainUser == true}" />
 						<h:outputLabel value="#{userProfileView.user.loginId}" required="true" redisplay="true" rendered="#{userProfileView.user.domainUser == true}" />

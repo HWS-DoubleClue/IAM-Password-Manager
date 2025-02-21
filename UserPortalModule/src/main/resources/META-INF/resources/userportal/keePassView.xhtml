@@ -285,8 +285,10 @@
 					rendered="#{keePassView.previousUploadedFile != null}" />
 				<br />
 				<br />
-				<p:fileUpload id="fileUpload" label="#{DcupMsg['chooseFile']}" sizeLimit="10000000" value="#{keePassView.uploadedFile}" mode="simple" skinSimple="true"
-					required="true" />
+				<p:fileUpload id="fileUpload" label="#{DcupMsg['chooseFile']}"  value="#{keePassView.uploadedFile}" mode="simple" skinSimple="true"
+					required="true" >
+					<p:validateFile sizeLimit="10485760" />
+				</p:fileUpload>
 				<br />
 				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
 					<p:outputLabel for="uploadPassword" value="#{DcupMsg['label.password']}" />

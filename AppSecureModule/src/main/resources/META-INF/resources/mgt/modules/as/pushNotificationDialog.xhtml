@@ -48,8 +48,10 @@
 					<h:outputText value="#{pushNotificationDialog.projectId}" />
 
 					<h:outputText value="#{asMsg['pushNotification.googleServicesFile']} " />
-					<p:fileUpload id="fileUpload" sizeLimit="10000" label="#{CoreMsg['upload']}" value="#{pushNotificationDialog.uploadedFile}" mode="simple"
-						skinSimple="true" required="false" />
+					<p:fileUpload id="fileUpload"  label="#{CoreMsg['upload']}" value="#{pushNotificationDialog.uploadedFile}" mode="simple"
+						skinSimple="true" required="false" >
+						<p:validateFile sizeLimit="10000"  />
+					</p:fileUpload>
 
 					<h:outputText value="#{asMsg['pushNotification.deleteUploaded']} " />
 					<p:selectBooleanCheckbox value="#{pushNotificationDialog.deleteUploaded}">

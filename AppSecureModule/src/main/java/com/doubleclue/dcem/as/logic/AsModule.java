@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.doubleclue.comm.thrift.AppSystemConstants;
 import com.doubleclue.dcem.admin.logic.AdminModule;
+import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.admin.logic.ReportAction;
 import com.doubleclue.dcem.as.comm.AppServices;
@@ -402,7 +403,7 @@ public class AsModule extends DcemModule {
 	@Override
 	public void preferencesValidation(ModulePreferences modulePreferences) throws DcemException {
 		AsPreferences preferences = (AsPreferences) modulePreferences;
-		String fidoAllowedOrigins= "";
+		String fidoAllowedOrigins = "";
 		if (preferences.getFidoAllowedOrigins() != null) {
 			fidoAllowedOrigins = preferences.getFidoAllowedOrigins().replaceAll("\\s+", "");
 		}
@@ -470,24 +471,28 @@ public class AsModule extends DcemModule {
 		// Clean expired Activation-Codes
 		activationLogic.deleteExpiredActivationCodes();
 		// Clean expired Cloud-Data
-		cloudDataLogic.deleteExpiredCloudSafe();
-		cloudDataLogic.synchroniseGlobalCloudSafeUsageTotal();
-		fingerprintLogic.deleteExpiredFingerprints();
-		// Archive Reports
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		if (cal.get(Calendar.DAY_OF_MONTH) == 1 || systemModule.getSpecialPropery(DcemConstants.SPECIAL_PROPERTY_RUN_NIGHTLY_TASK) != null) {
-			int days = getPreferences().getDurationForMessageArchive();
-			if (days > 0) {
-				try {
-					String[] result = exportRecords.archive(days, MessageEntity.class, MessageEntity.GET_AFTER, MessageEntity.DELETE_AFTER);
-					if (result != null) {
-						logger.info("SecureMessage-Archived: File=" + result[0] + " Records=" + result[1]);
+		try {
+			cloudDataLogic.deleteExpiredCloudSafe();
+			cloudDataLogic.synchroniseGlobalCloudSafeUsageTotal();
+			fingerprintLogic.deleteExpiredFingerprints();
+			// Archive Reports
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			if (cal.get(Calendar.DAY_OF_MONTH) == 1 || systemModule.getSpecialPropery(DcemConstants.SPECIAL_PROPERTY_RUN_NIGHTLY_TASK) != null) {
+				int days = getPreferences().getDurationForMessageArchive();
+				if (days > 0) {
+					try {
+						String[] result = exportRecords.archive(days, MessageEntity.class, MessageEntity.GET_AFTER, MessageEntity.DELETE_AFTER);
+						if (result != null) {
+							logger.info("SecureMessage-Archived: File=" + result[0] + " Records=" + result[1]);
+						}
+					} catch (DcemException exp) {
+						logger.warn("Couldn't archive SecureMessage", exp);
 					}
-				} catch (DcemException exp) {
-					logger.warn("Couldn't archive SecureMessage", exp);
 				}
 			}
+		} catch (Exception exp) {
+			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.NIGHTLY_TASK, exp.toString(), AlertSeverity.ERROR, true);
 		}
 	}
 
@@ -653,7 +658,7 @@ public class AsModule extends DcemModule {
 		}
 		try {
 			cloudSafeLogic.getCloudSafeContentI().initiateTenant(tenantName);
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Could initialize CloudSafe", e);
 		}
 	}

@@ -103,8 +103,9 @@
 					<p:tab title="#{DcupMsg['dialog.attachments']} ">
 
 						<p:panelGrid columns="3" styleClass="gridAttachmentButtons">
-							<p:fileUpload id="uploadBtn" style="margin-left:-11px;" class="fileupload" sizeLimit="10485760" mode="advanced" dragDropSupport="true" fileLimit="1"
+							<p:fileUpload id="uploadBtn" style="margin-left:-11px;" class="fileupload"  mode="advanced" dragDropSupport="true" 
 								update="@this attachmentsTable" required="true" listener="#{keePassEntryView.handleFileUpload}" auto="true" label="#{DcupMsg['chooseFile']}">
+								<p:validateFile sizeLimit="1048576" allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" fileLimit="1" fileLimit="1" />
 							</p:fileUpload>
 
 							<p:commandLink action="#{keePassEntryView.actionDownloadAttachment()}" ajax="false" immediate="true">

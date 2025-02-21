@@ -95,9 +95,13 @@
 			<br></br>
 		</div>
 
-		<p:barChart model="#{welcomeView.userActivityBarChart}" responsive="true" id="barChart" style="width: 100%; height: 400px">
+<!-- 		<p:barChart model="#{welcomeView.userActivityBarChart}" responsive="true" id="barChart" style="width: 100%; height: 400px">
 			<p:ajax event="itemSelect" listener="#{welcomeView.itemSelect}" update="viewPart" />
-		</p:barChart>
+		</p:barChart> -->
+		
+		<p:chart id="barChart" value="#{welcomeView.userActivityBarModel}" style="width: 100%; height: 400px;">
+            <p:ajax event="itemSelect" listener="#{welcomeView.itemSelect}" update="viewPart"/>
+        </p:chart>
 
 	</h:panelGroup>
 
