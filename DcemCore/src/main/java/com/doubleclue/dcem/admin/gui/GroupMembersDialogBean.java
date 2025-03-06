@@ -131,7 +131,7 @@ public class GroupMembersDialogBean extends DcemDialog {
 	}
 
 	public String getWidth() {
-		return "500px";
+		return "";
 	}
 
 	public void leavingDialog() {

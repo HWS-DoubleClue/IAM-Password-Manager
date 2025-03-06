@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.AbstractQuery;
@@ -508,11 +509,13 @@ public class CloudSafeLogic {
 			CloudSafeEntity originalDbCloudSafeEntity, String ocrText) throws DcemException {
 
 		SortedSet<CloudSafeTagEntity> tags = new TreeSet<CloudSafeTagEntity>();
-		if (cloudSafeEntity.getTags() != null) {
-			for (CloudSafeTagEntity cloudSafeTagEntity : cloudSafeEntity.getTags()) {
-				tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId())); // attach tags
+		if (cloudSafeEntity.getId() != null && Persistence.getPersistenceUtil().isLoaded(cloudSafeEntity, "tags") == true) {
+			if (cloudSafeEntity.getTags() != null) {
+				for (CloudSafeTagEntity cloudSafeTagEntity : cloudSafeEntity.getTags()) {
+					tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId())); // attach tags
+				}
+				cloudSafeEntity.setTags(tags);
 			}
-			cloudSafeEntity.setTags(tags);
 		}
 		if (cloudSafeEntity.getSalt() == null) {
 			cloudSafeEntity.setSalt(RandomUtils.getRandom(16));

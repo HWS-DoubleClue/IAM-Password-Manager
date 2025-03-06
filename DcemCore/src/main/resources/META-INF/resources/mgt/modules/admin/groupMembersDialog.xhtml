@@ -32,7 +32,7 @@
 		</span>
 		<h:form id="groupMemberForm">
 				<p:outputLabel value="#{AdminMsg['groupName']}: " />
-				<p:outputLabel value="#{groupMembersDialog.actionObject.name}" style="font-weight: bold;" />
+				<p:outputLabel value="&nbsp;#{groupMembersDialog.actionObject.name}" style="font-weight: bold;" />
 				<p></p>
 				<h:panelGroup rendered="#{groupMembersDialog.actionObject.isDomainGroup() == false}">
 					<p:commandButton id="addMember" style="width: 12em" value="#{AdminMsg['addMember']}" ajax="true" onclick="PF('addMemberDialog').show();" />
@@ -41,7 +41,7 @@
 						update="memberTable memberCount" />
 				</h:panelGroup>
 				<p />
-				<p:dataTable id="memberTable" var="member" value="#{groupMembersDialog.members}" selectionMode="multiple" style="width: 100%"
+				<p:dataTable id="memberTable" var="member" value="#{groupMembersDialog.members}" selectionMode="multiple" style="width: 98%"
 					selection="#{groupMembersDialog.selectedUsers}" scrollable="true" rowKey="#{member.id}" scrollHeight="350" emptyMessage="#{CoreMsg['emptyTable']}">
 					<p:column filterBy="#{member.shortLoginId}" headerText="Name" filterMatchMode="contains" sortBy="#{member.shortLoginId}">
 						<p:outputLabel value="#{member.shortLoginId}" />
