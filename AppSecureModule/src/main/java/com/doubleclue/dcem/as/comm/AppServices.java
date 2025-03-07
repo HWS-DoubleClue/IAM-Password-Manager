@@ -946,30 +946,12 @@ public class AppServices {
 				throw new ExceptionReporting(
 						new DcemReporting(ReportAction.WriteCloudSafe, user, AsUtils.convertToAppErrorCodes(e.getErrorCode()), null, fileName),
 						"Exception while getting shared CloudSafe data.");
-			} else if (fileName.contains("/")) { // create directories
-				String[] pathSubstrings = fileName.split("/");
-				for (int i = 0; i < pathSubstrings.length - 1; i++) {
-					String dirName = pathSubstrings[i];
-					try {
-						CloudSafeEntity dir = cloudSafeLogic.getCloudSafe(owner, dirName, user, detachedDevice, (parent == null) ? null : parent.getId(), null);
-						parent = dir;
-					} catch (DcemException e1) { // not found
-						CloudSafeEntity newDir = new CloudSafeEntity(owner, user, detachedDevice, dirName, null, null, true, parent, user);
-						try {
-							CloudSafeEntity dir = cloudSafeLogic.updateCloudSafeEntity(newDir, userLogic.getUser(userId), false, null);
-							parent = dir;
-						} catch (DcemException e2) {
-							throw new ExceptionReporting(new DcemReporting(ReportAction.WriteCloudSafe, user, AsUtils.convertToAppErrorCodes(e.getErrorCode()),
-									null, user.getLoginId()), "Exception while writing new directories for file: " + fileName);
-						}
-					}
-				}
-				fileName = pathSubstrings[pathSubstrings.length - 1];
+			} else if (fileName.contains(CloudSafeLogic.FOLDER_SEPERATOR)) { 	
+				parent  = cloudSafeLogic.makeDirectories(null, fileName, user);  // create directories
+				fileName = fileName.substring(fileName.lastIndexOf(CloudSafeLogic.FOLDER_SEPERATOR) + 1);
 			}
 		}
-
 		// Check owner
-
 		switch (owner) {
 		case GLOBAL:
 			throw new ExceptionReporting(new DcemReporting(ReportAction.WriteCloudSafe, user, AppErrorCodes.INVALID_CLOUD_SAFE_OWNER, null, owner.name()),

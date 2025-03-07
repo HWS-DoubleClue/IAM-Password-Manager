@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.AbstractQuery;
@@ -47,6 +46,7 @@ import com.doubleclue.comm.thrift.SdkCloudSafe;
 import com.doubleclue.comm.thrift.SdkCloudSafeKey;
 import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
+import com.doubleclue.dcem.admin.logic.ReportAction;
 import com.doubleclue.dcem.as.entities.CloudSafeEntity;
 import com.doubleclue.dcem.as.entities.CloudSafeEntity_;
 import com.doubleclue.dcem.as.entities.CloudSafeLimitEntity;
@@ -65,6 +65,7 @@ import com.doubleclue.dcem.core.config.CloudSafeStorageType;
 import com.doubleclue.dcem.core.config.ClusterConfig;
 import com.doubleclue.dcem.core.entities.DcemAction;
 import com.doubleclue.dcem.core.entities.DcemGroup;
+import com.doubleclue.dcem.core.entities.DcemReporting;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
@@ -101,6 +102,8 @@ public class CloudSafeLogic {
 
 	final static String AUDIT_SHARED_BY = ", Shared By: ";
 	final static String OCR_TEXT = "ocr_text";
+	
+	final static public String FOLDER_SEPERATOR = "/";
 
 	@Inject
 	EntityManager em;
@@ -135,14 +138,9 @@ public class CloudSafeLogic {
 	@Inject
 	LicenceLogic licenceLogic;
 
-	@Inject
-	private CloudSafeTagLogic cloudSafeTagLogic;
-
 	CloudSafeContentI cloudSafeContentI;
-
 	CloudSafeStorageType cloudSafeStorageType;
 
-	private HashMap<Integer, CloudSafeNameDto> fullPathCache = new HashMap<Integer, CloudSafeNameDto>();
 
 	@PostConstruct
 	public void init() {
@@ -973,40 +971,40 @@ public class CloudSafeLogic {
 		query.executeUpdate();
 	}
 
-	public List<CloudSafeEntity> getCloudSafeAllFileList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, boolean withShareFiles)
-			throws DcemException {
-		DcemUser user = userLogic.getUser(userId);
-		if (user == null) {
-			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for Cloud Data Filenames.");
-		}
-		LocalDateTime modifiedFrom = DcemUtils.convertEpoch(modifiedFromEpoch);
-		String like = nameFilter == null || nameFilter.isEmpty() ? "%" : nameFilter;
-		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_OWNED_FILE_KEYS, CloudSafeEntity.class);
-		query.setParameter(1, like);
-		query.setParameter(2, LocalDateTime.now());
-		query.setParameter(3, user);
-		query.setParameter(4, owner);
-		query.setParameter(5, modifiedFrom);
-		List<CloudSafeEntity> cloudSafeEntities = query.getResultList();
-
-		for (CloudSafeEntity cloudSafeEntity : cloudSafeEntities) {
-			String path = getFullPath(cloudSafeEntity.getId(), null);
-			cloudSafeEntity.setName(path);
-		}
-		fullPathCache.clear();
-		return cloudSafeEntities;
-	}
+//	public List<CloudSafeEntity> getCloudSafeAllFileList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, boolean withShareFiles)
+//			throws DcemException {
+//		DcemUser user = userLogic.getUser(userId);
+//		if (user == null) {
+//			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for Cloud Data Filenames.");
+//		}
+//		LocalDateTime modifiedFrom = DcemUtils.convertEpoch(modifiedFromEpoch);
+//		String like = nameFilter == null || nameFilter.isEmpty() ? "%" : nameFilter;
+//		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_OWNED_FILE_KEYS, CloudSafeEntity.class);
+//		query.setParameter(1, like);
+//		query.setParameter(2, LocalDateTime.now());
+//		query.setParameter(3, user);
+//		query.setParameter(4, owner);
+//		query.setParameter(5, modifiedFrom);
+//		List<CloudSafeEntity> cloudSafeEntities = query.getResultList();
+//
+//		for (CloudSafeEntity cloudSafeEntity : cloudSafeEntities) {
+//			String path = getFullPath(cloudSafeEntity.getId(), null);
+//			cloudSafeEntity.setName(path);
+//		}
+//		fullPathCache.clear();
+//		return cloudSafeEntities;
+//	}
 
 	public List<SdkCloudSafe> getCloudSafeFileList(int userId, String nameFilter, long modifiedFromEpoch, CloudSafeOwner owner, boolean withShareFiles,
 			int libVersion) throws DcemException {
 		DcemUser user = userLogic.getUser(userId);
+		HashMap<Integer, CloudSafeNameDto> fullPathCache = new HashMap<Integer, CloudSafeNameDto>();
 		if (user == null) {
 			throw new DcemException(DcemErrorCodes.USER_IS_NULL, "Cannot get User for Cloud Data Filenames.");
 		}
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime modifiedFrom = DcemUtils.convertEpoch(modifiedFromEpoch);
 		String like = nameFilter == null || nameFilter.isEmpty() ? "%" : nameFilter;
-
 		List<DcemGroup> allUsersGroups = groupLogic.getAllUserGroups(user);
 
 		TypedQuery<CloudSafeEntity> query = em.createNamedQuery(CloudSafeEntity.GET_USER_FILE_LIST, CloudSafeEntity.class);
@@ -1023,9 +1021,8 @@ public class CloudSafeLogic {
 		query.setParameter(6, false); // isFolder
 		List<CloudSafeEntity> cloudSafeEntities = query.getResultList();
 		ArrayList<SdkCloudSafe> list = new ArrayList<>(cloudSafeEntities.size());
-
 		for (CloudSafeEntity cloudSafeEntity : cloudSafeEntities) {
-			String path = getFullPath(cloudSafeEntity.getId(), null);
+			String path = getFullPath(cloudSafeEntity.getId(), null, fullPathCache);
 			SdkCloudSafeKey cloudSafeKey = new SdkCloudSafeKey(cloudSafeEntity.getOwner(), path);
 			cloudSafeKey.setDbId(cloudSafeEntity.getId());
 
@@ -1061,11 +1058,11 @@ public class CloudSafeLogic {
 						cloudSafeKey = new SdkCloudSafeKey((libVersion < AsConstants.LIB_VERION_2 ? CloudSafeOwner.USER : CloudSafeOwner.GROUP),
 								AsConstants.SHARE_BY_GROUP_START + cloudSafeShareEntity.getCloudSafe().getGroup() + AsConstants.SHARE_BY_GROUP_END
 										+ AsConstants.SHARE_BY_SEPERATOR + (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? ""
-												: cloudSafeEntity.getParent().getId() + "/")
+												: cloudSafeEntity.getParent().getId() + FOLDER_SEPERATOR)
 										+ cloudSafeEntity.getName());
 					} else {
 						cloudSafeKey = new SdkCloudSafeKey(owner, cloudSafeShareEntity.getCloudSafe().getUser().getLoginId() + AsConstants.SHARE_BY_SEPERATOR
-								+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? "" : cloudSafeEntity.getParent().getId() + "/")
+								+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? "" : cloudSafeEntity.getParent().getId() + FOLDER_SEPERATOR)
 								+ cloudSafeEntity.getName());
 					}
 					cloudSafeKey.setDbId(cloudSafeEntity.getId());
@@ -1077,7 +1074,6 @@ public class CloudSafeLogic {
 				}
 			}
 		}
-		fullPathCache.clear();
 		return list;
 	}
 
@@ -1111,12 +1107,12 @@ public class CloudSafeLogic {
 					cloudSafeKey = new SdkCloudSafeKey((libVersion < AsConstants.LIB_VERION_2 ? CloudSafeOwner.USER : CloudSafeOwner.GROUP),
 							AsConstants.SHARE_BY_GROUP_START + cloudSafeShareEntity.getCloudSafe().getGroup() + AsConstants.SHARE_BY_GROUP_END
 									+ AsConstants.SHARE_BY_SEPERATOR
-									+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? "" : cloudSafeEntity.getParent().getId() + "/")
+									+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? "" : cloudSafeEntity.getParent().getId() + FOLDER_SEPERATOR)
 									+ cloudSafeEntity.getName());
 				} else {
 					cloudSafeKey = new SdkCloudSafeKey(owner,
 							cloudSafeShareEntity.getCloudSafe().getUser().getLoginId() + AsConstants.SHARE_BY_SEPERATOR
-									+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? "" : cloudSafeEntity.getParent().getId() + "/")
+									+ (cloudSafeEntity.getParent().getId().equals(getCloudSafeRoot().getId()) ? "" : cloudSafeEntity.getParent().getId() + FOLDER_SEPERATOR)
 									+ cloudSafeEntity.getName());
 				}
 				cloudSafeKey.setDbId(cloudSafeEntity.getId());
@@ -1310,7 +1306,7 @@ public class CloudSafeLogic {
 		}
 	}
 
-	private String getFullPath(int id, String path) {
+	private String getFullPath(int id, String path, HashMap<Integer, CloudSafeNameDto> fullPathCache) {
 		CloudSafeNameDto cloudsafe;
 		if (fullPathCache.containsKey(id) == false) {
 			TypedQuery<CloudSafeNameDto> query = em.createNamedQuery(CloudSafeEntity.GET_CLOUDSAFE_BY_ID, CloudSafeNameDto.class);
@@ -1320,10 +1316,10 @@ public class CloudSafeLogic {
 		} else {
 			cloudsafe = fullPathCache.get(id);
 		}
-		path = path == null ? cloudsafe.getName() : cloudsafe.getName() + "/" + path;
+		path = path == null ? cloudsafe.getName() : cloudsafe.getName() + FOLDER_SEPERATOR + path;
 		if (getCloudSafeRoot().getId().equals(cloudsafe.getParentId()) == false && cloudsafe.getParentId() != null
 				&& cloudsafe.getParentId() != cloudsafe.getId()) {
-			return getFullPath(cloudsafe.getParentId(), path);
+			return getFullPath(cloudsafe.getParentId(), path, fullPathCache);
 		} else {
 			return path;
 		}
@@ -1352,13 +1348,12 @@ public class CloudSafeLogic {
 
 	public CloudSafeEntity getCloudSafeFromPath(CloudSafeOwner owner, String path, DcemUser user, DeviceEntity device) {
 
-		String[] dirs = path.split("/");
+		String[] dirs = path.split(FOLDER_SEPERATOR);
 		String parent = DcemConstants.CLOUD_SAFE_ROOT;
 		if (dirs.length > 0) {
 			parent = dirs[dirs.length - 1];
 		}
 		CriteriaBuilder builder = em.getCriteriaBuilder();
-
 		CriteriaQuery<CloudSafeEntity> fileQuery = builder.createQuery(CloudSafeEntity.class);
 		Root<CloudSafeEntity> fileRoot = fileQuery.from(CloudSafeEntity.class);
 		fileQuery.select(fileRoot).where(builder.equal(fileRoot.get("name"), parent),
@@ -1367,10 +1362,8 @@ public class CloudSafeLogic {
 				device == null ? builder.equal(fileRoot.get("device"), getRootDevice()) : builder.equal(fileRoot.get("device"), device));
 
 		if (dirs.length > 1) {
-
 			AbstractQuery<?> lastQuery = fileQuery;
 			Root<CloudSafeEntity> lastRoot = fileRoot;
-
 			for (int i = dirs.length - 2; i >= 0; i--) {
 				Subquery<Integer> folderQuery = lastQuery.subquery(Integer.class);
 				Root<CloudSafeEntity> folderRoot = folderQuery.from(CloudSafeEntity.class);
@@ -1382,7 +1375,6 @@ public class CloudSafeLogic {
 				if (i == 0) {
 					folderQuery.where(folderQuery.getRestriction(), builder.equal(folderRoot.get("parent"), getCloudSafeRoot()));
 				}
-
 				lastQuery.where(lastQuery.getRestriction(), lastRoot.get("parent").in(folderQuery));
 				lastRoot = folderRoot;
 				lastQuery = folderQuery;
@@ -1402,13 +1394,13 @@ public class CloudSafeLogic {
 	 * @return
 	 */
 	public CloudSafeEntity getParentFromPath(DcemUser user, String path) {
-		if (path.equals("/")) {
+		if (path.equals(FOLDER_SEPERATOR)) {
 			return getCloudSafeRoot();
 		}
-		if (path.startsWith("/")) {
+		if (path.startsWith(FOLDER_SEPERATOR)) {
 			path = path.substring(1);
 		}
-		String[] dirs = path.split("/");
+		String[] dirs = path.split(FOLDER_SEPERATOR);
 		String dirRoot = DcemConstants.CLOUD_SAFE_ROOT;
 		if (dirs.length > 0) {
 			dirRoot = dirs[dirs.length - 1];
@@ -1636,10 +1628,10 @@ public class CloudSafeLogic {
 		try {
 			result = query.getSingleResult();
 			if (result == null) {
-				result = new Long(0);
+				result = Long.valueOf(0);
 			}
 		} catch (Exception e) {
-			result = new Long(0);
+			result = Long.valueOf(0);
 		}
 		getGlobalCloudSafeUsageTotal().getAndSet(result.longValue());
 	}
@@ -2108,11 +2100,11 @@ public class CloudSafeLogic {
 		}
 	}
 
-	public String getPathString(List<CloudSafeEntity> list) {
+	private String getPathString(List<CloudSafeEntity> list) {
 		StringBuilder sb = new StringBuilder();
 		for (CloudSafeEntity cloudSafeEntity : list) {
 			if (sb.isEmpty() == false) {
-				sb.append("/");
+				sb.append(FOLDER_SEPERATOR);
 			}
 			sb.append(cloudSafeEntity.getName());
 		}
@@ -2122,6 +2114,30 @@ public class CloudSafeLogic {
 	public List<Integer> getIdsOfAllEntries() {
 		TypedQuery<Integer> query = em.createNamedQuery(CloudSafeEntity.GET_ALL_IDS, Integer.class);
 		return query.getResultList();
+	}
+	
+	@DcemTransactional
+	public CloudSafeEntity makeDirectories (CloudSafeEntity parent, String pathFile, DcemUser user) throws ExceptionReporting {
+		String[] pathSubstrings = pathFile.split(CloudSafeLogic.FOLDER_SEPERATOR);
+		if (parent == null) {
+			parent = getCloudSafeRoot();
+		}
+		DeviceEntity deviceEntity = getRootDevice();
+		for (int i = 0; i < pathSubstrings.length - 1; i++) {
+			String dirName = pathSubstrings[i];
+			try {
+				parent = getCloudSafe(CloudSafeOwner.USER, dirName, user, deviceEntity, parent.getId(), null);
+			} catch (DcemException e1) { 	// not found
+				CloudSafeEntity newDir = new CloudSafeEntity(CloudSafeOwner.USER, user, deviceEntity, dirName, null, null, true, parent, user);
+				try {
+					parent = updateCloudSafeEntity(newDir, user, false, null);
+				} catch (DcemException e2) {
+					throw new ExceptionReporting(new DcemReporting(ReportAction.WriteCloudSafe, user, AsUtils.convertToAppErrorCodes(e2.getErrorCode()),
+							null, user.getLoginId()), "Exception while writing new directories for file: " + pathFile);
+				}
+			}
+		}
+		return parent;
 	}
 
 }
