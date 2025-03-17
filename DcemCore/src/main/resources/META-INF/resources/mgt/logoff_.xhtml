@@ -12,12 +12,15 @@
 	<h:outputStylesheet library="webjars" name="font-awesome/6.5.1/css/all-jsf.css" />
 	<script defer="defer" type="text/javascript" src="#{resource['js/javaScriptDCEM.js']}"></script>
 	<title>#{adminModule.title}</title>
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{mfaLoginView.preRenderView}" />
+	</f:metadata>
 </h:head>
 
 <f:view locale="#{operatorSession.locale}">
 	<h:body>
 		<h:outputStylesheet library="css" name="systemStyles.css" />
-
+		
 		<ui:include src="../titleLogin.xhtml" />
 
 		<div id="container" style="width: auto; height: 93vh; position: relative;">
@@ -32,7 +35,7 @@
 					<div style="margin-left: 10em">
 						<p></p>
 						<h:outputLabel class="fa fa-sign-out" style="font-size: 1.4em; color: #445686; margin-right: 8px; margin-top: 20px;" />
-						<h:outputText style="font-size: 1.4em; " value="#{CoreMsg['view.logoff.text']}" />
+						<h:outputText style="font-size: 1.4em; " styleClass="logoutInverseText" value="#{CoreMsg['view.logoff.text']}" />
 						<p></p>
 						<h:outputLabel styleClass="logoutInverseText" class="fa fa-sign-in" rendered="#{adminModule.windowsSso eq false}" />
 						<h:link styleClass="logoutInverseText" value=" #{CoreMsg['view.login.button.login']}" outcome="mgtPreLogin" rendered="#{adminModule.windowsSso eq false}" />

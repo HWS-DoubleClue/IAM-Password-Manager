@@ -66,7 +66,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 				+ "AND c.user=?3 AND c.owner=?4 AND (c.lastModified IS NULL OR c.lastModified>?5)"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_FILE_LIST, query = "SELECT c FROM CloudSafeEntity c WHERE c.name LIKE ?1 AND (c.discardAfter IS NULL OR c.discardAfter > ?2) AND c.name != 'Recycle Bin' AND c.recycled = false "
 				+ "AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?3) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?4)) AND (c.lastModified IS NULL OR c.lastModified>?5) AND c.isFolder=?6"),
-		
+
 		@NamedQuery(name = CloudSafeEntity.GET_EXPIRED_DATA, query = "SELECT c FROM CloudSafeEntity c WHERE c.discardAfter < ?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_ALL_USER_CLOUDSAFE_WITH_GROUP, query = "SELECT c FROM CloudSafeEntity c WHERE c.name!='_ROOT_' AND (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2) ORDER BY c.isFolder DESC, c.name ASC "),
 		@NamedQuery(name = CloudSafeEntity.GET_ALL_USER_CLOUDSAFE, query = "SELECT c FROM CloudSafeEntity c WHERE c.name!='_ROOT_' AND (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) ORDER BY c.isFolder DESC, c.name ASC "),
@@ -82,7 +82,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_ID, query = "SELECT NEW com.doubleclue.dcem.as.logic.CloudSafeNameDto(cs.id, cs.name, cs.parent.id) FROM CloudSafeEntity cs WHERE cs.id=?1"),
 		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_PARENT, query = "SELECT cs FROM CloudSafeEntity cs WHERE cs.parent=?1 AND cs.recycled=false AND cs.isFolder=false"),
 
-		@NamedQuery(name = CloudSafeEntity.GET_CLOUDSAFE_BY_ID_AND_RECYCLE_STATE, query = "SELECT cs FROM CloudSafeEntity cs WHERE cs.id=?1 AND cs.recycled=?2"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA_FLAT, query = "SELECT c FROM CloudSafeEntity c WHERE ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?1) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?2))  AND c.recycled = ?3 ORDER BY c.name ASC"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DATA, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = ?4 ORDER BY c.isFolder DESC, c.name ASC"),
 		@NamedQuery(name = CloudSafeEntity.GET_USER_CLOUDSAFE_DOCUMENTS, query = "SELECT c FROM CloudSafeEntity c WHERE (c.parent.id=?1 AND c.name!='_ROOT_') AND ((c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.USER AND c.user=?2) OR (c.owner=com.doubleclue.comm.thrift.CloudSafeOwner.GROUP AND c.group IN ?3)) AND c.recycled = false AND c.isFolder = false ORDER BY c.name ASC"),
@@ -117,7 +116,6 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String SET_FOLDER_NAME = "CloudSafeEntity.setFolderName";
 	public static final String MOVE_ENTRY = "CloudSafeEntity.moveEntry";
 	public static final String GET_CLOUDSAFE_BY_ID = "CloudSafeEntity.getParentById";
-	public static final String GET_CLOUDSAFE_BY_ID_AND_RECYCLE_STATE = "CloudSafeEntity.parentByIdAndRecycleState ";
 	public static final String GET_USER_CLOUDSAFE_DATA = "CloudSafeEntity.getUserCloudsafeData";
 	public static final String GET_USER_CLOUDSAFE_DATA_FLAT = "CloudSafeEntity.getUserCloudsafeDataFlat";
 	public static final String GET_SINGLE_USER = "CloudSafeEntity.getSingleUser";
@@ -132,13 +130,12 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String GET_CLOUDSAFE_BY_PARENT = "CloudSafeEntity.cloudSafeByParent";
 	public static final String GET_ALL_IDS = "CloudSafeEntity.allIds";
 
-
 	public CloudSafeEntity() {
 		super();
 	}
 
 	public CloudSafeEntity(CloudSafeOwner owner, DcemUser user, DeviceEntity device, String name, LocalDateTime discardAfter, String options, boolean isFolder,
-			CloudSafeEntity parent, DcemUser lastModifiedUser) {
+			CloudSafeEntity parent) {
 		super();
 		this.owner = owner;
 		this.user = user;
@@ -148,7 +145,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		this.options = options;
 		this.isFolder = isFolder;
 		this.parent = parent;
-		this.lastModifiedUser = lastModifiedUser;
+		this.lastModifiedUser = user;
 	}
 
 	@Id
@@ -224,10 +221,10 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@Column(nullable = true)
 	LocalDateTime discardAfter; // TODO to be removed
-	
+
 	@DcemGui
 	@Column(nullable = true, updatable = false)
-	LocalDateTime createdOn; 
+	LocalDateTime createdOn;
 
 	@JsonIgnore
 	String options;
@@ -280,15 +277,14 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@Transient
 	@JsonIgnore
 	boolean newEntity = false;
-	
+
 	@Transient
 	@JsonIgnore
 	boolean selected = false;
-	
+
 	@Transient
 	@JsonIgnore
 	String sharedTo;
-	
 
 	@Transient
 	@JsonIgnore
@@ -532,6 +528,26 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		return Objects.equals(this.getId(), other.getId());
 	}
 
+	public void copyEntity(CloudSafeEntity source) {
+		setOptions(source.getOptions());
+		if (source.getSalt() != null) {
+			setSalt(source.getSalt());
+		}
+		setUser(source.getUser());
+		if (source.getDevice() != null) {
+			setDevice(source.getDevice());
+		}
+		setDiscardAfter(source.getDiscardAfter());
+		setLastModified(LocalDateTime.now());
+		setName(source.getName());
+		setLastModifiedUser(source.getLastModifiedUser());
+		setLength(source.getLength());
+		setTextExtract(source.getTextExtract());
+		setTags(source.getTags());
+		setTextLength(source.getTextLength());
+		setInfo(source.getInfo());
+	}
+
 	public boolean isFile() {
 		return isFolder == false;
 	}
@@ -632,14 +648,14 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		}
 		return ownerName;
 	}
-	
-	public String getNameWithExtension () {
+
+	public String getNameWithExtension() {
 		if (dcemMediaType == null || name.contains(".")) {
 			return name;
 		}
 		return name + "." + dcemMediaType.getNameExtension();
 	}
-	
+
 	public String getLocation() {
 		if (parent.getName().equals(DcemConstants.CLOUD_SAFE_ROOT)) {
 			return "";
@@ -670,7 +686,5 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public void setCreatedOn(LocalDateTime createdOn) {
 		this.createdOn = createdOn;
 	}
-
-	
 
 }

@@ -11,6 +11,12 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.doubleclue.comm.thrift.AppErrorCodes;
+import com.doubleclue.dcem.admin.logic.AlertSeverity;
+import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
+import com.doubleclue.dcem.admin.logic.ReportAction;
+import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.entities.DcemReporting;
 import com.doubleclue.dcem.core.entities.DcemTemplate;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
@@ -60,23 +66,33 @@ public class EmailTask extends CoreTask {
 		logger.debug("EmailTask started");
 		long start = System.currentTimeMillis();
 		DcemApplicationBean applicationBean = CdiUtils.getReference(DcemApplicationBean.class);
+		DcemReportingLogic reportingLogic = CdiUtils.getReference(DcemReportingLogic.class);
 		TemplateLogic templateLogic = CdiUtils.getReference(TemplateLogic.class);
 		HashMap<SupportedLanguage, Set<String>> mapSortEmailsByLanguage = new HashMap<SupportedLanguage, Set<String>>();
 		if (users != null) {
-			for (DcemUser dcemUser : users) {
-				Set<String> emails = mapSortEmailsByLanguage.get(dcemUser.getLanguage());
-				if (emails == null) {
-					emails = new HashSet<String>();
-					mapSortEmailsByLanguage.put(dcemUser.getLanguage(), emails);
+			try {
+				for (DcemUser dcemUser : users) {
+					Set<String> emails = mapSortEmailsByLanguage.get(dcemUser.getLanguage());
+					if (emails == null) {
+						emails = new HashSet<String>();
+						mapSortEmailsByLanguage.put(dcemUser.getLanguage(), emails);
+					}
+					if (dcemUser.getEmail() == null || dcemUser.getEmail().isEmpty() == true) {
+						logger.info("Could not send email to '" + dcemUser.getLoginId() + "'. User has no Email!");
+						continue;
+					}
+					emails.add(dcemUser.getEmail());
 				}
-				if (dcemUser.getEmail() == null || dcemUser.getEmail().isEmpty() == true) {
-					logger.info("Could not send email to '" + dcemUser.getLoginId() + "'. User has no Email!");
-					continue;
-				}
-				emails.add(dcemUser.getEmail());
+			} catch (Exception e) {
+				reportingLogic.addReporting(
+						new DcemReporting(ReportAction.Email, null, AppErrorCodes.UNEXPECTED_ERROR, null, e.toString(), AlertSeverity.ERROR, false));
+				logger.error("E-Mail Task FAILED", e);
+				return;
 			}
 		}
-		if (emailAdresses != null && language != null) {
+		if (emailAdresses != null && language != null)
+
+		{
 			mapSortEmailsByLanguage.put(language, emailAdresses);
 		}
 
@@ -86,15 +102,23 @@ public class EmailTask extends CoreTask {
 				DbResourceBundle dbResourceBundle = DbResourceBundle.getDbResourceBundle(language.getLocale());
 				dcemTemplateEmail = templateLogic.getTemplateByNameLanguage(templateName, language);
 				if (dcemTemplateEmail == null) {
+					reportingLogic.addReporting(
+							new DcemReporting(ReportAction.GetTemplate, null, AppErrorCodes.NO_TEMPLATE_FOUND, "", templateName, AlertSeverity.ERROR, false));
 					logger.error("Couldn't send Emanuel with template. Tempalte name not found for: " + templateName);
 					continue;
 				}
 				StringWriter stringWriter = new StringWriter();
 				Template tempalte = applicationBean.getTemplateFromConfig(dcemTemplateEmail);
 				tempalte.process(map, stringWriter);
-				SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), stringWriter.toString(),
-						dbResourceBundle.getString(subjectResource), attachments);
+				String subject = dbResourceBundle.getString(subjectResource);
+				String subjectParam = (String) map.get(DcemConstants.MAIL_SUBJECT_PARAMETER);
+				if (subjectParam != null) {
+					subject = subject.replace("{{" + DcemConstants.MAIL_SUBJECT_PARAMETER + "}}", subjectParam);
+				}
+				SendEmail.sendMessage(new ArrayList<String>(mapSortEmailsByLanguage.get(language)), stringWriter.toString(), subject, attachments);
 			} catch (Exception e) {
+				reportingLogic.addReporting(
+						new DcemReporting(ReportAction.Email, null, AppErrorCodes.UNEXPECTED_ERROR, null, e.toString(), AlertSeverity.ERROR, false));
 				logger.error("E-Mail Task FAILED", e);
 				continue;
 			}

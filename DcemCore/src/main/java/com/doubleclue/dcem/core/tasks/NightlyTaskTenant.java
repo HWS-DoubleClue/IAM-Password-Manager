@@ -31,6 +31,7 @@ public class NightlyTaskTenant extends CoreTask {
 	@Override
 	public void runTask() {
 		try {
+			System.out.println("NightlyTaskTenant.runTask()");
 			logger.info("Nightly-Task for " + TenantIdResolver.getCurrentTenantName());
 			OperatorSessionBean operatorSessionBean = CdiUtils.getReference(OperatorSessionBean.class);
 			AdminModule adminModule =  CdiUtils.getReference(AdminModule.class);

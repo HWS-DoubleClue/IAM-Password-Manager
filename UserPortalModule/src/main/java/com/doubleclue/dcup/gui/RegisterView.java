@@ -462,7 +462,7 @@ public class RegisterView implements Serializable {
 		if (portalSessionBean.getDcemUser() != null) {
 			// creating the recovery key
 			CloudSafeEntity cloudSafeEntity = new CloudSafeEntity(CloudSafeOwner.USER, portalSessionBean.getDcemUser(), null, DcemConstants.RECOVERY_KEY, null,
-					CloudSafeOptions.ENC.name(), false, null, portalSessionBean.getDcemUser());
+					CloudSafeOptions.ENC.name(), false, null);
 			cloudSafeEntity.setGcm(true);
 			byte[] recoverKey;
 			try {

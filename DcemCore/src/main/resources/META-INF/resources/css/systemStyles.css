@@ -191,7 +191,7 @@
 	color: var(--header-link-text-color) !important;
 	vertical-align: middle;
 	margin-left: 8px;
-	font-size: large;
+	font-size: x-large;
 	text-decoration: none;
 	background-color: none !important;
 }

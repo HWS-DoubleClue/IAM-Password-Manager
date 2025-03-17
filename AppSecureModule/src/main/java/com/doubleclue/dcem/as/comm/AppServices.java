@@ -917,7 +917,7 @@ public class AppServices {
 	 * @param detachedDevice
 	 * @throws DcemException
 	 */
-	public LocalDateTime setCloudSafe(SdkCloudSafe sdkCloudSafe, DeviceEntity detachedDevice, int userId) throws ExceptionReporting {
+	public LocalDateTime setCloudSafe(SdkCloudSafe sdkCloudSafe, DeviceEntity detachedDevice, int userId) throws Exception {
 		// Check user
 		DcemUser user = (detachedDevice != null) ? detachedDevice.getUser() : userLogic.getUser(userId);
 		if (user == null) {
@@ -947,7 +947,7 @@ public class AppServices {
 						new DcemReporting(ReportAction.WriteCloudSafe, user, AsUtils.convertToAppErrorCodes(e.getErrorCode()), null, fileName),
 						"Exception while getting shared CloudSafe data.");
 			} else if (fileName.contains(CloudSafeLogic.FOLDER_SEPERATOR)) { 	
-				parent  = cloudSafeLogic.makeDirectories(null, fileName, user);  // create directories
+				parent  = cloudSafeLogic.makeDirectories(null, fileName, user, null);  // create directories
 				fileName = fileName.substring(fileName.lastIndexOf(CloudSafeLogic.FOLDER_SEPERATOR) + 1);
 			}
 		}
@@ -969,7 +969,7 @@ public class AppServices {
 		LocalDateTime lastModified = (sdkCloudSafe.getLastModified() > 0) ? DcemUtils.convertEpoch(sdkCloudSafe.getLastModified()) : null;
 
 		CloudSafeEntity cloudSafeEntity = new CloudSafeEntity(owner, fileOwner, owner == CloudSafeOwner.USER ? null : detachedDevice, fileName, discardAfter,
-				sdkCloudSafe.getOptions(), false, parent, fileOwner);
+				sdkCloudSafe.getOptions(), false, parent);
 		cloudSafeEntity.setLastModified(lastModified);
 		try {
 			// String x = new String(sdkCloudSafe.getContent(), StandardCharsets.UTF_8);

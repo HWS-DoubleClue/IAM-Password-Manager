@@ -68,7 +68,7 @@ public class DcemReportingLogic {
 		dcemReporting.setLocalDateTime(LocalDateTime.now());
 		dcemReporting.setId(adminModule.getTenantData().getReportIdGenerator().newId());
 		if (dcemReporting.getSource() == null) {
-			dcemReporting.setSource(AuthApplication.SECURE_APP.name());
+			dcemReporting.setSource(AuthApplication.DCEM.name());
 		}
 		em.persist(dcemReporting);
 	}

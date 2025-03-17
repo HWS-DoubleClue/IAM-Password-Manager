@@ -8,7 +8,7 @@ public class CloudSafeUploadFile {
 
 	public String fileName;
 	public File file;
-	public CloudSafeEntity cloudSafeEntity;
+	private CloudSafeEntity cloudSafeEntity;
 
 	public CloudSafeUploadFile(String fileName, File file, CloudSafeEntity cloudSafeEntity) {
 		this.fileName = fileName;

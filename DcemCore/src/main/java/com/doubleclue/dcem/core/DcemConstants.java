@@ -534,6 +534,8 @@ public final class DcemConstants {
 	
 	public static final String ICONS_16_PATH = "/META-INF/resources/pictures/icons/16x16/";
 
+	public static final String MAIL_SUBJECT_PARAMETER = "SubjectParameter";
+
 	
 
 	

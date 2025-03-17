@@ -242,7 +242,7 @@ public class AsModuleApiImpl implements AsModuleApi {
 	@Override
 	public void setUserCloudSafe(String name, String options, LocalDateTime discardAfter, DcemUser dcemUser, boolean withAuditing, char[] password, byte[] content)
 			throws DcemException {
-		CloudSafeEntity cloudSafeEntity = new CloudSafeEntity(CloudSafeOwner.USER, dcemUser, null, name, discardAfter, options, false, null, dcemUser);
+		CloudSafeEntity cloudSafeEntity = new CloudSafeEntity(CloudSafeOwner.USER, dcemUser, null, name, discardAfter, options, false, null);
 		cloudSafeLogic.setCloudSafeByteArray(cloudSafeEntity, password, content, dcemUser, null);
 	}
 

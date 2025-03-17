@@ -2,7 +2,6 @@ package com.doubleclue.dcem.as.logic.cloudsafe;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
 
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -19,7 +18,7 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.Bucket;
+import software.amazon.awssdk.services.s3.model.BucketVersioningStatus;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -29,7 +28,9 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
+import software.amazon.awssdk.services.s3.model.PutBucketVersioningRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.VersioningConfiguration;
 
 @Named("cloudSafeContentS3")
 public class CloudSafeContentS3 implements CloudSafeContentI {
@@ -58,11 +59,28 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 			s3Client = S3Client.builder().region(Region.EU_CENTRAL_1).credentialsProvider(awsCredentialsProvider).endpointOverride(uri).build();
 		}
 		ListBucketsResponse listBucketsResponse = s3Client.listBuckets();
+//		VersioningConfiguration versioningConfiguration = VersioningConfiguration.builder().status(BucketVersioningStatus.ENABLED).build();
+//		PutBucketVersioningRequest request = PutBucketVersioningRequest.builder().bucket(s3SecretAccessKey).versioningConfiguration(versioningConfiguration).build();
+   
+	//	s3Client.putBucketVersioning(request);
 //		List<Bucket> buckets = listBucketsResponse.buckets();
 //		for (Bucket bucket : buckets) {
 //			System.out.println(" Bucket: " + bucket.name());
 //		}
 	}
+	
+//	private void addRule() {
+//		LifecycleRule lifecycleRule = LifecycleRule.builder().build();
+//		lifecycleRule.noncurrentVersionExpiration().builder().noncurrentDays(1).build();
+//
+//		BucketLifecycleConfiguration bucketLifecycleConfiguration = BucketLifecycleConfiguration.builder().rules(null).build();
+//		
+//		 BucketLifecycleConfiguration.Rule rule1 = new BucketLifecycleConfiguration.Rule()
+//                 .withId("Archive immediately rule")
+//                 .withFilter(new LifecycleFilter(new LifecyclePrefixPredicate("glacierobjects/")))
+//                 .addTransition(new Transition().withDays(0).withStorageClass(StorageClass.Glacier))
+//                 .withStatus(BucketLifecycleConfiguration.ENABLED);
+//	}
 
 	@Override
 	public void initiateTenant(String tenantName) throws Exception {
@@ -99,6 +117,16 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 		ResponseInputStream<GetObjectResponse> inputStream = s3Client.getObject(objectRequest);
 		return inputStream;
 	}
+	
+	
+//	public void getVersions(EntityManager em, int id) throws DcemException {
+//		String bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
+//		ListObjectVersionsRequest versionsRequest = ListObjectVersionsRequest.builder().bucket(awsS3BucketPrefix).keyMarker(bucketName).keyMarker(getObjectKey(id, null)).build();
+//		ListObjectVersionsResponse list = s3Client.listObjectVersions(versionsRequest);
+//		List<ObjectVersion> list2 =  list.
+////		list2.get(0).g
+////		return inputStream;
+//	}
 
 	
 	@Override

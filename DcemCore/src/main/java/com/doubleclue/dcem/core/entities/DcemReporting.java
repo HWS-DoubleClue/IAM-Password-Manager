@@ -95,6 +95,8 @@ public class DcemReporting extends EntityInterface implements DataSerializable {
 			this.errorCode = errorcode.name();
 		}
 		this.location = location;
+		this.severity = severity;
+		this.showOnDashboard = showOnDashboard;
 		setInfo(info);
 	}
 

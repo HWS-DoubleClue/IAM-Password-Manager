@@ -55,11 +55,9 @@
 
 			<p:outputLabel value="#{CoreMsg['Template.formatKeyToken']} "></p:outputLabel>
 			<p></p>
-			<div style="height: 550px; display: block">
+			<div style="height: 500px; display: block">
 				<p:inputTextarea style="width: 98%" autoResize="false" id="editor1" rows="26" name="editor1" value="#{templateDialog.actionObject.content}" />
 			</div>
-			<p></p>
-
 			<p:commandButton id="ok" style="width: 8em" value="#{CoreMsg['OK']}" icon="fa fa-check" rendered="#{templateDialog.newTemplateAction}" ajax="true"
 				actionListener="#{autoDialog.actionOk}" process="@form"></p:commandButton>
 
