@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -97,12 +98,7 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 	}
 
 
-	@Override
-	public InputStream getS3Data(int id, String prefix) throws DcemException {
-		throw new DcemException(DcemErrorCodes.NOT_IMPLEMENTED, prefix);
-	}
-
-
+	
 	@Override
 	public void writeS3Data(int id, String prefix, InputStream inputStream, int length) throws DcemException {
 		throw new DcemException(DcemErrorCodes.NOT_IMPLEMENTED, prefix);
@@ -113,5 +109,20 @@ public class CloudSafeContentNas implements CloudSafeContentI {
 	public void deleteS3Data(int id, String prefix) throws DcemException {
 		throw new DcemException(DcemErrorCodes.NOT_IMPLEMENTED, prefix);		
 	}
+
+
+	@Override
+	public List<DocumentVersion> getS3Versions(int id) throws DcemException {
+		throw new DcemException(DcemErrorCodes.NOT_IMPLEMENTED, "");
+	}
+
+
+	@Override
+	public InputStream getS3ContentInputStream(int id, String prefix, String versionId) throws DcemException {
+		throw new DcemException(DcemErrorCodes.NOT_IMPLEMENTED, "");
+	}
+
+
+	
 		
 }

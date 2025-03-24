@@ -102,7 +102,7 @@ public class ReverseProxyDialog extends DcemDialog {
 			rpConfig.setSdkConfigContent(null);
 			auditingLogic.addAudit(getAutoViewAction().getDcemAction(), AsConstants.RP_CONFIG_DISABLED);
 		} else {
-			if (rpConfig.getPassword().trim().isEmpty()) {
+			if (rpConfig.getPassword() == null || rpConfig.getPassword().trim().isEmpty()) {
 				JsfUtils.addErrorMessage(AsModule.RESOURCE_NAME, "rpMessage.pwempty");
 				return;
 			}

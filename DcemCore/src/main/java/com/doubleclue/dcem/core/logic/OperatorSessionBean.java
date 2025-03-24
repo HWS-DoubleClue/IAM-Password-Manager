@@ -485,4 +485,12 @@ public class OperatorSessionBean implements Serializable {
 			return dcemUser.getAccountName() + " LoggedIn: " + loggedIn;
 		}
 	}
+
+	public TimeZone getMyTimeZone() {
+		return myTimeZone;
+	}
+
+	public void setMyTimeZone(TimeZone myTimeZone) {
+		this.myTimeZone = myTimeZone;
+	}
 }

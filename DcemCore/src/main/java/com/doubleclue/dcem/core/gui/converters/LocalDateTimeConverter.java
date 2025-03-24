@@ -54,6 +54,9 @@ public class LocalDateTimeConverter extends DateTimeConverter {
         	LocalDate localDate = (LocalDate) value;
         	return localDate.format(df.withLocale(facesContext.getViewRoot().getLocale())); 
         }
+        if (value instanceof Instant) { // Long Epoch always UTC 
+        	value = DcemUtils.convertEpoch(((Instant)value).toEpochMilli());         	
+        }
         if (value instanceof LocalDateTime) {
             LocalDateTime localDateTime = (LocalDateTime) value;
             TimeZone timeZone = (TimeZone) facesContext.getExternalContext().getSessionMap().get(DcemConstants.SESSION_TIMEZONE);

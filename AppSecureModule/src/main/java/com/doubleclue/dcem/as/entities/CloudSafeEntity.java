@@ -164,6 +164,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@JsonIgnore
 	CloudSafeOwner owner;
 
+	@DcemGui(name = "userr", subClass = "loginId", visible = false)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_AS_PROP_USER"), nullable = false, insertable = true, updatable = true)
 	@JsonIgnore
@@ -241,6 +242,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@JsonIgnore
 	Boolean isGcm = true;
 
+	@DcemGui(visible = false)
 	@Column(name = "recycled", nullable = false)
 	@JsonIgnore
 	boolean recycled = false;
@@ -294,6 +296,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	@DcemGui
 	@Transient
 	String ownerName;
+	
 
 	public String getPath() {
 		return path;
@@ -546,6 +549,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		setTags(source.getTags());
 		setTextLength(source.getTextLength());
 		setInfo(source.getInfo());
+		setOwner(source.getOwner());
 	}
 
 	public boolean isFile() {

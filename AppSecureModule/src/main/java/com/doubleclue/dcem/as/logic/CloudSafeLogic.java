@@ -59,6 +59,7 @@ import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentDb;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentI;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentNas;
 import com.doubleclue.dcem.as.logic.cloudsafe.CloudSafeContentS3;
+import com.doubleclue.dcem.as.logic.cloudsafe.DocumentVersion;
 import com.doubleclue.dcem.as.restapi.model.AsApiCloudSafeFile;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.as.DcemUploadFile;
@@ -102,7 +103,7 @@ public class CloudSafeLogic {
 			0x02, 0x3, 0x04, 0x01, 0x02, 0x3, 0x04 };
 
 	final static String AUDIT_SHARED_BY = ", Shared By: ";
-	final static String OCR_TEXT = "ocr_text";
+//	final static String OCR_TEXT = "ocr_text";
 
 	final static public String FOLDER_SEPERATOR = "/";
 
@@ -171,7 +172,8 @@ public class CloudSafeLogic {
 		} catch (DcemException e) {
 			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, e.getErrorCode(), e.getMessage(), AlertSeverity.ERROR, false);
 		} catch (Exception e) {
-			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, e.getMessage(), AlertSeverity.ERROR,
+			logger.error("couldn't initialze CloudSafe: " + cloudSafeStorageType, e);
+			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.CLOUD_SAFE_CONFIGURATION, e.getMessage(), AlertSeverity.ERROR,
 					false);
 		}
 	}
@@ -196,10 +198,10 @@ public class CloudSafeLogic {
 		}
 	}
 
-	public String getContentAsString(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser, boolean ocr) throws DcemException {
+	public String getContentAsString(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser) throws DcemException {
 		InputStream inputStream = null;
 		try {
-			inputStream = getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, ocr);
+			inputStream = getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, null);
 			return IOUtils.toString(inputStream, StandardCharsets.UTF_8.name());
 		} catch (Exception exp) {
 			throw new DcemException(DcemErrorCodes.INVALID_CLOUDDATA_ID, "");
@@ -213,17 +215,13 @@ public class CloudSafeLogic {
 		}
 	}
 
-	public byte[] getContentAsBytes(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser) throws DcemException {
-		return getContentAsBytes(cloudSafeEntity, password, auditUser, false);
-	}
-
 	/*
 	 * Use this method for short entries only
 	 */
-	public byte[] getContentAsBytes(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser, boolean ocr) throws DcemException {
+	public byte[] getContentAsBytes(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser) throws DcemException {
 		InputStream inputStream = null;
 		try {
-			inputStream = getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, ocr);
+			inputStream = getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, null);
 			return KaraUtils.readInputStream(inputStream);
 		} catch (Exception exp) {
 			throw new DcemException(DcemErrorCodes.INVALID_CLOUDDATA_ID, "", exp);
@@ -239,11 +237,11 @@ public class CloudSafeLogic {
 
 	@DcemTransactional
 	public InputStream getCloudSafeContentAsStream(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser) throws DcemException {
-		return getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, false);
+		return getCloudSafeContentAsStream(cloudSafeEntity, password, auditUser, null);
 	}
 
 	@DcemTransactional
-	public InputStream getCloudSafeContentAsStream(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser, boolean ocrText) throws DcemException {
+	public InputStream getCloudSafeContentAsStream(CloudSafeEntity cloudSafeEntity, char[] password, DcemUser auditUser, String versionId) throws DcemException {
 		if (cloudSafeEntity.getName().endsWith(AsConstants.EXTENSION_PASSWORD_SAFE)) {
 			if (passwordSafeEnabled(cloudSafeEntity.getUser()) == false) {
 				throw new DcemException(DcemErrorCodes.PASSWORD_SAFE_NOT_ENABLED, "PasswordSafe is disabled for this user. Please contact your Administrator.");
@@ -258,8 +256,8 @@ public class CloudSafeLogic {
 		}
 		try {
 			InputStream inputStream;
-			if (ocrText == true) {
-				inputStream = cloudSafeContentI.getS3Data(cloudSafeEntity.getId(), OCR_TEXT);
+			if (versionId != null) {
+				inputStream = cloudSafeContentI.getS3ContentInputStream(cloudSafeEntity.getId(), null, versionId);
 			} else {
 				inputStream = cloudSafeContentI.getContentInputStream(em, cloudSafeEntity.getId());
 			}
@@ -290,7 +288,7 @@ public class CloudSafeLogic {
 			throw exp;
 		} catch (NoSuchKeyException exp) {
 			exp.printStackTrace();
-			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, cloudSafeEntity.getName() + ocrText);
+			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_NOT_FOUND, cloudSafeEntity.getName() );
 		} catch (Exception exp) {
 			throw new DcemException(DcemErrorCodes.CLOUD_SAFE_FILE_DECRYPTION, cloudSafeEntity.getName());
 		}
@@ -520,7 +518,7 @@ public class CloudSafeLogic {
 			CloudSafeEntity originalDbCloudSafeEntity, String ocrText) throws DcemException {
 
 		SortedSet<CloudSafeTagEntity> tags = new TreeSet<CloudSafeTagEntity>();
-		if (cloudSafeEntity.getId() != null && Persistence.getPersistenceUtil().isLoaded(cloudSafeEntity, "tags") == true) {
+		if (Persistence.getPersistenceUtil().isLoaded(cloudSafeEntity, "tags") == true) {
 			if (cloudSafeEntity.getTags() != null) {
 				for (CloudSafeTagEntity cloudSafeTagEntity : cloudSafeEntity.getTags()) {
 					tags.add(em.find(CloudSafeTagEntity.class, cloudSafeTagEntity.getId())); // attach tags
@@ -551,18 +549,15 @@ public class CloudSafeLogic {
 					updateCloudSafeUsage(dbCloudSafeEntity.getUser().getId(), delta);
 				}
 			}
-			if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
-				if (ocrText == null || ocrText.isEmpty()) {
-					cloudSafeContentI.deleteS3Data(dbCloudSafeEntity.getId(), OCR_TEXT);
-					dbCloudSafeEntity.setTextLength(0L);
-				} else {
-					byte[] ocrData = ocrText.getBytes(StandardCharsets.UTF_8);
-					InputStream ocrStream = new ByteArrayInputStream(ocrData);
-					InputStream encryptedStream = getEncryptStream(dbCloudSafeEntity, ocrStream, password);
-					dbCloudSafeEntity.setTextLength((long) ocrData.length);
-					cloudSafeContentI.writeS3Data(dbCloudSafeEntity.getId(), OCR_TEXT, encryptedStream, ocrData.length + 16);
-				}
-			}
+//			if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
+//				if (ocrText != null) {
+//					byte[] ocrData = ocrText.getBytes(StandardCharsets.UTF_8);
+//					InputStream ocrStream = new ByteArrayInputStream(ocrData);
+//					InputStream encryptedStream = getEncryptStream(dbCloudSafeEntity, ocrStream, password);
+//					dbCloudSafeEntity.setTextLength((long) ocrData.length);
+//					cloudSafeContentI.writeS3Data(dbCloudSafeEntity.getId(), OCR_TEXT, encryptedStream, ocrData.length + 16);
+//				}
+//			}
 			if (loggedInUser != null && asModule.getPreferences().isEnableAuditUser() == true && cloudSafeEntity.getOwner() != CloudSafeOwner.DEVICE) {
 				DcemAction dcemAction = new DcemAction(asCloudSafeSubject, DcemConstants.ACTION_EDIT);
 				String passwordProtected = "";
@@ -1199,11 +1194,6 @@ public class CloudSafeLogic {
 	public void deleteCloudSafeFilesContent(List<CloudSafeDto> list) throws DcemException {
 		for (CloudSafeDto cloudSafeDto : list) {
 			cloudSafeContentI.delete(em, cloudSafeDto.getId());
-			if (cloudSafeStorageType == CloudSafeStorageType.AwsS3) {
-				if (cloudSafeDto.textLength > 0) {
-					cloudSafeContentI.deleteS3Data(cloudSafeDto.getId(), OCR_TEXT);
-				}
-			}
 		}
 	}
 
@@ -1858,14 +1848,14 @@ public class CloudSafeLogic {
 		// EG TODO folderPassword is not supported anymore
 		if (folderPassword != null && !cloudSafeEntity.isOption(CloudSafeOptions.FPD)) {
 			if (moveTo != null && (getCloudSafe(moveTo).isOption(CloudSafeOptions.PWD) || getCloudSafe(moveTo).isOption(CloudSafeOptions.FPD))) {
-				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, null, loggedInUser, false);
+				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, null, loggedInUser, null);
 				cloudSafeEntity.setOptions((CloudSafeOptions.FPD.name()));
 			} else if (moveTo == null || getCloudSafe(moveTo).isOption(CloudSafeOptions.ENC) && cloudSafeEntity.isOption(CloudSafeOptions.FPD)) {
-				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, folderPassword.toCharArray(), loggedInUser, false);
+				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, folderPassword.toCharArray(), loggedInUser, null);
 				cloudSafeEntity.setOptions((CloudSafeOptions.PWD.name()));
 			} else if (getCloudSafe(moveTo).isOption(CloudSafeOptions.ENC) && cloudSafeEntity.isOption(CloudSafeOptions.ENC)
 					&& cloudSafeEntity.isFolder() == false) {
-				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, null, loggedInUser, false);
+				inputStream = getCloudSafeContentAsStream(cloudSafeEntity, null, loggedInUser, null);
 			}
 			File tempFile = null;
 			FileOutputStream fileOutputStream = null;
@@ -2160,6 +2150,10 @@ public class CloudSafeLogic {
 			}
 		}
 		return parent;
+	}
+	
+	public List<DocumentVersion> getS3Versions (CloudSafeEntity document) throws DcemException {
+		return cloudSafeContentI.getS3Versions(document.getId());
 	}
 
 }
