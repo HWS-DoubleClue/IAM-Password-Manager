@@ -298,13 +298,10 @@ public final class DcemConstants {
 	public static final String LICENCE_SERVLET_PATH = "/lcServlet";
 
 	// user portal
-	public static final String USERPORTAL_SERVLET_CLASS = "com.doubleclue.dcem.userportal.servlets.DcupServlet";
-	public static final String USERPORTAL_SERVLET_NAME = "DcupServlet";
-	public static final String USERPORTAL_SERVLET_FILTER = "/userportal/*";
-	public static final String USERPORTAL_SERVLET_FILTER_CLASS = "com.doubleclue.dcem.userportal.servlets.EmbeddedUserPortalFilter";
-	public static final String USERPORTAL_SERVLET_FILTER_NAME = "EmbeddedUserPortalFilter";
-	public static final String USERPORTAL_SERVLET_PATH = "/userPortalServlet";
-	public static final String USERPORTAL_SERVL_PATH = "userPortalServlet";
+	public static final String VERIFICATION_SERVLET_CLASS = "com.doubleclue.dcem.core.servlets.VerificationServlet";
+	public static final String VERIFICATION_SERVLET_NAME = "verificationServlet";
+	public static final String VERIFICATION_SERVLET_FILTER = "/mgt/verificationServlet/*";
+	public static final String VERIFICATION_SERVLET_PATH = "verificationServlet";
 	public static final String DCDB_URL_PROTOCOL = "dcdb";
 	public static final String EMAIL_LICENCE_WARNING_SUBJECT_BUNDLE_KEY = "system.EmailLicenceWarningSubject";
 	public static final String EMAIL_PASSWORD_RESET_SUBJECT_BUNDLE_KEY = "system.EmailForgotPasswordSubject";
@@ -370,8 +367,7 @@ public final class DcemConstants {
 	public static final String FIDO_ERROR_WRONG_RP_ID_FIREFOX = "The operation is insecure.";
 
 	// public static final String USER_PORTAL_SERVLET_PATH = "/openServlet";
-	public static final String USER_PORTAL_SERVLET_NAME = "DCUP-Servlet";
-	public static final String USER_PORTAL_CONTEXT = "/userportal";
+//	public static final String AUTHENTICATION_CONTEXT = "/autenticationServlet";
 	public static final String EXPIRED_PAGE = "expired_.xhtml";
 	public static final String LOGOFF_PAGE = "logoff_.xhtml";
 
@@ -381,10 +377,10 @@ public final class DcemConstants {
 	public static final String EMBEDDED_USER_PORTAL_PATH = "/dcem/userportal";
 
 	// AZURE
-	public static final String AZURE_CALLBACK_SERVLET_NAME = "AzureCallbackServlet";
-	public static final String AZURE_CALLBACK_SERVLET_PATH = "/azureCallback";
-	public static final String AZURE_AUTHORITY = "https://login.microsoftonline.com/";
-	public static final String AZURE_RESOURCE_GRAPH = "https://graph.microsoft.com/";
+//	public static final String AZURE_CALLBACK_SERVLET_NAME = "AzureCallbackServlet";
+//	public static final String AZURE_CALLBACK_SERVLET_PATH = "/azureCallback";
+ 	public static final String AZURE_AUTHORITY = "https://login.microsoftonline.com/";
+//	public static final String AZURE_RESOURCE_GRAPH = "https://graph.microsoft.com/";
 
 	public static final int MAX_MEM_CLOUD_SAFE_LENGTH = (1024 * 1024 * 1024); // 1 Gbyte
 	public static final String FACES_REDIRECT = "?faces-redirect=true";
@@ -498,7 +494,7 @@ public final class DcemConstants {
 	public static final String EMAIL_SHIFT_SUBJECT_ASSGINED = "Shift has been assigned";
 	public static final String EMAIL_SHIFT_SUBJECT_REMOVED = "Shift has been removed";
 
-	public static final String DEFAULT_APP_ICON = "/appHub/DC_Logo_transp_01.2.png";
+	public static final String DEFAULT_APP_ICON = "/META-INF/resources/pictures/DC_Logo_transp_01.2.png";
 
 	public static int PHOTO_WIDTH = 128;
 	public static int PHOTO_HEIGHT = 128;
@@ -533,10 +529,15 @@ public final class DcemConstants {
 	public static final String URL_PARAMS = "&params=";
 	
 	public static final String ICONS_16_PATH = "/META-INF/resources/pictures/icons/16x16/";
+	public static final String ICONS_SVG_PATH = "/META-INF/resources/pictures/svg/";
 
 	public static final String MAIL_SUBJECT_PARAMETER = "SubjectParameter";
 
+	public static final String JSF_NOTIFICATION_PAGE = "/notificationView_.xhtml";
 	
+	public static final String JSF_PAGE_FORGOT_PASSWORD_REQUEST = "forgotPasswordRequestView_.xhtml";
+	public static final String JSF_PAGE_FORGOT_PASSWORD = "forgotPasswordView_.xhtml";
+	public static final String JSF_PAGE_END_MESSAGE = "endMessageView_.xhtml";
 
 	
 

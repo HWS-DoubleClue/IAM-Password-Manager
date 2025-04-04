@@ -1,9 +1,6 @@
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.http.client.utils.URLEncodedUtils;
 
 import com.doubleclue.dcem.core.jpa.ApiFilterItem;
 import com.doubleclue.dcem.core.jpa.ApiFilterItem.OperatorEnum;
@@ -11,6 +8,7 @@ import com.doubleclue.dcem.core.jpa.ApiFilterItem.SortOrderEnum;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.nimbusds.jose.util.StandardCharset;
 import com.nimbusds.jose.util.StandardCharset;
 
 public class ApiFiltersToJson {
@@ -29,7 +27,7 @@ public class ApiFiltersToJson {
 			System.out.println(encoded);
 			
 			System.exit(0);
-		} catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) { 
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(-1);

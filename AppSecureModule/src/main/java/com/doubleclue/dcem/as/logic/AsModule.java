@@ -355,7 +355,7 @@ public class AsModule extends DcemModule {
 							} else {
 								sb.append(url.getProtocol() + "://" + url.getHost());
 							}
-							service = configLogic.getClusterConfig().getConnectionService(ConnectionServicesType.USER_PORTAL);
+							service = configLogic.getClusterConfig().getConnectionService(ConnectionServicesType.MANAGEMENT);
 							if (service != null && service.getPort() != mgtPort) {
 								sb.append(",");
 								sb.append((service.isSecure() ? "https" : "http") + "://" + url.getHost() + ":" + service.getPort());
@@ -571,7 +571,6 @@ public class AsModule extends DcemModule {
 			listPolicy.add(new PolicyAppEntity(AuthApplication.WebServices, operator.getId(), operator.getLoginId()));
 		}
 		listPolicy.add(new PolicyAppEntity(AuthApplication.AuthGateway, 0, null));
-		listPolicy.add(new PolicyAppEntity(AuthApplication.USER_PORTAL, 0, null));
 		for (AuthGatewayEntity authGatewayEntity : gatewayList) {
 			listPolicy.add(new PolicyAppEntity(AuthApplication.AuthGateway, authGatewayEntity.getId(), authGatewayEntity.getName()));
 		}

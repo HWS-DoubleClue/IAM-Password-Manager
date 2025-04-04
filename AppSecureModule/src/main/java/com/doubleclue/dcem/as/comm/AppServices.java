@@ -1,5 +1,6 @@
 package com.doubleclue.dcem.as.comm;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -54,6 +55,8 @@ import com.doubleclue.comm.thrift.Template;
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.admin.logic.ReportAction;
+import com.doubleclue.dcem.as.dm.DmModuleApi;
+import com.doubleclue.dcem.as.dm.UploadDocument;
 import com.doubleclue.dcem.as.entities.ActivationCodeEntity;
 import com.doubleclue.dcem.as.entities.AsVersionEntity;
 import com.doubleclue.dcem.as.entities.CloudSafeEntity;
@@ -121,6 +124,7 @@ import com.doubleclue.dcem.core.logic.module.OtpModuleApi;
 import com.doubleclue.dcem.core.tasks.TaskExecutor;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
+import com.doubleclue.dcem.core.utils.typedetector.FileUploadDetector;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ProductVersion;
@@ -129,6 +133,7 @@ import com.doubleclue.utils.SecureUtils;
 import com.doubleclue.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Charsets;
+import com.google.common.io.Files;
 import com.hazelcast.core.IExecutorService;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.Member;
@@ -908,7 +913,8 @@ public class AppServices {
 		}
 		byte[] content = cloudSafeLogic.getContentAsBytes(cloudSafeEntity, null, userLogic.getUser(userId));
 		return new SdkCloudSafe(uniqueKey, content != null ? ByteBuffer.wrap(content) : null, cloudSafeEntity.getOptions(),
-				cloudSafeEntity.getDiscardAfterAsLong(), cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
+				cloudSafeEntity.getDiscardAfterAsLong(),
+				cloudSafeEntity.getLastModified() != null ? (cloudSafeEntity.getLastModified().toEpochSecond(ZoneOffset.UTC) * 1000) : 0, null,
 				cloudSafeEntity.getLength(), null, cloudSafeEntity.isWriteAccess(), cloudSafeEntity.isRestrictDownload());
 	}
 
@@ -946,9 +952,11 @@ public class AppServices {
 				throw new ExceptionReporting(
 						new DcemReporting(ReportAction.WriteCloudSafe, user, AsUtils.convertToAppErrorCodes(e.getErrorCode()), null, fileName),
 						"Exception while getting shared CloudSafe data.");
-			} else if (fileName.contains(CloudSafeLogic.FOLDER_SEPERATOR)) { 	
-				parent  = cloudSafeLogic.makeDirectories(null, fileName, user, null);  // create directories
+			} else if (fileName.contains(CloudSafeLogic.FOLDER_SEPERATOR)) {
+				parent = cloudSafeLogic.makeDirectories(null, fileName, user, null); // create directories
 				fileName = fileName.substring(fileName.lastIndexOf(CloudSafeLogic.FOLDER_SEPERATOR) + 1);
+			} else {
+				parent = cloudSafeLogic.getCloudSafeRoot();
 			}
 		}
 		// Check owner
@@ -972,9 +980,24 @@ public class AppServices {
 				sdkCloudSafe.getOptions(), false, parent);
 		cloudSafeEntity.setLastModified(lastModified);
 		try {
-			// String x = new String(sdkCloudSafe.getContent(), StandardCharsets.UTF_8);
-			CloudSafeEntity newEntity = cloudSafeLogic.setCloudSafeByteArray(cloudSafeEntity, null, sdkCloudSafe.getContent(), userLogic.getUser(userId),
-					cloudSafeFromDb);
+			/*
+			 */
+			DmModuleApi dmModuleApi = null;
+			try {
+				dmModuleApi = (DmModuleApi) CdiUtils.getReference(AsConstants.DM_MODULE_API_IMPL_BEAN);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			CloudSafeEntity newEntity;
+			if (dmModuleApi != null) {
+				File file = File.createTempFile(AsConstants.DOUBLE_CLUE_DM, "");
+				Files.write(sdkCloudSafe.getContent(), file);			
+				UploadDocument uploadDocument = new UploadDocument(fileName, file, parent, FileUploadDetector.getMediaType(fileName, file));
+				newEntity = dmModuleApi.saveNewDocument(uploadDocument, user, null);
+				file.delete();
+			} else {
+				newEntity = cloudSafeLogic.setCloudSafeByteArray(cloudSafeEntity, null, sdkCloudSafe.getContent(), userLogic.getUser(userId), cloudSafeFromDb);
+			}
 			return newEntity.getLastModified();
 		} catch (DcemException exp) {
 			AppErrorCodes appErrorCode = null;

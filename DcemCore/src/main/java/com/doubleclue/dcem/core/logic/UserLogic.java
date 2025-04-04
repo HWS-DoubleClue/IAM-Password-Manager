@@ -812,18 +812,18 @@ public class UserLogic {
 	}
 
 	@DcemTransactional
-	public String registerUser(DcemUser dcemUser, String url, int timeout) throws DcemException {
+	public void registerUser(DcemUser dcemUser, String url, int timeout) throws DcemException {
 		addOrUpdateUser(dcemUser, new DcemAction(userSubject, DcemConstants.ACTION_ADD), true, false, adminModule.getPreferences().getUserPasswordLength(),
 				false);
 		UrlTokenEntity urlTokenEntity = urlTokenLogic.addUrlTokenToDb(UrlTokenType.VerifyEmail, timeout, null, dcemUser.getId().toString());
 		urlTokenLogic.sendUrlTokenByEmail(dcemUser, url, urlTokenEntity);
-		String recoveryKey = null;
-		if (asModuleApi != null) {
-			recoveryKey = RandomUtils.generateRandomAlphaNumericString(20);
-			asModuleApi.setUserCloudSafe(DcemConstants.RECOVERY_KEY, CloudSafeOptions.ENC.name(), null, dcemUser, false, null,
-					recoveryKey.getBytes(DcemConstants.UTF_8));
-		}
-		return recoveryKey;
+//		String recoveryKey = null;
+//		if (asModuleApi != null) {
+//			recoveryKey = RandomUtils.generateRandomAlphaNumericString(20);
+//			asModuleApi.setUserCloudSafe(DcemConstants.RECOVERY_KEY, CloudSafeOptions.ENC.name(), null, dcemUser, false, null,
+//					recoveryKey.getBytes(DcemConstants.UTF_8));
+//		}
+		return;
 	}
 
 	public String getUserGroupNamesAsString(DcemUser dcemUser, String filter) throws DcemException {

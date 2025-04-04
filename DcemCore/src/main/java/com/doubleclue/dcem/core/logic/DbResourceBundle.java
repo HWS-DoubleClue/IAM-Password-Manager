@@ -15,7 +15,6 @@ import javax.faces.context.FacesContext;
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.tasks.ReloadClassInterface;
 import com.doubleclue.dcem.core.weld.CdiUtils;
-import com.doubleclue.utils.ResourceBundleUtf8Control;
 
 public class DbResourceBundle extends ResourceBundle implements ReloadClassInterface {
 
@@ -23,7 +22,6 @@ public class DbResourceBundle extends ResourceBundle implements ReloadClassInter
 
 	Locale locale;
 	public String bundleName;
-    protected static final Control UTF8_CONTROL = new ResourceBundleUtf8Control(); 
 
 
 	// public DbResourceBundle(Properties inProperties) {
@@ -56,12 +54,12 @@ public class DbResourceBundle extends ResourceBundle implements ReloadClassInter
 	protected DbResourceBundle(String bundleName) {
 		this();
 		setParent(ResourceBundle.getBundle(bundleName, 
-                FacesContext.getCurrentInstance().getViewRoot().getLocale(), UTF8_CONTROL));
+                FacesContext.getCurrentInstance().getViewRoot().getLocale()));
 	}
 	
 	protected DbResourceBundle(Locale locale, String bundleName) {
 		this(locale);
-		setParent(ResourceBundle.getBundle(bundleName, locale, UTF8_CONTROL));
+		setParent(ResourceBundle.getBundle(bundleName, locale));
 	}
 	
 

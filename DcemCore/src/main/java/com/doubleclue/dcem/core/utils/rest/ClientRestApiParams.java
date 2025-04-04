@@ -60,7 +60,7 @@ public class ClientRestApiParams {
 		if (authHeader != null) {
 			return authHeader;
 		}
-		if (credentials != null) {
+		if (credentials != null) { 
 			authHeader = "Basic " + new String(Base64.getEncoder().encodeToString((credentials.getUserName() + ":" + credentials.getPassword()).getBytes()));
 		}
 		return authHeader;

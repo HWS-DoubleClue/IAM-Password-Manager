@@ -550,6 +550,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 		setTextLength(source.getTextLength());
 		setInfo(source.getInfo());
 		setOwner(source.getOwner());
+		setDcemMediaType(source.getDcemMediaType());
 	}
 
 	public boolean isFile() {

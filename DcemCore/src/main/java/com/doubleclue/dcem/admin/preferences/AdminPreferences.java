@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.validator.constraints.Range;
 
+import com.doubleclue.dcem.admin.logic.NotificationType;
 import com.doubleclue.dcem.core.gui.DcemGui;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.logic.module.ModulePreferences;
@@ -64,9 +65,6 @@ public class AdminPreferences extends ModulePreferences {
 	@DcemGui()
 	String alertsNotificationGroup = null;
 
-	@DcemGui()
-	boolean disableUserPortal = false;
-
 	@DcemGui(separator = "Login With")
 	boolean enableAzureDirectLogin;
 
@@ -76,8 +74,14 @@ public class AdminPreferences extends ModulePreferences {
 	@DcemGui()
 	boolean useWindowsSSO;
 	
-	@DcemGui()
+	@DcemGui(separator = "New User Registration")
 	boolean enableCreateAccount;
+	
+	@DcemGui()
+	NotificationType notificationType = NotificationType.BOTH;
+	
+	@DcemGui(help = "Activation code validation in minutes")
+	int urlTokenTimeout = 120;  // minutes
 
 	@DcemGui(separator = "Location", choose = { "None", "IP", "City" })
 	String locationInformation = "None";
@@ -248,20 +252,28 @@ public class AdminPreferences extends ModulePreferences {
 		this.useOnlyAzureDirectLogin = useOnlyAzureDirectLogin;
 	}
 
-	public boolean isDisableUserPortal() {
-		return disableUserPortal;
-	}
-
-	public void setDisableUserPortal(boolean disableUserPortal) {
-		this.disableUserPortal = disableUserPortal;
-	}
-
 	public boolean isEnableCreateAccount() {
 		return enableCreateAccount;
 	}
 
 	public void setEnableCreateAccount(boolean enableCreateAccount) {
 		this.enableCreateAccount = enableCreateAccount;
+	}
+
+	public NotificationType getNotificationType() {
+		return notificationType;
+	}
+
+	public void setNotificationType(NotificationType notificationType) {
+		this.notificationType = notificationType;
+	}
+
+	public int getUrlTokenTimeout() {
+		return urlTokenTimeout;
+	}
+
+	public void setUrlTokenTimeout(int urlTokenTimeout) {
+		this.urlTokenTimeout = urlTokenTimeout;
 	}
 
 }

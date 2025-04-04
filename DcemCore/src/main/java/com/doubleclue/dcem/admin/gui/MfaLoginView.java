@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
+import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.config.ConnectionServicesType;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
@@ -21,6 +22,7 @@ import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.ViewNavigator;
 import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
+
 
 @SuppressWarnings("serial")
 @Named("mfaLoginView")
@@ -95,6 +97,10 @@ public class MfaLoginView extends LoginViewAbstract {
 		loginPanelRendered = false;
 		passwordPanelRendered = true;
 		PrimeFaces.current().ajax().update("loginForm");
+	}
+	
+	public String actionForgotPassword() {
+		return DcemConstants.JSF_PAGE_FORGOT_PASSWORD_REQUEST + DcemConstants.FACES_REDIRECT;
 	}
 	
 	

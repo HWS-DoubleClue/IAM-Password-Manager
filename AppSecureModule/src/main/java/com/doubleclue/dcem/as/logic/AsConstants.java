@@ -118,4 +118,6 @@ public class AsConstants {
 	public final static String SHARE_BY_GROUP_START = "(";
 	public final static String SHARE_BY_GROUP_END = ")";
 	public final static int LIB_VERION_2 = 0x200000;
+	public static final String DM_MODULE_API_IMPL_BEAN = "documentLogic";
+	public static final String DOUBLE_CLUE_DM = "dcemDm";
 }

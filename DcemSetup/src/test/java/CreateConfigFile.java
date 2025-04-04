@@ -41,15 +41,11 @@ public class CreateConfigFile {
 		databaseConfig.setDatabaseName("dcem_db");
 		databaseConfig.setDatabaseEncryptionKey(Base64.getEncoder().encodeToString(key));
 		
-
 		databaseConfig.setDatabaseType(DatabaseTypes.MARIADB.name());
 		DbPoolConfig dbPoolConfig = new DbPoolConfig();
 		//		nodeConfig.setNodeName("A");
 		localConfig.setDatabase(databaseConfig);
 		localConfig.setDbPoolConfig(dbPoolConfig);
-//		localConfig.setNode(nodeConfig);
-		
-		
 		try {
 			LocalConfigProvider.readConfig();
 			LocalConfigProvider.writeConfig(localConfig);

@@ -163,7 +163,7 @@ public class JsonWebKey {
 	private static String getBase64StringFromX509Certificate(X509Certificate certificate) throws CertificateEncodingException {
 		return Base64.getEncoder().encodeToString(certificate.getEncoded()).replaceAll("(.{64})", "$1\n");
 	}
-
+	
 	private byte[] decodeBase64String(String base64String) {
 		return Base64.getDecoder().decode(base64String.replaceAll("\n", "").replaceAll("\r", ""));
 	}

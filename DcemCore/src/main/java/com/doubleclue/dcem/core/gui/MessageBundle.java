@@ -7,11 +7,6 @@ import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import javax.faces.component.UIViewRoot;
-import javax.faces.context.FacesContext;
-
-import com.doubleclue.utils.ResourceBundleUtf8Control;
-
 /**
  * Note: Internal Use only.
  *
@@ -101,15 +96,13 @@ public class MessageBundle {
 				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 				/*PropertyResourceBundle bundle = (PropertyResourceBundle) PropertyResourceBundle
 						.getBundle(sMessageBundleName, locale, classLoader);*/
-				
-				ResourceBundleUtf8Control utf8Control = new ResourceBundleUtf8Control();
 				PropertyResourceBundle rBundle;
 				/*try {
 					rBundle = (PropertyResourceBundle)utf8Control.newBundle(sMessageBundleName, locale, null, classLoader, true); 
 				} catch (Exception e) {
 					rBundle = (PropertyResourceBundle)ResourceBundle.getBundle(sMessageBundleName, locale, classLoader, utf8Control);
 				}*/
-				rBundle = (PropertyResourceBundle) ResourceBundle.getBundle(sMessageBundleName, locale, utf8Control);
+				rBundle = (PropertyResourceBundle) ResourceBundle.getBundle(sMessageBundleName, locale);
 				mBundles.put(locale, rBundle);
 			}
 		}

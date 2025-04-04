@@ -11,7 +11,6 @@ public enum KeyStorePurpose {
 	Saml_Connection_CA ("SAML Web Connection", ConnectionServicesType.SAML),
 	Saml_IdP_CA ("SAML Identity Provider",null),
 	OAuth_Connection_CA ("OpenID - OAuth", ConnectionServicesType.OPENN_ID_OAUTH),
-	USER_PORTAL ("UserPortal", ConnectionServicesType.USER_PORTAL),
 	HealthCheck_Connection_CA ("Health Check", ConnectionServicesType.HEALTH_CHECK);
 	
 	String readableName;

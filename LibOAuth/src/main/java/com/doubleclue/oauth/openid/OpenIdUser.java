@@ -434,7 +434,7 @@ public class OpenIdUser {
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}
-		}
+		} 
 	}
 
 	private String getDigestAlgorithm(SignatureAlgorithm signatureAlgorithm) {

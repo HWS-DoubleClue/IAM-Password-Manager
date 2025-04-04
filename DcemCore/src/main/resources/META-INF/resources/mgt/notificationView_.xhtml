@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</f:facet>
+	<h:outputStylesheet library="webjars" name="font-awesome/6.5.1/css/all-jsf.css" />
+	<title>DoubleClue Registration</title>
+	<h:outputStylesheet library="css" name="systemStyles.css" />
+	<h:outputStylesheet library="css" name="media.css" />
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{registerView.preRenderViewInputs}" />
+	</f:metadata>
+</h:head>
+
+<style>
+</style>
+
+<f:view >
+	<h:body>
+		<ui:include src="../titleLogin.xhtml" />
+		<div class="ui-fluid" style="margin-left: 1em">
+			<h:form id="notificationForm">
+				<p:messages id="messages" showDetail="false" sticky="true" closable="true" keepAlive="true">
+					<p:autoUpdate />
+				</p:messages>
+				<br />
+				<p></p>			
+					<p:outputLabel value="#{AdminMsg['registration.secondStepSummaryNotification']}" style="font-size: x-large;" />
+				<p:separator />
+				<br />
+				<p:outputLabel value="#{AdminMsg['registration.secondStepDetailNotification']}" />
+				<p></p>
+				<p:outputLabel value="#{AdminMsg['registration.activationCodeLabel']}" />
+				<p></p>
+				<p:panelGrid  styleClass="ui-fluid sendActivationCode" columnClasses="ui-g-4 ui-mg-3 ui-sm-8 ui-lg-2, ui-g-4 ui-mg-3 ui-sm-12 ui-lg-2" columns="2" layout="grid">
+					<p:commandButton id="showActivationCode" value="#{AdminMsg['registration.buttonShow']}" action="#{registerView.displayActivationCode}" icon="fa fa-eye" />
+					<p:outputLabel id="activationCodeLabel" style="font-size: large; font-weight: bold;" value="#{registerView.activationCode}" />
+				</p:panelGrid>
+				<p:panelGrid  styleClass="ui-fluid sendActivationCode" columnClasses="ui-g-4 ui-mg-4 ui-sm-8 ui-lg-2" columns="1" layout="grid">
+					<p:commandButton id="sendActivationCodeEmail" value="#{AdminMsg['registration.buttonSendEmail']}" rendered="#{registerView.emailNotificationTypeSelected}"
+						action="#{registerView.actionSendEmailWithActivationCode}" icon="fa fa-arrow-circle-right" />
+					<p:commandButton id="sendActivationCodeSMS" value="#{AdminMsg['registration.buttonSendSMS']}" rendered="#{registerView.smsNotificationTypeSelected}"
+						action="#{registerView.actionSendSmsWithActivationCode}" icon="fa fa-arrow-circle-right" />
+				</p:panelGrid>
+				<p></p>
+				<br></br>
+				<p:commandLink id="secureLogin" action="#{registerView.actionGotoLogin}" ajax="false" style="margin-left: 1em" immediate="true">
+					<h:outputText style="font-size: 1.5em;" class="fa fa-angle-double-left"  />
+					<h:outputText style="font-size: 1.5em" value=" #{AdminMsg['button.backToLogin']}" />
+				</p:commandLink>
+
+				
+			</h:form>
+		</div>
+
+	</h:body>
+</f:view>
+</html>

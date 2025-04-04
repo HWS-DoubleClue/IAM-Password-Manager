@@ -161,5 +161,23 @@ public class FileUploadDetector {
 		}
 		return sb.toString();
 	}
+	
+	public static DcemMediaType getMediaType(String name, File file) {
+		if (name.toLowerCase().endsWith(".kdbx")) {
+			return DcemMediaType.KEEPASS;
+		}
+		MediaType mediaType;
+		try {
+ 			mediaType = FileUploadDetector.detectMediaType(file, new Metadata());
+		} catch (Exception e) {
+			return DcemMediaType.BINARY;
+		}
+		DcemMediaType dcemMediaType = DcemMediaType.getDcemMediaType(mediaType.toString());
+		if (dcemMediaType == null) {
+			dcemMediaType = DcemMediaType.BINARY;
+		}
+		return dcemMediaType;
+	}
+	
 
 }

@@ -80,6 +80,9 @@ public class ClusterConfig implements Cloneable, Serializable {
 		ConnectionServicesType[] types = ConnectionServicesType.values();
 		connectionServices = new ArrayList<>(types.length);
 		for (ConnectionServicesType type : types) {
+			if (type == ConnectionServicesType.USER_PORTAL || type == ConnectionServicesType.AZURE_CALLBACK) {
+				continue;
+			}
 			connectionServices.add(new ConnectionService(type));
 		}
 	}
@@ -90,6 +93,9 @@ public class ClusterConfig implements Cloneable, Serializable {
 			types.remove(service.getConnectionServicesType());
 		}
 		for (ConnectionServicesType type : types) {
+			if (type == ConnectionServicesType.USER_PORTAL || type == ConnectionServicesType.AZURE_CALLBACK) {
+				continue;
+			}
 			connectionServices.add(new ConnectionService(type));
 		}
 	}
@@ -97,6 +103,7 @@ public class ClusterConfig implements Cloneable, Serializable {
 	public ConnectionService getConnectionService(ConnectionServicesType connectionServicesType) {
 		for (ConnectionService connectionService : connectionServices) {
 			if (connectionServicesType == connectionService.getConnectionServicesType()) {
+				
 				if (connectionService.getSameAsConnectionServiceType() != null) {
 					return getConnectionService(connectionService.getSameAsConnectionServiceType());
 				}
@@ -161,7 +168,13 @@ public class ClusterConfig implements Cloneable, Serializable {
 	}
 
 	public void setConnectionServices(List<ConnectionService> connectionServices) {
-		this.connectionServices = connectionServices;
+		this.connectionServices = new ArrayList<>();
+		for (ConnectionService connectionService :  connectionServices) {
+			if (connectionService.connectionServicesType == ConnectionServicesType.USER_PORTAL || connectionService.connectionServicesType == ConnectionServicesType.AZURE_CALLBACK) {
+				continue;
+			}
+			this.connectionServices.add(connectionService);
+		}
 	}
 
 	@XmlTransient

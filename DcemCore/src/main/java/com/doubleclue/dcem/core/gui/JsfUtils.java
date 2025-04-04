@@ -54,7 +54,6 @@ import org.primefaces.model.StreamedContent;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.utils.KaraUtils;
-import com.doubleclue.utils.ResourceBundleUtf8Control;
 
 /**
  * General useful static utilies for workign with JSF.
@@ -353,11 +352,11 @@ public class JsfUtils {
 			locale = Locale.ENGLISH;
 		}
 		// ClassLoader ldr = Thread.currentThread().getContextClassLoader();
-		return ResourceBundle.getBundle(pMessageBundleName, locale, new ResourceBundleUtf8Control());
+		return ResourceBundle.getBundle(pMessageBundleName, locale);
 	}
 
 	public static ResourceBundle getBundle(String pMessageBundleName, Locale locale) {
-		return ResourceBundle.getBundle(pMessageBundleName, locale, new ResourceBundleUtf8Control());
+		return ResourceBundle.getBundle(pMessageBundleName, locale);
 	}
 
 	public static Locale getLocale() {		
@@ -941,7 +940,7 @@ public class JsfUtils {
 		}
 		UIViewRoot uiRoot = ctx.getViewRoot();
 		Locale locale = uiRoot.getLocale();
-		return ResourceBundle.getBundle(ctx.getApplication().getMessageBundle(), locale, new ResourceBundleUtf8Control());
+		return ResourceBundle.getBundle(ctx.getApplication().getMessageBundle(), locale);
 	}
 
 	/**

@@ -2,9 +2,6 @@ package com.doubleclue.dcem.as.logic;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -14,7 +11,6 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 
 import com.doubleclue.comm.thrift.CloudSafeOwner;
-import com.doubleclue.dcem.admin.gui.WelcomeView.SelectedFormat;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 
 //import org.apache.logging.log4j.LogManager;
@@ -32,10 +28,7 @@ import com.doubleclue.dcem.as.entities.PolicyEntity;
 import com.doubleclue.dcem.as.policy.AuthenticationLogic;
 import com.doubleclue.dcem.as.policy.FingerprintLogic;
 import com.doubleclue.dcem.as.policy.PolicyLogic;
-import com.doubleclue.dcem.as.restapi.model.AddMessageResponse;
-import com.doubleclue.dcem.as.restapi.model.AsApiMessage;
 import com.doubleclue.dcem.as.restapi.model.AsApiMessageResponse;
-import com.doubleclue.dcem.as.restapi.model.AsMapEntry;
 import com.doubleclue.dcem.as.restapi.model.RequestLoginQrCodeResponse;
 import com.doubleclue.dcem.as.tasks.AsCreateChangeTenantCall;
 import com.doubleclue.dcem.as.tasks.AsCreateChangeTenantCallResult;
@@ -55,10 +48,8 @@ import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
-import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.jpa.JpaEntityCacheLogic;
-import com.doubleclue.dcem.core.logic.AuthMethodsActivityDto;
 import com.doubleclue.dcem.core.logic.DbResourceBundle;
 import com.doubleclue.dcem.core.logic.JndiProxyParam;
 import com.doubleclue.dcem.core.logic.TemplateLogic;
@@ -291,5 +282,10 @@ public class AsModuleApiImpl implements AsModuleApi {
 	@Override
 	public long getCloudSafeUsageMb() {
 		return asModule.getTenantData().getGlobalCloudSafeUsageTotal().get() / (1024 * 1024);
+	}
+
+	@Override
+	public String requestActivationCode(DcemUser user) {
+		return  activationLogic.requestActivationCode(user);
 	}
 }

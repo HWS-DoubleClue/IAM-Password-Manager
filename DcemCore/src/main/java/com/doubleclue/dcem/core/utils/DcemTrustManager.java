@@ -107,6 +107,7 @@ public class DcemTrustManager extends X509ExtendedTrustManager {
 				// + chain[0].getSubjectDN().getName().toString());
 			}
 		}
+		
 //			} else {
 //				throw new CertificateException("No trusted CA issuers found");
 //			}			

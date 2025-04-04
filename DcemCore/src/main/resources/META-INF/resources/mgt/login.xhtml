@@ -25,7 +25,7 @@
 	<h:outputScript library="js" name="loginDCEM.js" />
 	<h:outputStylesheet library="webjars" name="font-awesome/6.5.1/css/all-jsf.css" />
 	<script defer="defer" type="text/javascript" src="#{resource['js/javaScriptDCEM.js']}"></script>
-	
+
 	<link id="favicon" rel="icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
 	<link rel="shortcut icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
 </h:head>
@@ -36,11 +36,13 @@
 		<h:outputStylesheet library="css" name="systemStyles.css" />
 
 		<ui:include src="../titleLogin.xhtml" />
-		<div style="width: 100%; height: 100%; position: absolute; top: 6vh; left: 0;">
-			<p:graphicImage cache="true" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.isBackgroundImage()}" />
-		</div>
 
-		<div id="container" style="position:absolute;z-index: 2; left:0px; top: 6vh; width: 100%; height: 96vh; overflow: auto;  #{adminModule.loginBackgroundColor};">
+		<!-- 	<div style="width: 100%; height: 100%; position: absolute; top: 6vh; left: 0;">
+			<p:graphicImage cache="true" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.isBackgroundImage()}" />
+		</div> -->
+
+		<div id="container"
+			style="position:absolute;z-index: 2; left:0px; top: 10vh; width: 100%; height: 90vh; overflow: auto;  #{adminModule.loginBackgroundColor};">
 
 			<ui:include src="ajaxStatus.xhtml" />
 			<h:form id="locForm">
@@ -75,21 +77,17 @@
 				<!-- Login Form -->
 				<p:panel id="basic" style="width: 35em; margin: 0 auto; border: 0px;">
 					<p />
-					<h:panelGroup id="customheader" style="vertical-align: middle; position: relative; vertical-align: center">
-						<p:graphicImage library="pictures" name="support.svg" width="32" height="32" style="vertical-align: middle; filter: var(--filter)" />
-						<p:outputLabel value="Enterprise Management" class="dialogTitle" />
-					</h:panelGroup>
-					<p:commandLink id="register" action="#{logoffView.actionRequestRegister}" rendered="#{adminModule.modulePreferences.enableCreateAccount}"
-						ajax="false" style="float:right;">
-						<h:outputText class="fa fa-user-plus" style="font-size: large" />
-						<p:spacer width="2em" />
-						<p:outputLabel style="font-size: medium; cursor: pointer" value=" #{DcupMsg['title.createNewAccount']}" />
+
+					<p:commandLink id="register" action="#{registerView.actionRequestRegister}" rendered="#{adminModule.modulePreferences.enableCreateAccount}" ajax="false"
+						style="float:right;">
+						<h:outputText class="fa fa-user-plus" style="font-size: x-large" />
+						<p:outputLabel style="margin-left: 0.2em; font-size: medium; cursor: pointer; text-decoration-line: underline;" value="#{AdminMsg['createNewAccount']}" />
 					</p:commandLink>
 
 					<p />
 					<p:outputLabel value="#{AdminMsg['mfalogin.login']}" class="dialogTitle" style="margin-left: 8px; font-size: 1.6em;"
 						rendered="#{mfaLoginView.loginPanelRendered}" />
-					<p:outputLabel value="#{DcupMsg['title.changePasswordView']}" class="dialogTitle" style="margin-left: 8px; font-size: 1.6em;"
+					<p:outputLabel value="#{AdminMsgg['title.changePasswordView']}" class="dialogTitle" style="margin-left: 8px; font-size: 1.6em;"
 						rendered="#{mfaLoginView.passwordPanelRendered}" />
 					<br />
 					<p:focus for="password" rendered="#{mfaLoginView.userNameDisable == true}" />
@@ -119,27 +117,24 @@
 					<!-- change password panel -->
 					<p:panel style="width: 80%; margin: 0 auto; border: none; font-size: 1.2em" rendered="#{mfaLoginView.passwordPanelRendered}">
 						<br />
-						<p:outputLabel class="labelLogin" value="#{DcupMsg['label.username']}" />
+						<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.username']}" />
 						<p:inputText id="username" value="#{mfaLoginView.userName}" size="40" disabled="true" style="width: 280px;" />
 						<p></p>
-						<p:outputLabel class="labelLogin" value="#{DcupMsg['label.passwordOld']}" />
+						<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.passwordOld']}" />
 						<p:password id="passwordOld" size="40" value="#{mfaLoginView.passwordOld}" redisplay="true" maxlength="64" style="width: 280px;" toggleMask="true" />
 
 						<p></p>
-						<p:outputLabel class="labelLogin" value="#{DcupMsg['label.passwordNew']}" />
+						<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.passwordNew']}" />
 						<p:password id="passwordNew" size="40" value="#{mfaLoginView.passwordNew}" redisplay="true" maxlength="64" style="width: 280px;" toggleMask="true" />
 						<p></p>
-						<p:outputLabel class="labelLogin" value="#{DcupMsg['label.passwordNewRepeat']}" />
+						<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.passwordNewRepeat']}" />
 						<p:password id="passwordRepeat" size="40" value="#{mfaLoginView.passwordRepeat}" redisplay="true" maxlength="64" style="width: 280px;" toggleMask="true" />
 						<p />
-						<p:commandButton id="changePassword" value="#{DcupMsg['button.changePassword']}" action="#{mfaLoginView.actionChangePassword}" style="width: 100%"
+						<p:commandButton id="changePassword" value="#{AdminMsgg['button.changePassword']}" action="#{mfaLoginView.actionChangePassword}" style="width: 100%"
 							update="@form" ajax="true" async="true">
 						</p:commandButton>
 						<p />
 					</p:panel>
-
-					<p />
-
 					<p />
 					<br />
 					<p:selectBooleanCheckbox id="useAlternative" value="#{mfaLoginView.useAlternativeAuthMethods}" itemLabel="#{AdminMsg['label.useAlternativeAuthMethods']}" />
@@ -148,19 +143,18 @@
 					<p:tooltip for="useAlternativeInfo" showEvent="click" position="top" value="#{AdminMsg['label.useAlternativeAuthMethodsInfo']}" />
 					<br />
 					<p:selectBooleanCheckbox id="staySignedIn" value="#{mfaLoginView.stayLoggedIn}" itemLabel="#{AdminMsg['label.staySignedIn']}" />
-
 					<p />
-
 					<p:commandLink value="" rendered="#{mfaLoginView.backLink}" action="#{mfaLoginView.actionBackLink}" ajax="true">
 						<h:outputLabel class="fa fa-arrow-left" style="padding-right: 0.5em; cursor:pointer;" />
 						<p:outputLabel value="#{AdminMsg['label.selectAnotherUser']}" style="cursor:pointer;"></p:outputLabel>
 					</p:commandLink>
-
 					<p />
-					<p:commandButton id="requestQrCode" rendered="#{mfaLoginView.stopQrCode}" icon="fa fa-qrcode" style="font-size: 1.2em"
-						action="#{mfaLoginView.requestNewQrCode()}" ajax="true" value="#{AdminMsg['mfalogin.login.qrcode.request']}">
-					</p:commandButton>
-					<p />
+					<h:panelGroup>
+						<p:commandButton id="requestQrCode" rendered="#{mfaLoginView.stopQrCode}" icon="fa fa-qrcode" style="font-size: 1.2em"
+							action="#{mfaLoginView.requestNewQrCode()}" ajax="true" value="#{AdminMsg['mfalogin.login.qrcode.request']}">
+						</p:commandButton>
+						<p:commandLink id="forgotPassword" value="#{AdminMsg['button.forgotPassword']}"  action="#{mfaLoginView.actionForgotPassword}" ajax="false" style="float: right" />
+					</h:panelGroup>
 
 				</p:panel>
 
@@ -237,7 +231,7 @@
 				</h:panelGroup>
 				<p />
 				<p />
-				<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{DcupMsg['close']}" onclick="PF('authMethodDialog').hide();"
+				<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{AdminMsgg['close']}" onclick="PF('authMethodDialog').hide();"
 					style="float: right; margin-right: 1em;" immediate="true" />
 				<p />
 				<br />

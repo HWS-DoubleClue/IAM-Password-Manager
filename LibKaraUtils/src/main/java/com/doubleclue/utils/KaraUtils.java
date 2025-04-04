@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
@@ -19,8 +17,6 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.Permission;
-import java.security.PermissionCollection;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -204,7 +200,7 @@ public class KaraUtils {
 	public static String readInputStreamText(InputStream inputStream) throws IOException {
 		return new String(readInputStream(inputStream), StandardCharsets.UTF_8);
 	}
-
+ 
 	// static public PlatformInterface getPlatformInterface() throws Exception {
 	// return platformInterface;
 	// }
@@ -370,6 +366,7 @@ public class KaraUtils {
 			sb.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
 		}
 		return sb.toString();
+		
 	}
 
 	public static Map<String, String> urlParamStringToMap(String param) {

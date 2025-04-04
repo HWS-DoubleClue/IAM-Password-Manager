@@ -80,7 +80,7 @@
 		<artifactId>PetshopModule</artifactId> 
 			</dependency> -->
 
-		<dependency>
+	<!--	<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>RadiusModule</artifactId>
 		</dependency>
@@ -98,12 +98,12 @@
 		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>OAuthModule</artifactId>
-		</dependency>
+		</dependency>-->
 
-		<dependency>
+	<!--	<dependency>
 			<artifactId>UserPortalModule</artifactId>
 			<groupId>com.doubleclue.dcem.module</groupId>
-		</dependency>
+		</dependency>-->
 		<!-- https://mvnrepository.com/artifact/com.sun.xml.ws/jaxws-ri -->
 		<!--
 		https://mvnrepository.com/artifact/org.codehaus.enunciate/enunciate-jaxws-ri-rt -->

@@ -24,22 +24,21 @@
 
 <f:view locale="#{operatorSession.locale}">
 	<h:body>
-
 		<ui:include src="ajaxStatus.xhtml" />
-
 		<ui:include src="../titleLogin.xhtml" />
 		<h:form id="selectLoginForm">
-			<div id="container" style="width: auto; height: 93vh; position: relative;">
-				<div class="box" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+			<div id="container" style="width: auto; height: 90vh; position: relative;">
+				<!-- <div class="box" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
 					<p:graphicImage cache="true" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.backgroundImg != null}" />
-				</div>
+				</div> -->
 
-				<div class="box" style="width: 100%; height: 100%;position: absolute;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
+				<div style="width: 100%; height: 100%;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
 					<p:spacer height="60" />
 					<p:panel id="basic" style="width: 480px; margin: 0 auto; border: none;">
 						<p:panel style=" margin: 0 auto; border: none!important;">
-							<p:graphicImage library="pictures" name="support.svg" width="32" height="32" style="vertical-align: middle; filter: var(--filter)" />
-							<p:outputLabel value="Enterprise Management" class="dialogTitle" />
+							<p:graphicImage cache="false"  value="#{adminModule.logo}" rendered="#{adminModule.defaultCompanyLogo == false}" />
+							<p:graphicImage library="pictures" cache="false" style="vertical-align: middle;" name="DC_Logo_Check_trans_64.png" rendered="#{adminModule.defaultCompanyLogo}" />
+							<p:outputLabel value="#{AdminMsg['mfalogin.login']}" class="dialogTitle" />
 							<p />
 							<p:messages>
 								<p:autoUpdate />

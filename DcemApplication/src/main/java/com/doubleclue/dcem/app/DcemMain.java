@@ -73,6 +73,7 @@ import com.doubleclue.dcem.system.logic.NodeLogic;
 import com.doubleclue.dcem.system.logic.SystemModule;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.ProductVersion;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -193,6 +194,11 @@ public class DcemMain {
 
 		try {
 			data = JdbcUtils.getConfigData(conn, SystemModule.MODULE_ID, DcemConstants.CONFIG_KEY_CLUSTER_CONFIG);
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.configure(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS, false);
+			objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
+			objectMapper.configure(DeserializationFeature.FAIL_ON_UNRESOLVED_OBJECT_IDS, false);
+			objectMapper.configure(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY, false);
 			clusterConfig = new ObjectMapper().readValue(data, ClusterConfig.class);
 			if (JdbcUtils.getNodeId(conn, nodeName) == null) {
 				fatalExit(conn, "No DB-Node configuration found for Node: " + nodeName, null);
@@ -429,12 +435,6 @@ public class DcemMain {
 					addFilter(standardContext, DcemConstants.OAUTH_SERVLET_FILTER_NAME, DcemConstants.OAUTH_SERVLET_FILTER_CLASS,
 							new String[] { DcemConstants.OAUTH_SERVLET_PATH + "/*" }, enabled);
 					break;
-				case USER_PORTAL:
-					addFilter(standardContext, DcemConstants.USERPORTAL_SERVLET_FILTER_NAME, DcemConstants.USERPORTAL_SERVLET_FILTER_CLASS,
-							DcemConstants.USERPORTAL_SERVLET_FILTER, enabled);
-					addFilter(standardContext, DcemConstants.TESTMODULE_SERVLET_FILTER_NAME, DcemConstants.TESTMODULE_SERVLET_FILTER_CLASS,
-							DcemConstants.TESTMODULE_SERVLET_FILTER, enabled);
-					break;
 				default:
 					break;
 				}
@@ -465,9 +465,9 @@ public class DcemMain {
 						addServlet(standardContext, DcemConstants.SAML_SERVLET_NAME, DcemConstants.SAML_SERVLET_CLASS,
 								new String[] { DcemConstants.SAML_SERVLET_PATH, DcemConstants.SAML_SERVLET_PATH + "/idp_metadata.xml" });
 						break;
-					case USER_PORTAL:
-						addServlet(standardContext, DcemConstants.USERPORTAL_SERVLET_NAME, DcemConstants.USERPORTAL_SERVLET_CLASS,
-								DcemConstants.USERPORTAL_SERVLET_PATH);
+					case MANAGEMENT:
+						addServlet(standardContext, DcemConstants.VERIFICATION_SERVLET_NAME, DcemConstants.VERIFICATION_SERVLET_CLASS,
+								DcemConstants.VERIFICATION_SERVLET_FILTER);
 		//				addServlet(standardContext, DcemConstants.WEBDAV_SERVLET_NAME, DcemConstants.WEBDAV_SERVLET_CLASS, DcemConstants.WEBDAV_SERVLET_PATH);
 						addServlet(standardContext, DcemConstants.TEST_SP_SERVLET_NAME, DcemConstants.TEST_SP_SERVLET_CLASS,
 								DcemConstants.TEST_SP_SERVLET_PATH);

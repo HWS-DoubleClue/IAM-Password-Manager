@@ -21,8 +21,8 @@ import com.doubleclue.dcem.core.logic.module.UserPortalModuleApi;
 @SuppressWarnings("serial")
 public class DcemExceptionHandler extends HttpServlet {
 
-	@Inject
-	UserPortalModuleApi userPortalModuleApi;
+//	@Inject
+//	UserPortalModuleApi userPortalModuleApi;
 
 	@Inject
 	AdminModule module;
@@ -71,20 +71,15 @@ public class DcemExceptionHandler extends HttpServlet {
 				break;
 			case 404:
 				if (uri.startsWith(DcemConstants.DEFAULT_WEB_NAME)) {
-					try {
-						userPortalModuleApi.getUserPortalConfig();
-					} catch (DcemException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					if (module.isSwitchUserPortal() == false) {
+					
+				//	if (module.isSwitchUserPortal() == false) {
 						response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 								+ DcemConstants.DEFAULT_WEB_NAME + DcemConstants.WEB_MGT_CONTEXT);
 						return;
-					}
-					response.sendRedirect(
-							request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + DcemConstants.USER_PORTAL_WELCOME);
-					return;
+				//	}
+//					response.sendRedirect(
+//							request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + DcemConstants.USER_PORTAL_WELCOME);
+// TODO					return;
 				}
 				error = "Page Not Found";
 				break;

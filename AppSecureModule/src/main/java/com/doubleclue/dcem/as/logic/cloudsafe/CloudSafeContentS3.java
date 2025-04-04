@@ -94,7 +94,7 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 		if (bucketName == null) {
 			bucketName = awsS3BucketPrefix + TenantIdResolver.getCurrentTenantName().toLowerCase();
 		}
-		NoncurrentVersionExpiration noncurrentVersion = NoncurrentVersionExpiration.builder().newerNoncurrentVersions(3).noncurrentDays(1).build();
+		NoncurrentVersionExpiration noncurrentVersion = NoncurrentVersionExpiration.builder().newerNoncurrentVersions(3).noncurrentDays(14).build();
 		LifecycleRule lifecycleRule = LifecycleRule.builder().status(ExpirationStatus.ENABLED).prefix(CLOUDSAFEFILE)
 				.noncurrentVersionExpiration(noncurrentVersion).build();
 
@@ -127,6 +127,7 @@ public class CloudSafeContentS3 implements CloudSafeContentI {
 	public void initiateTenant(String tenantName) throws Exception {
 		String bucketName = awsS3BucketPrefix + tenantName.toLowerCase();
 		if (checkAccessBucket(bucketName) == true) {
+			addVersionRule(bucketName);
 			return;
 		}
 		// Create Bucket

@@ -2,40 +2,28 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
+	<h:outputStylesheet library="webjars" name="font-awesome/6.5.1/css/all-jsf.css" />
 
 	<div style="#{adminModule.titleStyle};" class="parent-flex-container">
 		<div class="flex-container">
 			<div class="parent-flex-container">
-				<p:graphicImage cache="false" styleClass="companyLogoStyle"
-					value="#{adminModule.logo}"
-					rendered="#{!adminModule.defaultCompanyLogo}" />
-				<p:graphicImage library="pictures" cache="false"
-					styleClass="companyLogoStyle" name="DC_white_bar_209x64center.png"
+				<p:graphicImage cache="false" styleClass="companyLogoStyle" value="#{adminModule.logo}" rendered="#{!adminModule.defaultCompanyLogo}" />
+				<p:graphicImage library="pictures" cache="false" styleClass="companyLogoStyle" name="DC_white_bar_209x64center.png"
 					rendered="#{adminModule.defaultCompanyLogo}" />
 			</div>
 		</div>
 		<div class="center">
 			<div>
-				<h:outputText value="#{adminModule.titleEnterpriseManagment} " />
-				<h:outputText class="fa fa-shuffle"
-					style="color: white; font-size: 1.6em"
-					rendered="#{operatorSession.masterAdminGuest}" />
+				<h:outputText value="#{adminModule.titleEnterpriseManagment}" />
+				<h:outputText class="fa fa-shuffle" style="color: white; font-size: 1.6em" rendered="#{operatorSession.masterAdminGuest}" />
 			</div>
 		</div>
 		<div style="display: flex; align-items: center;">
 			<div style="display: flex; align-items: center; padding: 1em;">
-				<div id="theme-switcher"
-					title="#{CoreMsg['titleMenu.toggleLightDarkMode']}"
-					class="header-button">
-					<!-- <span class="theme-switch-day"><i class="fa fa-solid fa-moon"></i></span> -->
-					<!-- <span class="theme-switch-night"><i class="fa fa-solid fa-sun"></i></span> -->
-					<span class="theme-switch-day"><i class="pi pi-moon"></i></span> <span
-						class="theme-switch-night"><i class="pi pi-sun"></i></span>
+				<div id="theme-switcher" title="#{CoreMsg['titleMenu.toggleLightDarkMode']}" class="header-button">
+					<span class="theme-switch-day"><i class="pi pi-moon"></i></span> <span class="theme-switch-night"><i class="pi pi-sun"></i></span>
 				</div>
 			</div>
 		</div>

@@ -102,21 +102,6 @@ public class GenerateSdkConfigDialog extends DcemDialog {
 		this.serverUrl = serverUrl;
 	}
 
-	public String getPortalUrl() {
-		if (portalUrl == null || portalUrl.isEmpty()) {
-			portalUrl = "--yourhost--";
-			try {
-				portalUrl = dcemApplicationBean.getServiceUrl(ConnectionServicesType.USER_PORTAL);
-			} catch (DcemException e1) {
-			}
-		}
-		return portalUrl;
-	}
-
-	public void setPortalUrl(String portalUrl) {
-		this.portalUrl = portalUrl;
-	}
-
 	public void download() {
 		SdkConfig sdkConfig = new SdkConfig();
 

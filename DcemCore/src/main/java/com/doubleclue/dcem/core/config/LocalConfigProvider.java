@@ -100,7 +100,6 @@ public class LocalConfigProvider {
 		} catch (Exception e1) {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, "Couldn't encrypte admin password", e1);
 		}
-
 		try {
 			configFile = LocalPaths.getConfigurationFile();
 			if (configFile.exists()) {

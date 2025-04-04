@@ -611,10 +611,6 @@ public class DcemApplicationBean implements Serializable {
 		return getServiceUrl(ConnectionServicesType.MANAGEMENT, tenantName);
 	}
 
-	public String getUserPortalUrl(String tenantName) throws DcemException {
-		return getServiceUrl(ConnectionServicesType.USER_PORTAL, tenantName);
-	}
-
 	public String getServiceUrl(ConnectionServicesType connectionServicesType) throws DcemException {
 		return getServiceUrl(connectionServicesType, null);
 	}

@@ -152,30 +152,7 @@ public class AdminModule extends DcemModule {
 		return (AdminTenantData) getModuleTenantData();
 	}
 
-	public boolean isSwitchUserPortal() {
-		if (getPreferences().isDisableUserPortal() == true) {
-			return false;
-		}
-		try {
-			AdminTenantData adminTenantData = getTenantData();
-			if (adminTenantData.getDisabledModules() != null) {
-				for (String moduleId : adminTenantData.getDisabledModules()) {
-					if (moduleId.equals("up")) {
-						return false;
-					}
-				}
-			}
-			if (operatorSessionBean.isLoggedIn() == true && operatorSessionBean
-					.isPermission(new DcemAction(AdminModule.MODULE_ID, DcemConstants.SUBJECT_TITLE_BAR, DcemConstants.ACTION_SWITCH_USER_PORTAL)) == false) {
-				return false;
-			}
-			return true;
-		} catch (Exception e) {
-			logger.error(e);
-			return false;
-		}
-	}
-
+	
 	public String getTitle() {
 		String name = "";
 		TenantIdResolver.getCurrentTenantName();
@@ -459,14 +436,7 @@ public class AdminModule extends DcemModule {
 		}
 	}
 
-	public void actionRedirectionToUserPortal() {
-		try {
-			FacesContext.getCurrentInstance().getExternalContext().redirect(DcemConstants.USER_PORTAL_WELCOME + DcemConstants.FACES_REDIRECT);
-		} catch (IOException e) {
-			logger.error("Could not redirect to Userportal", e);
-		}
-	}
-
+	
 	@Override
 	public boolean isPluginModule() {
 		return false;

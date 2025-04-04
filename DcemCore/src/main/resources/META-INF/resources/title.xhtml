@@ -38,16 +38,10 @@
 				</div>
 				<div style="display: flex; align-items: center; padding: 1em; color: inherit">
 					<div id="theme-switcher" title="#{CoreMsg['titleMenu.toggleLightDarkMode']}" class="header-button">
-						<!-- <span class="theme-switch-day"><i class="fa fa-solid fa-moon"></i></span> -->
-						<!-- <span class="theme-switch-night"><i class="fa fa-solid fa-sun"></i></span> -->
 						<span class="theme-switch-day"><i class="pi pi-moon"></i></span> <span class="theme-switch-night"><i class="pi pi-sun"></i></span>
 					</div>
 
 					<h:outputText id="sessionTimeout" style="font-size: small; margin-right: 1em;" value="" />
-					<p:commandLink action="#{adminModule.actionRedirectionToUserPortal}" title="#{DcupMsg['title.switchToUserportal']}"
-						rendered="#{adminModule.switchUserPortal}" styleClass="header-button">
-						<i class="fa fa-exchange" style="font-size: 1.1em;"></i>
-					</p:commandLink>
 					<p:spacer width="10" />
 					<p:commandLink action="#{viewNavigator.reload}" update="viewPart" style="text-decoration: none;" styleClass="header-button">
 						<i class="fa fa-refresh" style="font-size: 1.1em;"></i>
@@ -62,7 +56,7 @@
 							icon="fa fa-user-pen">
 							<p:ajax event="dialogReturn" update="menuForm titleForm:titleMenu titleForm:userAvatar viewPart" />
 						</p:menuitem>
-						<p:menuitem value="#{DcupMsg['title.changePasswordView']}" action="#{titleBarView.updatePassword}" icon="fa fa-key"
+						<p:menuitem value="#{AdminMsg['AUTO_ACTION.changePassword']}" action="#{titleBarView.updatePassword}" icon="fa fa-key"
 							rendered="#{titleBarView.changePasswordPermission}" />
 						<p:menuitem value="#{CoreMsg['titleMenu.logoff']}" action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" />
 					</p:menu>

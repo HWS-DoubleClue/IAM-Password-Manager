@@ -234,7 +234,6 @@ public class SamlUtils {
 	}
 
 	public static String getBase64String(XMLObject xmlObject) throws MarshallingException {
-
 		byte[] xmlBytes = getXmlByteArray(xmlObject);
 		return Base64.getEncoder().encodeToString(xmlBytes);
 	}

@@ -5,7 +5,7 @@ import com.doubleclue.dcem.core.DcemConstants;
 public enum DcemMediaType {
 // DO NOT CHANGE TO ORDINAL NUMBERS	
 	XHTML("text/html", "html-file.svg", "html"),
-	TEXT("text/plain", "txt-file.png", "txt"),
+	TEXT("text/plain", "gui-file-text-svgrepo-com.svg", "txt"),
 	
 	GIF("image/gif", "picture-file.svg", "gif"),
 	JPEG("image/jpeg", "picture-file.svg", "jpeg"),
@@ -17,7 +17,7 @@ public enum DcemMediaType {
 	TAR("application/x-tar", "zip-file.svg", "tar"),
 	XML("application/xml", DcemConstants.DEFAULT_FILE_ICON, "xml"),
 	ZIP("application/zip", "zip-file.svg", "zip"),
-	KEEPASS("application/octet-stream", "keepass-icon.png", "kdbx"),
+	KEEPASS("application/octet-stream", "keepass2-svgrepo-com.svg", "kdbx"),
 	BINARY("application/octet-stream", DcemConstants.DEFAULT_FILE_ICON, "bin"),
 	
 	WORD("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "microsoft-word.svg", "docx"),
@@ -66,10 +66,16 @@ public enum DcemMediaType {
 		return iconName;
 	}
 	
-	public String getIconResource() {
+	public String getIconResource() { 
+		if (iconName.endsWith(".svg")) {
+			return DcemConstants.ICONS_SVG_PATH + iconName;
+		}
 		return DcemConstants.ICONS_16_PATH + iconName;
 	}
 	public String getIconResourcePath() {
+		if (iconName.endsWith(".svg")) {
+			return "svg/" +  iconName;
+		}
 		return "icons/16x16/" + iconName;
 	}
 

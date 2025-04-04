@@ -1,7 +1,6 @@
 package com.doubleclue.dcem.core.as;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import com.doubleclue.dcem.admin.logic.SendByEnum;
@@ -13,6 +12,8 @@ import com.doubleclue.dcem.core.logic.JndiProxyParam;
 
 public interface AsModuleApi {
 	public String createActivationCode(DcemUser dcemUser, LocalDateTime validTill, SendByEnum sendBy, String info) throws DcemException;
+	
+	public String requestActivationCode(DcemUser user);
 
 	public LocalDateTime getActivationCodeDefaultValidTill();
 

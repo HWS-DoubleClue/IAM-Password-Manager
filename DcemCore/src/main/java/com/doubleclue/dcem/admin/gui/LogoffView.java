@@ -39,9 +39,7 @@ public class LogoffView extends DcemView {
 		PrimeFaces.current().executeScript("localStorage.clear();");
 	}
 	
-	public String actionRequestRegister() {
-		return "/userportal/register_.xhtml" + DcemConstants.FACES_REDIRECT + "&startedFrom=mgt";
-	}
+	
 
 
 	

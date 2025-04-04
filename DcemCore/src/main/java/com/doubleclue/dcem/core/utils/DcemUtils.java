@@ -1316,66 +1316,62 @@ public class DcemUtils {
 		}
 		return null;
 	}
-	
-	 
 
-//	public static List<DcemUploadFile> getMailContents(Message message) throws Exception {
-//
-//		if (message.isMimeType("text/plain") || message.isMimeType("text/html")) {
-//			File tempFile = File.createTempFile("dcem-", "-mail");
-//			Files.write(tempFile.toPath(), message.getContent().toString().getBytes(Charsets.UTF_8));
-//			List<DcemUploadFile> files = new ArrayList<>(1);
-//			DcemMediaType dcemMediaType = DcemMediaType.XHTML;
-//			if (message.isMimeType("text/plain")) {
-//				dcemMediaType = DcemMediaType.TEXT;
-//			}
-//			files.add(new DcemUploadFile("MailBody", tempFile, dcemMediaType));
-//			return files;
-//		} else if (message.isMimeType("multipart/*")) {
-//			Multipart multiPart = (Multipart) message.getContent();
-//			List<DcemUploadFile> files = new ArrayList<>(multiPart.getCount());
-//			File tempFile;
-//			DcemMediaType dcemMediaType = null;
-//			for (int i = 0; i < multiPart.getCount(); i++) {
-//				tempFile = File.createTempFile("dcem-", "-mail");
-//				MimeBodyPart bodyPart = (MimeBodyPart) multiPart.getBodyPart(i);
-//				if (bodyPart.getContentType().toLowerCase().startsWith("text/plain")) {
-//					dcemMediaType = DcemMediaType.TEXT;
-//				} else if (bodyPart.getContentType().toLowerCase().startsWith("text/html")) {
-//					dcemMediaType = DcemMediaType.XHTML;
-//				} else if (bodyPart.getContent() instanceof MimeMultipart) {
-//					System.out.println("DcemUtils.getMailContents()");
-//				} else {
-//					dcemMediaType = null;
-//				}
-//				bodyPart.saveFile(tempFile);
-//				files.add(new DcemUploadFile(bodyPart.getFileName(), tempFile, dcemMediaType));
-//			}
-//			return files;
-//		} else {
-//			return null;
-//		}
-//	}
-//	
-//	private static String getMimeMultipart(MimeMultipart mimeMultipart, List<DcemUploadFile> files) throws Exception {
-//		StringBuffer sb = new StringBuffer();
-//		int count = mimeMultipart.getCount();
-//		for (int i = 0; i < count; i++) {
-//			BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-//			if (bodyPart.isMimeType("text/plain")) {
-//				sb.append('\n');
-//				sb.append(bodyPart.getContent());
-//				break; // without break same text appears twice in my tests
-//			} else if (bodyPart.isMimeType("text/html")) {
-//				sb.append((String) bodyPart.getContent());
-//			} else if (bodyPart.getContent() instanceof MimeMultipart) {
-//				sb.append(getmMimeMultipart((MimeMultipart) bodyPart.getContent()));
-//			}
-//		}
-//		return sb.toString();
-//	}
-	
-	
+	// public static List<DcemUploadFile> getMailContents(Message message) throws Exception {
+	//
+	// if (message.isMimeType("text/plain") || message.isMimeType("text/html")) {
+	// File tempFile = File.createTempFile("dcem-", "-mail");
+	// Files.write(tempFile.toPath(), message.getContent().toString().getBytes(Charsets.UTF_8));
+	// List<DcemUploadFile> files = new ArrayList<>(1);
+	// DcemMediaType dcemMediaType = DcemMediaType.XHTML;
+	// if (message.isMimeType("text/plain")) {
+	// dcemMediaType = DcemMediaType.TEXT;
+	// }
+	// files.add(new DcemUploadFile("MailBody", tempFile, dcemMediaType));
+	// return files;
+	// } else if (message.isMimeType("multipart/*")) {
+	// Multipart multiPart = (Multipart) message.getContent();
+	// List<DcemUploadFile> files = new ArrayList<>(multiPart.getCount());
+	// File tempFile;
+	// DcemMediaType dcemMediaType = null;
+	// for (int i = 0; i < multiPart.getCount(); i++) {
+	// tempFile = File.createTempFile("dcem-", "-mail");
+	// MimeBodyPart bodyPart = (MimeBodyPart) multiPart.getBodyPart(i);
+	// if (bodyPart.getContentType().toLowerCase().startsWith("text/plain")) {
+	// dcemMediaType = DcemMediaType.TEXT;
+	// } else if (bodyPart.getContentType().toLowerCase().startsWith("text/html")) {
+	// dcemMediaType = DcemMediaType.XHTML;
+	// } else if (bodyPart.getContent() instanceof MimeMultipart) {
+	// System.out.println("DcemUtils.getMailContents()");
+	// } else {
+	// dcemMediaType = null;
+	// }
+	// bodyPart.saveFile(tempFile);
+	// files.add(new DcemUploadFile(bodyPart.getFileName(), tempFile, dcemMediaType));
+	// }
+	// return files;
+	// } else {
+	// return null;
+	// }
+	// }
+	//
+	// private static String getMimeMultipart(MimeMultipart mimeMultipart, List<DcemUploadFile> files) throws Exception {
+	// StringBuffer sb = new StringBuffer();
+	// int count = mimeMultipart.getCount();
+	// for (int i = 0; i < count; i++) {
+	// BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+	// if (bodyPart.isMimeType("text/plain")) {
+	// sb.append('\n');
+	// sb.append(bodyPart.getContent());
+	// break; // without break same text appears twice in my tests
+	// } else if (bodyPart.isMimeType("text/html")) {
+	// sb.append((String) bodyPart.getContent());
+	// } else if (bodyPart.getContent() instanceof MimeMultipart) {
+	// sb.append(getmMimeMultipart((MimeMultipart) bodyPart.getContent()));
+	// }
+	// }
+	// return sb.toString();
+	// }
 
 	public static String getMailBodyContent(Message message) throws Exception {
 		if (message.isMimeType("text/plain") || message.isMimeType("text/html")) {
@@ -1435,7 +1431,6 @@ public class DcemUtils {
 		} catch (IOException e1) {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, null, e1);
 		}
-
 		BufferedImage outputImage = resizeImage(inputImage, maxWidth, maxHeight, center);
 		try {
 			ImageIO.write(outputImage, "jpeg", outputStream);
@@ -1445,6 +1440,15 @@ public class DcemUtils {
 		if (outputStream.toByteArray().length > maxLength) {
 			throw new DcemException(DcemErrorCodes.IMAGE_TOO_BIG, "wrong widht or height");
 		}
+		return outputStream.toByteArray();
+	}
+
+	public static byte[] convertImageToJpeg(byte[] image) throws Exception {
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024 * 4);
+		BufferedImage inputImage;
+		inputImage = ImageIO.read(inputStream);
+		ImageIO.write(inputImage, "jpeg", outputStream);
 		return outputStream.toByteArray();
 	}
 
@@ -1594,7 +1598,7 @@ public class DcemUtils {
 	public static String formatDate(String locale, LocalDate date) {
 		return formatDate(new Locale(locale), date);
 	}
-	
+
 	public static String decideFontColor(String hexColor) {
 		int[] rgb = hexToRGB(hexColor);
 		double luminance = calculateLuminance(rgb[0], rgb[1], rgb[2]);
