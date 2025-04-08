@@ -774,14 +774,11 @@
 			</dependency>
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
-				<artifactId>RedHatSatelliteModule</artifactId>
+				<artifactId>MyDevicesModules</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.doubleclue.dcem.lib</groupId>
-				<artifactId>JarLoader</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+			
+			
 			<!-- <dependency> <groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>CrmModule</artifactId> 
 				<version>${project.version}</version> </dependency> -->

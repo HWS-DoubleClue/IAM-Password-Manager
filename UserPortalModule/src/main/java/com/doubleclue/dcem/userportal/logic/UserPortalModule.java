@@ -71,7 +71,7 @@ public class UserPortalModule extends DcemModule {
 		String url = dcemApplicationBean.getUserPortalUrl(null);
 		int ind = url.lastIndexOf('/');
 		url = url.substring(0, ind);
-		return url + DcemConstants.USERPORTAL_SERVLET_PATH + "?token=";
+		return url + DcemConstants.VERIFICATION_SERVLET_FILTER + "?token=";
 	}
 
 	public String getResourceName() {

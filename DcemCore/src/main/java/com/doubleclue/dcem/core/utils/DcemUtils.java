@@ -1419,10 +1419,14 @@ public class DcemUtils {
 	}
 
 	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength) throws DcemException {
-		return resizeImage(image, maxWidth, maxHeight, maxLength, true);
+		return resizeImage(image, maxWidth, maxHeight, maxLength, true, null);
+	}
+	
+	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength, boolean center) throws DcemException {
+		return resizeImage(image, maxWidth, maxHeight, maxLength, center, "jpeg");
 	}
 
-	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength, boolean center) throws DcemException {
+	public static byte[] resizeImage(byte[] image, int maxWidth, int maxHeight, int maxLength, boolean center, String format) throws DcemException {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024 * 4);
 		BufferedImage inputImage;
@@ -1431,9 +1435,13 @@ public class DcemUtils {
 		} catch (IOException e1) {
 			throw new DcemException(DcemErrorCodes.UNEXPECTED_ERROR, null, e1);
 		}
-		BufferedImage outputImage = resizeImage(inputImage, maxWidth, maxHeight, center);
+//		BufferedImage outputImage = resizeImage(inputImage, maxWidth, maxHeight, center);
+		BufferedImage outputImage = inputImage;
+		if (format == null ) {
+			format = "jpeg";
+		}
 		try {
-			ImageIO.write(outputImage, "jpeg", outputStream);
+			ImageIO.write(outputImage, format, outputStream);
 		} catch (Exception e) {
 			logger.error("Couldn't resize image", e);
 		}
@@ -1441,7 +1449,7 @@ public class DcemUtils {
 			throw new DcemException(DcemErrorCodes.IMAGE_TOO_BIG, "wrong widht or height");
 		}
 		return outputStream.toByteArray();
-	}
+	} 
 
 	public static byte[] convertImageToJpeg(byte[] image) throws Exception {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
@@ -1484,13 +1492,16 @@ public class DcemUtils {
 		int y = 0;
 		return resizedImage.getSubimage(x, y, targetWidth, targetHeight);
 	}
-
+	
 	public static byte[] resizeImage(byte[] image, int maxLength) throws Exception {
-		if (maxLength != 0) {
-			return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, maxLength);
-		}
-		return DcemUtils.resizeImage(image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, DcemConstants.PHOTO_MAX);
+		return resizeImage(image, maxLength, "jpeg");
+	}
 
+	public static byte[] resizeImage(byte[] image, int maxLength, String format) throws Exception {
+		if (maxLength != 0) {
+			return DcemUtils.resizeImage (image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, maxLength, true, format);
+		}
+		return DcemUtils.resizeImage (image, DcemConstants.PHOTO_WIDTH, DcemConstants.PHOTO_HEIGHT, DcemConstants.PHOTO_MAX, true, format);
 	}
 
 	public static TimeZone getTimeZoneFromCountry(String country) {
