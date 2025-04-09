@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<h:outputScript library="js" name="webauthn.js" />
+
+	<f:view locale="#{operatorSession.locale}">
+		<h:panelGroup >
+			<h:form id="deviceForm">
+				<br />
+				
+				<p></p>
+				<p:commandLink onclick="PF('addNewDeviceDialog').show(); return false;" update="@form">
+					<p:outputLabel id="addDevice" class="fa fa-plus-circle toolBarButtons" />
+					<p:tooltip for="addDevice" value="#{MyDevicesMsg['button.addDevice']}" position="bottom" />
+				</p:commandLink>
+				<br />
+				<br />
+				<h:panelGroup id="devicesPanel" >
+					<p:outputLabel value="#{MyDevicesMsg['NETWORK_DEVICE_VIEW']}" styleClass="viewSecondTitleLabel" />
+					<br />
+					<h:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+						<h:panelGroup>
+							<p:commandLink  action="#{myDevicesView.actionSetDeviceState(true)}"
+								update="@form">
+								<p:outputLabel id="unlock" class="fa fa-unlock toolBarButtons" />
+								<p:tooltip for="unlock" value="#{MyDevicesMsg['button.enable']}" position="bottom" />
+							</p:commandLink>
+							<p:spacer width="10em"></p:spacer>
+							<p:commandLink  action="#{myDevicesView.actionSetDeviceState(false)}"
+								update="@form">
+								<p:outputLabel id="lock" class="fa fa-lock toolBarButtons" />
+								<p:tooltip for="lock" value="#{MyDevicesMsg['button.disable']}" position="bottom" />
+							</p:commandLink>
+							<p:spacer width="10em"></p:spacer>
+							<p:commandLink  action="#{myDevicesView.deleteSelectedDevices}"
+								update="@form" ajax="true">
+								<p:outputLabel id="delete" class="fa fa-trash toolBarButtons" />
+								<p:tooltip for="delete" value="#{MyDevicesMsg['button.delete']}" position="bottom" />
+								<p:confirm header="#{MyDevicesMsg['dialog.title.confirm']}" message="#{MyDevicesMsg['dialog.message.deleteSelectedDevices']}" />
+							</p:commandLink>
+						</h:panelGroup>
+					</h:panelGrid>
+					<p />
+					<p:dataTable id="deviceTable" reflow="true" var="device" value="#{myDevicesView.devices}" 
+						selection="#{myDevicesView.selectedDevices}" rowKey="#{device.id}" class="borderless" style="margin-bottom: 2%">
+						<p:column required="true" selectionMode="multiple" style="width:2em; text-align:center;" selectionBox="true" />
+						<p:column headerText="#{MyDevicesMsg['columnTitle.name']}">
+							<h:outputText value="#{device.name}" />
+						</p:column>
+
+						<p:column headerText="#{MyDevicesMsg['columnTitle.online']}">
+							<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{device.online}" />
+							<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{device.online eq false}" />
+						</p:column>
+
+						<p:column headerText="#{MyDevicesMsg['columnTitle.clientType']}">
+							<h:outputText value="#{device.deviceType}" />
+						</p:column>
+
+						<p:column headerText="#{MyDevicesMsg['columnTitle.enabled']}">
+							<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{device.enabled}" />
+							<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{device.enabled eq false}" />
+						</p:column>
+
+						<p:column headerText="#{MyDevicesMsg['columnTitle.lastLogin']}">
+							<h:outputText value="#{device.lastLoginTime}" converter="dcem.LocalDateTimeConverter" />
+						</p:column>
+					</p:dataTable>
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
+						<p:commandButton type="button" value="#{MyDevicesMsg['button.yes']}" style="width: 6em" icon="fa fa-check" styleClass="ui-confirmdialog-yes" />
+						<p:commandButton type="button" value="#{MyDevicesMsg['button.no']}" style="margin-left: 2em; width: 6em" icon="fa fa-close"
+							styleClass="ui-confirmdialog-no" />
+					</p:confirmDialog>
+				</h:panelGroup>
+
+				<h:panelGroup id="otpTokensPanel" rendered="#{myDevicesView.otpModule}" >
+					<p:outputLabel value="#{MyDevicesMsg['title.otpView']}" styleClass="viewSecondTitleLabel" />
+					<br />
+
+					<h:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+						<h:panelGroup>
+							<p:commandLink  action="#{myDevicesView.actionSetTokenState(false)}" update="@form">
+								<p:outputLabel id="unlocktoken" class="fa fa-unlock toolBarButtons"></p:outputLabel>
+								<p:tooltip for="unlocktoken" value="#{MyDevicesMsg['button.enable']}" position="bottom" />
+							</p:commandLink>
+							<p:spacer width="10em"></p:spacer>
+							<p:commandLink action="#{myDevicesView.actionSetTokenState(true)}" update="@form">
+								<p:outputLabel id="locktoken" class="fa fa-lock toolBarButtons"></p:outputLabel>
+								<p:tooltip for="locktoken" value="#{MyDevicesMsg['button.disable']}" position="bottom" />
+							</p:commandLink>
+							<p:spacer width="10em"></p:spacer>
+							<p:commandLink  action="#{myDevicesView.actionUnassignSelectedTokens}" update="@form">
+								<p:outputLabel id="deletetoken" class="fa fa-trash toolBarButtons"></p:outputLabel>
+								<p:tooltip for="deletetoken" value="#{MyDevicesMsg['button.delete']}" position="bottom" />
+								<p:confirm header="#{MyDevicesMsg['dialog.title.confirm']}" message="#{MyDevicesMsg['dialog.message.removeSelectedTokens']}"
+									class="commandButtonStandard" />
+							</p:commandLink>
+						</h:panelGroup>
+					</h:panelGrid>
+					<p />
+
+					<p:dataTable reflow="true" class="borderless" var="hardwareToken" id="hardwareTokenTable" value="#{myDevicesView.otpTokens}"
+						 selection="#{myDevicesView.selectedOtpTokens}" rowKey="#{hardwareToken.serialNumber}"
+						style="margin-bottom: 2%">
+						<p:column selectionMode="multiple" style="width:2em; text-align:center" selectionBox="true" />
+						<p:column headerText="#{MyDevicesMsg['columnTitle.otpType']}">
+							<h:outputText value="#{hardwareToken.otpType}" />
+						</p:column>
+
+						<p:column headerText="#{MyDevicesMsg['columnTitle.serialNumber']}">
+							<h:outputText value="#{hardwareToken.serialNumber}" />
+						</p:column>
+
+						<p:column headerText="#{MyDevicesMsg['columnTitle.info']}">
+							<h:outputText value="#{hardwareToken.info}" />
+						</p:column>
+
+						<p:column headerText="#{MyDevicesMsg['columnTitle.enabled']}">
+							<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{hardwareToken.disabled eq false}" />
+							<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{hardwareToken.disabled}" />
+						</p:column>
+					</p:dataTable>
+				</h:panelGroup>
+
+				
+				<p:dialog widgetVar="addNewDeviceDialog" modal="true" class="addDeviceLayout" resizable="false" style="border: none;">
+					<f:facet name="header">
+						<h:outputLabel value="#{MyDevicesMsg['dialog.title.selectDeviceType']}" class="dialogTitle" resizable="false" dragable="true" />
+					</f:facet>
+					<h:panelGroup layout="block">
+						<p />
+						<h:panelGroup >
+							<p:commandLink action="#{requestActivationCodeDialog.onOpen}" update="smartDeviceForm:addSmartDevice">
+								<p:graphicImage library="pictures" style="border: 0; vertical-align: middle; margin-left: 10%; margin-right: 1em " name="device.png" />
+								<p:outputLabel value="#{MyDevicesMsg['deviceView.addNetworkDevice']}" styleClass="addNewDeviceText" />
+							</p:commandLink>
+						</h:panelGroup>
+						<p />
+						<h:panelGroup rendered="#{myDevicesView.otpModule}">
+							<p:commandLink onclick="PF('addNewDeviceDialog').hide(); PF('addNewHardwareToken').show();">
+								<p:graphicImage library="pictures" style="border: 0; vertical-align: middle; margin-left: 10%; margin-right: 1em " name="otp_white.png" />
+								<p:outputLabel value="#{MyDevicesMsg['deviceView.addOTP']}" styleClass="addNewDeviceText" />
+							</p:commandLink>
+						</h:panelGroup>
+						<p />
+						<br />
+						<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{CoreMsg['close']}" onclick="PF('addNewDeviceDialog').hide();"
+							style="float: right; margin-right: 1em;" immediate="true" />
+						<p />
+						<p:spacer height="1"></p:spacer>
+						<p />
+					</h:panelGroup>
+				</p:dialog>
+
+
+				<p:dialog widgetVar="addNewHardwareToken" modal="true" style="border: none;" >
+					<f:facet name="header">
+						<h:outputLabel value="#{MyDevicesMsg['deviceView.addOTP']}" class="dialogTitle" />
+					</f:facet>
+					<h:panelGroup style="width: 30em; margin: 0 auto;" layout="block">
+						<p:messages id="hardwareOtpMsg" globalOnly="false" showSummary="true" closable="true">
+							<p:autoUpdate />
+						</p:messages>
+						<h:outputText class="fa fa-info-circle" style="white-space: normal; font-size: large" />
+						<h:outputText style="white-space: normal;" value=" #{MyDevicesMsg['deviceView.addNewOTPInfo']}" />
+						<br />
+						<p />
+						<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+							<h:outputLabel value="#{MyDevicesMsg['label.serialNumber']}" />
+							<p:inputText id="serialNumber" value="#{assignOtpTokenDialog.serialNumber}" />
+
+							<h:outputLabel value="#{MyDevicesMsg['label.passcode']}" />
+							<p:inputText id="otpCode" value="#{assignOtpTokenDialog.passcode}" />
+						</h:panelGrid>
+						<p />
+						<p:commandButton id="assignToken" value="#{MyDevicesMsg['button.add']}" action="#{assignOtpTokenDialog.assignOtpToken}" update="" ajax="true"
+							ignoreAutoUpdate="true">
+						</p:commandButton>
+						<p />
+						<p:commandLink value="#{CoreMsg['close']}" styleClass="closeDialog" onclick="PF('addNewHardwareToken').hide();"
+							style="float: right; margin-right: 2em;" immediate="true" />
+						<p />
+						<p:spacer height="1"></p:spacer>
+					</h:panelGroup>
+					<p></p>
+				</p:dialog>
+
+				
+			</h:form>
+
+			<h:form id="smartDeviceForm">
+				<p:dialog widgetVar="addSmartDevice" modal="true" width="650" height="auto" style="border: none;" id="addSmartDevice">
+
+					<f:facet name="header">
+						<h:outputLabel value="#{MyDevicesMsg['deviceView.addNetworkDevice']}" class="dialogTitle" />
+					</f:facet>
+					<h:panelGroup style="width: 40em" layout="block">
+						<p:messages layout="table" globalOnly="false" showSummary="true" closable="true">
+							<p:autoUpdate />
+						</p:messages>
+						<h:outputText class="fa fa-info-circle" style="white-space: normal; font-size: large" />
+						<h:outputText style="white-space: normal;" value=" #{MyDevicesMsg['deviceView.addNewDeviceInfo']}" />
+
+						<p />
+						<h:panelGrid columns="2" style="border:0">
+							<p:outputLabel value="#{MyDevicesMsg['label.notificationType']} " />
+							<p:selectOneMenu value="#{requestActivationCodeDialog.sendBy}">
+								<f:selectItem itemLabel="#{MyDevicesMsg['sendNotificationBy.none']}" itemValue="NONE" noSelectionOption="true" />
+								<f:selectItem itemLabel="#{MyDevicesMsg['sendNotificationBy.email']}" itemValue="EMAIL" />
+								<f:selectItem itemLabel="#{MyDevicesMsg['sendNotificationBy.sms']}" itemValue="SMS" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+						<p />
+						<p:commandButton id="register" value="#{MyDevicesMsg['button.requestActivationCode']}" action="#{requestActivationCodeDialog.actionRequestActivationCode}"
+							style="widht: 22em" update="activationCodeResult" process="@form" ajax="true">
+						</p:commandButton>
+						<p:commandLink value="#{CoreMsg['close']}" styleClass="closeDialog" onclick="PF('addSmartDevice').hide();" style="float: right; margin-right: 2em;"
+							immediate="true" />
+						<p />
+						<h:panelGroup id="activationCodeResult">
+							<p:panel rendered="#{requestActivationCodeDialog.activationAvialble}">
+								<h:outputText class="fa fa-info-circle" style="white-space: normal; font-size: large" />
+								<h:outputText style="white-space: normal;" value=" #{MyDevicesMsg['deviceView.addNewDeviceInfo2']}" />
+								<p></p>
+								<p:graphicImage id="qrCodeImage" value="#{requestActivationCodeDialog.activationImage}" stream="false" />
+								<h:panelGrid columns="2">
+									<p:outputLabel value="#{MyDevicesMsg['label.user']}: " />
+									<p:outputLabel value="#{requestActivationCodeDialog.activationParameters.username}" />
+									<p:outputLabel value="#{MyDevicesMsg['label.activationCodes']}: " />
+									<p:outputLabel value="#{requestActivationCodeDialog.activationParameters.activationCode}" />
+									<p:outputLabel value="#{MyDevicesMsg['label.validTill']}: " />
+									<p:outputLabel value="#{requestActivationCodeDialog.dateTxt}" />
+								</h:panelGrid>
+
+							</p:panel>
+						</h:panelGroup>
+					</h:panelGroup>
+					<p></p>
+				</p:dialog>
+			</h:form>
+
+
+		</h:panelGroup>
+	</f:view>
+</ui:composition>

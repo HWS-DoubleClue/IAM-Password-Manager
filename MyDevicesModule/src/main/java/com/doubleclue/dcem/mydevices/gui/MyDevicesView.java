@@ -30,7 +30,7 @@ import com.doubleclue.dcem.core.logic.module.AsApiOtpToken;
 import com.doubleclue.dcem.core.logic.module.OtpModuleApi;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.mydevices.logic.MyDevicesModule;
-import com.doubleclue.dcem.subjects.AsDeviceSubject;
+import com.doubleclue.dcem.mydevices.subjects.MyDevicesSubject;
 
 @Named("myDevicesView")
 @SessionScoped
@@ -38,11 +38,9 @@ public class MyDevicesView extends DcemView {
 
 	private static final long serialVersionUID = 1L;
 
-
 	@Inject
 	MyDevicesModule myDevicesModule;
 
-	
 	@Inject
 	AsFidoLogic asFidoLogic;
 
@@ -50,13 +48,13 @@ public class MyDevicesView extends DcemView {
 	AsDeviceLogic asDeviceLogic;
 
 	@Inject
-	AsDeviceSubject deviceSubject;
+	AsFidoLogic fidoLogic;
 
 	@Inject
-	AsFidoLogic fidoLogic;
-	
-	@Inject
 	OperatorSessionBean operatorSessionBean;
+
+	@Inject
+	MyDevicesSubject devicesSubject;
 
 	private Logger logger = LogManager.getLogger(MyDevicesView.class);
 
@@ -66,20 +64,31 @@ public class MyDevicesView extends DcemView {
 
 	private String regResponse = null;
 	private String regError = null;
-//	private String fidoDisplayName = null;
+	// private String fidoDisplayName = null;
 	private String rpId = null;
 
 	private List<DeviceEntity> selectedDevices;
 	private List<AsApiOtpToken> selectedOtpTokens;
 	private List<FidoAuthenticatorEntity> selectedFidoAuthenticators = null;
 	ResourceBundle resourceBundle;
+	
+	OtpModuleApi apiServiceImpl;
 
 	@PostConstruct
 	public void init() {
+		this.setSubject(devicesSubject);
 		resourceBundle = ResourceBundle.getBundle(MyDevicesModule.RESOURCE_NAME, operatorSessionBean.getLocale());
+		try {
+			apiServiceImpl = CdiUtils.getReference(OtpModuleApi.OTP_SERVICE_IMPL);
+		} catch (Exception e) {
+			
+		}
+	}
+	
+	public boolean isOtpModule() {
+		return apiServiceImpl != null;
 	}
 
-	
 	public List<FidoAuthenticatorEntity> getFidoAuthenticators() {
 		try {
 			List<ApiFilterItem> filters = new LinkedList<>();
@@ -102,10 +111,9 @@ public class MyDevicesView extends DcemView {
 	public List<DeviceEntity> getDevices() {
 		try {
 			List<ApiFilterItem> filters = new LinkedList<>();
-			filters.add(new ApiFilterItem("user.loginId", operatorSessionBean.getDcemUser().getDisplayName(), ApiFilterItem.SortOrderEnum.ASCENDING,
+			filters.add(new ApiFilterItem("user.loginId", operatorSessionBean.getDcemUser().getLoginId(), ApiFilterItem.SortOrderEnum.UNSORTED,
 					ApiFilterItem.OperatorEnum.EQUALS));
-			filters.add(new ApiFilterItem("name", DcemConstants.DEVICE_ROOT, ApiFilterItem.SortOrderEnum.ASCENDING,
-					ApiFilterItem.OperatorEnum.NOT_EQUALS));
+			filters.add(new ApiFilterItem("name", DcemConstants.DEVICE_ROOT, ApiFilterItem.SortOrderEnum.UNSORTED, ApiFilterItem.OperatorEnum.NOT_EQUALS));
 			devices = asDeviceLogic.queryDevices(filters, 0, 100);
 		} catch (DcemException e) {
 			logger.warn(e);
@@ -122,14 +130,13 @@ public class MyDevicesView extends DcemView {
 	}
 
 	public List<AsApiOtpToken> getOtpTokens() {
+		if (apiServiceImpl == null) {
+			return null;
+		}
 		try {
 			List<ApiFilterItem> filters = new LinkedList<>();
-			filters.add(new ApiFilterItem("user.loginId", operatorSessionBean.getDcemUser().getDisplayName(), ApiFilterItem.SortOrderEnum.ASCENDING,
+			filters.add(new ApiFilterItem("user.loginId", operatorSessionBean.getDcemUser().getLoginId(), ApiFilterItem.SortOrderEnum.ASCENDING,
 					ApiFilterItem.OperatorEnum.EQUALS));
-			OtpModuleApi apiServiceImpl = CdiUtils.getReference(OtpModuleApi.OTP_SERVICE_IMPL);
-			if (apiServiceImpl == null) {
-				return null;
-			}
 			otpTokens = apiServiceImpl.queryOtpTokenEntities(filters, 0, 100, false);
 		} catch (DcemException e) {
 			logger.error("Error while querying OTP tokens: " + e.getLocalizedMessage());
@@ -145,13 +152,13 @@ public class MyDevicesView extends DcemView {
 		this.otpTokens = otpTokens;
 	}
 
-//	public String getFidoDisplayName() {
-//		return fidoDisplayName;
-//	}
-//
-//	public void setFidoDisplayName(String fidoDisplayName) {
-//		this.fidoDisplayName = fidoDisplayName;
-//	}
+	// public String getFidoDisplayName() {
+	// return fidoDisplayName;
+	// }
+	//
+	// public void setFidoDisplayName(String fidoDisplayName) {
+	// this.fidoDisplayName = fidoDisplayName;
+	// }
 
 	public String getRpId() {
 		return rpId;
@@ -161,102 +168,102 @@ public class MyDevicesView extends DcemView {
 		this.rpId = rpId;
 	}
 
-//	public void actionFidoStartRegistration() throws DcemException {
-//		portalSessionBean.isActionEnable(ActionItem.FIDO_ADD_ACTION);
-//		if (fidoDisplayName != null && !fidoDisplayName.isEmpty()) {
-//			try {
-//				String regRequestJson = fidoLogic.startRegistration(portalSessionBean.getDcemUser(), rpId);
-//				PrimeFaces.current().ajax().addCallbackParam(DcupConstants.FIDO_PARAM_JSON, regRequestJson);
-//			} catch (DcemException exp) {
-//				logger.warn(exp);
-//				JsfUtils.addErrorMessage(portalSessionBean.getErrorMessage(exp));
-//			} catch (Exception e) {
-//				logger.warn(e);
-//				JsfUtils.addErrorMessage(e.getMessage());
-//			}
-//		} else {
-//			JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error.local.FIDO_NO_DISPLAY_NAME"));
-//		}
-//	}
+	// public void actionFidoStartRegistration() throws DcemException {
+	// portalSessionBean.isActionEnable(ActionItem.FIDO_ADD_ACTION);
+	// if (fidoDisplayName != null && !fidoDisplayName.isEmpty()) {
+	// try {
+	// String regRequestJson = fidoLogic.startRegistration(portalSessionBean.getDcemUser(), rpId);
+	// PrimeFaces.current().ajax().addCallbackParam(DcupConstants.FIDO_PARAM_JSON, regRequestJson);
+	// } catch (DcemException exp) {
+	// logger.warn(exp);
+	// JsfUtils.addErrorMessage(portalSessionBean.getErrorMessage(exp));
+	// } catch (Exception e) {
+	// logger.warn(e);
+	// JsfUtils.addErrorMessage(e.getMessage());
+	// }
+	// } else {
+	// JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error.local.FIDO_NO_DISPLAY_NAME"));
+	// }
+	// }
 
-//	public void actionFidoFinishRegistration() {
-//		try {
-//			if (regResponse == null || regResponse.isEmpty()) {
-//				JsfUtils.addErrorMessage(resourceBundle.getString("error.local.FIDO_NO_RESPONSE"));
-//			} else {
-//				String regResultJson = fidoLogic.finishRegistration(regResponse, fidoDisplayName);
-//				JSONObject obj = new JSONObject(regResultJson);
-//				boolean successful = obj.getBoolean("success");
-//				if (successful) {
-//					JsfUtils.addInfoMessage(resourceBundle.getString("message.fidoRegisterSuccessful"));
-//				} else {
-//					JsfUtils.addWarnMessage(resourceBundle.getString("message.fidoRegisterFailed"));
-//				}
-//				regResponse = null;
-//				fidoDisplayName = null;
-//			}
-//		} catch (DcemException e) {
-//			JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error." + e.getErrorCode().name()));
-//		} catch (Exception e) {
-//			JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error." + e.getMessage()));
-//		}
-//	}
+	// public void actionFidoFinishRegistration() {
+	// try {
+	// if (regResponse == null || regResponse.isEmpty()) {
+	// JsfUtils.addErrorMessage(resourceBundle.getString("error.local.FIDO_NO_RESPONSE"));
+	// } else {
+	// String regResultJson = fidoLogic.finishRegistration(regResponse, fidoDisplayName);
+	// JSONObject obj = new JSONObject(regResultJson);
+	// boolean successful = obj.getBoolean("success");
+	// if (successful) {
+	// JsfUtils.addInfoMessage(resourceBundle.getString("message.fidoRegisterSuccessful"));
+	// } else {
+	// JsfUtils.addWarnMessage(resourceBundle.getString("message.fidoRegisterFailed"));
+	// }
+	// regResponse = null;
+	// fidoDisplayName = null;
+	// }
+	// } catch (DcemException e) {
+	// JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error." + e.getErrorCode().name()));
+	// } catch (Exception e) {
+	// JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error." + e.getMessage()));
+	// }
+	// }
 
-//	public void actionShowError() {
-//		if (regError != null && !regError.isEmpty()) {
-//			String localisedMessage;
-//			switch (regError) {
-//			case DcupConstants.FIDO_ERROR_ABORTED_CHROME:
-//			case DcupConstants.FIDO_ERROR_ABORTED_FIREFOX:
-//				localisedMessage = portalSessionBean.getResourceBundle().getString("error.local.FIDO_REGISTRATION_ABORTED");
-//				break;
-//			case DcupConstants.FIDO_ERROR_ALREADY_REGISTERED_CHROME:
-//			case DcupConstants.FIDO_ERROR_ALREADY_REGISTERED_FIREFOX:
-//				localisedMessage = portalSessionBean.getResourceBundle().getString("error.local.FIDO_ALREADY_REGISTERED");
-//				break;
-//			case DcupConstants.FIDO_ERROR_WRONG_RP_ID_FIREFOX:
-//				localisedMessage = portalSessionBean.getResourceBundle().getString("error.local.FIDO_WRONG_RP_ID");
-//				break;
-//			default:
-//				localisedMessage = regError;
-//				break;
-//			}
-//			JsfUtils.addErrorMessage(localisedMessage);
-//		}
-//	}
+	// public void actionShowError() {
+	// if (regError != null && !regError.isEmpty()) {
+	// String localisedMessage;
+	// switch (regError) {
+	// case DcupConstants.FIDO_ERROR_ABORTED_CHROME:
+	// case DcupConstants.FIDO_ERROR_ABORTED_FIREFOX:
+	// localisedMessage = portalSessionBean.getResourceBundle().getString("error.local.FIDO_REGISTRATION_ABORTED");
+	// break;
+	// case DcupConstants.FIDO_ERROR_ALREADY_REGISTERED_CHROME:
+	// case DcupConstants.FIDO_ERROR_ALREADY_REGISTERED_FIREFOX:
+	// localisedMessage = portalSessionBean.getResourceBundle().getString("error.local.FIDO_ALREADY_REGISTERED");
+	// break;
+	// case DcupConstants.FIDO_ERROR_WRONG_RP_ID_FIREFOX:
+	// localisedMessage = portalSessionBean.getResourceBundle().getString("error.local.FIDO_WRONG_RP_ID");
+	// break;
+	// default:
+	// localisedMessage = regError;
+	// break;
+	// }
+	// JsfUtils.addErrorMessage(localisedMessage);
+	// }
+	// }
 
-//	public void actionDeleteSelectedFidoAuthenticator() throws DcemException {
-//		portalSessionBean.isActionEnable(ActionItem.FIDO_DELETE_ACTION);
-//		if (selectedFidoAuthenticators.isEmpty()) {
-//			JsfUtils.addWarnMessage(portalSessionBean.getResourceBundle().getString("message.selectDeviceManager"));
-//			return;
-//		} else {
-//			for (FidoAuthenticatorEntity fidoAuthenticator : selectedFidoAuthenticators) {
-//				try {
-//					fidoLogic.deleteFidoAuthenticator((int) fidoAuthenticator.getId());
-//				} catch (DcemException e) {
-//					JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error." + e.getMessage()));
-//				} catch (Exception e) {
-//					logger.warn(e);
-//					JsfUtils.addErrorMessage(e.toString());
-//				}
-//			}
-//		}
-//	}
+	// public void actionDeleteSelectedFidoAuthenticator() throws DcemException {
+	// portalSessionBean.isActionEnable(ActionItem.FIDO_DELETE_ACTION);
+	// if (selectedFidoAuthenticators.isEmpty()) {
+	// JsfUtils.addWarnMessage(portalSessionBean.getResourceBundle().getString("message.selectDeviceManager"));
+	// return;
+	// } else {
+	// for (FidoAuthenticatorEntity fidoAuthenticator : selectedFidoAuthenticators) {
+	// try {
+	// fidoLogic.deleteFidoAuthenticator((int) fidoAuthenticator.getId());
+	// } catch (DcemException e) {
+	// JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("error." + e.getMessage()));
+	// } catch (Exception e) {
+	// logger.warn(e);
+	// JsfUtils.addErrorMessage(e.toString());
+	// }
+	// }
+	// }
+	// }
 
-//	public void validateDeleteSelectedFidoAuthenticator() throws DcemException {
-//		if (selectedFidoAuthenticators != null && selectedFidoAuthenticators.isEmpty() == false) {
-//			showDialog("confirmDlgSelectedFidoAuthenticator");
-//		} else {
-//			JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("message.noFilesSelected"));
-//		}
-//	}
+	// public void validateDeleteSelectedFidoAuthenticator() throws DcemException {
+	// if (selectedFidoAuthenticators != null && selectedFidoAuthenticators.isEmpty() == false) {
+	// showDialog("confirmDlgSelectedFidoAuthenticator");
+	// } else {
+	// JsfUtils.addErrorMessage(portalSessionBean.getResourceBundle().getString("message.noFilesSelected"));
+	// }
+	// }
 
-//	public String getDialogMessage(AsApiFidoAuthenticator fidoAuthenticator) {
-//		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, portalSessionBean.getLocale());
-//		return JsfUtils.getMessageFromBundle(portalSessionBean.getResourceBundle(), "dialog.message.deleteFidoAuthenticator",
-//				df.format(fidoAuthenticator.getRegisteredOn()));
-//	}
+	// public String getDialogMessage(AsApiFidoAuthenticator fidoAuthenticator) {
+	// DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, portalSessionBean.getLocale());
+	// return JsfUtils.getMessageFromBundle(portalSessionBean.getResourceBundle(), "dialog.message.deleteFidoAuthenticator",
+	// df.format(fidoAuthenticator.getRegisteredOn()));
+	// }
 
 	public void actionSetDeviceState(boolean enableState) throws DcemException {
 		if (selectedDevices.isEmpty()) {
@@ -264,11 +271,11 @@ public class MyDevicesView extends DcemView {
 			return;
 		}
 		// TODO
-//		if (enableState) {
-//			portalSessionBean.isActionEnable(ActionItem.NETWORK_DEVICE_ENABLE_ACTION);
-//		} else {
-//			portalSessionBean.isActionEnable(ActionItem.NETWORK_DEVICE_DISABLE_ACTION);
-//		}
+		// if (enableState) {
+		// portalSessionBean.isActionEnable(ActionItem.NETWORK_DEVICE_ENABLE_ACTION);
+		// } else {
+		// portalSessionBean.isActionEnable(ActionItem.NETWORK_DEVICE_DISABLE_ACTION);
+		// }
 
 		for (DeviceEntity device : selectedDevices) {
 			try {
@@ -294,10 +301,10 @@ public class MyDevicesView extends DcemView {
 			JsfUtils.addWarnMessage(resourceBundle.getString("message.selectDeviceManager"));
 			return;
 		}
-// TODO		portalSessionBean.isActionEnable(ActionItem.NETWORK_DEVICE_DELETE_ACTION);
+		// TODO portalSessionBean.isActionEnable(ActionItem.NETWORK_DEVICE_DELETE_ACTION);
 
 		try {
-			asDeviceLogic.deleteDevices(selectedDevices, new DcemAction(deviceSubject, DcemConstants.ACTION_DELETE));
+			asDeviceLogic.deleteDevices(selectedDevices, new DcemAction(devicesSubject, DcemConstants.ACTION_DELETE));
 		} catch (Exception e) {
 			logger.warn(e);
 			JsfUtils.addErrorMessage(e.toString());
@@ -349,11 +356,11 @@ public class MyDevicesView extends DcemView {
 			JsfUtils.addWarnMessage(resourceBundle.getString("message.selectDeviceManager"));
 			return;
 		}
-//	TODO	if (enableState) {
-//			portalSessionBean.isActionEnable(ActionItem.OTP_ENABLE_ACTION);
-//		} else {
-//			portalSessionBean.isActionEnable(ActionItem.OTP_DISABLE_ACTION);
-//		}
+		// TODO if (enableState) {
+		// portalSessionBean.isActionEnable(ActionItem.OTP_ENABLE_ACTION);
+		// } else {
+		// portalSessionBean.isActionEnable(ActionItem.OTP_DISABLE_ACTION);
+		// }
 
 		if (selectedOtpTokens != null) {
 			for (AsApiOtpToken asApiOtpToken : selectedOtpTokens) {
@@ -367,9 +374,8 @@ public class MyDevicesView extends DcemView {
 		if (selectedOtpTokens.isEmpty()) {
 			JsfUtils.addWarnMessage(resourceBundle.getString("message.selectDeviceManager"));
 			return;
-		}
-		else {
-// TODO			portalSessionBean.isActionEnable(ActionItem.OTP_DELETE_ACTION);
+		} else {
+			// TODO portalSessionBean.isActionEnable(ActionItem.OTP_DELETE_ACTION);
 			for (AsApiOtpToken otpToken : selectedOtpTokens) {
 				otpToken.setAssignedTo(null);
 				otpToken.setInfo("");
@@ -456,7 +462,6 @@ public class MyDevicesView extends DcemView {
 	public void setSelectedDevices(List<DeviceEntity> selectedDevices) {
 		this.selectedDevices = selectedDevices;
 	}
-
 
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;

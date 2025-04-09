@@ -75,11 +75,7 @@
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>AppSecureModule</artifactId>
 		</dependency>
-		
-		<dependency>
-			<groupId>com.doubleclue.dcem.module</groupId>
-			<artifactId>MyDevicesModule</artifactId>
-		</dependency>
+	
 
 		<!-- <dependency> <groupId>com.doubleclue.dcem.module</groupId>
 		<artifactId>PetshopModule</artifactId> 
@@ -89,12 +85,18 @@
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>RadiusModule</artifactId>
 		</dependency>
+		-->
 
 		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>OtpModule</artifactId>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>MyDevicesModule</artifactId>
+		</dependency>
+<!---
 		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>SamlModule</artifactId>

@@ -774,7 +774,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
-				<artifactId>MyDevicesModules</artifactId>
+				<artifactId>MyDevicesModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			
@@ -1282,7 +1282,7 @@
 		<module>../RadiusModule</module>
 		<module>../OtpModule</module>
 		<module>../OAuthModule</module>
-		<module>../UserPortalModule</module>
+		<module>../MyDevicesModule</module>
 		<module>../DcemApplication</module>
 		<module>../DcemSetup</module>
 		<module>../DcemDistribution</module>

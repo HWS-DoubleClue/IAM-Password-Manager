@@ -7,7 +7,7 @@
 	<application>
 		<resource-bundle>
 			<base-name>com.doubleclue.dcem.mydevices.resources.Messages</base-name>
-			<var>mydevicesMsg</var>
+			<var>MyDevicesMsg</var>
 		</resource-bundle>
 	</application>
 	
