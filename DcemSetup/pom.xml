@@ -88,10 +88,10 @@
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>OAuthModule</artifactId>
 		</dependency>
-		<dependency>
+	<!--	<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>UserPortalModule</artifactId>
-		</dependency>
+		</dependency> -->
 		
 <!--  		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>

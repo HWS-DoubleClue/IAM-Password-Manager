@@ -48,9 +48,7 @@ import com.doubleclue.dcem.core.tasks.TaskExecutor;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.system.logic.SystemModule;
-import com.doubleclue.dcem.userportal.entities.ApplicationHubEntity;
-import com.doubleclue.dcem.userportal.logic.MyApplication;
-import com.doubleclue.dcem.userportal.logic.UpAppHubLogic;
+
 import com.doubleclue.utils.FileContent;
 import com.doubleclue.utils.ProductVersion;
 import com.doubleclue.utils.ResourceFinder;
@@ -79,8 +77,8 @@ public class DbMigrate {
 	@Inject
 	RoleLogic roleLogic;
 
-	@Inject
-	UpAppHubLogic upAppHubLogic;
+//	@Inject
+//	UpAppHubLogic upAppHubLogic;
 	
 	@Inject
 	UserLogic userLogic;
@@ -257,20 +255,20 @@ public class DbMigrate {
 
 	@DcemTransactional
 	public void updateMyApplications() throws Exception {
-		List<FileContent> myApplicationsFiles = ResourceFinder.find(DbLogic.class, SetupConstants.MYAPPLICATIONS_RESOURCES, SetupConstants.MYAPPLICATIONS_TYPE);
-		for (FileContent fileContent : myApplicationsFiles) {
-			try {
-				String fileContents = new String(fileContent.getContent(), DcemConstants.CHARSET_UTF8);
-				ObjectMapper mapper = new ObjectMapper();
-				MyApplication myApplication = mapper.readValue(fileContents, MyApplication.class);
-				if (upAppHubLogic.getApplicationByName(myApplication.getName()) == null) {
-					upAppHubLogic.updateApplication(new ApplicationHubEntity(myApplication));
-				}
-			} catch (Exception exp) {
-				logger.warn("Couldn't upload myapplication file [" + fileContent.getName() + "] to DB", exp);
-				throw exp;
-			}
-		}
+//		List<FileContent> myApplicationsFiles = ResourceFinder.find(DbLogic.class, SetupConstants.MYAPPLICATIONS_RESOURCES, SetupConstants.MYAPPLICATIONS_TYPE);
+//		for (FileContent fileContent : myApplicationsFiles) {
+//			try {
+//				String fileContents = new String(fileContent.getContent(), DcemConstants.CHARSET_UTF8);
+//				ObjectMapper mapper = new ObjectMapper();
+//				MyApplication myApplication = mapper.readValue(fileContents, MyApplication.class);
+//				if (upAppHubLogic.getApplicationByName(myApplication.getName()) == null) {
+//					upAppHubLogic.updateApplication(new ApplicationHubEntity(myApplication));
+//				}
+//			} catch (Exception exp) {
+//				logger.warn("Couldn't upload myapplication file [" + fileContent.getName() + "] to DB", exp);
+//				throw exp;
+//			}
+//		}
 	}
 
 	
