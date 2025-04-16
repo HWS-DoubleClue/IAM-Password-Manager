@@ -8,7 +8,7 @@
 		<version>3.3.0-SNAPSHOT</version>
 		<relativePath>../IAM-Password-Manager/DcemParent/pom.xml</relativePath>
 	</parent>
-	<artifactId>PasswordManagerModule</artifactId>
+	<artifactId>PasswordSafeModule</artifactId>
 	<groupId>com.doubleclue.dcem.module</groupId>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

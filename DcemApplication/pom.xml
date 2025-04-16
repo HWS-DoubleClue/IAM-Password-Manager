@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.doubleclue.application</groupId>
-	<artifactId>DcemApplication</artifactId>
+	<artifactId>DcemApplication</artifactId> 
 	<parent>
 		<artifactId>DcemParent</artifactId>
 		<groupId>com.doubleclue</groupId>
@@ -81,12 +81,11 @@
 		<artifactId>PetshopModule</artifactId> 
 			</dependency> -->
 
-	<!--	<dependency>
+		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>RadiusModule</artifactId>
 		</dependency>
-		-->
-
+		
 		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>OtpModule</artifactId>
