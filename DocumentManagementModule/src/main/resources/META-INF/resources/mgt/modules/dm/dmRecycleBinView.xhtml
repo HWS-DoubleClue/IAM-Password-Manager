@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<style>
+</style>
+
+	<f:view locale="#{operatorSession.locale}">
+		<h:form id="recycleBinForm">
+			<p:commandLink action="#{dmRecycleBinView.actionPrepareConfirmation}" immediate="true" styleClass="toolBarButtons">
+				<h:outputText id="deleteBtn" class="fa fa-solid fa-file-circle-xmark iconsButtons"></h:outputText>
+				<p:tooltip for="deleteBtn" value="#{DmMsg['documentView.button.delete']}" position="bottom" />
+			</p:commandLink>
+			<p:spacer width="2em" />
+			<p:commandLink action="#{dmRecycleBinView.actionOpenRecoverDialog()}" immediate="true" styleClass="toolBarButtons">
+				<h:outputText id="recoverBtn" class="fa fa-rotate-left iconsButtons" />
+				<p:tooltip for="recoverBtn" value="#{DmMsg['documentView.button.recover']}" position="bottom" />
+			</p:commandLink>
+
+			<p:dataTable reflow="true" id="deletedDocumentsTable" var="document" value="#{dmRecycleBinView.trashedFiles}"
+				emptyMessage="#{DmMsg['documentView.message.emptyTable']}" selection="#{dmRecycleBinView.selectedFiles}" rowKey="#{document.id}" sortMode="single" rows="20"
+				rowsPerPageTemplate="20,50,100,300" paginator="true" paginatorPosition="bottom"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+				<p:column selectionMode="multiple" styleClass="columnselect" toggleable="false" selectionBox="true" />
+
+				<p:column id="fileName" headerText="#{DmMsg['documentView.columnTitle.filename']}" sortBy="#{document.name}" filterBy="#{document.name}"
+					filterMatchMode="contains">
+					<p:graphicImage styleClass="viewFileImage" library="pictures" name="icons/16x16/#{dmDocumentView.getFileIcon(document)}" />
+					<p:outputLabel value="#{document.name}" id="documentName" style="margin-left: 0.2em" />
+				</p:column>
+
+				<p:column id="location" headerText="#{DmMsg['documentView.columnTitle.location']}" sortBy="#{document.location}" filterBy="#{document.location}"
+					filterMatchMode="contains">
+					<h:outputText id="locationFolder" value="#{document.location}" />
+					<p:tooltip for="locationFolder" value="#{dmDocumentView.getPath(document)}" position="bottom" />
+				</p:column>
+
+				<p:column id="groupName" headerText="#{DmMsg['documentView.columnTitle.owner']}" sortBy="#{document.owner.value}">
+					<h:panelGroup rendered="#{document.owner.value == '3'}">
+						<h:outputText class="fa-solid fa-people-group" />
+					</h:panelGroup>
+					<h:outputText value="#{document.ownerName}" />
+				</p:column>
+
+				<p:column id="mediaType" headerText="#{DmMsg['documentView.columnTitle.mediaType']}" sortBy="#{document.lengthKb}">
+					<h:outputText value="#{document.dcemMediaType}" />
+				</p:column>
+
+				<p:column id="length" headerText="#{DmMsg['documentView.columnTitle.length']}" sortBy="#{document.lengthKb}" style="text-align: right">
+					<h:outputText value="#{document.lengthKb}" style="margin-right: 1em" />
+				</p:column>
+
+				<p:column id="discardAfter" headerText="#{DmMsg['documentView.columnTitle.discardsAfter']}" sortBy="#{document.discardAfter}"
+					visible="#{dmDocumentView.columnFilterSettings.getOrDefault('discardAfter', true)}">
+					<h:outputText value="#{document.discardAfter}" converter="dcem.LocalDateTimeConverterShort" />
+				</p:column>
+
+				<!-- 	<p:column id="lastModified" headerText="#{DmMsg['documentView.columnTitle.lastModified']}" sortBy="#{document.lastModified}">
+					<h:outputText value="#{document.lastModified}" converter="dcem.LocalDateTimeConverterShort" />
+				</p:column> -->
+
+				<!-- <p:column id="lastModifiedUser" headerText="#{DmMsg['documentView.columnTitle.lastModifiedUser']}" sortBy="#{document.lastModifiedUser.displayName}">
+					<h:outputText value="#{document.lastModifiedUser.displayName}" />
+				</p:column> -->
+				<p:column id="documentId" headerText="ID" sortBy="#{document.id}" style="text-align: right">
+					<h:outputText value="#{document.id}" style="margin-right: 1em" />
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+
+		<h:form id="deleteDialog">
+			<p:dialog id="confirmDlg" widgetVar="confirmDlg" modal="true" styleClass="confirmDialog">
+				<f:facet name="header">
+					<h:outputLabel value="#{DmMsg['documentView.dialog.title.confirm']}" class="dialogTitle" />
+				</f:facet>
+				<br />
+				<p:panel id="deleteTextMessage" style="margin-bottom: 40px;">
+					<p:outputLabel value="#{DmMsg['documentView.dialog.message.deleteSelectedCloudSafeFiles']}" />
+				</p:panel>
+				<div style="margin-bottom: 20px;">
+					<p:commandButton value="#{DmMsg['documentView.button.ok']}" action="#{dmRecycleBinView.deleteCloudSafeFiles}" update="recycleBinForm" styleClass="okButton"
+						icon="fa fa-check" ajax="true">
+					</p:commandButton>
+					<p:commandButton id="closeConfirmDialog" value="#{DmMsg['Document.button.close']}" onclick="PF('confirmDlg').hide();"
+						style="float: right; margin-right: 1em;" immediate="true" icon="fa fa-close" />
+				</div>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="recoverDialog">
+			<p:dialog id="recoverDlg" widgetVar="recoverDlg" modal="true" styleClass="confirmDialog">
+				<f:facet name="header">
+					<h:outputLabel value="#{DmMsg['documentView.dialog.title.confirm']}" class="dialogTitle" />
+				</f:facet>
+				<br />
+				<p:panel id="confirmTextMessage" style="margin-bottom: 40px;">
+					<p:outputLabel value="#{DmMsg['documentView.dialog.message.recoverSelectedCloudSafeFiles']}" />
+				</p:panel>
+				<div style="margin-bottom: 20px;">
+					<p:commandButton value="#{DmMsg['documentView.button.ok']}" action="#{dmRecycleBinView.actionRecoverSelectedFiles()}" update="recycleBinForm"
+						styleClass="okButton" icon="fa fa-check" ajax="true">
+					</p:commandButton>
+					<p:commandButton id="closeRecoverDialog" value="#{DmMsg['Document.button.close']}" onclick="PF('recoverDlg').hide();"
+						style="float: right; margin-right: 1em;" immediate="true" icon="fa fa-close" />
+				</div>
+			</p:dialog>
+		</h:form>
+
+	</f:view>
+</ui:composition>

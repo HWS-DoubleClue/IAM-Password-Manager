@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.doubleclue</groupId>
+		<artifactId>DcemParent</artifactId>
+		<version>3.3.0-SNAPSHOT</version>
+		<relativePath>../IAM-Password-Manager/DcemParent/pom.xml</relativePath>
+	</parent>
+	<artifactId>PasswordManagerModule</artifactId>
+	<groupId>com.doubleclue.dcem.module</groupId>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<junit.version>4.12</junit.version>
+		<equalsverifier.version>1.7.8</equalsverifier.version>
+		<simplexml.version>2.7.1</simplexml.version>
+	</properties>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>DcemCore</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>AppSecureModule</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.doubleclue</groupId>
+			<artifactId>openkeepass</artifactId>
+			<version>0.8.3-SNAPSHOT</version>
+		</dependency>
+
+
+		<!--<dependency>
+			<groupId>de.slackspace</groupId>
+			<artifactId>openkeepass</artifactId>
+		</dependency>-->
+
+		<dependency>
+			<groupId>org.simpleframework</groupId>
+			<artifactId>simple-xml</artifactId>
+			<version>${simplexml.version}</version>
+		</dependency>
+
+	</dependencies>
+	<build>
+		<plugins>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<h:outputScript library="js" name="psJavaScript.js" />
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{psFileView.preRenderView}" />
+	</f:metadata>
+
+	<button id="pluginCallbackBtn" value="" onclick="pluginCallback(this.value); return false;" style="display: none"></button>
+
+	<h:form id="psFileForm">
+		<p:remoteCommand name="updateDashboardGroup" update="psFileForm" />
+		<p:remoteCommand name="pluginChromeUnavailableAlert" action="#{psFileView.showPluginChromeUnavailableAlert}" />
+		<p:remoteCommand name="pluginFirefoxUnavailableAlert" action="#{psFileView.showPluginFirefoxUnavailableAlert}" />
+		<p:remoteCommand name="pluginSafariUnavailableAlert" action="#{psFileView.showPluginSafariUnavailableAlert}" />
+		<p:remoteCommand name="pluginUnavailableAlert" action="#{psFileView.showPluginUnavailableAlert}" />
+
+
+		<p:panelGrid id="actionBarPanel" style="width:99%;" layout="flex" columns="1">
+			<p:row style="background: #0e5077;">
+				<h:panelGroup style="float:left;" rendered="#{psFileView.writeAccess}">
+					<p:commandLink action="#{psFileView.actionToPasswordSafeSelection}" style="text-decoration: none;" update="viewPart">
+						<h:outputText id="chooseOtherFile" class="fa fa-left-long actionBarButtons" />
+						<p:tooltip for="chooseOtherFile" value="#{PsMsg['button.closeFile']}" />
+					</p:commandLink>
+					<p:commandLink action="#{psFileView.onAddEntry(null)}" style="margin-left: 2em;">
+						<h:outputText id="addEntry" class="actionBarButtons fa fa-plus-circle actionBarButtons" />
+						<p:tooltip for="addEntry" value="#{PsMsg['addEntry']}" />
+					</p:commandLink>
+					<p:commandLink action="#{psFileView.onAddGroup}" style="text-decoration: none; margin-left: 1em;">
+						<h:outputText id="addGroup" class="fa fa-sitemap actionBarButtons" />
+						<p:tooltip for="addGroup" value="#{PsMsg['button.addGroup']}" />
+					</p:commandLink>
+				</h:panelGroup>
+				<h:panelGroup style="margin-left: 5em;">
+					<p:outputLabel id="searchIcon" class="fa fa-search" style="color:#bae2f5 !important; margin-right:0.5em; margin-bottom: 5px;"></p:outputLabel>
+					<p:inputText id="SeachField" placeholder="#{PsMsg['searchPlaceHolder']}" value="#{psFileView.searchValue}" title="#{CoreMsg['filterTooltip']}"
+						style=" margin-right: 15px;">
+						<p:ajax event="keyup" update="gridPanel" delay="1000" />
+					</p:inputText>
+				</h:panelGroup>
+			</p:row>
+		</p:panelGrid>
+
+		<h:outputText value="#{PsMsg['message.fileIsReadOnly']}" style="color: #ffc003" rendered="#{psFileView.writeAccess == false}" />
+		<p></p>
+		<br />
+		<p:outputPanel id="gridPanel">
+			<ui:repeat value="#{psFileView.keepassGroups}" var="group" varStatus="status">
+				<div style="border-bottom: 2px solid #0E5077;">
+					<p:panel id="groupPanel" header="#{group.name}" collapsed="false" toggleable="true" toggleableHeader="true">
+						<f:facet name="header">
+							<h:outputLabel class="fa fa-trash" rendered="#{psFileView.isRecycleBin(group)}" />
+							<h:outputLabel class="fa fa-sitemap" rendered="#{psFileView.isRecycleBin(group) == false}" />
+							<h:outputText style="margin-left: 0.5em" value="#{group.name}" />
+						</f:facet>
+						<f:facet name="options">
+							<p:menu rendered="#{psFileView.isRecycleBin(group) eq false}">
+								<p:submenu label="#{PsMsg['group']}">
+									<p:menuitem value="#{PsMsg['addEntry']}" icon="fa fa-plus-circle" action="#{psFileView.onAddEntry(group)}" />
+									<p:menuitem value="#{PsMsg['editGroupName']}" icon="fa fa-pencil" action="#{psFileView.onEditGroupName(group)}"
+										oncomplete="PF('editGroupNameDialog').show()" />
+									<p:menuitem value="#{PsMsg['deleteGroup']}" icon="fa fa-trash" action="#{psFileView.deleteGroup(group)}" />
+								</p:submenu>
+							</p:menu>
+						</f:facet>
+
+						<h:panelGroup id="dashboardGroup">
+							<p:outputPanel rendered="#{psFileView.getGroupEntries(group).size() == 0}" style="text-align: center;">
+								<p>#{PsMsg['appHub.noItemsInGroup']}</p>
+							</p:outputPanel>
+							<p:dataView id="availableApplications" var="currentEntry" value="#{psFileView.getGroupEntries(group)}" layout="grid" flex="true"
+								styleClass="myApplicationGrid" emptyMessage="" gridRowStyleClass="p-sm-4 p-md-2 p-xl-1">
+								<p:dataViewGridItem>
+									<p:contextMenu for="entryPanel">
+										<p:menuitem value="#{PsMsg['editEntry']}" action="#{psFileView.onEditEntry(currentEntry, group)}" update="" icon="fa fa-pencil" />
+										<p:menuitem value="#{PsMsg['deleteEntry']}" action="#{psFileView.actionDeleteEntry(currentEntry)}" update="" icon="fa fa-trash" />
+										<p:menuitem value="#{PsMsg['button.view']}" action="#{psFileView.onShowEntry(currentEntry, group)}" icon="fa fa-eye" />
+									</p:contextMenu>
+									<p:panel id="entryPanel" header="#{currentEntry.title}" closable="false" styleClass="appPanelStyle">
+										<f:facet name="options">
+											<p:menu>
+												<p:submenu>
+													<p:menuitem value="#{PsMsg['editEntry']}" icon="fa fa-pencil" action="#{psFileView.onEditEntry(currentEntry, group)}" />
+													<p:menuitem value="#{PsMsg['deleteEntry']}" icon="fa fa-trash" action="#{psFileView.actionDeleteEntry(currentEntry)}" />
+													<p:menuitem value="#{PsMsg['button.view']}" icon="fa fa-eye" action="#{psFileView.onShowEntry(currentEntry, group)}" />
+												</p:submenu>
+											</p:menu>
+										</f:facet>
+										<p:commandLink action="#{psFileView.performLogin(currentEntry)}"
+											style="display:block; text-align: center; text-decoration:none; ">
+											<p:graphicImage stream="false" value="#{psFileView.getEntryImage(currentEntry)}" style="background-color: white !Important; height: 64px; width: 64px; padding:0.1em;" />
+										</p:commandLink>
+									</p:panel>
+								</p:dataViewGridItem>
+							</p:dataView>
+						</h:panelGroup>
+					</p:panel>
+				</div>
+			</ui:repeat>
+		</p:outputPanel>
+		<!-- <p:overlayPanel widgetVar="entryButtons" id="entryButtons" showCloseIcon="true" dynamic="true">
+			<p:commandButton styleClass="applicationButtonEdit" action="#{psFileView.onEditEntry(currentEntry, group)}" icon="fa fa-pencil applicationHoverBtn"
+				title="#{AdminMsg['button.edit']}">
+			</p:commandButton>
+			<p:commandButton styleClass="applicationButtonClose" action="#{psFileView.actionDeleteEntry(currentEntry)}" immediate="true"
+				icon="fa fa-trash applicationHoverBtn" update='@form' title="#{AdminMsg['button.delete']}">
+			</p:commandButton>
+			<p:commandButton id="viewAppCredentialsBtn" styleClass="applicationButtonView" icon="fa fa-eye applicationHoverBtn" title="#{PsMsg['button.view']}"
+				action="#{psFileView.onShowEntry(currentEntry, group)}" update="psFileForm:viewAppCredentialsOutputPanel"
+				oncomplete="PF('viewAppCredentialsOP').show('#{component.clientId}')">
+			</p:commandButton>
+		</p:overlayPanel> -->
+	</h:form>
+	<h:form id="showEntryForm">
+		<p:dialog widgetVar="showEntry" id="showEntry" modal="true" showCloseIcon="true" dynamic="true">
+			<f:facet name="header">
+				<h:outputText style="vertical-align: middle;" value="#{psFileView.currentEntry.title}" />
+			</f:facet>
+			<h:panelGrid columns="3" cellpadding="2" cellspacing="2" style="margin:auto;">
+				<p:outputLabel value="#{PsMsg['label.username']}: " style="font-size: 1.1em" />
+				<p:outputLabel value="#{psFileView.currentEntry.username}" style="font-size: 1.1em" />
+				<h:panelGroup>
+					<h:outputLabel id="clipboardUserNameIcon" style="padding-left: 0.2em; cursor: pointer;" class="fa fa-clipboard"
+						onclick="copyTextToClipboard('#{psFileView.currentEntry.username}')" />
+					<p:tooltip for="clipboardUserNameIcon" value="#{PsMsg['toolTip.copy']}" position="right" trackMouse="true" />
+				</h:panelGroup>
+				<p:outputLabel value="#{PsMsg['password']}: " style="font-size: 1.1em" />
+				<p:outputLabel value="#{psFileView.currentEntry.password}" style="font-size: 1.1em" />
+				<h:panelGroup>
+					<h:outputLabel id="clipboardPasswordIcon" style="padding-left: 0.2em; cursor: pointer;" class="fa fa-clipboard"
+						onclick="copyTextToClipboard('#{psFileView.currentEntry.password}')" />
+					<p:tooltip for="clipboardPasswordIcon" value="#{PsMsg['toolTip.copy']}" position="right" trackMouse="true" />
+				</h:panelGroup>
+
+				<p:outputLabel rendered="#{psFileView.isAuthCodeVisible()}" value="#{PsMsg['appHub.authenticatorCode']}: " style="font-size: 1.1em" />
+				<p:outputLabel rendered="#{psFileView.authCodeVisible}" id="passcodeValue" value="#{psFileView.generateTotpCode()}" />
+				<h:panelGroup rendered="#{psFileView.authCodeVisible}">
+					<h:outputLabel id="clipboardTotpIcon" style="padding-left: 0.2em; cursor: pointer;" class="fa fa-clipboard"
+						onclick="copyTextToClipboard('#{psFileView.generateTotpCode()}')" />
+					<p:tooltip for="clipboardTotpIcon" value="#{PsMsg['toolTip.copy']}" position="right" trackMouse="true" />
+				</h:panelGroup>
+			</h:panelGrid>
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('showEntry').hide();"
+				style="float: right; margin-right: 1em;" immediate="true" />
+			<p></p>
+		</p:dialog>
+	</h:form>
+
+
+	<h:form id="pluginChromeUnavailableForm">
+		<p:dialog id="pluginChromeUnavailableDlg" modal="true" widgetVar="pluginChromeUnavailableDlg" resizable="false" width="100" draggable="false">
+			<f:facet name="header">
+				<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{PsMsg['appHub.error.pluginUnavailableHeader']}" />
+			</f:facet>
+			<p />
+			<p:panel style="text-align:center; padding:2em">
+				<p:outputLabel value="#{PsMsg['appHubAdmin.error.pluginChromeUnavailable']}"></p:outputLabel>
+				<p></p>
+				<p:button href="https://chrome.google.com/webstore/detail/doubleclue-myapplications/klfnhdgbkpajadkokakemnbipikkjifj?hl=en" target="_blank"
+					value="#{PsMsg['appHub.installPlugin']}" style="margin: 0 auto;width: 15em;"></p:button>
+			</p:panel>
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('pluginChromeUnavailableDlg').hide(); return false;"
+				style="float: right; margin-right: 1em; display: block " />
+			<p />
+			<br></br>
+			<p:spacer height="2" />
+		</p:dialog>
+	</h:form>
+
+	<h:form id="pluginSafariUnavailableForm">
+		<p:dialog id="pluginSafariUnavailableDlg" styleClass="PluginDlg" modal="true" widgetVar="pluginSafariUnavailableDlg" resizable="false" width="100">
+			<f:facet name="header">
+				<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{PsMsg['appHub.error.pluginUnavailableHeader']}" />
+			</f:facet>
+			<p />
+			<p:panel style="text-align:center; padding:2em">
+				<p:outputLabel value="#{PsMsg['appHubAdmin.error.pluginSafariUnavailable']}"></p:outputLabel>
+				<p></p>
+				<p:button href="https://apps.apple.com/us/story/id1377753262" target="_blank" value="#{PsMsg['appHub.installPlugin']}" style="margin: 0 auto;width: 15em;"></p:button>
+			</p:panel>
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('pluginFirefoxUnavailableDlg').hide(); return false;"
+				style="float: right; margin-right: 1em; display: block " />
+			<p />
+			<br></br>
+			<p:spacer height="2" />
+
+		</p:dialog>
+	</h:form>
+
+	<h:form id="pluginFirefoxUnavailableForm">
+		<p:dialog id="pluginFirefoxUnavailableDlg" styleClass="PluginDlg" modal="true" widgetVar="pluginFirefoxUnavailableDlg" draggable="false" resizable="false">
+			<f:facet name="header">
+				<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{PsMsg['appHub.error.pluginUnavailableHeader']}" />
+			</f:facet>
+			<p />
+			<p:panel style="text-align:center; padding:2em">
+				<p:outputLabel value="#{PsMsg['appHubAdmin.error.pluginFirefoxUnavailable']}" style="font-size:1.2em;"></p:outputLabel>
+				<p></p>
+				<p:button href="https://addons.mozilla.org/en-US/firefox/addon/doubleclue/" target="_blank" value="#{PsMsg['appHub.installPlugin']}"
+					style="margin: 0 auto;width: 15em;"></p:button>
+			</p:panel>
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('pluginFirefoxUnavailableDlg').hide(); return false;"
+				style="float: right; margin-right: 1em; display: block " />
+			<p />
+			<br></br>
+			<p:spacer height="2" />
+
+		</p:dialog>
+	</h:form>
+
+	<h:form id="pluginUnavailableForm">
+		<p:dialog id="pluginUnavailableDlg" modal="true" resizable="false" widgetVar="pluginUnavailableDlg" width="100" draggable="false">
+			<f:facet name="header">
+				<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{PsMsg['appHub.error.pluginUnavailableHeader']}" />
+			</f:facet>
+			<p />
+			<p:panel style="text-align:center; padding:2em">
+				<p:outputLabel value="#{PsMsg['appHubAdmin.error.pluginUnavailable']}"></p:outputLabel>
+				<p></p>
+			</p:panel>
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('pluginUnavailableDlg').hide(); return false;"
+				style="float: right; margin-right: 1em; display: block " />
+			<p />
+			<br></br>
+			<p:spacer height="2" />
+		</p:dialog>
+	</h:form>
+
+	<h:form id="addAppsForm" enctype="multipart/form-data">
+		<p:dialog id="addAppDlg" widgetVar="addAppDlg" modal="true" style="border:none;">
+			<f:facet name="header" >
+				<h:outputLabel value="#{PsMsg['addEntry']}" class="dialogTitle" rendered="#{psFileView.editingApplication == false}" />
+				<h:outputLabel value="#{PsMsg['appHub.editCustomApp']}" class="dialogTitle" rendered="#{psFileView.editingApplication == true}" />
+			</f:facet>
+			<p:messages showSummary="true" showDetail="false" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			<p:tabView id="tabView" multiViewState="true">
+				<p:tab title="#{PsMsg['appHubAdmin.addAppApplication']}">
+					<p:remoteCommand name="finishExecutePlugin" update="actionsTable" action="#{psFileView.actionFinishExecutePlugin}" />
+					<h:inputHidden id="pluginResponse" value="#{psFileView.pluginResponse}" />
+
+					<p:remoteCommand name="pluginChromeUnavailableAlert" action="#{psFileView.showPluginChromeUnavailableAlert}" />
+					<p:remoteCommand name="pluginFirefoxUnavailableAlert" action="#{psFileView.showPluginFirefoxUnavailableAlert}" />
+					<p:remoteCommand name="pluginSafariUnavailableAlert" action="#{psFileView.showPluginSafariUnavailableAlert}" />
+					<p:remoteCommand name="pluginUnavailableAlert" action="#{psFileView.showPluginUnavailableAlert}" />
+
+					<h:panelGrid columns="2" cellpadding="2" cellspacing="2" rendered="#{psFileView.currentEntry != null}">
+
+						<p:outputLabel value="#{PsMsg['button.selectEntityTemplate']}" />
+						<h:panelGroup>
+							<p:outputLabel id="entryPredefined" value="#{psFileView.predefinedAppName}" disabled="#{psFileView.writeAccess == false}" size="36" />
+							<p:commandButton id="setPreDefinedBtn" style="margin-left: 1em" onclick="PF('setPredefinedAppDialog').show()" icon="fa fa-bars"
+								disabled="#{psFileView.writeAccess == false}" title="Select Predefined Application" />
+						</h:panelGroup>
+
+						<p:outputLabel for="entryTitle" value="#{PsMsg['dialog.addEntry.title']}" />
+						<p:inputText id="entryTitle" value="#{psFileView.appNameValue}" disabled="#{psFileView.writeAccess == false}" maxlength="128" size="36" />
+
+						<p:outputLabel value="#{PsMsg['label.username']}" />
+						<p:inputText value="#{psFileView.appUsernameValue}" disabled="#{psFileView.writeAccess == false}" maxlength="128" size="36" />
+
+						<p:outputLabel for="entryPassword" value="#{PsMsg['dialog.password']}" />
+
+						<p:password id="entryPassword" value="#{psFileView.appPasswordValue}" maxlength="256" size="36" redisplay="true"
+							validatorMessage="#{PsMsg['registration.noMatchPassword']}" match="confirmEntryPassword" autocomplete="false"
+							disabled="#{psFileView.writeAccess == false}" toggleMask="true">
+						</p:password>
+
+						<p:outputLabel for="confirmEntryPassword" value="#{PsMsg['dialog.confirmPassword']}" />
+						<p:password id="confirmEntryPassword" value="#{psFileView.appPasswordValue}" maxlength="256" size="36" redisplay="true"
+							disabled="#{psFileView.writeAccess == false}" toggleMask="true" />
+
+						<p:outputLabel value="#{PsMsg['appHubAdmin.addAppUrl']}" />
+						<h:panelGroup>
+							<p:inputText id="addAppUrlField" value="#{psFileView.appUrlValue}" style="width:350px;" disabled="#{psFileView.writeAccess == false}">
+							</p:inputText>
+							<p:commandButton id="actionOkBtn" value="#{PsMsg['button.validateUrl']}" style="margin-left:5px;" action="#{psFileView.appUrlValueValidate}" async="true" />
+						</h:panelGroup>
+						<p:outputLabel value="#{PsMsg['appHubAdmin.addAppLogo']}" />
+						<h:panelGroup id="fileLogo" style="display: inline-flex;">
+							<p:graphicImage id="fileLogoImg" cache="false" style="border: 1px solid grey; height: 5em; width: 5em; margin-left:0.5em;"
+								value="#{psFileView.fileLogoImage}" />
+							<p:fileUpload listener="#{psFileView.uploadFileLogoListener}" label="#{CoreMsg['choose']}" value="#{psFileView.uploadedFileLogo}" mode="advanced"
+								skinSimple="true" auto="true" multiple="false" update="fileLogo" invalidSizeMessage="#{PsMsg['appHubAdmin.invalidFileSizeLogoMsg']}"
+								disabled="#{psFileView.writeAccess == false}" accept=".png,.jpg,.jpeg,.gif">
+								<p:validateFile allowTypes="/(\.|\/)(gif|jpe?g|png)$/" fileLimit="1" sizeLimit="40240" />
+							</p:fileUpload>
+						</h:panelGroup>
+
+						<p:outputLabel value="#{PsMsg['dialog.addEntry.notes']}" />
+						<p:inputTextarea value="#{psFileView.appNotesValue}" autoResize="false" maxlength="1024" style="width:28.5em;" row="6"
+							disabled="#{psFileView.writeAccess == false}" />
+
+						<p:outputLabel for="setAuthBtn" value="#{PsMsg['dialog.addEntry.setUpAuthenticator']}" />
+						<p:commandButton id="setAuthBtn" action="#{psFileView.onSetAuthenticator}" icon="fa fa-key" value="#{PsMsg['button.setAuthenticator']}" async="true"
+							disabled="#{psFileView.writeAccess == false}" />
+
+						<p:outputLabel for="entryGroup" value="#{PsMsg['dialog.addEntry.group']}" />
+						<p:selectOneMenu id="entryGroup" value="#{psFileView.groupSelectItem}" style="width: 11em" disabled="#{psFileView.writeAccess == false}">
+							<f:selectItems value="#{psFileView.selectedAppGroups}" />
+						</p:selectOneMenu>
+						<br></br>
+					</h:panelGrid>
+				</p:tab>
+				<p:tab title="#{PsMsg['dialog.customProperties']} ">
+					<p></p>
+					<p:commandLink action="#{psFileView.addNewProperty}" immediate="true" disabled="#{psFileView.writeAccess == false}" >
+						<p:outputLabel id="addNewProperty" class="fa fa-plus-circle actionBarButtons"></p:outputLabel>
+						<p:tooltip for="addNewProperty" value="#{PsMsg['button.add']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink action="#{psFileView.editProperty}" immediate="true" disabled="#{psFileView.writeAccess == false}">
+						<p:outputLabel id="editProperty" class="fa fa-edit actionBarButtons"></p:outputLabel>
+						<p:tooltip for="editProperty" value="#{PsMsg['button.edit']}" position="bottom" />
+					</p:commandLink>
+
+					<p:commandLink action="#{psFileView.deleteProperty}" immediate="true" disabled="#{psFileView.writeAccess == false}">
+						<p:outputLabel id="deleteProperty" class="fa fa-trash actionBarButtons" />
+						<p:tooltip for="deleteProperty" value="#{PsMsg['button.delete']}" position="bottom" />
+					</p:commandLink>
+
+					<p:panel style="display:inline-block;float:right;padding:0;margin:0;">
+						<p:commandLink update="customPropertiesTable" action="#{psFileView.upAction}" immediate="true" disabled="#{psFileView.writeAccess == false}">
+							<h:outputText id="up" class="fa fa-arrow-up "/>
+							<p:tooltip for="up" value="#{PsMsg['button.up']}" position="bottom" />
+						</p:commandLink>
+						<p:commandLink update="customPropertiesTable" action="#{psFileView.downAction}" style="margin-left: 1em" immediate="true" disabled="#{psFileView.writeAccess == false}">
+							<h:outputText id="down" class="fa fa-arrow-down" />
+							<p:tooltip for="down" value="#{PsMsg['button.down']}" position="bottom" />
+						</p:commandLink>
+					</p:panel>
+					<br></br>
+					<br></br>
+					<p:dataTable class="borderlessAttachment" id="customPropertiesTable" var="customProperty" value="#{psFileView.customProperties}"
+						selection="#{psFileView.selectedProperty}" rowKey="#{customProperty.key}" emptyMessage="#{PsMsg['message.emptyTable']}">
+
+						<p:column selectionMode="single" style="width:16px; text-align:center" />
+						<p:ajax event="rowSelect" update="customPropertiesTable" />
+						<p:column headerText="#{PsMsg['dialog.customProperties.name']}" style="text-align: left;">
+							<h:outputLabel value="#{customProperty.key}" />
+						</p:column>
+						<p:column headerText="#{PsMsg['dialog.customProperties.value']}" style="text-align: left;">
+							<h:outputLabel value="#{customProperty.propertyValue.value}" />
+						</p:column>
+
+					</p:dataTable>
+				</p:tab>
+
+				<p:tab title="#{PsMsg['dialog.attachments']} ">
+					<p:panelGrid columns="3" styleClass="gridAttachmentButtons">
+						<p:fileUpload id="uploadBtn" style="margin-left:-11px;" class="fileupload" mode="advanced" dragDropSupport="true" update="@this attachmentsTable"
+							required="true" listener="#{psFileView.handleFileUpload}" auto="true" label="#{PsMsg['chooseFile']}" disabled="#{psFileView.writeAccess == false}">
+							<p:validateFile sizeLimit="1048576" fileLimit="1" />
+						</p:fileUpload>
+
+						<p:commandLink action="#{psFileView.actionDownloadAttachment()}" ajax="false" immediate="true">
+							<p:outputLabel id="actionDownload" class="fa fa-cloud-download actionBarButtons" />
+							<p:tooltip for="actionDownload" value="#{PsMsg['button.download']}" position="bottom" />
+						</p:commandLink>
+
+						<p:commandLink action="#{psFileView.deleteAttachment}" immediate="true" disabled="#{psFileView.writeAccess == false}">
+							<p:outputLabel id="deleteattach" class="fa fa-trash actionBarButtons" />
+							<p:tooltip for="deleteattach" value="#{PsMsg['button.delete']}" position="bottom" />
+						</p:commandLink>
+					</p:panelGrid>
+					<p></p>
+					<p:dataTable class="borderlessAttachment" id="attachmentsTable" var="attachment" value="#{psFileView.currentFiles}"
+						selection="#{psFileView.selectedAttachmentFile}" rowKey="#{attachment.key}" emptyMessage="#{PsMsg['message.emptyTable']}" style="margin-bottom:0">
+
+						<p:column selectionMode="single" style="width:16px; text-align:center" />
+						<p:ajax event="rowSelect" update="attachmentsTable" />
+						<p:column headerText="#{PsMsg['dialog.attachments.fileName']}" style="text-align: left;">
+							<h:outputLabel value="#{attachment.key}" />
+						</p:column>
+
+						<p:column headerText="#{PsMsg['dialog.attachments.fileSize']}" style="text-align: left;">
+							<h:outputLabel value="#{attachment.length}" />
+						</p:column>
+
+					</p:dataTable>
+				</p:tab>
+
+				<p:tab title="#{PsMsg['appHub.loginProcess']}">
+					<p />
+					<p:commandLink actionListener="#{psFileView.recordCustomApplication}" rendered="#{psFileView.noPredefinedApp}"
+						disabled="#{psFileView.writeAccess == false}">
+						<p:outputLabel id="chooseOtherFile" style="color: font-size: 1.1em; cursor: pointer;" class="fa fa-external-link" />
+						<p:outputLabel style="color: font-size: 1.1em; cursor: pointer; text-decoration: underline" value=" #{PsMsg['appHub.executePlugin']}" />
+					</p:commandLink>
+					<p></p>
+					<h:outputText value="#{PsMsg['appHub.advanceRecording']} " rendered="#{psFileView.noPredefinedApp}" />
+					<p:selectBooleanCheckbox value="#{psFileView.advanceRecording}" rendered="#{psFileView.noPredefinedApp}" />
+					<p></p>
+
+					<a style="position: absolute; top: 3.5em; right: 1.5em; font-size: 1.5em;" title="#{PsMsg['appHub.linkToRecordGuide']}"
+						href="#{PsMsg['appHub.linkToHelp']}" target="_blank"><i class="fa fa-book"></i></a>
+
+					<p:fieldset legend="#{PsMsg['appHub.loginData']}" style="margin-top: 2em; border-style: solid; border-color: grey;">
+						<p />
+						<p:commandButton value="#{PsMsg['appHubAdmin.addStep']}" action="#{psFileView.onAddNewAction}" icon="fa fa-plus" 
+							update="actionForm" disabled="#{psFileView.writeAccess == false}" rendered="#{psFileView.noPredefinedApp}" />
+						<p:spacer width="12" />
+						<p:commandButton value="#{PsMsg['appHubAdmin.editStep']}" actionListener="#{psFileView.onEditAction}" icon="fa fa-edit" 
+							disabled="#{psFileView.writeAccess == false}" rendered="#{psFileView.noPredefinedApp}" />
+						<p:spacer width="12" />
+						<p:commandButton value="#{PsMsg['appHubAdmin.deleteStep']}" actionListener="#{psFileView.deleteAction}" icon="fa fa-minus"
+							 disabled="#{psFileView.writeAccess == false}" rendered="#{psFileView.noPredefinedApp}">
+							<p:confirm header="#{PsMsg['appHubAdmin.deleteConfirmHeader']}" message="#{PsMsg['appHubAdmin.deleteSelectedAction']}" icon="fa fa-warning confirmIcon" />
+						</p:commandButton>
+						<p />
+						<p:dataTable id="actionsTable" var="appStep" scrollHeight="260" scrollable="true" value="#{psFileView.currentAppActions}" widgetVar="actionsTable"
+							selection="#{psFileView.selectedActions}" rowKey="#{appStep.index}" draggableRows="true" styleClass="borderless"
+							emptyMessage="#{PsMsg['message.emptyTable']}">
+							<p:column selectionMode="multiple" style="width:16px; text-align:center" />
+							<p:ajax event="rowSelect" update="actionsTable" />
+							<p:column headerText="#{PsMsg['appHubAdmin.type']}">
+								<h:outputText value="#{appStep.type}" />
+							</p:column>
+							<p:column headerText="#{PsMsg['appHubAdmin.selector']}" style="max-width: 20em">
+								<h:outputText value="#{appStep.selector}" />
+							</p:column>
+							<p:column headerText="#{PsMsg['appHubAdmin.valueType']}">
+								<h:outputText value="#{psFileView.getActionValueSource(appStep)}" />
+							</p:column>
+							<p:column headerText="#{PsMsg['appHubAdmin.value']}">
+								<h:outputText value="#{appStep.valueParameter}" />
+							</p:column>
+						</p:dataTable>
+						<p></p>
+						<p:commandLink id="exportApp" style="float:right;" action="#{psFileView.actionExportApp}" value="" ajax="false">
+							<h:outputText class="fa fa-download" />
+							<p:outputLabel value="Export" style="cursor: pointer" />
+						</p:commandLink>
+					</p:fieldset>
+				</p:tab>
+			</p:tabView>
+			<p />
+			<p:commandButton id="addAppOK" value="OK" icon="fa fa-check" style="width: 8em;" action="#{psFileView.actionAddEditEntry}" ajax="true" upadate="viewPart"
+				disabled="#{psFileView.writeAccess == false}" />
+			<p:spacer width="12" />
+
+			<p:commandButton id="closeDialog" value="#{PsMsg['close']}" onclick="PF('addAppDlg').hide();" style="width: 8em" icon="fa fa-close" immediate="true"></p:commandButton>
+			<p></p>
+
+			<br />
+			<p></p>
+		</p:dialog>
+		<h:outputLabel id="label" />
+	</h:form>
+
+	<h:form id="actionForm">
+		<p:dialog id="actionDialog" widgetVar="actionDialog" modal="true" resizable="false" width="60em">
+			<f:facet name="header">
+				<h:outputLabel value="#{PsMsg['appHubAdmin.addAction']}" style="font-size: 1.2em;" rendered="#{psFileView.editingAction eq false}" />
+				<h:outputLabel value="#{PsMsg['appHubAdmin.editAction']}" style="font-size: 1.2em;" rendered="#{psFileView.editingAction eq true}" />
+			</f:facet>
+			<p />
+			<p:messages showDetail="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p />
+			<p:focus context="actionDialog" />
+			<h:panelGrid id="editPanel" columns="2" cellspacing="2" cellpadding="2">
+				<h:outputLabel for="attrType" value="#{PsMsg['appHubAdmin.type']}" />
+				<p:selectOneMenu id="attrType" value="#{psFileView.selectedActionType}">
+					<f:selectItems value="#{psFileView.actionTypes}" />
+					<p:ajax event="change" update="editPanel" process="@form" />
+				</p:selectOneMenu>
+
+				<h:outputLabel for="attrSelector" value="#{PsMsg['appHubAdmin.selector']}" rendered="#{psFileView.actionWithSelector}" />
+				<p:inputTextarea id="attrSelector" rows="4" value="#{psFileView.selectedAction.selector}" style="width: 30em" rendered="#{psFileView.actionWithSelector}" />
+
+				<h:outputLabel for="attrSource" value="#{PsMsg['appHubAdmin.valueType']}" rendered="#{psFileView.isActionWithSourceValue()}" />
+				<p:selectOneMenu id="attrSource" value="#{psFileView.selectedActionSourceType}" rendered="#{psFileView.isActionWithSourceValue()}">
+					<f:selectItems value="#{psFileView.actionSourceTypes}" />
+					<p:ajax event="change" update="attrDelayName attrFiledName" process="@this" />
+				</p:selectOneMenu>
+
+				<h:outputLabel for="attrDelayName" value="#{PsMsg['appHubAdmin.valueInSeconds']}" rendered="#{psFileView.actionWithDelay}" />
+				<p:inputText id="attrDelayName" value="#{psFileView.selectedAction.valueParameter}" style="width: 4em" rendered="#{psFileView.actionWithDelay}" />
+
+				<h:outputLabel for="attrFiledName" value="#{PsMsg['appHubAdmin.value']}" rendered="#{psFileView.actionWithParameter}" />
+				<h:panelGroup rendered="#{psFileView.actionWithParameter}">
+					<p:inputText id="attrFiledName" value="#{psFileView.selectedAction.valueParameter}" style="width: 20em" />
+					<p:spacer width="10" />
+					<h:outputText id="displayNameInfo" style="font-size: 1.2em;color: white !Important;cursor: pointer;" class="fa fa-question-circle" />
+					<p:tooltip for="displayNameInfo" showEvent="click" position="bottom" value="#{PsMsg['appHubAdmin.actionNameInfo']}" />
+				</h:panelGroup>
+
+			</h:panelGrid>
+			<br />
+			<p:commandButton id="actionOkBtn" style="width: 8em; margin-left:auto; margin-right:auto; margin-top:10px; margin-bottom:5px; display:table;" ajax="true"
+				value="OK" action="#{psFileView.actionAddEditAction}" async="true" />
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('actionDialog').hide();" style="float: right; margin-right: 1em; display: block "
+				immediate="true" />
+			<p />
+			<br></br>
+			<p:spacer height="2" />
+
+		</p:dialog>
+		<p:defaultCommand target="actionOkBtn" scope="actionDialog" />
+	</h:form>
+
+	<h:form id="sortedGroupForm">
+		<p:dialog id="sortedGroupDialog" widgetVar="sortedGroupDialog" modal="true" resizable="false">
+			<f:facet name="header">
+				<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{PsMsg['appHub.addGroup']}" />
+			</f:facet>
+			<p />
+			<p:messages showDetail="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p />
+			<p:focus context="sortedGroupDialog" />
+			<h:outputLabel for="groupName" value="#{PsMsg['appHub.sortedGroupLabel']}" />
+			<p:inputText id="groupName" value="#{psFileView.sortedGroupName}" style="margin-left: 1em; width: 18em" />
+			<br />
+			<p />
+			<p />
+			<p:commandButton id="actionOkBtn" style="width: 8em; margin-top:2em; margin-bottom:5px; display:table;" ajax="true" value="OK"
+				action="#{psFileView.addGroup}" update="psFileForm" async="true" />
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('sortedGroupDialog').hide();" style="float: right; margin-right: 1em;" immediate="true" />
+			<p></p>
+			<br />
+		</p:dialog>
+		<p:defaultCommand target="actionOkBtn" scope="sortedGroupDialog" />
+	</h:form>
+
+	<h:form id="editGroupNameForm">
+		<p:dialog id="editGroupNameDialog" widgetVar="editGroupNameDialog" modal="true" resizable="false">
+			<f:facet name="header">
+				<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{PsMsg['appHub.editGroupName']}" />
+			</f:facet>
+			<p />
+			<p:messages showDetail="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p />
+			<p:focus context="editGroupName" />
+
+			<p:outputLabel for="editGroupName" value="#{PsMsg['appHub.sortedGroupLabel']}" />
+			<p:inputText id="editGroupName" value="#{psFileView.sortedGroupName}" style="margin-left: 1em;  width: 18em" />
+
+			<p:commandButton id="actionOkBtn" style="width: 8em; margin-left:auto; margin-right:auto; margin-top:15px; margin-bottom:5px; display:table;" value="OK"
+				action="#{psFileView.editGroupName}" update="psFileForm" />
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('editGroupNameDialog').hide();"
+				style="float: right; margin-right: 1em; display: block " immediate="true" />
+			<p />
+			<br></br>
+			<p:spacer height="2" />
+		</p:dialog>
+		<p:defaultCommand target="actionOkBtn" scope="editGroupName" />
+	</h:form>
+
+	<h:form id="setPredefinedAppForm">
+		<p:dialog id="setPredefinedAppDialog" widgetVar="setPredefinedAppDialog" modal="true" resizable="false">
+			<span id="customheader"> <h:outputLabel value="#{PsMsg['appHub.title.setPredefinedAppTitle']}" style="font-size: 1.4em; padding: 20px;" />
+			</span>
+			<p />
+			<p:messages showDetail="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p />
+			<p:focus context="setPredefinedAppDialog" />
+			<p:selectOneListbox id="predefinedAppList" value="#{psFileView.selectedAddApp}" var="a" filter="true" filterMatchMode="contains"
+				style="width:25em; margin: 0 auto;">
+				<f:selectItems value="#{psFileView.availableApplications}" var="app" itemLabel="#{app.name}" itemValue="#{app}" />
+				<p:column>
+					<p:graphicImage stream="false" value="#{a.logoImg}" style="height:30px; padding: 0.5em" />
+				</p:column>
+				<p:column>
+					<h:outputText value="#{a.name}" />
+				</p:column>
+			</p:selectOneListbox>
+			<br />
+			<p:commandButton id="actionOkBtn" style="width: 10em; " value="OK" action="#{psFileView.actionSetPredefinedApp}" />
+			<p:commandButton id="actionRemoveBtn" style="width: 10em; margin-left: 2em" value="#{PsMsg['appHub.removePredefinedApp']}"
+				action="#{psFileView.actionRemovePredefinedApp}" />
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('setPredefinedAppDialog').hide();"
+				style="float: right; margin-right: 1em; display: block " immediate="true" />
+			<p />
+			<br></br>
+			<p:spacer height="2" />
+
+		</p:dialog>
+		<p:defaultCommand target="actionOkBtn" scope="setPredefinedAppDialog" />
+	</h:form>
+
+	<h:form id="addAuthenticatorKeyForm">
+		<p:dialog id="addAuthenticatorKeyDlg" widgetVar="addAuthenticatorKeyDialog" modal="true" resizable="false" width="100">
+			<f:facet name="header">
+				<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{PsMsg['appHub.addAuthenticatorKey']}" />
+			</f:facet>
+
+			<p />
+			<p:messages showDetail="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p />
+			<p:focus context="addAuthenticatorKeyDlg" />
+			<h:outputLabel for="authenticatorKey" value="#{PsMsg['appHub.setAuthPasscode']}" />
+			<p:inputText id="authenticatorKey" value="#{psFileView.authPasscodeValue}" placeholder="eg. 5PFZQPE3HQTY7D74" maxlength="128" size="50" />
+
+			<br />
+			<p:commandButton id="actionOkBtn" style="width: 8em; margin-left:auto; margin-right:auto; margin-top:10px; margin-bottom:5px; display:table;" ajax="true"
+				value="OK" action="#{psFileView.setAuthenticatorKey}" />
+			<p></p>
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('addAuthenticatorKeyDialog').hide();"
+				style="float: right; margin-right: 1em; display: block " immediate="true" />
+			<p />
+			<br></br>
+			<p:spacer height="2" />
+
+		</p:dialog>
+		<p:defaultCommand target="actionOkBtn" scope="addAuthenticatorKeyDlg" />
+	</h:form>
+
+	<h:form id="addNewPropertyForm">
+		<p:dialog id="addNewPropertyDialog" widgetVar="addNewPropertyDialog" modal="true" resizable="false" draggable="false">
+			<f:facet name="header">
+				<h:outputLabel value="#{PsMsg['dialog.customProperties.add']}" class="dialogTitle" rendered="#{psFileView.editingProperty eq false}" />
+				<h:outputLabel value="#{PsMsg['dialog.customProperties.edit']}" class="dialogTitle" rendered="#{psFileView.editingProperty eq true}" />
+			</f:facet>
+
+			<p:messages showDetail="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:focus context="addNewPropertyDialog" />
+			<h:panelGrid id="editPanel" columns="2" cellspacing="4" cellpadding="4">
+
+				<p:outputLabel for="name" value="#{PsMsg['dialog.customProperties.name']}" />
+				<p:inputText id="name" value="#{psFileView.customPropertyName}" maxlength="64" style="width: 24em" required="true"
+					disabled="#{psFileView.editingProperty eq true}" requiredMessage="#{PsMsg['dialog.addEntry.propertyNameRequired']}" />
+
+				<p:outputLabel for="value" value="#{PsMsg['dialog.customProperties.value']}" />
+				<p:inputText id="value" value="#{psFileView.customPropertyValue}" maxlength="1024" style="width: 24em" required="true"
+					requiredMessage="#{PsMsg['dialog.addEntry.propertyValueRequired']}" />
+			</h:panelGrid>
+			<br></br>
+
+			<p:commandButton style="margin-left:10em" value="#{PsMsg['button.ok']}" action="#{psFileView.actionCustomProperty}" styleClass="wideButton"
+				icon="fa fa-check" ajax="true" update="">
+			</p:commandButton>
+			<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{PsMsg['close']}" onclick="PF('addNewPropertyDialog').hide();"
+				style="float: right; margin-right: 1em; margin-top: 1em; display: block " immediate="true" />
+			<p />
+		</p:dialog>
+	</h:form>
+
+</ui:composition>

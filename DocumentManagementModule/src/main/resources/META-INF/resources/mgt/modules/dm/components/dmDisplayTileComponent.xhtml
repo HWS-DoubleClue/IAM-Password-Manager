@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+	<p:dataView var="document" value="#{dmDocumentView.currentFolders}" emptyMessage=" " layout="grid" styleClass="smallComponent">
+		<p:dataViewGridItem>
+			<p:panel styleClass="smallComponentPanel">
+				<p:selectBooleanCheckbox value="#{document.selected}" style="margin-left: 1em; vertical-align: middle">
+					<p:ajax event="valueChange" listener="#{dmDocumentView.onSelection(document)}" />
+				</p:selectBooleanCheckbox>
+				<p:commandLink action="#{dmDocumentView.actionClickFolder(document)}" style="cursor: pointer;" immediate="true" update="@form">
+					<p:graphicImage styleClass="viewFolderImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
+					<h:outputText class="folderName" value="#{document.name}" />
+				</p:commandLink>
+			</p:panel>
+		</p:dataViewGridItem>
+	</p:dataView>
+
+	<p:dataView var="document" value="#{dmDocumentView.currentDocuments}" rows="20" rowsPerPageTemplate="20,50,100,200" paginator="true" paginatorPosition="bottom"
+		emptyMessage="#{DmMsg['documentView.message.emptyTable']}"
+		paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" layout="grid"
+		styleClass="smallComponent" selectionMode="multiple" selection="#{dmDocumentView.selectedCloudSafeFiles}" rowKey="#{document.id}">
+		<p:dataViewGridItem>
+			<p:selectBooleanCheckbox value="#{document.selected}" style="margin-left: 1em; margin-bottom: -3.5em">
+				<p:ajax event="valueChange" listener="#{dmDocumentView.onSelection(document)}" />
+			</p:selectBooleanCheckbox>
+
+			<p:panel styleClass="smallComponentPanel">
+				<div style="display: flex; justify-content: center;">
+					<p:graphicImage cache="false" value="#{dmDocumentView.getThumbnailStream(document)}" stream="false" style="border-radius: 5px;"
+						styleClass="smallComponentImage" />
+				</div>
+				<div style="margin-top: 4px; display: inline-block;" class="documentName">
+					<p:graphicImage styleClass="viewFileImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
+					<h:outputText style="margin-left: 2px" value="#{document.name}" />
+				</div>
+				<h:panelGroup rendered="#{dmDocumentView.searchResultMode eq true and document.location.isEmpty() eq false}">
+					<br />
+					<h:outputText class="fa-regular fa-folder" />
+					<p:commandLink id="locationFolder" value="#{document.location}" action="#{dmDocumentView.actionParentFolder(document)}" class="folderName" immediate="true"
+						update="@form" />
+					<p:tooltip for="locationFolder" value="#{dmDocumentView.getPath(document)}" position="bottom" />
+				</h:panelGroup>
+
+				<h:panelGroup rendered="#{document.owner.value == '3'}">
+					<br />
+					<h:outputText class="fa-solid fa-people-group" />
+					<p:outputLabel value=": #{document.ownerName}" style="margin-left: 5px;" />
+				</h:panelGroup>
+				<br />
+				<div>
+					<div style="margin-top: 0.4em">
+						<ui:repeat value="#{dmDocumentView.getTagsSafely(document)}" var="tag">
+							<div style="color: #{tag.foregroundColor}; background-color: #{tag.color};" class="documentTag">#{tag.name}</div>
+						</ui:repeat>
+
+					</div>
+				</div>
+			</p:panel>
+		</p:dataViewGridItem>
+	</p:dataView>
+</ui:composition>

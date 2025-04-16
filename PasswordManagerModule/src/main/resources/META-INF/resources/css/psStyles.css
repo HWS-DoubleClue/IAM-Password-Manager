@@ -1,0 +1,316 @@
+
+.actionBarButtons {
+	font-size: 2em !important;
+	color: var(--header-link-text-color);
+	margin-right: 0.5em;
+	text-decoration: none !important;
+}
+
+
+.containerBanner {
+	border: solid 0px;
+	display: grid;
+	grid-template-columns: 10% 5% 70% auto;
+	height: 6vh;
+}
+
+.containerBannerLogin {
+	border: solid 0px;
+	display: grid;
+	grid-template-columns: 10% 70% auto;
+	height: 6vh;
+}
+
+.buttonChild {
+	display: block;
+	position: relative;
+	padding: 0;
+	margin: 0;
+	line-height: 5vh;
+	vertical-align: middle;
+}
+
+.menuRightbtn {
+	position: static;
+	display: inline-block;
+	float: right;
+}
+
+.refresh {
+	position: static;
+	display: inline-block;
+	margin-right: 0.5em;
+	float: right;
+	vertical-align: middle;
+	font-size: 1em;
+}
+
+
+.viewTitle {
+	font-size: 1.6em;
+	color: var(--header-link-text-color);
+	vertical-align: middle;
+	text-decoration: none;
+}
+
+
+.confirmDialog {
+	max-width: 350px;
+	border-radius: 5px;
+}
+
+.confirmDialog>.ui-dialog-titlebar {
+	padding: 5px 10px 10px 10px !important;
+	vertical-align: center;
+	margin: 0 !important;
+	color: black;
+}
+
+.ui-dialog-titlebar {
+	margin: 0 !important;
+	text-align: center;
+}
+
+.confirmDialog>.ui-dialog-content>.ui-icon {
+	display: none;
+}
+
+#loginKeePass {
+	margin-top: 2%;
+	margin-bottom: 10%;
+	padding-left: 10px;
+}
+
+#keePassCreate {
+	margin-bottom: 1%;
+	margin-top: 1%;
+	margin-right: 1%;
+}
+
+.keePassFolderContent {
+	float: left;
+	width: 240px !important;
+	border: none;
+}
+
+
+.commandButtonStandard {
+	width: 9em;
+}
+
+.submenuKeePass a.ui-menuitem-link, .ui-menu-child {
+	width: 11em !important;
+}
+
+.submenuKeePass .ui-menu-child {
+	width: 12em !important;
+}
+
+.contextMenu a.ui-menuitem-link {
+	width: 10em;
+}
+
+.contextMenu.ui-menu {
+	width: auto;
+	border: 1px solid !important;
+}
+/* end menu section  */
+
+/* Tab View */
+.keepassEntryTabs.ui-tabs {
+	width: 39em;
+}
+
+
+.borderHidden.headAndTextPanel {
+	text-align: center;
+	padding-left: 5%;
+	padding-right: 5%;
+	padding-top: 5%;
+}
+
+
+.ui-icon.keepassIcon {
+	background: url("#{resource['pictures/Keepass_white.png']}") no-repeat
+		!important;
+	height: 32px !important;
+	width: 32px !important;
+	margin-top: -5px;
+	margin-right: 10px;
+	stroke: white;
+	fill: white;
+	stroke-width: 1;
+}
+
+.ui-icon.passwordSafeIcon {
+	background: url("#{resource['pictures/Keepass_white.png']}") no-repeat
+		!important;
+	height: 32px !important;
+	width: 32px !important;
+	margin-top: -5px;
+	margin-right: 10px;
+	stroke: white;
+	fill: white;
+	stroke-width: 1;
+}
+
+
+.viewFileImage {
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+	vertical-align: sub;
+	width: 16px;
+	height: 16px;
+}
+
+#moveFolderDlg .ui-widget-content {
+	border: none;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	margin: 0 auto;
+	border: none;
+	width: auto;
+	margin-top: 10em;
+}
+
+
+.recentFileLink {
+	font-size: 1.2em;
+	color: var(--header-link-text-color);
+}
+
+
+.ui-panel.appPanelStyle .ui-panel-titlebar:hover {
+	cursor: move;
+}
+
+/****** ApplicationHubStyle *****/
+.appPanelStyle:hover .ui-panel-actions {
+	visibility: visible;
+	height: 0px !important;
+}
+
+.ui-panel .ui-panel-titlebar-icon {
+	background: inherit;
+	border: none;
+}
+
+
+.ui-button-icon-left {
+	font-size: small;
+	padding-top: 1px;
+}
+
+
+
+.ui-dataview-content {
+	border: none; 
+	font-size: 1.2em;
+}
+
+.ui-panel-titlebar-icon {
+	visibility: visible;
+}
+
+.ui-panel .ui-panel-titlebar-icon {
+	width: 1.2em;
+	height: 1.2em;
+}
+
+.ui-icon ui-icon-gear {
+	width: 1.0em !Important;
+	height: 1.0em;
+}
+
+
+.ui-dataview.myApplicationGrid .ui-dataview-row {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.applicationButtonClose {
+	display: inherit !important;
+	width: 1.6em !important;
+	height: 1.6em !important;
+	/* margin-top: -0.4em; */
+	margin-right: 0.5em;
+	background-color: #fff !important;
+	border-radius: 0.8em !important;
+	top: 2.2em;
+	left: 80%;
+}
+
+.applicationButtonEdit {
+	display: inherit !important;
+	width: 1.6em !important;
+	height: 1.6em !important;
+	/* margin-top: -0.4em; */
+	margin-right: 0.5em;
+	background-color: #fff !important;
+	border-radius: 0.8em !important;
+	top: 3.7em; 
+	left: 80%;
+}
+
+.applicationButtonView {
+	display: inherit !important;
+	width: 1.6em !important;
+	height: 1.6em !important;
+	/* margin-top: -0.4em; */
+	margin-right: 0.5em;
+	background-color: #fff !important;
+	border-radius: 0.8em !important;
+	top: 2.7em;
+	left: 80%;
+}
+
+.applicationButtonClose:hover, .applicationButtonEdit:hover,
+	.applicationButtonView:hover {
+	background-color: #e0e000 !important;
+}
+
+.applicationHoverBtn {
+	color: #000;
+	font-size: 0.8em;
+	text-align: center;
+	width: auto;
+}
+
+
+.onAddAppText:hover {
+	cursor: pointer;
+	color: #FF1493 !important;
+}
+
+
+/***** ApplicationHub Style End *****/
+.ui-panelgrid.gridAttachmentButtons tbody tr, .ui-panelgrid.gridAttachmentButtons tbody td
+	{
+	border-style: none;
+}
+
+.labelPasswordNew {
+	font-size: 1.2em ! important;
+}
+
+.bottomImg {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	display: inline-block;
+}
+
+
+.toggleable-panel .ui-panel-title {
+	cursor: pointer;
+}
+
+
+.imageProfileUser {
+	border: 1px solid #005078;
+	height: 8em;
+	width: 8em;
+	border-radius: 4em;
+}
+

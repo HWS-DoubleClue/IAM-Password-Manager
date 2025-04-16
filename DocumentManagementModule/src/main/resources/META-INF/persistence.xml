@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="dcem.dm">
+		<class>com.doubleclue.dcem.as.entities.DeviceEntity</class>
+		<class>com.doubleclue.dcem.as.entities.AsVersionEntity</class>
+		<class>com.doubleclue.dcem.as.entities.CloudSafeEntity</class>
+		<class>com.doubleclue.dcem.as.entities.AuthGatewayEntity</class>
+		<class>com.doubleclue.dcem.as.entities.CloudSafeShareEntity</class>
+		<class>com.doubleclue.dcem.as.entities.CloudSafeContentEntity</class>
+		<class>com.doubleclue.dcem.as.entities.CloudSafeLimitEntity</class>
+		<class>com.doubleclue.dcem.as.entities.CloudSafeTagEntity</class>
+		<class>com.doubleclue.dcem.as.entities.CloudSafeThumbnailEntity</class>
+	
+	
+		<class>com.doubleclue.dcem.as.entities.DeviceEntity</class>
+		<class>com.doubleclue.dcem.as.entities.CloudSafeEntity</class>
+		<class>com.doubleclue.dcem.dm.entities.DmWorkflowEntity</class>
+	</persistence-unit>
+</persistence>

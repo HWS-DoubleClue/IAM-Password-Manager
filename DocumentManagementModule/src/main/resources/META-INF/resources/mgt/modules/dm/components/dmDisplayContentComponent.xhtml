@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+	<p:dataView var="document" value="#{dmDocumentView.currentFolders}" emptyMessage="" layout="grid" styleClass="smallComponent">
+		<p:dataViewGridItem>
+			<p:panel styleClass="smallComponentPanel">
+				<p:selectBooleanCheckbox value="#{document.selected}" style="margin-left: 1em;">
+					<p:ajax event="valueChange" listener="#{dmDocumentView.onSelection(document)}" />
+				</p:selectBooleanCheckbox>
+				<p:commandLink action="#{dmDocumentView.actionClickFolder(document)}" style="cursor: pointer; " immediate="true" update="@form">
+					<p:graphicImage styleClass="viewFolderImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
+					<h:outputText class="folderName" value="#{document.name}" />
+				</p:commandLink>
+			</p:panel>
+		</p:dataViewGridItem>
+	</p:dataView>
+	<p:dataView var="document" value="#{dmDocumentView.currentDocuments}" rows="20" rowsPerPageTemplate="20,50,100,200" paginator="true" paginatorPosition="bottom"
+		emptyMessage="#{DmMsg['documentView.message.emptyTable']}"
+		paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" layout="List"
+		flex="true">
+		<p:dataViewListItem>
+			<p:selectBooleanCheckbox value="#{document.selected}" style="margin-left: 1em; margin-bottom: -4em">
+				<p:ajax event="valueChange" process="@this" listener="#{dmDocumentView.onSelection(document)}" />
+			</p:selectBooleanCheckbox>
+
+			<p:panel class="ui-g-12" style="background-color: #E0E0E0; border-radius: 5px; box-sizing: border-box; margin-bottom:0.5em;">
+				<div style="display: flex; flex-direction: row; align-items: center;">
+					<p:graphicImage cache="false" value="#{dmDocumentView.getThumbnailStream(document)}" stream="false" style="border-radius: 5px;"
+						styleClass="contentComponentImage" />
+					<div style="border-right: 1px solid lightgray; height: 15em" class="ui-g-8">
+						<div style="display: flex; justify-content: space-between; align-items: center;">
+							<div style="margin-top: 4px; display: inline-block;" class="documentName">
+								<p:graphicImage styleClass="viewFileImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
+								<h:outputText style="margin-left: 2px" value="#{document.name}" />
+							</div>
+							<div style="display: flex; gap: 0.5em; flex-wrap: wrap;">
+								<ui:repeat value="#{dmDocumentView.getTagsSafely(document)}" var="tag">
+									<div style="color: #{tag.foregroundColor}; background-color: #{tag.color};" class="documentTag">#{tag.name}</div>
+								</ui:repeat>
+							</div>
+						</div>
+
+						<p:outputLabel value="#{DmMsg['editDocument.comment']}:" style="margin-top: 5px;font-size: x-small" />
+						<p:scrollPanel style="width:100%; height:5rem" mode="native">
+							<h:outputText value="#{document.info} " escape="´true" />
+						</p:scrollPanel>
+
+						<p:outputLabel value="#{DmMsg['Document.ocrText']}:" style="margin-top: 5px;font-size: x-small" />
+						<p:scrollPanel style="width:100%; height: 3rem" mode="native">
+							<h:outputText style="font-size: x-small" value="#{document.textExtract}" />
+						</p:scrollPanel>
+					</div>
+					<h:panelGrid columns="2" style="font-size: x-small">
+						<h:outputText value="#{DmMsg['documentView.columnTitle.length']}: " />
+						<h:outputText value="#{document.lengthKb}" />
+
+						<h:outputText value="#{DmMsg['Document.owner']}: " rendered="#{document.owner.value eq 3}" />
+						<h:outputText value="#{document.group.name}" rendered="#{document.owner.value eq 3}" />
+
+						<h:outputText value="#{DmMsg['documentView.columnTitle.lastModified']}: " />
+						<h:outputText value="#{document.lastModified}" converter="dcem.LocalDateTimeConverterShort"></h:outputText>
+
+						<h:outputText value="#{DmMsg['documentView.columnTitle.lastModifiedUser']}: " />
+						<h:outputText value="#{document.lastModifiedUser.displayName}" />
+
+						<h:outputText value="#{DmMsg['documentView.columnTitle.discardsAfter']}: " />
+						<h:outputText style="color:red" value="#{document.discardAfter}" converter="dcem.LocalDateTimeConverter"></h:outputText>
+					</h:panelGrid>
+				</div>
+			</p:panel>
+
+		</p:dataViewListItem>
+	</p:dataView>
+
+	<style>
+.ui-dataview-header {
+	display: none !important;
+}
+</style>
+
+</ui:composition>

@@ -724,6 +724,17 @@
 			</dependency>
 			<dependency>
 				<groupId>com.doubleclue.dcem.module</groupId>
+				<artifactId>DocumentManagementModule</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.doubleclue.dcem.module</groupId>
+				<artifactId>PasswordSafeModule</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.doubleclue.dcem.module</groupId>
 				<artifactId>VacancyModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -777,8 +788,8 @@
 				<artifactId>MyDevicesModule</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
-			
+
+
 			<!-- <dependency> <groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>CrmModule</artifactId> 
 				<version>${project.version}</version> </dependency> -->

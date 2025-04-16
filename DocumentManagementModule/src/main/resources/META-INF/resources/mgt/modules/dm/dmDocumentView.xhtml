@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:dc="http://xmlns.jcp.org/jsf/composite/components" >
+
+	<style>
+.ui-datatable .ui-selection-column .ui-chkbox-all {
+	display: block;
+	margin: 0 !important;
+	width: 16px;
+	height: 16px;
+}
+
+.columWidth {
+	width: 50%;
+}
+
+.mailDialogWidth {
+	width: 50em !important;
+}
+
+.custom-dropzone {
+	border: 2px dashed #999;
+	border-radius: 10px;
+	padding: 50px;
+	text-align: center;
+	background-color: #f9f9f9;
+	color: #666;
+	transition: background-color 0.3s, color 0.3s;
+	display: flex;
+}
+
+.custom-dropzone.ui-fileupload-dragover {
+	background-color: rgba(255, 128, 0, 0.2);
+	color: #006600;
+	border-color: #F06600;
+}
+</style>
+
+	<f:view locale="#{operatorSession.locale}">
+		<!-- <f:event type="preRenderView" listener="#{dmDocumentView.preRenderView}" /> -->
+		<h:form id="documentForm" enctype="multipart/form-data" >
+			<div id="dragOverlay" class="dragOverlay">
+				<h:outputText value="#{DmMsg['documentView.dragFilesHere']}" styleClass="dragoOverlayText" />
+			</div>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirmDialog">
+				<p:commandButton value="#{DmMsg['button.yes']}" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+				<p:commandButton value="#{DmMsg['button.no']}" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-close" />
+			</p:confirmDialog>
+
+			<dc:dmDocumentTopPartComponent selectManyValue="#{dmDocumentView.selectedFilterTags}" selectItemsValue="#{dmDocumentView.filterTags}"
+				searchTerm="#{dmDocumentView.searchTerm}" searchAction="#{dmDocumentView.actionSearch}" displayListAction="#{dmDocumentView.setDisplayMode('LIST')}"
+				displayTileAction="#{dmDocumentView.setDisplayMode('TILE')}" displayContentAction="#{dmDocumentView.setDisplayMode('CONTENT')}"
+				usagePercentage="#{dmDocumentView.usagePercentage}" formattedUsage="#{dmDocumentView.formattedUsage}" formattedLimit="#{dmDocumentView.formattedLimit}"
+				buttonXhtml="dmDocumentViewButtons.xhtml" />
+
+			<p:breadCrumb id="documentBreadCrumbId" rendered="#{dmDocumentView.searchResultMode eq false}" class="breadCrumbStyle" homeDisplay="icon"
+				homeIcon="fa fa-home" model="#{dmDocumentView.breadCrumbModel}" />
+			<h:panelGroup rendered="#{dmDocumentView.searchResultMode eq true}">
+				<p:outputLabel id="resultText" value="#{DmMsg['documentView.searchResults']}" style="font-size: x-large" />
+				<p:commandLink id="searchClearLink" action="#{dmDocumentView.actionClearSearch}" style="margin-left: 0" update="@form">
+					<h:outputText id="clearSearch" class="fa fa-rectangle-xmark" style="margin-left: 0.5em;font-size: x-large" />
+					<p:tooltip for="clearSearch" value="#{DmMsg['documentView.button.clearSearch']}" position="bottom" />
+				</p:commandLink>
+			</h:panelGroup>
+
+			<p:contextMenu id="nodeContextMenu" widgetVar="nodeContextMenu" for="documentView">
+				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles}" icon="fa fa-cloud-download" />
+				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument()}" icon="fa fa-pencil" />
+				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
+					disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+			</p:contextMenu>
+
+			<p:panel id="documentView">
+				<div style="width: 100%">
+					<h:panelGroup rendered="#{dmDocumentView.displayMode == 'LIST'}">
+						<ui:include src="/mgt/modules/dm/components/dmDisplayListComponent.xhtml" />
+					</h:panelGroup>
+					<h:panelGroup rendered="#{dmDocumentView.displayMode == 'TILE'}">
+						<ui:include src="/mgt/modules/dm/components/dmDisplayTileComponent.xhtml" />
+					</h:panelGroup>
+					<h:panelGroup rendered="#{dmDocumentView.displayMode == 'CONTENT'}">
+						<ui:include src="/mgt/modules/dm/components/dmDisplayContentComponent.xhtml" />
+					</h:panelGroup>
+				</div>
+			</p:panel>
+
+			<p:fileUpload id="filesUpload" widgetVar="dragDropUpload" dropZone="@form" dragDropSupport="true" multiple="true" skinSimple="true"
+				style="display: none" auto="true" listener="#{dmUploader.uploadFileListener}" oncomplete="openDialog2()" >
+				<p:validateFile></p:validateFile>
+			</p:fileUpload>
+			<p:remoteCommand name="openDialog2" action="#{dmUploader.onUploadComplete}" ignoreAutoUpdate="false" />
+
+			
+		</h:form>
+
+
+		<h:form id="addForm">
+			<p:dialog id="addDialog" widgetVar="addDialog" modal="true" resizeable="false">
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DmMsg['documentView.dialog.addFile.title']}" />
+				</f:facet>
+				<h:panelGrid columns="2" cellpadding="10" style="width: 50em" columnClasses="columWidth, columWidth">
+					<p:outputLabel value="#{DmMsg['documentView.dialog.addFile.createPdf']}" class="dialogTitle" style="font-weight:bold" />
+					<p:outputLabel value="#{DmMsg['documentView.dialog.addFile.createText']}" class="dialogTitle" style="font-weight:bold" />
+					<p:outputLabel value="#{DmMsg['documentView.dialog.addFile.createPdfExplanation']}" />
+					<p:outputLabel value="#{DmMsg['documentView.dialog.addFile.createTextExplanation']}" />
+					<p:commandButton value="#{DmMsg['documentView.dialog.addFile.button.createPdf']}" action="#{dmDocumentView.actionAddDocument ('PDF')}" immediate="true"
+						icon="fa fa-file-pdf" />
+					<p:commandButton value="#{DmMsg['documentView.dialog.addFile.button.createText']}" action="#{dmDocumentView.actionAddDocument('XHTML')}" immediate="true"
+						icon="fa fa-file" />
+				</h:panelGrid>
+				<p:commandButton value="#{DmMsg['Document.button.close']}" onclick="PF('addDialog').hide();" style="float: right; margin-right: 1em; margin-bottom: 1em;"
+					immediate="true" icon="fa fa-close" />
+			</p:dialog>
+		</h:form>
+
+		<h:form id="downloadForm">
+			<p:dialog id="downloadDlg" widgetVar="downloadDlg" modal="true" resizable="false" styleClass="downloadDialog" draggable="false">
+				<p:ajax event="open" update="password dldFileName" />
+				<p:messages id="downloadMsg" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DmMsg['documentView.document.downloadDialogTitle']}" />
+				</f:facet>
+
+				<h:panelGrid columns="2">
+					<p:outputLabel for="dldFileName" value="#{DmMsg['documentView.document.downloadFileName']} " style="margin-right: 1em"></p:outputLabel>
+					<h:outputText id="dldFileName" value="#{dmDocumentView.downloadFileName}"></h:outputText>
+				</h:panelGrid>
+				<br></br>
+				<h:panelGroup id="password" rendered="#{dmDocumentView.fileWithPassword}">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="downloadPassword" value="#{DmMsg['documentView.label.password']}" />
+						<p:password id="downloadPassword" style="margin-left: 1em" value="#{dmDocumentView.filePassword}" autocomplete="off" required="true" toggleMask="true" />
+					</h:panelGrid>
+				</h:panelGroup>
+
+				<p:commandButton id="actionDownloadFile" icon="fa fa-cloud-download" value="#{DmMsg['documentView.button.download']}" ajax="false" async="true"
+					onclick="PrimeFaces.monitorDownload(null, stopDownLoad);">
+					<p:fileDownload value="#{dmDocumentView.actionDownloadFile()}" />
+				</p:commandButton>
+
+				<p:commandButton value="#{DmMsg['Document.button.close']}" actionListener="#{dmDocumentView.actionCloseDownloadFile}"
+					style="float: right; margin-right: 1em;" immediate="true" icon="fa fa-close" />
+				<br></br>
+				<p:remoteCommand name="stopDownLoad" action="#{dmDocumentView.actionCloseDownloadFile()}" ignoreAutoUpdate="false" />
+				<p></p>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="addDocumentByMail">
+			<p:dialog widgetVar="addDocumentByMailDlg" id="addDocumentByMailDlg" modal="true" resizable="false" draggable="false" styleClass="mailDialogWidth">
+				<f:facet name="header">
+					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DmMsg['documentView.dialog.title.addDocumentByMail']}" />
+				</f:facet>
+				<p:outputLabel value="#{DmMsg['documentView.dialog.addDocumentByMail.explanation']} #{dmDocumentView.emailAddress}" />
+
+				<p></p>
+				<p:outputLabel value="#{DmMsg['Document.owner']}" style="font-weight: bold;" />
+				<p:selectOneRadio id="line" value="#{dmDocumentView.emailForGroup}" layout="lineDirection" style="margin-bottom: 0.5em;">
+					<f:selectItem itemLabel="#{DmMsg['documentView.dialog.addDocumentByMail.myDocument']}" itemValue="0" />
+					<f:selectItem itemLabel="#{DmMsg['documentView.dialog.addDocumentByMail.groupOwner']}" itemValue="1" />
+					<p:ajax event="change" update="groupPanel" />
+				</p:selectOneRadio>
+
+				<h:panelGroup id="groupPanel">
+					<h:panelGroup rendered="#{dmDocumentView.emailForGroup == 1}">
+						<p:outputLabel value="#{DmMsg['documentView.label.groupname']}" style="display: inline-block; vertical-align: middle; line-height: 1;" />
+						<p:selectOneMenu value="#{dmDocumentView.selectedGroup}" style="margin-left: 1em;">
+							<f:selectItems value="#{dmDocumentView.userGroups}"></f:selectItems>
+						</p:selectOneMenu>
+					</h:panelGroup>
+				</h:panelGroup>
+				<p></p>
+				<p:commandButton id="createToken" value="#{DmMsg['documentView.button.createToken']}" action="#{dmDocumentView.actionEmailToken}" update="tokenResult"
+					icon="fa fa-key" />
+				<p></p>
+				<br></br>
+				<h:panelGroup id="tokenResult">
+					<h:panelGroup rendered="#{dmDocumentView.isMailToken() == true}">
+						<p:outputLabel value="#{DmMsg['documentView.dialog.addDocumentByMail.tokenResult']}: " style="margin-right: 1em;" />
+						<p:outputLabel value="#{dmDocumentView.getMailToken()}" style="margin-right: 1em;" />
+
+						<h:outputLabel id="clipboardToken" style="padding-left: 0.2em; cursor: pointer;font-size: large" class="fa fa-clipboard"
+							onclick="copyTextToClipboard('#{dmDocumentView.getMailToken()}')" />
+						<p:tooltip for="clipboardToken" value="#{DcupMsg['toolTip.copy']}" position="right" trackMouse="true" />
+						<br />
+						<p:outputLabel value="#{DmMsg['documentView.dialog.addDocumentByMail.expires']}:&nbsp;" />
+						<p:outputLabel value="#{dmDocumentView.tokenExpiryDate}" />
+					</h:panelGroup>
+				</h:panelGroup>
+				<p></p>
+				<p:commandButton value="#{DmMsg['Document.button.close']}" onclick="PF('addDocumentByMailDlg').hide();" style="float: right; margin: 1em;" immediate="true"
+					icon="fa fa-close" />
+			</p:dialog>
+		</h:form>
+
+		<h:form id="processFolderForm">
+			<p:dialog id="processFolderDialog" widgetVar="processFolderDialog" modal="true" draggable="true" resizable="false" style="border:none;">
+				<p:ajax event="open" update="processFolderForm:addFolderInput" />
+
+				<f:facet name="header">
+					<h:outputLabel value="#{DmMsg['documentView.dialog.addFolder']}" rendered="#{dmDocumentView.editFolderProcess == false}" class="dialogTitle" />
+				</f:facet>
+
+				<p:messages id="mainMessages" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+
+				<h:panelGrid id="addFolderInput" columns="2" cellpadding="4" cellspacing="2">
+					<p:outputLabel for="addFolderName" value="#{DmMsg['documentView.dialog.addFolder.folderName']}" />
+					<p:inputText id="addFolderName" size="36" value="#{dmDocumentView.addFolderName}" maxlength="100" />
+				</h:panelGrid>
+
+				<div style="padding-bottom: 1em; padding-top: 1em">
+					<p:commandButton value="#{DmMsg['documentView.button.ok']}" rendered="#{dmDocumentView.editFolderProcess == false}" action="#{dmDocumentView.addFolder}"
+						styleClass="okButton" icon="fa fa-check" ajax="true" update="documentForm">
+					</p:commandButton>
+
+					<p:commandButton id="closeDialog" value="#{DmMsg['Document.button.close']}" onclick="PF('processFolderDialog').hide();"
+						style="float: right; margin-right: 1em;" immediate="true" icon="fa fa-close" />
+				</div>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="moveEntryConfirmationForm">
+			<p:dialog id="moveEntryConfirmation" widgetVar="moveEntryConfirmationDialog" modal="true" resizable="false" style="border:none;">
+				<f:facet name="header">
+					<h:outputLabel value="#{DmMsg['documentView.dialog.moveConfirmationEntry']}" styleClass="dialogTitle" />
+				</f:facet>
+				<p:messages id="movenMessages" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+
+				<h:panelGrid columns="2">
+					<p:outputLabel value="#{DmMsg['documentView.dialog.MoveEntries.text']}: " />
+					<ul>
+						<ui:repeat value="#{dmDocumentView.selectedCloudSafeFiles}" var="selectedCseFiles">
+							<li><p:outputLabel value="#{selectedCseFiles.name}" style="font-weight: bold;">
+								</p:outputLabel></li>
+						</ui:repeat>
+					</ul>
+					<p:outputLabel value="#{DmMsg['documentView.dialog.MoveEntries.to']}: " />
+					<br></br>
+					<p:outputLabel style="font-weight: bold; margin-left: 0.5em" value="#{dmDocumentView.moveToFolder.name}" />
+				</h:panelGrid>
+				<br></br>
+
+				<div style="padding-bottom: 1em; padding-top: 1em">
+					<p:commandButton id="moveConfirmationOK" value="#{DmMsg['documentView.button.ok']}" action="#{dmDocumentView.moveFileEntry}" style="width: 8em"
+						icon="fa fa-check" ajax="true" update="documentForm:documentTable">
+					</p:commandButton>
+
+
+					<p:commandButton id="closeDialog" value="#{DmMsg['Document.button.close']}" onclick="PF('moveEntryConfirmationDialog').hide();"
+						style="float: right; margin-right: 1em;" immediate="true" icon="fa fa-close" />
+				</div>
+			</p:dialog>
+		</h:form>
+
+		<h:form>
+			<p:dialog id="confirmDlg" widgetVar="confirmDlg" modal="true" styleClass="confirmDialog">
+				<f:facet name="header">
+					<h:outputLabel value="#{DmMsg['documentView.dialog.title.confirm']}" class="dialogTitle" />
+				</f:facet>
+				<br />
+				<p:panel id="deleteTextMessage" style="margin-bottom: 40px;">
+					<p:outputLabel value="#{DmMsg['documentView.dialog.message.recycleSelectedCloudSafeFiles']}" />
+				</p:panel>
+				<div style="margin-bottom: 20px;">
+					<p:commandButton value="#{DmMsg['documentView.button.ok']}" action="#{dmDocumentView.actionTrashDocuments}" update="documentForm:documentView"
+						styleClass="okButton" icon="fa fa-check" ajax="true">
+					</p:commandButton>
+					<p:commandButton id="closeDialog" value="#{DmMsg['Document.button.close']}" onclick="PF('confirmDlg').hide();" style="float: right; margin-right: 1em;"
+						immediate="true" icon="fa fa-close" />
+				</div>
+			</p:dialog>
+		</h:form>
+
+		<h:form id="displayModeForm">
+			<h:inputHidden id="storedDisplayMode" value="#{dmDocumentView.displayMode}" />
+		</h:form>
+
+	</f:view>
+</ui:composition>

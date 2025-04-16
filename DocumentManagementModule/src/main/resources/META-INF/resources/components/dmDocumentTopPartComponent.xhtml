@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+    <cc:interface>
+        <!-- Attributes for the component -->
+        <cc:attribute name="selectManyValue" type="java.util.List"/>
+        <cc:attribute name="selectItemsValue" type="java.util.List"/>
+        <cc:attribute name="searchTerm" type="java.lang.String"/>
+        <cc:attribute name="usagePercentage" type="java.lang.String"/>
+        <cc:attribute name="formattedUsage" type="java.lang.String"/>
+        <cc:attribute name="formattedLimit" type="java.lang.String"/>
+        <cc:attribute name="buttonXhtml" type="java.lang.String"/>
+
+        <cc:attribute name="searchAction" method-signature="void action()"/>
+        <cc:attribute name="displayListAction" method-signature="void action(java.lang.String)"/>
+        <cc:attribute name="displayTileAction" method-signature="void action(java.lang.String)"/>
+        <cc:attribute name="displayContentAction" method-signature="void action(java.lang.String)"/>
+
+    </cc:interface>
+
+    <cc:implementation>
+        <div class="toolBar" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
+            <div style="display: flex; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    <ui:include src="#{cc.attrs.buttonXhtml}"/>
+                </div>
+            </div>
+			 <p:defaultCommand target="searchAction" />
+            <h:panelGroup id="searchDiv" style="flex-grow: 1; text-align: center;" >
+                <p:commandButton id="settings" icon="fa fa-filter" style="margin-right: 0.5em" onclick="PF('overlayPanel').show()"/>
+                <p:tooltip for="settings" value="#{DmMsg['documentView.Filter']}" position="bottom"/>
+                <p:overlayPanel for="settings" dismissable="true" showCloseIcon="true" widgetVar="overlayPanel" dynamic="false">
+                    <p:selectManyMenu id="filterSelection" widgetVar="selectManyFilter" value="#{cc.attrs.selectManyValue}" var="selectedTag" filter="true"
+                                      filterMatchMode="contains" filterNormalize="true" showCheckbox="true">
+                        <f:selectItems value="#{cc.attrs.selectItemsValue}" var="tag" itemLabel="#{tag.name}" itemValue="#{tag}"/>
+                        <p:column style="text-align:left; margin-left: 1em">
+                            <h:outputText value="#{selectedTag.name}"/>
+                        </p:column>
+                    </p:selectManyMenu>
+                </p:overlayPanel>
+                <p:inputText id="searchText" size="25" value="#{cc.attrs.searchTerm}"/>
+                <p:commandButton id="searchAction" action="#{cc.attrs.searchAction}" icon="fa fa-magnifying-glass" style="margin-left: 0.5em" update="@form"/>
+                <p:tooltip for="searchAction" value="#{DmMsg['documentView.search']}" position="bottom" widgetVar="searchField"/>
+            </h:panelGroup>
+
+            <div style="margin-right: 10px; float: right">
+                <p:commandLink action="#{cc.attrs.displayListAction}" styleClass="toolBarButtons" update="@form">
+                    <h:outputText id="displayList" class="fa fa-list"/>
+                    <p:tooltip for="displayList" value="#{DmMsg['documentView.button.details']}" position="bottom"/>
+                </p:commandLink>
+
+                <p:commandLink action="#{cc.attrs.displayTileAction}" styleClass="toolBarButtons" update="@form">
+                    <h:outputText id="displayTile" class="fa fa-th-large"/>
+                    <p:tooltip for="displayTile" value="#{DmMsg['documentView.button.tile']}" position="bottom"/>
+                </p:commandLink>
+
+                <p:commandLink action="#{cc.attrs.displayContentAction}" styleClass="toolBarButtons" update="@form">
+                    <h:outputText id="displayContent" class="fa fa-server"/>
+                    <p:tooltip for="displayContent" value="#{DmMsg['documentView.button.content']}" position="bottom"/>
+                </p:commandLink>
+            </div>
+
+            <div>
+                <h:panelGrid columns="1" id="storageInfo">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: #{cc.attrs.usagePercentage}%;"></div>
+                    </div>
+                    <p:outputLabel value="#{cc.attrs.formattedUsage} #{DmMsg['documentView.usedFrom']} #{cc.attrs.formattedLimit}"/>
+                </h:panelGrid>
+            </div>
+        </div>
+    </cc:implementation>
+</ui:composition>

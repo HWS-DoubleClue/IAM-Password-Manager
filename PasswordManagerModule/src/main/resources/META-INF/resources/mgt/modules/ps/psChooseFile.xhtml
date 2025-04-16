@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+	<h:form id="chooseFileForm">
+		<h:panelGroup style="float:left;">
+			<p:commandLink action="#{psChooseFileView.onNewPasswordSafeFile}" style="text-decoration: none;">
+				<h:outputText id="newMyAppFileFile" class="fa fa-plus-square actionBarButtons" />
+				<p:tooltip for="newMyAppFileFile" value="#{PsMsg['button.newKeepassFile']}" />
+			</p:commandLink>
+			<p:spacer width="20" />
+			<p:commandLink action="#{psChooseFileView.onUploadKeepass}" style="text-decoration: none;">
+				<h:outputLabel id="uploadKeepassFile" class="fa fa-cloud-upload actionBarButtons" />
+				<p:tooltip for="uploadKeepassFile" value="#{PsMsg['button.uploadKeepassFile']}" />
+			</p:commandLink>
+		</h:panelGroup>
+		<br></br>
+
+		<p></p>
+		<p:outputPanel id="keepassSelectionPanel" style="float:left; margin-top : 1em">
+			<h:outputText value="#{PsMsg['appHub.availablePasswordSafeFiles']}" style="color:#fff; font-size:1.5em;" />
+			<p></p>
+			<p:dataTable id="passwordSafeFiles" var="passwordSafeFile" value="#{psChooseFileView.availableOwnedPasswordSafeFiles}" class="recentfiletable" reflow="true"
+				emptyMessage="#{PsMsg['message.emptyTable']}">
+				<p:column headerText="#{PsMsg['columnTitle.filename']}">
+					<p:commandLink styleClass="recentFileLink" action="#{psChooseFileView.actionOpenFile(passwordSafeFile)}" update="viewPart">
+						<h:outputText value="#{passwordSafeFile.getUniqueKey().name}"></h:outputText>
+					</p:commandLink>
+				</p:column>
+				<p:column headerText="#{PsMsg['columnTitle.lastModified']}">
+					<h:outputText value="#{passwordSafeFile.lastModified}" converter="dcem.LocalDateTimeConverter" />
+				</p:column>
+				<p:column headerText="#{PsMsg['columnTitle.writeAccess']}" sortBy="#{cloudSafeFile.writeAccess}" style="text-align: center;">
+					<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{passwordSafeFile.writeAccess}" />
+					<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{passwordSafeFile.writeAccess == false}" />
+				</p:column>
+				<p:column headerText="#{PsMsg['columnTitle.groupOwned']}">
+					<h:outputText rendered="#{passwordSafeFile.getUniqueKey().owner.value == 3}"
+						value="#{psChooseFileView.getGroupOwnerName(passwordSafeFile.getUniqueKey().dbId)}"></h:outputText>
+				</p:column>
+				<p:column headerText="#{PsMsg['columnTitle.download']}">
+					<p:commandButton style="float: right" icon="fa fa-download" onclick="PrimeFaces.monitorDownload(null, stopDownLoad);">
+						<p:fileDownload value="#{psChooseFileView.actionDownloadFile(passwordSafeFile)}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+
+			<p:spacer height="80" />
+			<h:outputText value="#{PsMsg['appHub.availableSharedPasswordSafeFiles']}" style="color:  var(--header-link-text-color); font-size:1.2em;" />
+			<p></p>
+			<p:dataTable id="passwordSafeSharedFiles" var="passwordSafeFile" value="#{psChooseFileView.availableSharedPasswordSafeFiles}" class="recentfiletable"
+				reflow="true" emptyMessage="#{PsMsg['message.emptyTable']}">
+				<p:column headerText="#{PsMsg['columnTitle.filename']}">
+					<p:commandLink styleClass="recentFileLink" action="#{psChooseFileView.actionOpenFile(passwordSafeFile)}" update="viewPart">
+						<h:outputText value="#{psChooseFileView.getFileName(passwordSafeFile.getUniqueKey().name)}"></h:outputText>
+					</p:commandLink>
+				</p:column>
+				<p:column headerText="#{PsMsg['columnTitle.sharedBy']}">
+					<h:outputText value="#{psChooseFileView.getSharedByName(passwordSafeFile.getUniqueKey().name)}"></h:outputText>
+				</p:column>
+				<p:column headerText="#{PsMsg['columnTitle.lastModified']}">
+					<h:outputText value="#{passwordSafeFile.lastModified}" converter="dcem.LocalDateTimeConverter" />
+				</p:column>
+				<p:column headerText="#{PsMsg['columnTitle.writeAccess']}" sortBy="#{cloudSafeFile.writeAccess}" style="text-align: center;">
+					<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{passwordSafeFile.writeAccess}" />
+					<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{passwordSafeFile.writeAccess == false}" />
+				</p:column>
+				<p:column headerText="#{PsMsg['columnTitle.groupOwned']}">
+					<p:outputLabel id="groupIcon" class="fa fa-users" style="color:#EA5079 !important;" rendered="#{passwordSafeFile.getUniqueKey().owner.value == 3}"></p:outputLabel>
+					<p:tooltip for="groupIcon" value="#{PsMsg['message.owner']} #{psChooseFileView.getGroupOwnerName(passwordSafeFile.getUniqueKey().dbId)}" position="right" />
+				</p:column>
+
+			</p:dataTable>
+		</p:outputPanel>
+	</h:form>
+	<h:form id="uploadFileForm" enctype="multipart/form-data">
+		<p:dialog id="uploadFileDialog" widgetVar="uploadFileDialog" modal="true" draggable="true" resizable="false" style="border:none">
+			<f:facet name="header">
+				<h:outputLabel value="#{PsMsg['dialog.uploadKeePass']}" class="dialogTitle" />
+			</f:facet>
+			<p:messages id="uploadPasswordMessages" layout="table" globalOnly="false" showSummary="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			<br />
+			<p:outputLabel value="#{PsMsg['dialog.uploadKeePass.previousFile']} #{psChooseFileView.previousUploadedFile.fileName}"
+				rendered="#{psChooseFileView.previousUploadedFile != null}" />
+			<br />
+			<br />
+			<p:fileUpload id="fileUpload" label="#{PsMsg['chooseFile']}" value="#{psChooseFileView.uploadedFile}" mode="simple" skinSimple="true" required="true">
+				<p:validateFile sizeLimit="1048576" allowTypes="/(\.|\/)(kdbx|KDBX)$/" />
+			</p:fileUpload>
+			<br />
+			<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+				<p:outputLabel for="uploadPassword" value="#{PsMsg['label.password']}" />
+				<h:panelGroup style="width: 250px;display: inherit;">
+					<p:password id="uploadPassword" autocomplete="off" value="#{psChooseFileView.uploadPassword}" redisplay="false" maxlength="128" toggleMask="true" />
+				</h:panelGroup>
+				<h:outputLabel value="#{PsMsg['dialog.savePassword']}" />
+				<p:selectBooleanCheckbox value="#{psChooseFileView.rememberPassword}" />
+
+			</h:panelGrid>
+			<p></p>
+			<p:commandButton id="uploadKeePassOK" value="OK" action="#{psChooseFileView.actionUploadFile}" style="width: 8em" ajax="false" />
+			<p></p>
+			<p:commandLink id="closeDialog" styleClass="closeDialog" value="#{PsMsg['close']}" onclick="PF('uploadFileDialog').hide();"
+				style="float: right; margin-right: 1em;" immediate="true" />
+			<p />
+			<p></p>
+			<br />
+			<br />
+		</p:dialog>
+	</h:form>
+	<h:form id="confirmForm">
+		<p:dialog widgetVar="confirmUploadDialog" modal="true" resizable="false" draggable="false" style="border:none;">
+			<p:ajax event="open" update="confirmUploadFileMessage" />
+			<p:ajax event="close" update="chooseFileForm" />
+			<h:outputLabel style="font-size: xx-large" class="fa fa-warning" value="" />
+			<h:outputLabel id="confirmUploadFileMessage" value=" #{psChooseFileView.uploadMessage}" />
+			<p />
+			<br />
+			<p:commandButton id="confirmUploadButton" style="width: 8em" icon="fa fa-check" value="#{PsMsg['button.upload']}" action="#{psChooseFileView.confirmUpload}" />
+			<p:spacer width="12" />
+			<p:commandButton id="cancelUploadButton" value="#{PsMsg['button.cancel']}" icon="fa fa-close" style="width: 8em" immediate="true"
+				onclick="PF('confirmUploadDialog').hide();" />
+			<br />
+			<br />
+			<p />
+		</p:dialog>
+
+		<p:dialog widgetVar="confirmCreateKeepassFileDialog" modal="true" resizable="false" draggable="true" style="border:none;">
+			<p:ajax event="open" update="confirmCreateFileMessage" />
+			<p:ajax event="close" update="chooseFileForm" />
+			<h:outputLabel style="font-size: xx-large" class="fa fa-warning" value="" />
+			<h:outputLabel id="confirmCreateFileMessage" value=" #{psChooseFileView.createMessage}" />
+			<p />
+			<br />
+			<p:commandButton id="createKeepassFile" style="width: 8em" icon="fa fa-check" value="#{PsMsg['button.ok']}" action="#{psChooseFileView.actionNewFile}"
+				update="viewPart pmForm" />
+			<p:spacer width="12" />
+			<p:commandButton id="cancelCreateFile" value="#{PsMsg['button.cancel']}" icon="fa fa-close" style="width: 8em" immediate="true"
+				onclick="PF('confirmCreateKeepassFileDialog').hide();" />
+			<br />
+			<br />
+			<p />
+		</p:dialog>
+	</h:form>
+
+	<h:form id="loginAppHubKeePassForm">
+		<p:dialog id="loginAppHubKeePass" widgetVar="loginAppHubKeePass" modal="true" resizable="false" draggable="false" style="border:none;">
+			<f:facet name="header">
+				<h:outputLabel value="#{PsMsg['appHub.loginKeePass']}" class="dialogTitle" />
+			</f:facet>
+			<p />
+			<p:messages id="mainMessages" layout="table" globalOnly="false" showSummary="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			<br />
+			<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+				<h:outputLabel value="#{PsMsg['dialog.masterPassword']} " />
+				<h:column style="margin:0;padding: 0;display: inherit;">
+					<p:password id="newMyAppFilePwd1" value="#{psChooseFileView.masterPassword}" redisplay="false" style="width: 18em;" required="true" toggleMask="true" />
+
+				</h:column>
+				<h:panelGroup>
+					<h:outputLabel value="#{PsMsg['dialog.savePassword']}" />
+					<p:spacer width="10" />
+					<h:outputText id="savePasswordLocally" style="margin-bottom: 0.5em; font-size: 1.5em" class="fa fa-info-circle" />
+					<p:tooltip for="savePasswordLocally" showEvent="click" position="top" value="#{PsMsg['info.savePasswordLocally']}" />
+				</h:panelGroup>
+				<p:selectBooleanCheckbox value="#{psChooseFileView.rememberPassword}" />
+			</h:panelGrid>
+
+			<p />
+			<p:commandButton id="loginAppHubKeePassOK" value="OK" style="width: 8em" action="#{psChooseFileView.actionOpenKeepassFile}" upadate="viewPart" />
+			<p></p>
+			<p:commandLink id="closeDlg" styleClass="closeDialog" value="#{PsMsg['close']}" onclick="PF('loginAppHubKeePass').hide(); return false;"
+				style="float: right; margin-right: 1em;" />
+			<p></p>
+			<br />
+			<p></p>
+		</p:dialog>
+		<h:outputLabel id="label" />
+	</h:form>
+
+	<h:form id="newKeePassForm">
+		<p:dialog id="newKeePass" widgetVar="newKeePass" modal="true" resizable="false" draggable="false" style="border:none;width:40em;">
+			<f:facet name="header">
+				<h:outputLabel value="#{PsMsg['dialog.newKeePass']}" class="dialogTitle" />
+			</f:facet>
+			<p:messages id="mainMessages" layout="table" globalOnly="false" showSummary="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			<br />
+			<h:panelGrid columns="2" cellpadding="5" cellspacing="7">
+				<p:outputLabel value="#{PsMsg['columnTitle.filename']}" />
+				<p:inputText value="#{psChooseFileView.newFileName}" maxlength="64" size="25" />
+				<p:outputLabel for="newKeePassPwd1" value="#{PsMsg['dialog.masterPassword']}" />
+				<h:column style="margin:0;padding: 0;display: inherit;">
+					<p:password id="newKeePassPwd1" value="#{psChooseFileView.uploadPassword}" maxlength="128" redisplay="false" style="width:14.9em" match="newKeePassPwd2"
+						feedback="true" validatorMessage="#{PsMsg['registration.noMatchPassword']}" toggleMask="true" />
+				</h:column>
+				<p:outputLabel for="newKeePassPwd2" value="#{PsMsg['label.masterPasswordRepeat']}" />
+				<h:column style="margin:0;padding: 0;display: inherit;">
+					<p:password id="newKeePassPwd2" value="#{psChooseFileView.uploadPassword}" maxlength="128" redisplay="false" style="width:14.9em" toggleMask="true" />
+				</h:column>
+				<h:panelGroup>
+					<h:outputLabel value="#{PsMsg['dialog.savePassword']}" />
+					<p:spacer width="10" />
+					<h:outputText id="savePasswordLocally" style="margin-bottom: 0.5em; font-size: 1.5em" class="fa fa-info-circle iconHelpBtn" />
+					<p:tooltip for="savePasswordLocally" showEvent="click" position="top" value="#{PsMsg['info.savePasswordLocally']}" />
+				</h:panelGroup>
+				<p:selectBooleanCheckbox value="#{psChooseFileView.rememberPassword}" />
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="2">
+				<h:outputText class="fa fa-exclamation-triangle" style="vertical-align: middle; font-size: 1.8em; padding-right: 6px;" />
+				<p:outputLabel style="font-size: 1.1em; width:30em; display:inline-block;" value="#{PsMsg['dialog.newKeePassMessage']}" />
+			</h:panelGrid>
+
+			<p />
+			<p:commandButton id="newKeePassOK" value="OK" style="width: 8em" action="#{psChooseFileView.onNewFile}" ajax="true" upadate="viewPart pmForm" />
+			<p></p>
+			<p:commandLink id="closeDlg" styleClass="closeDialog" value="#{PsMsg['close']}" onclick="PF('newKeePass').hide(); return false;"
+				style="float: right; margin-right: 1em;" />
+			<p></p>
+			<br />
+			<p></p>
+		</p:dialog>
+		<h:outputLabel id="label" />
+	</h:form>
+
+</ui:composition>

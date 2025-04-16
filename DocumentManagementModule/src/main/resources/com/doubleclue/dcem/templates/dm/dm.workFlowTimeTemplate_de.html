@@ -1,0 +1,30 @@
+<html>
+
+<body>
+
+	<div id="wrapper">
+		Hello,
+		<p></p><br>
+		Diese Ablauf notification from workflow rule '${workflowName}' for your DoubleClue document <b>${documentName}</b>.
+		<p />
+		Triggered by: <b>${workflowTrigger}</b>
+		<p/>
+				
+		Last modified by: <b>${user}</b>
+		<p />
+		Here some more information.
+		<div>
+		<hr />
+		<#outputformat "HTML">
+			${workflowInformation} 
+		</#outputformat>
+		</div>
+		<hr />
+		
+		<p></p>
+		With best regards<p></p>
+		DoubleClue Documentation Management
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<ui:include src="/mgt/modules/dialogHead.xhtml" />
+
+<head>
+<h:outputScript library="js" name="dmDocumentView.js" />
+
+<style>
+</style>
+</head>
+
+<f:view locale="#{operatorSession.locale}">
+	<title >#{DmMsg['uploadingDocuments']} </title>
+
+	<h:body style="width: 100%" class="dialogBody">
+		<h:form id="uploadingDocumentsForm">
+			
+			<p:dataTable id="documents" var="document" value="#{dmUploader.uploadingDocuments}" selectionDisabled="true" scrollable="true" scrollHeight="200"
+				styleClass="uploaderTable">
+				<p:column>
+					<h:panelGroup>
+						<p:graphicImage styleClass="viewFolderImage" library="pictures" name="icons/16x16/#{document.dcemMediaType.iconName}" />
+						<h:outputText value="#{document.pathName}" class="documentName" style="margin-left: 0.5em" />
+					</h:panelGroup>
+				</p:column>
+
+				<p:column>
+					<p:graphicImage id="documentStatus" styleClass="viewFolderImage" library="pictures" name="#{document.statusIcon}" />
+					<p:tooltip for="documentStatus" value="#{dmUploader.getInfo(document)}" />
+				</p:column>
+				<p:column>
+					<h:outputText value="#{dmUploader.getTimeElapse(document)}" />
+				</p:column>
+
+			</p:dataTable>
+			<br />
+			<p:commandButton style="width: 10em; color: red" icon="fa fa-close" value="#{DmMsg['cancelUpload']}" action="#{dmUploader.actionClose}"
+				rendered="#{dmUploader.ready eq false}" />
+			<p:commandButton style="width: 10em" icon="fa fa-check" value="#{CoreMsg['close']}" action="#{dmUploader.actionClose}" rendered="#{dmUploader.ready eq true}"
+				oncomplete="updateParent();" />
+			<p:outputLabel class="uploaderDialogText" value="#{dmUploader.documentCounts}" />
+			<p:poll interval="4" listener="#{dmUploader.actionPoll}" update="@form" delay="2" />
+		</h:form>
+		<script>
+			
+		</script>
+	</h:body>
+</f:view>
+</html>

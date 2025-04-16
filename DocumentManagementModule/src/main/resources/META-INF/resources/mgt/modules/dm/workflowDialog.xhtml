@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:dc="http://java.sun.com/jsf/composite/dcemComponents">
+
+<ui:include src="/mgt/modules/dialogHead.xhtml" />
+<f:view locale="#{operatorSession.locale}">
+
+	<h:body class="dialogBody">
+		<span id="customheader"> <h:outputLabel class="#{autoView.icon} dialogTitle" /> <h:outputLabel value="#{viewNavigator.dialogTitle}"
+				styleClass="dialogTitle" />
+		</span>
+		<h:form id="dialogForm" style="padding-bottom: 100px">
+			<p:messages showSummary="true" showDetail="false" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			<p:outputLabel styleClass="dialogTitle" value="#{DmMsg['dmWorkflowView.document']}: " />
+			<p:outputLabel styleClass="dialogTitle" value="#{dmWorkflowDialog.documentName} " />
+			<p></p>
+			<p:outputLabel for="@next" value="#{DmMsg['name']} " />
+			<p:inputText id="name" style="margin-left: 2em; width: 20em" required="true" value="#{dmWorkflowDialog.workflowEntity.name}" widgetVar="" />
+			<br></br>
+			<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.description']} " />
+			<br></br>
+			<p:textEditor id="editor" value="#{dmWorkflowDialog.workflowEntity.description}" style="width: 100%;">
+				<f:facet name="toolbar">
+					<span class="ql-formats">
+						<button class="ql-bold"></button>
+						<button class="ql-italic"></button>
+						<button class="ql-underline"></button>
+						<button class="ql-strike"></button>
+					</span>
+					<span class="ql-formats"> <select class="ql-font"></select> <select class="ql-size"></select>
+					</span>
+				</f:facet>
+			</p:textEditor>
+
+			<p:panel id="triggers" header="#{DmMsg['dmWorkflowView.trigger']}">
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+					<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.trigger']} " />
+					<p:selectOneMenu value="#{dmWorkflowDialog.workflowTriggerName}">
+						<f:selectItems value="#{dmWorkflowDialog.triggers}" />
+						<p:ajax event="change" process="@this" update="triggers actions" listener="#{dmWorkflowDialog.listenTrigger}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.dayOfWeek']} " rendered="#{dmWorkflowDialog.renderWeekly}" />
+					<p:selectOneMenu value="#{dmWorkflowDialog.workflowEntity.day}" rendered="#{dmWorkflowDialog.renderWeekly}">
+						<f:selectItems value="#{dmWorkflowDialog.daysOfWeek}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="@next" style="margin-left: 1rem" value="#{DmMsg['dmWorkflowView.dayOfMonth']} " rendered="#{dmWorkflowDialog.renderMonthly}" />
+					<p:selectOneMenu id="daysOfMonth" value="#{dmWorkflowDialog.workflowEntity.day}" rendered="#{dmWorkflowDialog.renderMonthly}">
+						<f:selectItems value="#{dmWorkflowDialog.daysOfMonth}" />
+					</p:selectOneMenu>
+
+					<h:panelGroup rendered="#{dmWorkflowDialog.renderYearly}">
+					<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.month']} "/>
+					
+						<p:selectOneMenu value="#{dmWorkflowDialog.workflowEntity.month}">
+							<f:selectItems value="#{dmWorkflowDialog.months}" />
+							<p:ajax event="change" update="daysOfMonth" />
+						</p:selectOneMenu>
+					</h:panelGroup>
+
+					<h:panelGroup rendered="#{dmWorkflowDialog.renderYearly}">
+					<p:outputLabel for="@next" style="margin-left: 2rem" value="#{DmMsg['dmWorkflowView.dayOfMonth']} " />
+						<p:selectOneMenu id="daysOfMonthYear" value="#{dmWorkflowDialog.workflowEntity.day}">
+							<f:selectItems value="#{dmWorkflowDialog.daysOfMonth}" />
+						</p:selectOneMenu>
+					</h:panelGroup>
+
+					<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.date']}" rendered="#{dmWorkflowDialog.renderOnDate}" />
+					<p:datePicker id="date" value="#{dmWorkflowDialog.workflowEntity.localDate}" locale="#{operatorSession.locale}" rendered="#{dmWorkflowDialog.renderOnDate}"
+						pattern="#{operatorSession.dateTimePattern}" showTime="false" yearNavigator="true" />
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel id="actions" header="#{DmMsg['dmWorkflowView.action']}">
+				<h:panelGrid id="action" columns="2" cellpadding="4" cellspacing="4">
+					<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.action']} " />
+					<p:selectOneMenu value="#{dmWorkflowDialog.workflowActionName}">
+						<f:selectItems value="#{dmWorkflowDialog.actions}"></f:selectItems>
+					</p:selectOneMenu>
+
+					<p:outputLabel for="autoUser" value="#{CoreMsg['user']} 1" />
+					<dc:autoCompleteUser id="autoUser" userValue="#{dmWorkflowDialog.dcemUser}" required="true" />
+
+					<p:outputLabel for="autoUser2" value="#{CoreMsg['user']} 2" />
+					<dc:autoCompleteUser id="autoUser2" userValue="#{dmWorkflowDialog.dcemUser2}" required="false" />
+
+					<p:outputLabel for="group" value="#{DmMsg['dmWorkflowView.toAllGroupMembers']}" rendered="#{dmWorkflowDialog.ownerGroup}" />
+					<p:toggleSwitch id="group" value="#{dmWorkflowDialog.workflowEntity.groupMembers}" required="false" rendered="#{dmWorkflowDialog.ownerGroup}" />
+				</h:panelGrid>
+			</p:panel>
+
+			<p />
+			<p:commandButton id="ok" style="width: 8em" icon="fa fa-check" value="#{CoreMsg['OK']}" ajax="true" actionListener="#{autoDialog.actionOk}" update="@form" />
+			<p:spacer width="12" />
+			<p:commandButton id="closeDialog" value="#{CoreMsg['cancel']}" icon="fa fa-close" style="width: 8em" immediate="true"
+				action="#{viewNavigator.actionCloseDialog}" />
+		</h:form>
+	</h:body>
+</f:view>
+</html>

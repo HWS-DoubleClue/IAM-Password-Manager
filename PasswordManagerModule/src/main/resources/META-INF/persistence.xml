@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="dcem.up">
+	
+	<class>com.doubleclue.dcem.ps.entities.ApplicationHubEntity</class>
+		<class>com.doubleclue.dcem.ps.entities.KeepassEntryEntity</class>
+		<class>com.doubleclue.dcem.ps.entities.DbJsonConverterAppHub</class>
+<!--  	
+		<class>com.doubleclue.dcem.core.entities.DcemGroup</class>
+		<class>com.doubleclue.dcem.core.entities.DcemRole</class>
+		<class>com.doubleclue.dcem.core.entities.DomainEntity</class>
+		<class>com.doubleclue.dcem.core.entities.DcemUserExtension</class>
+		<class>com.doubleclue.dcem.core.entities.DcemUser</class>
+		<class>com.doubleclue.dcem.core.entities.DcemAction</class>		
+		<class>com.doubleclue.dcem.core.entities.DomainConfig</class>
+		<class>com.doubleclue.dcem.core.entities.DepartmentEntity</class>
+		-->	
+	
+	</persistence-unit>
+</persistence>

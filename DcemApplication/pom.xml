@@ -96,7 +96,7 @@
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>MyDevicesModule</artifactId>
 		</dependency>
-<!---
+
 		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>SamlModule</artifactId>
@@ -105,7 +105,17 @@
 		<dependency>
 			<groupId>com.doubleclue.dcem.module</groupId>
 			<artifactId>OAuthModule</artifactId>
-		</dependency>-->
+		</dependency>
+		
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>DocumentManagementModule</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.doubleclue.dcem.module</groupId>
+			<artifactId>PasswordSafeModule</artifactId>
+		</dependency>
 
 	<!--	<dependency>
 			<artifactId>UserPortalModule</artifactId>
