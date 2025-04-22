@@ -82,7 +82,7 @@ public class PsChooseFileView extends DcemView {
 	AsModule asModule;
 
 	@Inject
-	KeePassLogic userPortalKeePassLogic;
+	KeePassLogic keePassLogic;
 
 	@Inject
 	GroupLogic groupLogic;
@@ -317,9 +317,9 @@ public class PsChooseFileView extends DcemView {
 		Meta meta = new MetaBuilder(keePassFile_.getMeta()).historyMaxSize(0).historyMaxItems(0).build();
 		keePassFile_ = new KeePassFileBuilder(newFileName).withMeta(meta).build();
 		try {
-			cloudSafeEntity = userPortalKeePassLogic.createCloudSafeEntity(name);
+			cloudSafeEntity = keePassLogic.createCloudSafeEntity(name);
 			cloudSafeEntity.setDcemMediaType(DcemMediaType.KEEPASS);
-			byte[] content = userPortalKeePassLogic.saveDatabaseFile(cloudSafeEntity, keePassFile_, name, uploadPassword);
+			byte[] content = keePassLogic.saveDatabaseFile(cloudSafeEntity, keePassFile_, name, uploadPassword);
 			if (content == null) {
 				logger.warn("actionNewKeePass - failed to create entry");
 				JsfUtils.addErrorMessage(PasswordSafeModule.RESOURCE_NAME, "appHub.error.FAILED_TO_CREATE_ENTRY", selectedPasswordSafeFile);
@@ -411,8 +411,8 @@ public class PsChooseFileView extends DcemView {
 
 	private void uploadFile(String uploadPassword, KeePassFile keePassFileTemp) {
 		try {
-			cloudSafeEntity = userPortalKeePassLogic.createCloudSafeEntity(uploadedFile.getFileName());
-			byte[] content = userPortalKeePassLogic.saveDatabaseFile(cloudSafeEntity, keePassFileTemp, uploadedFile.getFileName(), uploadPassword);
+			cloudSafeEntity = keePassLogic.createCloudSafeEntity(uploadedFile.getFileName());
+			byte[] content = keePassLogic.saveDatabaseFile(cloudSafeEntity, keePassFileTemp, uploadedFile.getFileName(), uploadPassword);
 			if (content == null) {
 				return;
 			}
@@ -545,9 +545,9 @@ public class PsChooseFileView extends DcemView {
 	}
 
 	public void updatePsHistory(int id, String fileName, String password, boolean remove, String groupName) throws Exception {
-		String psHistory = userPortalKeePassLogic.updatePsHistory(id, fileName, password, remove, recentFiles, groupName);
+		String psHistory = keePassLogic.updatePsHistory(id, fileName, password, remove, recentFiles, groupName);
 		setRecentFiles(recentFiles);
-		operatorSessionBean.setLocalStorageUserSetting("psHistory", userPortalKeePassLogic.escapeJson(psHistory));
+		operatorSessionBean.setLocalStorageUserSetting("psHistory", keePassLogic.escapeJson(psHistory));
 	}
 
 	public void actionCloseAddDialog() {

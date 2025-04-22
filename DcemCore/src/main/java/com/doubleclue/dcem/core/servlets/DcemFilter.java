@@ -239,7 +239,7 @@ public abstract class DcemFilter implements Filter {
 		} catch (InvalidCipherTextIOException exp) { // should happen as now we have a JSF exception handler
 			logger.info("Could not decrypt downloaded file", exp.toString());
 			// try to redirect
-			redirect(httpServletRequest, response, "/userportal/welcome.xhtml?Error=" + exp.getMessage(), true);
+			redirect(httpServletRequest, response, "/mgt/ndex.xhtml?Error=" + exp.getMessage(), true);
 			return;
 		} catch (Exception exp) {
 			logger.warn("Web Filter Failed", exp);

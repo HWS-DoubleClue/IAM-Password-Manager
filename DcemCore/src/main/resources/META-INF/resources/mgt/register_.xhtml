@@ -14,8 +14,7 @@
 	<title>DoubleClue Register</title>
 	<h:outputStylesheet library="css" name="systemStyles.css" />
 	<h:outputStylesheet library="css" name="media.css" />
-
-
+	<meta name="robots" content="noindex" />
 </h:head>
 
 <f:view>
@@ -42,8 +41,8 @@
 							<p:outputLabel for="name" value="#{AdminMsg['mfalogin.login.username']}" />
 							<p:inputText id="name" value="#{registerView.userId}" maxlength="64" required="true" style="margin-left:1em; width: 18em" autocomplete="off" />
 							<br />
-							<p:captcha id="captcha" label="Captcha" rendered="#{userPortalModule.enableCaptcha}" language="#{portalSessionBean.localeStr}}" />
-							<h:outputText value="" rendered="#{userPortalModule.enableCaptcha}" />
+						<!-- 	<p:captcha id="captcha" label="Captcha" rendered="#{userPortalModule.enableCaptcha}" language="#{portalSessionBean.localeStr}}" />
+							<h:outputText value="" rendered="#{userPortalModule.enableCaptcha}" /> -->
 						</p:panel>
 						<br />
 						<p:commandButton id="registerAllButton" value="#{AdminMsg['button.next']}" action="#{registerView.actionUserId}" icon="fa fa-arrow-circle-right"

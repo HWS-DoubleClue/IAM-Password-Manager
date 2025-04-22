@@ -1,34 +1,27 @@
 @CHARSET "ISO-8859-1";
 /* this file for responsive mode like mobile screen */
-
-
 @media screen and (max-width: 800px) {
-	.logoChild, .companyLogoStyle, .signInText , .ImgBox ,.spcaeHeader{
+	.logoChild, .companyLogoStyle, .signInText, .ImgBox, .spcaeHeader {
 		display: none;
 		visibility: hidden;
 	}
-	.box{
-	position:absolute;
-	
+	.box {
+		position: absolute;
 	}
-	
-	.eyeBtnStyle{
-	padding: 0 !important;
+	.eyeBtnStyle {
+		padding: 0 !important;
 	}
-	.headTitle{
+	.headTitle {
 		font-size: 1em !important;
 	}
-	
-	.samlloginPanel{
+	.samlloginPanel {
 		width: 24em !important;
 		margin-top: 0 !important;
 		padding-left: 0px !important;
-		
 	}
-	.loginPanelStyle{
-	padding-left: 0px !important;
+	.loginPanelStyle {
+		padding-left: 0px !important;
 	}
-	
 	.loginPanelContainer {
 		margin-top: 0 !important;
 		padding-top: 0;
@@ -37,15 +30,16 @@
 	.labelLogin {
 		font-size: 1em !important;
 	}
-	.panelLogOff{
+	.panelLogOff {
 		width: 70% !important;
 	}
-	.samllogOffTxt{font-size: 1em !important}
-
+	.samllogOffTxt {
+		font-size: 1em !important
+	}
 }
 
 @media screen and (max-width: 480px) {
-	.panelLoginChild .ui-panel-content,.panelLoginChildCheckBoxes {
+	.panelLoginChild .ui-panel-content, .panelLoginChildCheckBoxes {
 		padding: 0px !important;
 		margin: 0px !important;
 	}
@@ -100,26 +94,21 @@
 		display: inline-block ! important;
 		width: auto !important;
 	}
-	.ui-datatable.borderlessCloudSafe .ui-datatable-reflow td, .ui-datatable.borderlessCloudSafe .ui-datatable-data td
-		{
+	.ui-datatable.borderlessCloudSafe .ui-datatable-reflow td, .ui-datatable.borderlessCloudSafe .ui-datatable-data td {
 		display: inline-block !important;
 		float: none;
 	}
 	.ui-reflow-label {
 		width: auto !important;
 	}
-	
 	.panelLogOff {
 		width: 95% !important;
 	}
-	
-	.samlExpiredTxt{
-		font-size: 0.8em !important;	
+	.samlExpiredTxt {
+		font-size: 0.8em !important;
 	}
-	
-	.samlDialogMfa{
-	position: fixed !important;;
-	top:45px !important;;
+	.samlDialogMfa {
+		position: fixed !important;;
+		top: 45px !important;;
 	}
-	
 }

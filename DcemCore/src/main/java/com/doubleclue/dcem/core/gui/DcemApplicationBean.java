@@ -776,10 +776,6 @@ public class DcemApplicationBean implements Serializable {
 	}
 
 	public String getApplicationTheme() {
-		String path = JsfUtils.getHostUrl().getPath();
-		if (path.startsWith(DcemConstants.EMBEDDED_USER_PORTAL_PATH)) {
-			return DcemConstants.DCEM_PORTAL_THEME;
-		}
 		return DcemConstants.DCEM_THEME;
 	}
 

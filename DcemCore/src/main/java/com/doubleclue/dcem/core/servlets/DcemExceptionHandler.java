@@ -14,15 +14,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
-import com.doubleclue.dcem.core.exceptions.DcemException;
-import com.doubleclue.dcem.core.logic.module.UserPortalModuleApi;
 
 // WebServlet("/DcemExceptionHandler")
 @SuppressWarnings("serial")
 public class DcemExceptionHandler extends HttpServlet {
 
-//	@Inject
-//	UserPortalModuleApi userPortalModuleApi;
 
 	@Inject
 	AdminModule module;
@@ -60,7 +56,7 @@ public class DcemExceptionHandler extends HttpServlet {
 			return;
 		}
 		String error = "Unexpected ERROR";
-		String attribute = (String) request.getAttribute("error-message");
+	//	String attribute = (String) request.getAttribute("error-message");
 
 		if (statusCode != null) {
 

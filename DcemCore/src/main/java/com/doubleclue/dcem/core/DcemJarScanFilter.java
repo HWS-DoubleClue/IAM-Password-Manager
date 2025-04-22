@@ -8,7 +8,7 @@ import org.apache.tomcat.JarScanType;
 public class DcemJarScanFilter implements JarScanFilter {
 
 	String pattern = "(^bin.*|^jsf.*|^dcem.*|^dcup.*|Dcem.*|AppSecure.*|RadiusModule.*|OtpModule.*|DispatcherModule.*|LicenseModule.*|"
-			+ "SamlModule.*|OAuthModule.*|TestModule.*|UserPortalModule.*|WindowsSso-Module.*|.*Module.*|)";
+			+ "SamlModule.*|OAuthModule.*|TestModule.*|WindowsSso-Module.*|.*Module.*|)";
 
 	@Override
 	public boolean check(JarScanType jarScanType, String jarName) {

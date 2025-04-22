@@ -56,24 +56,6 @@
 
 					<p:panel>
 						<div id="customheader" style="vertical-align: middle; position: relative; margin-bottom: 0.5em;">
-							<h:outputLabel value="#{AdminMsg['tenantBranding.bannerUserPortal']}" styleClass="tenantBrandingTitle" />
-						</div>
-						<h:panelGroup>
-							<div style="float: left">
-								<h:outputText value="#{AdminMsg['tenantBranding.bannerText']}" />
-								<p:inputText size="40" maxlength="150" style="margin-left: 1em;" value="#{tenantBrandingView.branding.bannerTextUserPortal}" />
-
-								<h:outputText value="#{AdminMsg['tenantBranding.bannerStyleCSS']}" style="margin-left: 7em;" />
-							</div>
-							<div style="width: auto; overflow: hidden; padding: 0 1em 0 1em">
-								<p:inputText maxlength="200" style="width: 100%;" value="#{tenantBrandingView.branding.bannerStyleCSSUserPortal}" />
-							</div>
-						</h:panelGroup>
-					</p:panel>
-					<br />
-
-					<p:panel>
-						<div id="customheader" style="vertical-align: middle; position: relative; margin-bottom: 0.5em;">
 							<h:outputLabel value="#{AdminMsg['tenantBranding.bannerStyleSaml']}" styleClass="tenantBrandingTitle" />
 						</div>
 						<h:panelGroup>
@@ -170,8 +152,7 @@
 					</h:panelGroup>
 
 					<h:outputText value="#{AdminMsg['tenantBranding.backgroundColor']}" rendered="#{tenantBrandingView.branding.backgroundTypeColor}" />
-					<p:colorPicker value="#{tenantBrandingView.branding.backgroundColor}" rendered="#{tenantBrandingView.branding.backgroundTypeColor}" />
-
+					<p:colorPicker value="#{tenantBrandingView.branding.backgroundColor}"  rendered="#{tenantBrandingView.branding.backgroundTypeColor}" />
 
 				</h:panelGrid>
 			</p:panel>

@@ -122,7 +122,6 @@ public final class DcemConstants {
 	public static final String ACTION_SHOW_REPORT = "showReport";
 	public final static String ACTION_USER_PROFILE = "userProfile";
 	public final static String ACTION_CHANGE_PASSWORD = "changePassword";
-	public static final String ACTION_SWITCH_USER_PORTAL = "switchUserPortal";
 
 	public static final String ACTION_IMPORT_LICENCE_KEY = "importLicenceKey";
 	public static final String TEXT_RESOURCE_FILE_TYPE = ".properties";
@@ -141,7 +140,6 @@ public final class DcemConstants {
 
 	public static int WEB_MANAGEMENT_PORT = 8443;
 	public static String APP_TITLE = "Enterprise Management";
-	public static String USERPORTAL_TITLE = "UserPortal";
 	public static final String SYSTEM_ROLE_SUPERADMIN = "SuperAdmin";
 	public static final String SYSTEM_ROLE_ADMIN = "Admin";
 	public static final String SYSTEM_ROLE_HELPDESK = "HelpDesk";
@@ -182,7 +180,6 @@ public final class DcemConstants {
 	public static final String LICENCE_DIALOG_PATH = "/modules/admin/licenceDialog.xhtml";
 	public static final String IMPORT_USERS_VIEW_PATH = "/modules/admin/importLdapUsers.xhtml";
 	public static final String SHOW_ACTIVATION_CODE_DIALOG = "/modules/admin/adminActivationDialog.xhtml";
-	public static final String USER_PORTAL_WELCOME = "/dcem/userportal/welcome.xhtml";
 
 	public static final String SYSTEM_TENANT_DIALOG_PATH = "/modules/system/tenantDialog.xhtml";
 	public static final String TENANT_RECOVER_SUPERADMIN_ACCESS_DIALOG_PATH = "/modules/system/tenantRecoverSuperAdminAccessDialog.xhtml";
@@ -374,7 +371,6 @@ public final class DcemConstants {
 	// THEME
 	public static final String DCEM_PORTAL_THEME = "dcemportaltheme";
 	public static final String DCEM_THEME = "dcemtheme";
-	public static final String EMBEDDED_USER_PORTAL_PATH = "/dcem/userportal";
 
 	// AZURE
 //	public static final String AZURE_CALLBACK_SERVLET_NAME = "AzureCallbackServlet";
@@ -465,8 +461,6 @@ public final class DcemConstants {
 	public static final String CHROME_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36";
 
 	public static final String DOWNLOAD_CIPHER_EXCEPTION = "DOWNLOAD_CIPHER_EXP";
-
-	public static final String USERPORTAL_PREFERNCESES_TYPE_COMPARE = "notificationType";
 
 	public static final String EMAIL_STATE_SUCCESSED = "succssed";
 
