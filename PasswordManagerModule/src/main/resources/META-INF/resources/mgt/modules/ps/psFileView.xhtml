@@ -50,7 +50,7 @@
 		<h:outputText value="#{PsMsg['message.fileIsReadOnly']}" style="color: #ffc003" rendered="#{psFileView.writeAccess == false}" />
 		<p></p>
 		<br />
-		<p:outputPanel id="gridPanel">
+		<h:panelGroup id="gridPanel">
 			<ui:repeat value="#{psFileView.keepassGroups}" var="group" varStatus="status">
 				<div style="border-bottom: 2px solid #0E5077;">
 					<p:panel id="groupPanel" header="#{group.name}" collapsed="false" toggleable="true" toggleableHeader="true">
@@ -79,7 +79,10 @@
 								<p:dataViewGridItem>
 									<p:contextMenu for="entryPanel">
 										<p:menuitem value="#{PsMsg['editEntry']}" action="#{psFileView.onEditEntry(currentEntry, group)}" update="" icon="fa fa-pencil" />
-										<p:menuitem value="#{PsMsg['deleteEntry']}" action="#{psFileView.actionDeleteEntry(currentEntry)}" update="" icon="fa fa-trash" />
+										<p:menuitem value="#{PsMsg['trashEntry']}" action="#{psFileView.actionDeleteEntry(currentEntry)}" icon="fa fa-trash"
+											rendered="#{psFileView.isRecycleBin(group) eq false}" />
+										<p:menuitem value="#{PsMsg['dialog.deleteEntry']}" action="#{psFileView.actionDeleteEntry(currentEntry)}" style="color: red" icon="fa fa-rectangle-xmark"
+											rendered="#{psFileView.isRecycleBin(group) eq true}" />
 										<p:menuitem value="#{PsMsg['button.view']}" action="#{psFileView.onShowEntry(currentEntry, group)}" icon="fa fa-eye" />
 									</p:contextMenu>
 									<p:panel id="entryPanel" header="#{currentEntry.title}" closable="false" styleClass="appPanelStyle">
@@ -87,14 +90,17 @@
 											<p:menu>
 												<p:submenu>
 													<p:menuitem value="#{PsMsg['editEntry']}" icon="fa fa-pencil" action="#{psFileView.onEditEntry(currentEntry, group)}" />
-													<p:menuitem value="#{PsMsg['deleteEntry']}" icon="fa fa-trash" action="#{psFileView.actionDeleteEntry(currentEntry)}" />
+													<p:menuitem value="#{PsMsg['trashEntry']}" action="#{psFileView.actionDeleteEntry(currentEntry)}" icon="fa fa-trash"
+														rendered="#{psFileView.isRecycleBin(group) eq false}" />
+													<p:menuitem value="#{PsMsg['dialog.deleteEntry']}" action="#{psFileView.actionDeleteEntry(currentEntry)}" style="color: red" icon="fa fa-rectangle-xmark"
+														rendered="#{psFileView.isRecycleBin(group) eq true}" />
 													<p:menuitem value="#{PsMsg['button.view']}" icon="fa fa-eye" action="#{psFileView.onShowEntry(currentEntry, group)}" />
 												</p:submenu>
 											</p:menu>
 										</f:facet>
-										<p:commandLink action="#{psFileView.performLogin(currentEntry)}"
-											style="display:block; text-align: center; text-decoration:none; ">
-											<p:graphicImage stream="false" value="#{psFileView.getEntryImage(currentEntry)}" style="background-color: white !Important; height: 64px; width: 64px; padding:0.1em;" />
+										<p:commandLink action="#{psFileView.performLogin(currentEntry)}" style="display:block; text-align: center; text-decoration:none; ">
+											<p:graphicImage stream="false" value="#{psFileView.getEntryImage(currentEntry)}"
+												style="background-color: white !Important; height: 64px; width: 64px; padding:0.1em;" />
 										</p:commandLink>
 									</p:panel>
 								</p:dataViewGridItem>
@@ -103,7 +109,7 @@
 					</p:panel>
 				</div>
 			</ui:repeat>
-		</p:outputPanel>
+		</h:panelGroup>
 		<!-- <p:overlayPanel widgetVar="entryButtons" id="entryButtons" showCloseIcon="true" dynamic="true">
 			<p:commandButton styleClass="applicationButtonEdit" action="#{psFileView.onEditEntry(currentEntry, group)}" icon="fa fa-pencil applicationHoverBtn"
 				title="#{AdminMsg['button.edit']}">
@@ -147,8 +153,7 @@
 				</h:panelGroup>
 			</h:panelGrid>
 			<p></p>
-			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('showEntry').hide();"
-				style="float: right; margin-right: 1em;" immediate="true" />
+			<p:commandLink id="closeDialog" value="#{PsMsg['close']}" onclick="PF('showEntry').hide();" style="float: right; margin-right: 1em;" immediate="true" />
 			<p></p>
 		</p:dialog>
 	</h:form>
@@ -239,7 +244,7 @@
 
 	<h:form id="addAppsForm" enctype="multipart/form-data">
 		<p:dialog id="addAppDlg" widgetVar="addAppDlg" modal="true" style="border:none;">
-			<f:facet name="header" >
+			<f:facet name="header">
 				<h:outputLabel value="#{PsMsg['addEntry']}" class="dialogTitle" rendered="#{psFileView.editingApplication == false}" />
 				<h:outputLabel value="#{PsMsg['appHub.editCustomApp']}" class="dialogTitle" rendered="#{psFileView.editingApplication == true}" />
 			</f:facet>
@@ -316,7 +321,7 @@
 				</p:tab>
 				<p:tab title="#{PsMsg['dialog.customProperties']} ">
 					<p></p>
-					<p:commandLink action="#{psFileView.addNewProperty}" immediate="true" disabled="#{psFileView.writeAccess == false}" >
+					<p:commandLink action="#{psFileView.addNewProperty}" immediate="true" disabled="#{psFileView.writeAccess == false}">
 						<p:outputLabel id="addNewProperty" class="fa fa-plus-circle actionBarButtons"></p:outputLabel>
 						<p:tooltip for="addNewProperty" value="#{PsMsg['button.add']}" position="bottom" />
 					</p:commandLink>
@@ -333,10 +338,11 @@
 
 					<p:panel style="display:inline-block;float:right;padding:0;margin:0;">
 						<p:commandLink update="customPropertiesTable" action="#{psFileView.upAction}" immediate="true" disabled="#{psFileView.writeAccess == false}">
-							<h:outputText id="up" class="fa fa-arrow-up "/>
+							<h:outputText id="up" class="fa fa-arrow-up " />
 							<p:tooltip for="up" value="#{PsMsg['button.up']}" position="bottom" />
 						</p:commandLink>
-						<p:commandLink update="customPropertiesTable" action="#{psFileView.downAction}" style="margin-left: 1em" immediate="true" disabled="#{psFileView.writeAccess == false}">
+						<p:commandLink update="customPropertiesTable" action="#{psFileView.downAction}" style="margin-left: 1em" immediate="true"
+							disabled="#{psFileView.writeAccess == false}">
 							<h:outputText id="down" class="fa fa-arrow-down" />
 							<p:tooltip for="down" value="#{PsMsg['button.down']}" position="bottom" />
 						</p:commandLink>
@@ -409,14 +415,14 @@
 
 					<p:fieldset legend="#{PsMsg['appHub.loginData']}" style="margin-top: 2em; border-style: solid; border-color: grey;">
 						<p />
-						<p:commandButton value="#{PsMsg['appHubAdmin.addStep']}" action="#{psFileView.onAddNewAction}" icon="fa fa-plus" 
-							update="actionForm" disabled="#{psFileView.writeAccess == false}" rendered="#{psFileView.noPredefinedApp}" />
+						<p:commandButton value="#{PsMsg['appHubAdmin.addStep']}" action="#{psFileView.onAddNewAction}" icon="fa fa-plus" update="actionForm"
+							disabled="#{psFileView.writeAccess == false}" rendered="#{psFileView.noPredefinedApp}" />
 						<p:spacer width="12" />
-						<p:commandButton value="#{PsMsg['appHubAdmin.editStep']}" actionListener="#{psFileView.onEditAction}" icon="fa fa-edit" 
+						<p:commandButton value="#{PsMsg['appHubAdmin.editStep']}" actionListener="#{psFileView.onEditAction}" icon="fa fa-edit"
 							disabled="#{psFileView.writeAccess == false}" rendered="#{psFileView.noPredefinedApp}" />
 						<p:spacer width="12" />
 						<p:commandButton value="#{PsMsg['appHubAdmin.deleteStep']}" actionListener="#{psFileView.deleteAction}" icon="fa fa-minus"
-							 disabled="#{psFileView.writeAccess == false}" rendered="#{psFileView.noPredefinedApp}">
+							disabled="#{psFileView.writeAccess == false}" rendered="#{psFileView.noPredefinedApp}">
 							<p:confirm header="#{PsMsg['appHubAdmin.deleteConfirmHeader']}" message="#{PsMsg['appHubAdmin.deleteSelectedAction']}" icon="fa fa-warning confirmIcon" />
 						</p:commandButton>
 						<p />
@@ -447,11 +453,11 @@
 				</p:tab>
 			</p:tabView>
 			<p />
-			<p:commandButton id="addAppOK" value="OK" icon="fa fa-check" style="width: 8em;" action="#{psFileView.actionAddEditEntry}" ajax="true" upadate="viewPart"
-				disabled="#{psFileView.writeAccess == false}" />
+			<p:commandButton id="addAppOK" value="OK" icon="fa fa-check" style="width: 8em;" action="#{psFileView.actionAddEditEntry}" ajax="true"
+				upadate="psFileForm:gridPanel" disabled="#{psFileView.writeAccess == false}" />
 			<p:spacer width="12" />
 
-			<p:commandButton id="closeDialog" value="#{PsMsg['close']}" onclick="PF('addAppDlg').hide();" style="width: 8em" icon="fa fa-close" immediate="true"></p:commandButton>
+			<p:commandButton id="closeDialog" value="#{PsMsg['close']}" onclick="PF('addAppDlg').hide();" style="width: 8em" icon="fa fa-close" immediate="true" />
 			<p></p>
 
 			<br />

@@ -233,7 +233,7 @@ public class PsFileView extends DcemView {
 		for (ApplicationHubEntity applicationHubEntity : apps) {
 			result.add(new ApplicationSelectItem(applicationHubEntity.getId(), applicationHubEntity.getName(), applicationHubEntity.getLogo()));
 		}
-		PrimeFaces.current().ajax().update("applicationHubForm");
+		PrimeFaces.current().ajax().update("psFileForm:gridPanel");
 		return result;
 	}
 
@@ -244,7 +244,7 @@ public class PsFileView extends DcemView {
 	}
 
 	private void updateDashboardView() {
-		PrimeFaces.current().ajax().update("applicationHubForm");
+		PrimeFaces.current().ajax().update("psFileForm:gridPanel");
 	}
 
 	
@@ -995,7 +995,7 @@ public class PsFileView extends DcemView {
 			currentKeepassEntryEntity.setName(appNameValue);
 			keepassEntryLogic.updateEntry(currentKeepassEntryEntity);
 			saveAndUpdateFile();
-			PrimeFaces.current().ajax().update("applicationHubForm");
+			PrimeFaces.current().ajax().update("psFileForm:gridPanel");
 			hideDialog("addAppDlg");
 			currentEntry = null;
 		} catch (DcemException exp) {
@@ -1077,6 +1077,7 @@ public class PsFileView extends DcemView {
 				return;
 			}
 			keePassFile = psChooseFileView.loadKeepassFile(content, masterPassword);
+			PrimeFaces.current().ajax().update("psFileForm:gridPanel");
 		} catch (Exception e) {
 			logger.info("Couldn't delete Entry: " + entry.getTitle(), e);
 			JsfUtils.addErrorMessage(resourceBundle, "appHub.error.FAILED_CLOSE_APPLICATION");
@@ -1415,7 +1416,7 @@ public class PsFileView extends DcemView {
 				return;
 			}
 			keePassFile = psChooseFileView.loadKeepassFile(content, masterPassword);
-			PrimeFaces.current().ajax().update("applicationHubForm");
+			PrimeFaces.current().ajax().update("psFileForm:gridPanel");
 		} catch (Exception e) {
 			JsfUtils.addErrorMessage(e.toString());
 		}
