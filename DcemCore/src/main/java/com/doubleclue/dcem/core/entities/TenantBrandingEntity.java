@@ -16,7 +16,7 @@ public class TenantBrandingEntity {
 
 	private byte[] backgroundImage;
 
-	private String backgroundColor = "#f0f8ff";
+	private String backgroundColor = "var (--primary-background-color)";
 
 	final static String BANNER_STYLE_CSS = "color: #ffffff;vertical-align: middle !important;font-size: large;background-color: #0e4f77;text-align: center;";
 
@@ -26,11 +26,8 @@ public class TenantBrandingEntity {
 
 	private String bannerStyleCSSOauth = BANNER_STYLE_CSS;
 
-	private String bannerStyleCSSUserPortal = "background-color: #bae2f5; text-align:center; font-size:large;";
-
 	private String bannerTextEnterpriseManagment;
 
-	private String bannerTextUserPortal;
 
 	public boolean isBackgroundTypeColor() {
 		return backgroundTypeColor;
@@ -104,22 +101,6 @@ public class TenantBrandingEntity {
 		this.timezone = timezone;
 	}
 
-	public String getBannerTextUserPortal() {
-		return bannerTextUserPortal;
-	}
-
-	public void setBannerTextUserPortal(String bannerTextUserPortal) {
-		this.bannerTextUserPortal = bannerTextUserPortal;
-	}
-
-	public String getBannerStyleCSSUserPortal() {
-		return bannerStyleCSSUserPortal;
-	}
-
-	public void setBannerStyleCSSUserPortal(String bannerStyleCSSUserPortal) {
-		this.bannerStyleCSSUserPortal = bannerStyleCSSUserPortal;
-	}
-
 	public String getBannerStyleCSSsaml() {
 		return bannerStyleCSSsaml;
 	}
@@ -141,7 +122,7 @@ public class TenantBrandingEntity {
 		return "TenantBrandingEntity [timezones=" + timezone + ", signInPageText=" + signInPageText + ", companyLogo=" + companyLogo + ", backgroundImage="
 				+ backgroundImage + ", backgroundColor=" + backgroundColor + ", backgroundTypeColor=" + backgroundTypeColor + ", bannerStyleCSS="
 				+ bannerStyleCSS + ", bannerTextEnterpriseManagment=" + bannerTextEnterpriseManagment + ", signTextStyleCSS=" + signTextStyleCSS
-				+ ",bannerTextUserPortal=" + bannerTextUserPortal + ",bannerStyleCSSUserPortal=" + bannerStyleCSSUserPortal + ",bannerStyleCSSsaml="
+				+ ",bannerStyleCSSsaml="
 				+ bannerStyleCSSsaml + ",bannerStyleCSSOauth=" + bannerStyleCSSOauth + "]";
 	}
 

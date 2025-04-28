@@ -374,7 +374,7 @@ public class DcemMain {
 			Context rootContext = (StandardContext) tomcat.addWebapp("", new File(webAppDir, "custom").getAbsolutePath());
 			ErrorPage errorPage = new ErrorPage();
 			// errorPage.setErrorCode(HttpServletResponse.SC_NOT_FOUND);
-			errorPage.setLocation("/toUserPortal.html");
+			errorPage.setLocation("/error_.html");
 			rootContext.addErrorPage(errorPage);
 			StandardJarScanner jarScanner = (StandardJarScanner) rootContext.getJarScanner();
 			jarScanner.setScanAllFiles(false);

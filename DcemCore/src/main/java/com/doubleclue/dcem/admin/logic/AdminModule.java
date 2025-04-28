@@ -178,31 +178,6 @@ public class AdminModule extends DcemModule {
 		}
 	}
 
-	public String getTitleBannerTextUserPortal() {
-		String name = "";
-		String bannerTextUserPortal = getTenantData().getTenantBrandingEntity().getBannerTextUserPortal();
-		if (bannerTextUserPortal != null && bannerTextUserPortal.isEmpty() == false) {
-			return bannerTextUserPortal;
-		} else {
-			if (applicationBean.isMultiTenant()) {
-				TenantEntity tenantEntity = TenantIdResolver.getCurrentTenant();
-				if (tenantEntity.isMaster()) {
-					if (DcemCluster.getInstance().getClusterConfig() != null) {
-						name = DcemCluster.getInstance().getClusterConfig().getGivenName();
-						if (name != null && name.isEmpty() == false) {
-							name = " - " + name;
-						} else {
-							name = "";
-						}
-					}
-				}
-				name = name + " - " + tenantEntity.getName();
-			}
-
-			return DcemConstants.USERPORTAL_TITLE + name;
-		}
-	}
-
 	public String getTitleEnterpriseManagment() {
 		String name = "";
 		String bannerTextEnterpriseManagment = getTenantData().getTenantBrandingEntity().getBannerTextEnterpriseManagment();
@@ -267,14 +242,7 @@ public class AdminModule extends DcemModule {
 		return style;
 	}
 
-	public String getBannerStyleCSSUserPortal() {
-		String style = getTenantData().getTenantBrandingEntity().getBannerStyleCSSUserPortal();
-		if (style == null) {
-			return "";
-		}
-		return style;
-	}
-
+	
 	public String getTitleStyleSaml() {
 		String style = getTenantData().getTenantBrandingEntity().getBannerStyleCSSsaml();
 		if (style == null) {

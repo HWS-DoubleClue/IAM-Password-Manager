@@ -120,7 +120,7 @@
 						<p />
 						<p:panel rendered="#{oauthLoginView.deviceWizard}">
 							<h:outputLabel value="#{DbMsg['sso.login.panel.deviceWizard']}" />
-							<p:link href="#{dcemApplication.userPortalUrl}" value="{DbMsg['sso.login.panel.userPortalLink']}" target="_blank" />
+							<p:link href="#{dcemApplication.getDcemManagementUrl}" value="{DbMsg['sso.login.panel.userPortalLink']}" target="_blank" />
 						</p:panel>
 
 						<!-- Remote Commands -->

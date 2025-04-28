@@ -15,173 +15,166 @@
 	</f:facet>
 	<title>#{adminModule.title}</title>
 	<h:outputScript library="js" name="webauthn.js" />
-	<!-- 
-	// #if COMMUNITY_EDITION == false
-	 -->
+	<meta name="robots" content="noindex" />
 	<h:outputScript library="js" name="bdcclient.js" />
-	<!--
- 	//#endif
- 	-->
 	<h:outputScript library="js" name="loginDCEM.js" />
 	<h:outputStylesheet library="webjars" name="font-awesome/6.5.1/css/all-jsf.css" />
 	<script defer="defer" type="text/javascript" src="#{resource['js/javaScriptDCEM.js']}"></script>
-
 	<link id="favicon" rel="icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
 	<link rel="shortcut icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
 </h:head>
 
 <f:view locale="#{operatorSession.locale}">
 	<h:body>
-
 		<h:outputStylesheet library="css" name="systemStyles.css" />
 
 		<ui:include src="../titleLogin.xhtml" />
 
-		<!-- 	<div style="width: 100%; height: 100%; position: absolute; top: 6vh; left: 0;">
-			<p:graphicImage cache="true" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.isBackgroundImage()}" />
-		</div> -->
-
-		<div id="container"
-			style="position:absolute;z-index: 2; left:0px; top: 10vh; width: 100%; height: 90vh; overflow: auto;  #{adminModule.loginBackgroundColor};">
-
+		<div id="container" style="width: auto; height: 94vh; position: relative;">
+			<div class="box" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+				<p:graphicImage cache="false" style="height:100%; width: 100%;" value="#{adminModule.backgroundImg}" rendered="#{adminModule.backgroundImg != null}" />
+			</div>
 			<ui:include src="ajaxStatus.xhtml" />
-			<h:form id="locForm">
-				<h:inputHidden id="locationType" value="#{adminModule.locationType}" />
-				<h:inputHidden id="locationApi" value="#{adminModule.locationApi}" />
-			</h:form>
-			<p></p>
-			<h:outputText style="padding-left: 5em; text-align: left; font-size: x-large; #{adminModule.signInTextStyle};" value="#{adminModule.signInText}" />
-			<h:form id="loginForm">
-				<p:remoteCommand name="qrCodeExpired" actionListener="#{mfaLoginView.actionQrExpired}" update="qrcodePanel basic" />
-				<h:inputHidden id="mgtActiveView" value="#{mfaLoginView.mgtActiveView}" />
-				<h:inputHidden id="mgtUserSettings" value="#{mfaLoginView.userSettings}" />
-
-				<p />
-				<f:metadata>
-					<f:viewParam name="loginOtp" value="#{mfaLoginView.loginOtp}" />
-				</f:metadata>
-				<p />
-
-				<!-- Remote Commands -->
-				<p:remoteCommand name="finishFidoAuthentication" update="@form" action="#{mfaLoginView.actionFinishFidoAuthentication}" />
-				<p:remoteCommand name="showFidoError" update="@form" action="#{mfaLoginView.actionShowFidoError}" />
-
-				<!-- Hidden Inputs -->
-				<h:inputHidden id="fidoResponse" value="#{mfaLoginView.fidoResponse}" />
-				<h:inputHidden id="fidoError" value="#{mfaLoginView.fidoError}" />
-				<h:inputHidden id="rpId" value="#{mfaLoginView.rpId}" />
-
-				<h:inputHidden id="location" value="#{mfaLoginView.location}" />
-				<!-- <h:inputHidden id="accounts" value="#{mfaLoginView.accounts}" /> -->
-
-				<!-- Login Form -->
-				<p:panel id="basic" style="width: 35em; margin: 0 auto; border: 0px;">
-					<p />
-
-					<p:commandLink id="register" action="#{registerView.actionRequestRegister}" rendered="#{adminModule.modulePreferences.enableCreateAccount}" ajax="false"
-						style="float:right;">
-						<h:outputText class="fa fa-user-plus" style="font-size: x-large" />
-						<p:outputLabel style="margin-left: 0.2em; font-size: medium; cursor: pointer; text-decoration-line: underline;" value="#{AdminMsg['createNewAccount']}" />
-					</p:commandLink>
+			<div class="box" style="width: 100%; height: 100%;position: absolute;top: 0;left: 0;#{adminModule.loginBackgroundColor};">
+				<h:form id="locForm">
+					<h:inputHidden id="locationType" value="#{adminModule.locationType}" />
+					<h:inputHidden id="locationApi" value="#{adminModule.locationApi}" />
+				</h:form>
+				<p></p>
+				<h:outputText style="padding-left: 5em; text-align: left; font-size: x-large; #{adminModule.signInTextStyle};" value="#{adminModule.signInText}" />
+				<h:form id="loginForm">
+					<p:remoteCommand name="qrCodeExpired" actionListener="#{mfaLoginView.actionQrExpired}" update="qrcodePanel basic" />
+					<h:inputHidden id="mgtActiveView" value="#{mfaLoginView.mgtActiveView}" />
+					<h:inputHidden id="mgtUserSettings" value="#{mfaLoginView.userSettings}" />
 
 					<p />
-					<p:outputLabel value="#{AdminMsg['mfalogin.login']}" class="dialogTitle" style="margin-left: 8px; font-size: 1.6em;"
-						rendered="#{mfaLoginView.loginPanelRendered}" />
-					<p:outputLabel value="#{AdminMsgg['title.changePasswordView']}" class="dialogTitle" style="margin-left: 8px; font-size: 1.6em;"
-						rendered="#{mfaLoginView.passwordPanelRendered}" />
-					<br />
-					<p:focus for="password" rendered="#{mfaLoginView.userNameDisable == true}" />
-					<p:focus for="name" rendered="#{mfaLoginView.userNameDisable == false}" />
+					<f:metadata>
+						<f:viewParam name="loginOtp" value="#{mfaLoginView.loginOtp}" />
+					</f:metadata>
+					<p />
 
-					<!-- login panel -->
-					<p:panel style="width: 95%; margin: 0 auto; border: none; font-size: 1.2em; margin-left:1em;" rendered="#{mfaLoginView.loginPanelRendered}">
-						<h:outputLabel class="labelLogin" value="#{AdminMsg['mfalogin.login.username']}" />
-						<br></br>
-						<h:panelGroup>
-							<p:inputText id="name" value="#{mfaLoginView.userName}" size="50" autocomplete="on" style="width: 88%;" />
-						</h:panelGroup>
-						<p></p>
-						<h:outputLabel class="labelLogin" value="#{AdminMsg['mfalogin.login.password']}" />
-						<br></br>
-						<p:password id="password" size="50" value="#{mfaLoginView.password}" style="width: 88%" autocomplete="off" toggleMask="true" />
-						<p></p>
+					<!-- Remote Commands -->
+					<p:remoteCommand name="finishFidoAuthentication" update="@form" action="#{mfaLoginView.actionFinishFidoAuthentication}" />
+					<p:remoteCommand name="showFidoError" update="@form" action="#{mfaLoginView.actionShowFidoError}" />
 
-						<p:commandButton id="login" value="#{AdminMsg['mfalogin.login.button']}" action="#{mfaLoginView.actionLogin}" style="width: 91%;" ajax="true" async="true"
-							icon="fa fa-sign-in" />
-						<p></p>
-						<p:commandButton id="azureLogin" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{mfaLoginView.actionAzureLogin}" style="width: 91%;"
-							ajax="false" async="true" icon="ui-icon-azure" rendered="#{mfaLoginView.azureLogin}" />
+					<!-- Hidden Inputs -->
+					<h:inputHidden id="fidoResponse" value="#{mfaLoginView.fidoResponse}" />
+					<h:inputHidden id="fidoError" value="#{mfaLoginView.fidoError}" />
+					<h:inputHidden id="rpId" value="#{mfaLoginView.rpId}" />
 
-					</p:panel>
+					<h:inputHidden id="location" value="#{mfaLoginView.location}" />
+					<!-- <h:inputHidden id="accounts" value="#{mfaLoginView.accounts}" /> -->
 
-					<!-- change password panel -->
-					<p:panel style="width: 80%; margin: 0 auto; border: none; font-size: 1.2em" rendered="#{mfaLoginView.passwordPanelRendered}">
+					<!-- Login Form -->
+					<p:panel id="basic" style="width: 35em; margin: 0 auto; border: 0px;">
+						<p />
+
+						<p:commandLink id="register" action="#{registerView.actionRequestRegister}" rendered="#{adminModule.modulePreferences.enableCreateAccount}" ajax="false"
+							style="float:right;">
+							<h:outputText class="fa fa-user-plus" style="font-size: x-large" />
+							<p:outputLabel style="margin-left: 0.2em; font-size: medium; cursor: pointer; text-decoration-line: underline;" value="#{AdminMsg['createNewAccount']}" />
+						</p:commandLink>
+
+						<p />
+						<p:outputLabel value="#{AdminMsg['mfalogin.login']}" class="dialogTitle" style="margin-left: 8px; font-size: 1.6em;"
+							rendered="#{mfaLoginView.loginPanelRendered}" />
+						<p:outputLabel value="#{AdminMsgg['title.changePasswordView']}" class="dialogTitle" style="margin-left: 8px; font-size: 1.6em;"
+							rendered="#{mfaLoginView.passwordPanelRendered}" />
 						<br />
-						<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.username']}" />
-						<p:inputText id="username" value="#{mfaLoginView.userName}" size="40" disabled="true" style="width: 280px;" />
-						<p></p>
-						<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.passwordOld']}" />
-						<p:password id="passwordOld" size="40" value="#{mfaLoginView.passwordOld}" redisplay="true" maxlength="64" style="width: 280px;" toggleMask="true" />
+						<p:focus for="password" rendered="#{mfaLoginView.userNameDisable == true}" />
+						<p:focus for="name" rendered="#{mfaLoginView.userNameDisable == false}" />
 
-						<p></p>
-						<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.passwordNew']}" />
-						<p:password id="passwordNew" size="40" value="#{mfaLoginView.passwordNew}" redisplay="true" maxlength="64" style="width: 280px;" toggleMask="true" />
-						<p></p>
-						<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.passwordNewRepeat']}" />
-						<p:password id="passwordRepeat" size="40" value="#{mfaLoginView.passwordRepeat}" redisplay="true" maxlength="64" style="width: 280px;" toggleMask="true" />
+						<!-- login panel -->
+						<p:panel style="width: 95%; margin: 0 auto; border: none; font-size: 1.2em; margin-left:1em;" rendered="#{mfaLoginView.loginPanelRendered}">
+							<h:outputLabel class="labelLogin" value="#{AdminMsg['mfalogin.login.username']}" />
+							<br></br>
+							<h:panelGroup>
+								<p:inputText id="name" value="#{mfaLoginView.userName}" size="50" autocomplete="on" style="width: 88%;" />
+							</h:panelGroup>
+							<p></p>
+							<h:outputLabel class="labelLogin" value="#{AdminMsg['mfalogin.login.password']}" />
+							<br></br>
+							<p:password id="password" size="50" value="#{mfaLoginView.password}" style="width: 88%" autocomplete="off" toggleMask="true" />
+							<p></p>
+
+							<p:commandButton id="login" value="#{AdminMsg['mfalogin.login.button']}" action="#{mfaLoginView.actionLogin}" style="width: 91%;" ajax="true"
+								async="true" icon="fa fa-sign-in" />
+							<p></p>
+							<p:commandButton id="azureLogin" value="#{AdminMsg['mfalogin.azureLogin.button']}" action="#{mfaLoginView.actionAzureLogin}" style="width: 91%;"
+								ajax="false" async="true" icon="ui-icon-azure" rendered="#{mfaLoginView.azureLogin}" />
+
+						</p:panel>
+
+						<!-- change password panel -->
+						<p:panel style="width: 80%; margin: 0 auto; border: none; font-size: 1.2em" rendered="#{mfaLoginView.passwordPanelRendered}">
+							<br />
+							<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.username']}" />
+							<p:inputText id="username" value="#{mfaLoginView.userName}" size="40" disabled="true" style="width: 280px;" />
+							<p></p>
+							<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.passwordOld']}" />
+							<p:password id="passwordOld" size="40" value="#{mfaLoginView.passwordOld}" redisplay="true" maxlength="64" style="width: 280px;" toggleMask="true" />
+
+							<p></p>
+							<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.passwordNew']}" />
+							<p:password id="passwordNew" size="40" value="#{mfaLoginView.passwordNew}" redisplay="true" maxlength="64" style="width: 280px;" toggleMask="true" />
+							<p></p>
+							<p:outputLabel class="labelLogin" value="#{AdminMsgg['label.passwordNewRepeat']}" />
+							<p:password id="passwordRepeat" size="40" value="#{mfaLoginView.passwordRepeat}" redisplay="true" maxlength="64" style="width: 280px;" toggleMask="true" />
+							<p />
+							<p:commandButton id="changePassword" value="#{AdminMsgg['button.changePassword']}" action="#{mfaLoginView.actionChangePassword}" style="width: 100%"
+								update="@form" ajax="true" async="true">
+							</p:commandButton>
+							<p />
+						</p:panel>
 						<p />
-						<p:commandButton id="changePassword" value="#{AdminMsgg['button.changePassword']}" action="#{mfaLoginView.actionChangePassword}" style="width: 100%"
-							update="@form" ajax="true" async="true">
-						</p:commandButton>
+						<br />
+						<p:selectBooleanCheckbox id="useAlternative" value="#{mfaLoginView.useAlternativeAuthMethods}" itemLabel="#{AdminMsg['label.useAlternativeAuthMethods']}" />
+						<h:outputText id="useAlternativeInfo" style="font-size: 1.5em" class="fa fa-info-circle" />
+
+						<p:tooltip for="useAlternativeInfo" showEvent="click" position="top" value="#{AdminMsg['label.useAlternativeAuthMethodsInfo']}" />
+						<br />
+						<p:selectBooleanCheckbox id="staySignedIn" value="#{mfaLoginView.stayLoggedIn}" itemLabel="#{AdminMsg['label.staySignedIn']}" />
 						<p />
+						<p:commandLink value="" rendered="#{mfaLoginView.backLink}" action="#{mfaLoginView.actionBackLink}" ajax="true">
+							<h:outputLabel class="fa fa-arrow-left" style="padding-right: 0.5em; cursor:pointer;" />
+							<p:outputLabel value="#{AdminMsg['label.selectAnotherUser']}" style="cursor:pointer;"></p:outputLabel>
+						</p:commandLink>
+						<p />
+						<h:panelGroup>
+							<p:commandButton id="requestQrCode" rendered="#{mfaLoginView.stopQrCode}" icon="fa fa-qrcode" style="font-size: 1.2em"
+								action="#{mfaLoginView.requestNewQrCode()}" ajax="true" value="#{AdminMsg['mfalogin.login.qrcode.request']}">
+							</p:commandButton>
+							<p:commandLink id="forgotPassword" value="#{AdminMsg['button.forgotPassword']}" action="#{mfaLoginView.actionForgotPassword}" ajax="false"
+								style="float: right" />
+						</h:panelGroup>
+
 					</p:panel>
+
 					<p />
-					<br />
-					<p:selectBooleanCheckbox id="useAlternative" value="#{mfaLoginView.useAlternativeAuthMethods}" itemLabel="#{AdminMsg['label.useAlternativeAuthMethods']}" />
-					<h:outputText id="useAlternativeInfo" style="font-size: 1.5em" class="fa fa-info-circle" />
+					<!-- QR Code -->
+					<p:outputPanel id="qrcodePanel" widgetVar="qrcodePanel" style="width: 450px; display: block; margin: 0 auto;">
+						<p:graphicImage id="qrCodeImage" value="#{mfaLoginView.qrCodeImage}" stream="false" />
+						<br />
+						<h:panelGroup id="counterMsg" rendered="#{mfaLoginView.stopQrCode eq false}">
+							<p:outputLabel value="#{AdminMsg['mfalogin.login.qrcode.validity']}" />
+							<p:outputLabel style="display: inline;" id="counter">#{mfaLoginView.qrCodeTimeToLive}</p:outputLabel>
+							<p:outputLabel value="#{AdminMsg['mfalogin.login.qrcode.seconds']}" />
+						</h:panelGroup>
 
-					<p:tooltip for="useAlternativeInfo" showEvent="click" position="top" value="#{AdminMsg['label.useAlternativeAuthMethodsInfo']}" />
-					<br />
-					<p:selectBooleanCheckbox id="staySignedIn" value="#{mfaLoginView.stayLoggedIn}" itemLabel="#{AdminMsg['label.staySignedIn']}" />
-					<p />
-					<p:commandLink value="" rendered="#{mfaLoginView.backLink}" action="#{mfaLoginView.actionBackLink}" ajax="true">
-						<h:outputLabel class="fa fa-arrow-left" style="padding-right: 0.5em; cursor:pointer;" />
-						<p:outputLabel value="#{AdminMsg['label.selectAnotherUser']}" style="cursor:pointer;"></p:outputLabel>
-					</p:commandLink>
-					<p />
-					<h:panelGroup>
-						<p:commandButton id="requestQrCode" rendered="#{mfaLoginView.stopQrCode}" icon="fa fa-qrcode" style="font-size: 1.2em"
-							action="#{mfaLoginView.requestNewQrCode()}" ajax="true" value="#{AdminMsg['mfalogin.login.qrcode.request']}">
-						</p:commandButton>
-						<p:commandLink id="forgotPassword" value="#{AdminMsg['button.forgotPassword']}"  action="#{mfaLoginView.actionForgotPassword}" ajax="false" style="float: right" />
-					</h:panelGroup>
+						<p:poll id="poller" widgetVar="poller" autoStart="false" immediate="true" interval="#{dcemApplication.pollInterval}"
+							listener="#{mfaLoginView.checkQrCode()}" process="@this" global="false" />
+						<p />
+					</p:outputPanel>
+					<p:spacer height="60" />
 
-				</p:panel>
-
-				<p />
-				<!-- QR Code -->
-				<p:outputPanel id="qrcodePanel" widgetVar="qrcodePanel" style="width: 450px; display: block; margin: 0 auto;">
-					<p:graphicImage id="qrCodeImage" value="#{mfaLoginView.qrCodeImage}" stream="false" />
-					<br />
-					<h:panelGroup id="counterMsg" rendered="#{mfaLoginView.stopQrCode eq false}">
-						<p:outputLabel value="#{AdminMsg['mfalogin.login.qrcode.validity']}" />
-						<p:outputLabel style="display: inline;" id="counter">#{mfaLoginView.qrCodeTimeToLive}</p:outputLabel>
-						<p:outputLabel value="#{AdminMsg['mfalogin.login.qrcode.seconds']}" />
-					</h:panelGroup>
-
-					<p:poll id="poller" widgetVar="poller" autoStart="false" immediate="true" interval="#{dcemApplication.pollInterval}"
-						listener="#{mfaLoginView.checkQrCode()}" process="@this" global="false" />
-					<p />
-				</p:outputPanel>
-				<p:spacer height="60" />
-
-				<p:defaultCommand target="login" scope="basic" />
-			</h:form>
+					<p:defaultCommand target="login" scope="basic" />
+				</h:form>
 
 
-			<p:growl id="msgs" showDetail="false" sticky="true">
-				<p:autoUpdate />
-			</p:growl>
+				<p:growl id="msgs" showDetail="false" sticky="true">
+					<p:autoUpdate />
+				</p:growl>
+			</div>
 		</div>
 
 		<!-- Progress Dialog -->

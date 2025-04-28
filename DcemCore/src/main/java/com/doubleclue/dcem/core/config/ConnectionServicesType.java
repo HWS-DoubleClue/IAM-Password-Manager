@@ -9,8 +9,8 @@ public enum ConnectionServicesType {
 	SAML("SAML", 8002, false, false, "dcem/saml", ConnectionServicesType.MANAGEMENT),
 	OPENN_ID_OAUTH("OpenID - OAUTH", 8003, false, false, "dcem/oauth", ConnectionServicesType.MANAGEMENT),
 	HEALTH_CHECK("Health Check", 8004, false, false, "dcem/healthcheck", ConnectionServicesType.MANAGEMENT),
-	USER_PORTAL("UserPortal", 8005, false, false, "dcem/userportal", ConnectionServicesType.MANAGEMENT),
- 	AZURE_CALLBACK("Azure Callback Service", 8006, false, false, "dcem/azureCallback", ConnectionServicesType.MANAGEMENT);
+	USER_PORTAL("UserPortal", 8005, false, false, "dcem/userportal", ConnectionServicesType.MANAGEMENT),  // NOT in USE
+ 	AZURE_CALLBACK("Azure Callback Service", 8006, false, false, "dcem/azureCallback", ConnectionServicesType.MANAGEMENT); // NOT in USE
 
 	public String displayName;
 	int port;
