@@ -6,7 +6,7 @@
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
-
+    <p></p>
 	<h:form id="chooseFileForm">
 		<h:panelGroup style="float:left;">
 			<p:commandLink action="#{psChooseFileView.onNewPasswordSafeFile}" style="text-decoration: none;">
@@ -22,10 +22,10 @@
 		<br></br>
 
 		<p></p>
-		<p:outputPanel id="keepassSelectionPanel" style="float:left; margin-top : 1em">
+		<p:outputPanel id="keepassSelectionPanel" style="margin-top : 1em">
 			<h:outputText value="#{PsMsg['appHub.availablePasswordSafeFiles']}" style="color:#fff; font-size:1.5em;" />
 			<p></p>
-			<p:dataTable id="passwordSafeFiles" var="passwordSafeFile" value="#{psChooseFileView.availableOwnedPasswordSafeFiles}" class="recentfiletable" reflow="true"
+			<p:dataTable id="passwordSafeFiles" var="passwordSafeFile" value="#{psChooseFileView.availableOwnedPasswordSafeFiles}" class="recentfiletable" reflow="true" style="border-collapse: disabled; border-spacing: 1em"
 				emptyMessage="#{PsMsg['message.emptyTable']}">
 				<p:column headerText="#{PsMsg['columnTitle.filename']}">
 					<p:commandLink styleClass="recentFileLink" action="#{psChooseFileView.actionOpenFile(passwordSafeFile)}" update="viewPart">
@@ -36,15 +36,15 @@
 					<h:outputText value="#{passwordSafeFile.lastModified}" converter="dcem.LocalDateTimeConverter" />
 				</p:column>
 				<p:column headerText="#{PsMsg['columnTitle.writeAccess']}" sortBy="#{cloudSafeFile.writeAccess}" style="text-align: center;">
-					<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{passwordSafeFile.writeAccess}" />
-					<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{passwordSafeFile.writeAccess == false}" />
+					<h:outputLabel class="fa fa-check" style="color:#32CD32; float: left; padding-left: 15%" rendered="#{passwordSafeFile.writeAccess}" />
+					<h:outputLabel class="fa fa-times" style="color:#DC143C; float: left; padding-left: 15%" rendered="#{passwordSafeFile.writeAccess == false}" />
 				</p:column>
-				<p:column headerText="#{PsMsg['columnTitle.groupOwned']}">
+				<p:column headerText="#{PsMsg['columnTitle.ownerGroup']}">
 					<h:outputText rendered="#{passwordSafeFile.getUniqueKey().owner.value == 3}"
 						value="#{psChooseFileView.getGroupOwnerName(passwordSafeFile.getUniqueKey().dbId)}"></h:outputText>
 				</p:column>
 				<p:column headerText="#{PsMsg['columnTitle.download']}">
-					<p:commandButton style="float: right" icon="fa fa-download" onclick="PrimeFaces.monitorDownload(null, stopDownLoad);">
+					<p:commandButton style="left: 10%" icon="fa fa-download" onclick="PrimeFaces.monitorDownload(null, stopDownLoad);">
 						<p:fileDownload value="#{psChooseFileView.actionDownloadFile(passwordSafeFile)}" />
 					</p:commandButton>
 				</p:column>
@@ -60,17 +60,17 @@
 						<h:outputText value="#{psChooseFileView.getFileName(passwordSafeFile.getUniqueKey().name)}"></h:outputText>
 					</p:commandLink>
 				</p:column>
-				<p:column headerText="#{PsMsg['columnTitle.sharedBy']}">
+				<p:column headerText="#{PsMsg['columnTitle.owner']}">
 					<h:outputText value="#{psChooseFileView.getSharedByName(passwordSafeFile.getUniqueKey().name)}"></h:outputText>
 				</p:column>
 				<p:column headerText="#{PsMsg['columnTitle.lastModified']}">
 					<h:outputText value="#{passwordSafeFile.lastModified}" converter="dcem.LocalDateTimeConverter" />
 				</p:column>
 				<p:column headerText="#{PsMsg['columnTitle.writeAccess']}" sortBy="#{cloudSafeFile.writeAccess}" style="text-align: center;">
-					<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{passwordSafeFile.writeAccess}" />
-					<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{passwordSafeFile.writeAccess == false}" />
+					<h:outputLabel class="fa fa-check" style="color:#32CD32; float: left; padding-left: 10%" rendered="#{passwordSafeFile.writeAccess}" />
+					<h:outputLabel class="fa fa-times" style="color:#DC143C; float: left; padding-left: 10%" rendered="#{passwordSafeFile.writeAccess == false}" />
 				</p:column>
-				<p:column headerText="#{PsMsg['columnTitle.groupOwned']}">
+				<p:column headerText="#{PsMsg['columnTitle.ownerGroup']}">
 					<p:outputLabel id="groupIcon" class="fa fa-users" style="color:#EA5079 !important;" rendered="#{passwordSafeFile.getUniqueKey().owner.value == 3}"></p:outputLabel>
 					<p:tooltip for="groupIcon" value="#{PsMsg['message.owner']} #{psChooseFileView.getGroupOwnerName(passwordSafeFile.getUniqueKey().dbId)}" position="right" />
 				</p:column>

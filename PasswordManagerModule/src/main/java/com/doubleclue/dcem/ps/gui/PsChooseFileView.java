@@ -528,7 +528,7 @@ public class PsChooseFileView extends DcemView {
 			throw e;
 		} catch (KeePassDatabaseUnreadableException exp) {
 			if (exp.getCause() != null && exp.getCause() instanceof javax.crypto.BadPaddingException) {
-				throw new DcemException(DcemErrorCodes.INVALID_PASSWORD, " Please check your Master Password. ");
+				throw new DcemException(DcemErrorCodes.INVALID_PASSWORD, JsfUtils.getStringSafely(resourceBundle, "error.INVALID_MASTER_PASSWORD"));
 			}
 			throw exp;
 		} catch (Exception e) {

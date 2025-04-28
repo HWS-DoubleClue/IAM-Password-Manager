@@ -28,7 +28,7 @@ public class PasswordSafeModule extends DcemModule {
 	}
 	
 	public String getName() {
-		return "Password Safe";
+		return "PasswordSafe";
 	}
 
 	@Override
