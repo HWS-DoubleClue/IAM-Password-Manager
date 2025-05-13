@@ -7,6 +7,7 @@
 				<p:selectBooleanCheckbox value="#{document.selected}" style="margin-left: 1em; vertical-align: middle">
 					<p:ajax event="valueChange" listener="#{dmDocumentView.onSelection(document)}" />
 				</p:selectBooleanCheckbox>
+
 				<p:commandLink action="#{dmDocumentView.actionClickFolder(document)}" style="cursor: pointer;" immediate="true" update="@form">
 					<p:graphicImage styleClass="viewFolderImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
 					<h:outputText class="folderName" value="#{document.name}" />
@@ -20,42 +21,60 @@
 		paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" layout="grid"
 		styleClass="smallComponent" selectionMode="multiple" selection="#{dmDocumentView.selectedCloudSafeFiles}" rowKey="#{document.id}">
 		<p:dataViewGridItem>
-			<p:selectBooleanCheckbox value="#{document.selected}" style="margin-left: 1em; margin-bottom: -3.5em">
-				<p:ajax event="valueChange" listener="#{dmDocumentView.onSelection(document)}" />
-			</p:selectBooleanCheckbox>
-
-			<p:panel styleClass="smallComponentPanel">
-				<div style="display: flex; justify-content: center;">
-					<p:graphicImage cache="false" value="#{dmDocumentView.getThumbnailStream(document)}" stream="false" style="border-radius: 5px;"
-						styleClass="smallComponentImage" />
-				</div>
-				<div style="margin-top: 4px; display: inline-block;" class="documentName">
-					<p:graphicImage styleClass="viewFileImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
-					<h:outputText style="margin-left: 2px" value="#{document.name}" />
-				</div>
-				<h:panelGroup rendered="#{dmDocumentView.searchResultMode eq true and document.location.isEmpty() eq false}">
-					<br />
-					<h:outputText class="fa-regular fa-folder" />
-					<p:commandLink id="locationFolder" value="#{document.location}" action="#{dmDocumentView.actionParentFolder(document)}" class="folderName" immediate="true"
-						update="@form" />
-					<p:tooltip for="locationFolder" value="#{dmDocumentView.getPath(document)}" position="bottom" />
-				</h:panelGroup>
-
-				<h:panelGroup rendered="#{document.owner.value == '3'}">
-					<br />
-					<h:outputText class="fa-solid fa-people-group" />
-					<p:outputLabel value=": #{document.ownerName}" style="margin-left: 5px;" />
-				</h:panelGroup>
-				<br />
-				<div>
-					<div style="margin-top: 0.4em">
-						<ui:repeat value="#{dmDocumentView.getTagsSafely(document)}" var="tag">
-							<div style="color: #{tag.foregroundColor}; background-color: #{tag.color};" class="documentTag">#{tag.name}</div>
-						</ui:repeat>
-
+			<div>
+				<p:panel styleClass="smallComponentPanel">
+					<p:selectBooleanCheckbox value="#{document.selected}" style="margin-left: 0.21em; vertical-align: top;">
+						<p:ajax event="valueChange" listener="#{dmDocumentView.onSelection(document)}" />
+					</p:selectBooleanCheckbox>
+					
+					<p:graphicImage cache="false" value="#{dmDocumentView.getThumbnailStream(document)}" stream="false" style="border-radius: 5px; margin-left: 0.1em"
+							styleClass="smallComponentImage" />
+					
+					<p:commandLink id="dynaButton" style="float: right;">
+						<h:outputText class="pi pi-ellipsis-v"  />
+					</p:commandLink>
+					<p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom" style="width: 15em">
+						<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles (document)}" icon="fa fa-cloud-download" />
+						<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument(document)}" icon="fa fa-pencil" />
+						<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
+							rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+						<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
+							rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+						<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
+							rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+						<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
+							disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+					</p:menu>
+					<div style="margin-top: 4px; display: inline-block;" class="documentName">
+						<p:graphicImage styleClass="viewFileImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
+						<h:outputText style="margin-left: 2px" value="#{document.name}" />
 					</div>
-				</div>
-			</p:panel>
+					<h:panelGroup rendered="#{dmDocumentView.searchResultMode eq true and document.location.isEmpty() eq false}">
+						<br />
+						<h:outputText class="fa-regular fa-folder" />
+						<p:commandLink id="locationFolder" value="#{document.location}" action="#{dmDocumentView.actionParentFolder(document)}" class="folderName"
+							immediate="true" update="@form" />
+						<p:tooltip for="locationFolder" value="#{dmDocumentView.getPath(document)}" position="bottom" />
+					</h:panelGroup>
+
+					<h:panelGroup rendered="#{document.owner.value == '3'}">
+						<br />
+						<h:outputText class="fa-solid fa-people-group" />
+						<p:outputLabel value=": #{document.ownerName}" style="margin-left: 5px;" />
+					</h:panelGroup>
+					<br />
+					<div>
+						<div style="margin-top: 0.4em">
+							<ui:repeat value="#{dmDocumentView.getTagsSafely(document)}" var="tag">
+								<div style="color: #{tag.foregroundColor}; background-color: #{tag.color};" class="documentTag">#{tag.name}</div>
+							</ui:repeat>
+
+						</div>
+					</div>
+
+				</p:panel>
+			</div>
 		</p:dataViewGridItem>
 	</p:dataView>
+
 </ui:composition>

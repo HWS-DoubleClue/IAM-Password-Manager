@@ -99,7 +99,7 @@ public class DmNewDocumentView extends DcemView {
 
 	@Inject
 	DmSolrLogic solrLogic;
-	
+
 	@Inject
 	DmUploader uploader;
 
@@ -329,7 +329,11 @@ public class DmNewDocumentView extends DcemView {
 	public List<DocumentVersion> getVersions() {
 		try {
 			if (cacheVersion == null) {
-				cacheVersion = cloudSafeLogic.getS3Versions(cloudSafeEntity);
+				if (cloudSafeEntity.getId() == null) {
+					cacheVersion = new ArrayList<DocumentVersion>(0);
+				} else {
+					cacheVersion = cloudSafeLogic.getS3Versions(cloudSafeEntity);
+				}
 			}
 			return cacheVersion;
 		} catch (DcemException e) {
@@ -515,9 +519,9 @@ public class DmNewDocumentView extends DcemView {
 			fileOutputStream.close();
 			LocalDateTime localDateTime = getVersionLastModified(selectedVersion);
 			String newName = cloudSafeEntity.getName() + localDateTime.format(DcemConstants.DATE_TIME_FORMATTER_EXIST);
-//			CloudSafeEntity cloudSafeEntityDb = cloudSafeLogic.getCloudSafe(cloudSafeEntity.getId());
+			// CloudSafeEntity cloudSafeEntityDb = cloudSafeLogic.getCloudSafe(cloudSafeEntity.getId());
 			CloudSafeEntity parent = cloudSafeLogic.getCloudSafe(cloudSafeEntity.getParent().getId());
-			UploadDocument uploadDocument = new UploadDocument (newName, contentFile, parent, cloudSafeEntity.getDcemMediaType());
+			UploadDocument uploadDocument = new UploadDocument(newName, contentFile, parent, cloudSafeEntity.getDcemMediaType());
 			uploadDocument.setRecoverFrom(cloudSafeEntity);
 			uploader.uploadDocument(uploadDocument);
 		} catch (Exception e) {
@@ -582,11 +586,11 @@ public class DmNewDocumentView extends DcemView {
 			return;
 		}
 		dcemMediaType = cloudSafeEntity.getDcemMediaType();
-		
+
 		tagDualList.setTarget(new ArrayList<CloudSafeTagEntity>(cloudSafeEntity.getTags()));
 		originalFile = documentLogic.getDocumentContent(cloudSafeEntity);
 		if (dcemMediaType == null) {
-			dcemMediaType =  FileUploadDetector.getMediaType(cloudSafeEntity.getName(), originalFile);
+			dcemMediaType = FileUploadDetector.getMediaType(cloudSafeEntity.getName(), originalFile);
 			cloudSafeEntity.setDcemMediaType(dcemMediaType);
 		}
 		ocrText = null;

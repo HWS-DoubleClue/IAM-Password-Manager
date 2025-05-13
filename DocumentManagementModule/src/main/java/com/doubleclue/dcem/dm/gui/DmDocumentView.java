@@ -49,6 +49,7 @@ import com.doubleclue.dcem.as.entities.CloudSafeTagEntity;
 import com.doubleclue.dcem.as.logic.CloudSafeDto;
 import com.doubleclue.dcem.as.logic.CloudSafeLogic;
 import com.doubleclue.dcem.as.logic.CloudSafeTagLogic;
+import com.doubleclue.dcem.as.logic.DataUnit;
 import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
@@ -84,7 +85,7 @@ public class DmDocumentView extends DcemView {
 
 	@Inject
 	CloudSafeLogic cloudSafeLogic;
-	
+
 	@Inject
 	DmWorkflowView workflowView;
 
@@ -146,7 +147,6 @@ public class DmDocumentView extends DcemView {
 	private boolean shareDocumentsMode = false;
 	File downloadTempFile;
 
-
 	@PostConstruct
 	private void init() {
 		subject = dmDocumentEntitySubject;
@@ -163,7 +163,7 @@ public class DmDocumentView extends DcemView {
 		shareDocumentsMode = false;
 		onReload();
 	}
-	
+
 	public void setShareDocumentsMode(boolean value) {
 		shareDocumentsMode = value;
 		updateBreadCrumbModel(cloudSafeRoot);
@@ -177,34 +177,7 @@ public class DmDocumentView extends DcemView {
 		loadColumnFilter();
 	}
 
-	public int getUsagePercentage() {
-		CloudSafeLimitEntity cloudSafeLimitEntity = cloudSafeLogic.getCloudSafeLimitEntity(operatorSessionBean.getDcemUser().getId());
-		long limit = cloudSafeLimitEntity != null ? cloudSafeLimitEntity.getLimit() : cloudSafeLogic.getDefaultUserLimit();
-		long usage = cloudSafeLimitEntity != null ? cloudSafeLimitEntity.getUsed() : 0;
-		return limit > 0 ? (int) ((usage * 100) / limit) : 0;
-	}
-
-	private String formatSize(long sizeInKB) {
-		if (sizeInKB >= 1024 * 1024) {
-			return String.format("%.2f GB", sizeInKB / (1024.0 * 1024));
-		} else if (sizeInKB >= 1024) {
-			return String.format("%.2f MB", sizeInKB / 1024.0);
-		} else {
-			return sizeInKB + " KB";
-		}
-	}
-
-	public String getFormattedLimit() {
-		CloudSafeLimitEntity cloudSafeLimitEntity = cloudSafeLogic.getCloudSafeLimitEntity(operatorSessionBean.getDcemUser().getId());
-		long limit = cloudSafeLimitEntity != null ? cloudSafeLimitEntity.getLimit() : cloudSafeLogic.getDefaultUserLimit();
-		return formatSize(limit / 1024);
-	}
-
-	public String getFormattedUsage() {
-		CloudSafeLimitEntity cloudSafeLimitEntity = cloudSafeLogic.getCloudSafeLimitEntity(operatorSessionBean.getDcemUser().getId());
-		long usage = cloudSafeLimitEntity != null ? cloudSafeLimitEntity.getUsed() : 0;
-		return formatSize(usage / 1024);
-	}
+	
 
 	public List<SelectItem> getUserGroups() {
 		List<DcemGroup> listGroups = operatorSessionBean.getUserGroups();
@@ -247,7 +220,7 @@ public class DmDocumentView extends DcemView {
 		if (searchResultMode == true) {
 			return cloudSafeEntityFiles;
 		}
-//		System.out.println("DmDocumentView.getCurrentFiles()");
+		// System.out.println("DmDocumentView.getCurrentFiles()");
 		if (shouldRefreshCurrentFiles || cloudSafeEntityFiles == null) {
 			try {
 				shouldRefreshCurrentFiles = false;
@@ -478,7 +451,7 @@ public class DmDocumentView extends DcemView {
 			if (cloudSafeEntity.isOption(CloudSafeOptions.PWD)) {
 				iconName = DcemConstants.DEFAULT_FOLDER_LOOK_ICON;
 			} else {
-				iconName = "svg/" +  DcemConstants.DEFAULT_FOLDER_ICON;
+				iconName = "svg/" + DcemConstants.DEFAULT_FOLDER_ICON;
 			}
 		} else {
 			int ind = fileName.lastIndexOf('.');
@@ -541,6 +514,13 @@ public class DmDocumentView extends DcemView {
 		}
 		PrimeFaces.current().executeScript("PF('moveEntryConfirmationDialog').show();");
 		PrimeFaces.current().ajax().update("moveEntryConfirmationForm:moveEntryConfirmation");
+	}
+
+	public void onDownloadFiles(CloudSafeEntity cloudSafeEntity) {
+		if (selectedCloudSafeFiles.contains(cloudSafeEntity) == false) {
+			selectedCloudSafeFiles.add(cloudSafeEntity);
+		}
+		onDownloadFiles();
 	}
 
 	public void onDownloadFiles() {
@@ -611,43 +591,36 @@ public class DmDocumentView extends DcemView {
 		viewNavigator.setActiveView(DocumentManagementModule.MODULE_ID + DcemConstants.MODULE_VIEW_SPLITTER + dmNewDocumentView.getSubject().getViewName());
 	}
 
-	
-		
-		
-
-	
-	
-
-//	public void uploadDragFileListener(FilesUploadEvent event) {
-//		System.out.println("DmDocumentView.uploadDragFileListener() Count: " + event.getFiles().getSize());
-//		// System.out.println("DmDocumentView.uploadFileListener() file: " + event.getFiles().getSize());
-//		if (event.getFiles().getSize() > 1) {
-//			for (UploadedFile uploadedFile : event.getFiles().getFiles()) {
-//				System.out.println("DmDocumentView.uploadFileListener() " + uploadedFile.getFileName());
-//			}
-//			return;
-//		}
-//
-//		try {
-//			dmNewDocumentView.uploadDocument(event.getFiles().getFiles().get(0), selectedFolder);
-//		} catch (DcemException e) {
-//			switch (e.getErrorCode()) {
-//			case OCR_TESSERACT_NOT_CONFIGURED:
-//				JsfUtils.addWarnMessage(e.getLocalizedMessage());
-//				break;
-//			case OCR_TESSERACT_ERROR:
-//				JsfUtils.addErrorMessage(e.getLocalizedMessage());
-//				return;
-//			default:
-//				throw new IllegalArgumentException("Unexpected value: " + e.getErrorCode());
-//			}
-//		} catch (Throwable e) {
-//			logger.error("Couldn't upload file", e);
-//			JsfUtils.addErrorMessage(e.toString());
-//			return;
-//		}
-//		viewNavigator.setActiveView(DocumentManagementModule.MODULE_ID + DcemConstants.MODULE_VIEW_SPLITTER + dmNewDocumentView.getSubject().getViewName());
-//	}
+	// public void uploadDragFileListener(FilesUploadEvent event) {
+	// System.out.println("DmDocumentView.uploadDragFileListener() Count: " + event.getFiles().getSize());
+	// // System.out.println("DmDocumentView.uploadFileListener() file: " + event.getFiles().getSize());
+	// if (event.getFiles().getSize() > 1) {
+	// for (UploadedFile uploadedFile : event.getFiles().getFiles()) {
+	// System.out.println("DmDocumentView.uploadFileListener() " + uploadedFile.getFileName());
+	// }
+	// return;
+	// }
+	//
+	// try {
+	// dmNewDocumentView.uploadDocument(event.getFiles().getFiles().get(0), selectedFolder);
+	// } catch (DcemException e) {
+	// switch (e.getErrorCode()) {
+	// case OCR_TESSERACT_NOT_CONFIGURED:
+	// JsfUtils.addWarnMessage(e.getLocalizedMessage());
+	// break;
+	// case OCR_TESSERACT_ERROR:
+	// JsfUtils.addErrorMessage(e.getLocalizedMessage());
+	// return;
+	// default:
+	// throw new IllegalArgumentException("Unexpected value: " + e.getErrorCode());
+	// }
+	// } catch (Throwable e) {
+	// logger.error("Couldn't upload file", e);
+	// JsfUtils.addErrorMessage(e.toString());
+	// return;
+	// }
+	// viewNavigator.setActiveView(DocumentManagementModule.MODULE_ID + DcemConstants.MODULE_VIEW_SPLITTER + dmNewDocumentView.getSubject().getViewName());
+	// }
 
 	public StreamedContent actionDownloadFile() {
 		InputStream inputStream;
@@ -985,10 +958,16 @@ public class DmDocumentView extends DcemView {
 		PrimeFaces.current().executeScript("PF('moveEntryConfirmationDialog').hide();");
 	}
 
+	public void openEditDocument(CloudSafeEntity cloudSafeEntity) {
+		selectedCloudSafeFiles.clear();
+		selectedCloudSafeFiles.add(cloudSafeEntity);
+		openEditDocument();
+	}
+
 	public void openEditDocument() {
 		CloudSafeEntity cloudSafeEntity;
 		if (selectedCloudSafeFiles != null && selectedCloudSafeFiles.size() == 1) {
-			cloudSafeEntity = cloudSafeLogic.getCloudSafe(selectedCloudSafeFiles.get(0).getId()); 	// refresh Entity
+			cloudSafeEntity = cloudSafeLogic.getCloudSafe(selectedCloudSafeFiles.get(0).getId()); // refresh Entity
 			cloudSafeEntity.setWriteAccess(selectedCloudSafeFiles.get(0).isWriteAccess());
 
 		} else {
@@ -1008,16 +987,8 @@ public class DmDocumentView extends DcemView {
 			JsfUtils.addErrorMessage(e.toString());
 		}
 	}
-	
-	public void openWorkflow() {
-		CloudSafeEntity cloudSafeEntity;
-		if (selectedCloudSafeFiles != null && selectedCloudSafeFiles.size() == 1) {
-			cloudSafeEntity = cloudSafeLogic.getCloudSafe(selectedCloudSafeFiles.get(0).getId()); 	// refresh Entity
-			cloudSafeEntity.setWriteAccess(selectedCloudSafeFiles.get(0).isWriteAccess());
-		} else {
-			JsfUtils.addWarnMessage(resourceBundle.getString("documentView.message.selectOnlyOneFile"));
-			return;
-		}
+
+	public void openWorkflow(CloudSafeEntity cloudSafeEntity) {
 		workflowView.editWorkflows(cloudSafeEntity);
 		viewNavigator.setActiveView(DocumentManagementModule.MODULE_ID + DcemConstants.MODULE_VIEW_SPLITTER + workflowView.getSubject().getViewName());
 	}
@@ -1367,7 +1338,7 @@ public class DmDocumentView extends DcemView {
 	}
 
 	public boolean isSearchResultMode() {
-//		System.out.println("DmDocumentView.isSearchResultMode() " + searchResultMode);
+		// System.out.println("DmDocumentView.isSearchResultMode() " + searchResultMode);
 		return searchResultMode;
 	}
 
@@ -1399,5 +1370,4 @@ public class DmDocumentView extends DcemView {
 		this.shouldRefreshCurrentFiles = shouldRefreshCurrentFiles;
 	}
 
-	
 }

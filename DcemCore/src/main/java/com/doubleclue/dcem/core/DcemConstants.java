@@ -519,7 +519,7 @@ public final class DcemConstants {
 
 	public static final String LICENCE_PLUGINS_ALL = "all";
 
-	public static final String URL_VIEW = "?view=";
+	
 	public static final String URL_PARAMS = "&params=";
 	
 	public static final String ICONS_16_PATH = "/META-INF/resources/pictures/icons/16x16/";
@@ -533,6 +533,7 @@ public final class DcemConstants {
 	public static final String JSF_PAGE_FORGOT_PASSWORD = "forgotPasswordView_.xhtml";
 	public static final String JSF_PAGE_END_MESSAGE = "endMessageView_.xhtml";
 
-	
+	public static final String GOTO_VIEW = "gotoView";
+	public static final String URL_VIEW = "?" + GOTO_VIEW + "=";
 
 }

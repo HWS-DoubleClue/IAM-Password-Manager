@@ -22,7 +22,7 @@
 .flex-container {
 	display: flex;
 	color: inherit;
-	/* 	height: 6vh; */
+
 }
 
 .center {
@@ -59,7 +59,6 @@
 	background: transparent;
 	border: none;
 	width: 25px;
-	/* 	height: 6vh; */
 	cursor: pointer;
 	outline: 0;
 	border-radius: 4px;
@@ -186,7 +185,7 @@
 }
 
 .viewTitle {
-	font-size: 1.6em;
+	font-size: 1.4em;	
 	color: var(--header-link-text-color);
 	vertical-align: middle;
 	margin-left: 5px;
@@ -477,7 +476,7 @@
 	border: 0;
 	border-style: solid;
 	overflow: auto;
-	height: 94vh;
+	/* height: 96vh; */
 }
 
 .preferences-seperator {

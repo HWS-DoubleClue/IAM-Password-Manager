@@ -1,16 +1,16 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
 
-	<div class="columnToggler">
-		<p:commandButton id="toggler" value="#{DmMsg['documentView.columns']}" icon="pi pi-align-justify" />
-		<p:columnToggler datasource="documentTable" trigger="toggler">
+	<div class="columnToggler" rendered="#{operatorSession.appSession eq false}">
+		<p:commandButton id="toggler" style="height: 1.8em" value="#{DmMsg['documentView.columns']}" icon="pi pi-align-justify" rendered="#{operatorSession.appSession eq false}" />
+		<p:columnToggler datasource="documentTable" trigger="toggler" rendered="#{operatorSession.appSession eq false}">
 			<p:ajax event="toggle" listener="#{dmDocumentView.onColumnToggle}" />
 		</p:columnToggler>
 	</div>
-
-	<p:dataTable reflow="true" id="documentTable" var="document" value="#{dmDocumentView.currentFiles}" emptyMessage="#{DmMsg['documentView.message.emptyTable']}"
-		selection="#{dmDocumentView.selectedCloudSafeFiles}" rowKey="#{document.id}" sortMode="single" rows="20" rowsPerPageTemplate="20,50,100,200" paginator="true"
-		paginatorPosition="bottom"
+<p></p>
+	<p:dataTable id="documentTable" var="document" value="#{dmDocumentView.currentFiles}" emptyMessage="#{DmMsg['documentView.message.emptyTable']}"
+		selection="#{dmDocumentView.selectedCloudSafeFiles}" rowKey="#{document.id}" selectionRowMode="none" sortMode="single" rows="20"
+		rowsPerPageTemplate="20,50,100,200" paginator="true" paginatorPosition="bottom" style="table-layout: fixed !Important"
 		paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
 		<p:column selectionMode="multiple" toggleable="false" selectionBox="true">
@@ -20,10 +20,10 @@
 
 		<p:column id="fileName" headerText="#{DmMsg['documentView.columnTitle.filename']}" sortBy="#{document.name}" filterBy="#{document.name}"
 			filterMatchMode="contains" class="columName" visible="#{dmDocumentView.isVisibility('fileName')}">
-			
+
 			<p:commandLink action="#{dmDocumentView.actionClickFolder(document)}" style="cursor: pointer;" immediate="true" update="@form" rendered="#{document.folder}">
-					<p:graphicImage styleClass="viewFolderImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
-					<h:outputText class="folderName" value="#{document.name}" />
+				<p:graphicImage styleClass="viewFolderImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
+				<h:outputText class="folderName" value="#{document.name}" />
 			</p:commandLink>
 			<h:panelGroup rendered="#{document.folder eq false}">
 				<div class="documentName">
@@ -42,20 +42,21 @@
 				update="@form" />
 			<p:tooltip for="locationFolder" value="#{dmDocumentView.getPath(document)}" position="bottom" />
 		</p:column>
-		
-		<p:column id="shared" headerText="#{DmMsg['Document.share']}" visible="#{dmDocumentView.isVisibility('shareTo') and dmDocumentView.shareDocumentsMode eq false }"
-			filterBy="#{document.sharedTo}" filterMatchMode="contains" style="color: var(--header-link-text-color); text-align: center; width: 2em">
-			<h:outputLabel id="shareTo" class="fa fa-share-alt"  rendered="#{dmDocumentView.isShareTo(document)}" />
+
+		<p:column id="shared" headerText="#{DmMsg['Document.share']}"
+			visible="#{dmDocumentView.isVisibility('shareTo') and dmDocumentView.shareDocumentsMode eq false }" filterBy="#{document.sharedTo}"
+			filterMatchMode="contains" style="color: var(--header-link-text-color); text-align: center; width: 2em" responsivePriority="5">
+			<h:outputLabel id="shareTo" class="fa fa-share-alt" rendered="#{dmDocumentView.isShareTo(document)}" />
 			<p:tooltip for="shareTo" value="#{document.sharedTo}" position="bottom" />
 		</p:column>
 
-		<p:column id="tags" headerText="#{DmMsg['Document.tags']}" visible="#{dmDocumentView.isVisibility('tags')}"
-			filterBy="#{dmDocumentView.getTagsSafely(document)}" filterMatchMode="contains">
+		<p:column id="tags" headerText="#{DmMsg['Document.tags']}" responsivePriority="4" filterBy="#{dmDocumentView.getTagsSafely(document)}"
+			filterMatchMode="contains">
 			<h:outputText value="#{dmDocumentView.getTagsSafelyText(document)}" />
 		</p:column>
 
 		<p:column id="groupName" headerText="#{DmMsg['documentView.columnTitle.owner']}" sortBy="#{document.ownerName}" filterBy="#{document.ownerName}"
-			filterMatchMode="contains" visible="#{dmDocumentView.isVisibility('ownerName')}">
+			responsivePriority="4" filterMatchMode="contains" visible="#{dmDocumentView.isVisibility('ownerName')}">
 			<h:panelGroup rendered="#{document.owner.value == '3'}">
 				<h:outputText class="fa-solid fa-people-group" />
 			</h:panelGroup>
@@ -63,46 +64,62 @@
 		</p:column>
 
 		<p:column id="mediaType" headerText="#{DmMsg['documentView.columnTitle.mediaType']}" sortBy="#{document.dcemMediaType}" filterBy="#{document.dcemMediaType}"
-			filterMatchMode="contains" visible="#{dmDocumentView.isVisibility('mediaType')}"  style="width: 5em">
+			responsivePriority="4" filterMatchMode="contains" visible="#{dmDocumentView.isVisibility('mediaType')}" style="width: 5em">
 			<h:outputText value="#{document.dcemMediaType}" />
 		</p:column>
 
-		<p:column id="length" headerText="#{DmMsg['documentView.columnTitle.length']}" sortBy="#{document.lengthKb}" style="text-align: right"
+		<p:column id="length" headerText="#{DmMsg['documentView.columnTitle.length']}" sortBy="#{document.lengthKb}" style="text-align: right" responsivePriority="2"
 			visible="#{dmDocumentView.isVisibility('length')}">
 			<h:outputText value="#{document.lengthKb}" style="margin-right: 1em;" />
 		</p:column>
 
 		<p:column id="writeAccess" rendered="#{dmDocumentView.shareDocumentsMode eq true}" headerText="#{DmMsg['documentView.columnTitle.writeAccess']}"
-			sortBy="#{cloudSafeShare.writeAccess}" style="text-align: center" visible="#{dmDocumentView.isVisibility('writeAccess')}">
+			responsivePriority="2" sortBy="#{cloudSafeShare.writeAccess}" style="text-align: center" visible="#{dmDocumentView.isVisibility('writeAccess')}">
 			<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{document.writeAccess}" />
 			<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{document.writeAccess == false}" />
 		</p:column>
 
-		<p:column headerText="#{DmMsg['documentView.columnTitle.restrictDownload']}" rendered="#{dmDocumentView.shareDocumentsMode eq true}"
+		<p:column headerText="#{DmMsg['documentView.columnTitle.restrictDownload']}" rendered="#{dmDocumentView.shareDocumentsMode eq true}" responsivePriority="3"
 			style="text-align: center" visible="#{dmDocumentView.isVisibility('restrictDownload')}">
 			<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{document.restrictDownload}" />
 			<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{document.restrictDownload == false}" />
 		</p:column>
 
-		<p:column id="lastModified" headerText="#{DmMsg['documentView.columnTitle.lastModified']}" sortBy="#{document.lastModified}"
+		<p:column id="lastModified" headerText="#{DmMsg['documentView.columnTitle.lastModified']}" sortBy="#{document.lastModified}" responsivePriority="2"
 			visible="#{dmDocumentView.isVisibility('lastModified')}">
 			<h:outputText value="#{document.lastModified}" converter="dcem.LocalDateTimeConverterShort" />
 		</p:column>
 
 		<p:column id="lastModifiedUser" headerText="#{DmMsg['documentView.columnTitle.lastModifiedUser']}" sortBy="#{document.lastModifiedUser.displayName}"
-			visible="#{dmDocumentView.isVisibility('lastModifiedUser')}">
+			responsivePriority="2" visible="#{dmDocumentView.isVisibility('lastModifiedUser')}">
 			<h:outputText value="#{document.lastModifiedUser.displayName}" />
 		</p:column>
 
-		<!-- <p:column id="discardAfter" headerText="#{DmMsg['documentView.columnTitle.discardsAfter']}" sortBy="#{document.discardAfter}"
-			visible="#{dmDocumentView.isVisibility('discardAfter')}">
-			<h:outputText value="#{document.discardAfter}" converter="dcem.LocalDateTimeConverter">
-			</h:outputText>
-		</p:column> -->
-
-		<p:column id="documentId" headerText="ID" sortBy="#{document.id}" style="text-align: right" visible="#{dmDocumentView.isVisibility('documentId')}">
+		<p:column id="documentId" headerText="ID" sortBy="#{document.id}" style="text-align: right" visible="#{dmDocumentView.isVisibility('documentId')}"
+			responsivePriority="2">
 			<h:outputText value="#{document.id}" style="margin-right: 1em" />
 		</p:column>
 
+		<p:column headerText="Menu" responsivePriority="1">
+			<p:commandLink id="overlayMenu" style="margin: 0.5em">
+				<h:outputText class="pi pi-ellipsis-v" />
+			</p:commandLink>
+			<p:menu overlay="true" trigger="documentTable:overlayMenu" my="left top" at="left bottom" style="width: 15em">
+				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles (document)}" icon="fa fa-cloud-download" />
+				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument(document)}" icon="fa fa-pencil" />
+				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['Document.button.workflow']}" action="#{dmDocumentView.openWorkflow(document)}" icon="fa fa-cubes"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+
+				<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
+					disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+			</p:menu>
+		</p:column>
 	</p:dataTable>
+
 </ui:composition>

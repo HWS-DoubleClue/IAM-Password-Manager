@@ -5,14 +5,13 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
 
-	<h:outputStylesheet library="primefaces-dcemtheme" name="theme.css" />
 	<h:form id="titleForm">
 		<div style="#{adminModule.titleStyle};" class="parent-flex-container">
 			<div class="flex-container">
 				<div class="toggle" id="toggle" onclick="toggleNav()">
 					<span></span>
 				</div>
-				<h:commandLink action="#{viewNavigator.actionRedirectionToHome}">
+				<h:commandLink action="#{viewNavigator.actionRedirectionToHome}" rendered="#{operatorSession.appSession eq false}" >
 					<div style="float: left; border: none; width: auto;">
 						<p:graphicImage cache="false" styleClass="companyLogoStyle" value="#{adminModule.logo}" rendered="#{!adminModule.defaultCompanyLogo}" />
 						<p:graphicImage library="pictures" cache="false" styleClass="companyLogoStyle" name="DC_white_bar_209x64center.png"
@@ -41,8 +40,6 @@
 						<span class="theme-switch-day"><i class="pi pi-moon"></i></span> <span class="theme-switch-night"><i class="pi pi-sun"></i></span>
 					</div>
 
-					<h:outputText id="sessionTimeout" style="font-size: small; margin-right: 1em;" value="" />
-					<p:spacer width="10" />
 					<p:commandLink action="#{viewNavigator.reload}" update="viewPart" style="text-decoration: none;" styleClass="header-button">
 						<i class="fa fa-refresh" style="font-size: 1.1em;"></i>
 					</p:commandLink>
@@ -60,12 +57,9 @@
 							rendered="#{titleBarView.changePasswordPermission}" />
 						<p:menuitem value="#{CoreMsg['titleMenu.logoff']}" action="#{mfaLoginView.logoff}" icon="fa fa-sign-out" />
 					</p:menu>
-
 				</div>
 			</div>
-
 		</div>
-
 
 	</h:form>
 	<script type="text/javascript" src="#{resource['js/theme.js']}"></script>

@@ -1140,6 +1140,12 @@
 				<artifactId>primefaces</artifactId>
 				<version>15.0.0</version>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.webjars.npm/primeflex -->
+			<dependency>
+				<groupId>org.webjars.npm</groupId>
+				<artifactId>primeflex</artifactId>
+				<version>4.0.0</version>
+			</dependency>
 
 			<dependency>
 				<groupId>software.xdev</groupId>

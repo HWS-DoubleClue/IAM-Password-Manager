@@ -5,7 +5,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
+import javax.faces.context.ExternalContext;
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -23,16 +25,26 @@ import org.bouncycastle.crypto.io.InvalidCipherTextIOException;
 
 import com.doubleclue.dcem.admin.logic.AdminModule;
 import com.doubleclue.dcem.core.DcemConstants;
+import com.doubleclue.dcem.core.as.AsModuleApi;
+import com.doubleclue.dcem.core.as.AuthApplication;
+import com.doubleclue.dcem.core.as.AuthMethod;
+import com.doubleclue.dcem.core.as.AuthRequestParam;
+import com.doubleclue.dcem.core.as.AuthenticateResponse;
 import com.doubleclue.dcem.core.cluster.DcemCluster;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.entities.TenantEntity;
+import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
+import com.doubleclue.dcem.core.gui.ErrorDisplayBean;
+import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.CookieHelper;
 import com.doubleclue.dcem.core.logic.DomainAzure;
 import com.doubleclue.dcem.core.logic.DomainLogic;
+import com.doubleclue.dcem.core.logic.OperatorSessionBean;
 import com.doubleclue.dcem.core.logic.UserLogic;
+import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.system.logic.SystemModule;
 import com.doubleclue.dcem.system.logic.SystemPreferences;
 
@@ -52,6 +64,12 @@ public abstract class DcemFilter implements Filter {
 
 	@Inject
 	AdminModule adminModule;
+	
+	@Inject
+	OperatorSessionBean operatorSessionBean;
+	
+	@Inject
+	ErrorDisplayBean errorDisplayBean;
 
 	private static final Logger logger = LogManager.getLogger(DcemFilter.class);
 
@@ -90,6 +108,7 @@ public abstract class DcemFilter implements Filter {
 	protected List<String> allowedPaths;
 	protected String redirectionPage;
 	protected String redirectPort;
+	
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
@@ -190,7 +209,6 @@ public abstract class DcemFilter implements Filter {
 				ThreadContext.put(DcemConstants.MDC_USER_ID, getUserId());
 				secureHeaderREsponse(httpServletResponse);
 				chain.doFilter(request, response);
-
 				return;
 			}
 			secureHeaderREsponse(httpServletResponse);
@@ -205,7 +223,7 @@ public abstract class DcemFilter implements Filter {
 				httpServletRequest.getSession().setAttribute(DcemConstants.URL_TENANT_PARAMETER, tenantEntity);
 			}
 			setTenant(tenantEntity);
-			if (path.endsWith(OPEN_SUFFIX) || allowedPaths.contains(path)) { // excemption
+			if (path.endsWith(OPEN_SUFFIX) || allowedPaths.contains(path)) { 			// excemption
 				chain.doFilter(request, response);
 				return;
 			}
@@ -236,10 +254,47 @@ public abstract class DcemFilter implements Filter {
 				}
 				CookieHelper.removeStateNonceCookies(httpServletResponse);
 			}
+			String sessionCookie = httpServletRequest.getHeader("Dcem-SessionCookie");
+			if (sessionCookie != null) {
+				String userLoginId = httpServletRequest.getHeader("Dcem-UserId");
+				String tenantName = httpServletRequest.getHeader("Dcem-Tenant");
+				// TODO Swithc Tenant;
+				DcemUser dcemUser = userLogic.getUser(userLoginId);
+				if (dcemUser == null) {
+					throw new DcemException(DcemErrorCodes.INVALID_USERID, userLoginId);
+				}
+				AsModuleApi asModuleApi = (AsModuleApi) CdiUtils.getReference(DcemConstants.AS_MODULE_API_IMPL_BEAN);
+				if (asModuleApi.verifyFingerprint(dcemUser.getId(), DcemConstants.FINGERPRINT_ID_FOR_APP, sessionCookie) == false) {
+					throw new DcemException(DcemErrorCodes.INVALID_AUTH_SESSION_COOKIE, userLoginId);
+				}
+//				AuthRequestParam authRequestParam = new AuthRequestParam();
+//				authRequestParam.setSessionCookie(sessionCookie);
+//				AuthenticateResponse authResponse = asModuleApi.authenticate(AuthApplication.DCEM, DcemConstants.FINGERPRINT_ID_FOR_APP, userLoginId, AuthMethod.SESSION_RECONNECT, null, null, authRequestParam);
+//				if (authResponse.getDcemException() != null) {
+//					throw authResponse.getDcemException();
+//				}
+//				if (authResponse.isSuccessful() == false) {
+//					throw new DcemException(DcemErrorCodes.INVALID_AUTH_METHOD, userLoginId);
+//				}
+//				DcemUser dcemUser = authResponse.getDcemUser();
+				logUserIn (dcemUser, httpServletRequest);
+				TimeZone timeZone = userLogic.getTimeZone(dcemUser);
+				httpServletRequest.getSession().setAttribute((String) DcemConstants.SESSION_TIMEZONE, timeZone);
+				httpServletRequest.getSession().setAttribute((String) DcemConstants.SESSION_LOCALE, dcemUser.getLanguage().getLocale());
+				operatorSessionBean.setAppSession(true);
+				chain.doFilter(request, response);
+			}
+		} catch (DcemException exp) { 
+			logger.info("Filter Exception" + exp.toString());
+			// try to redirect
+			errorDisplayBean.setMessage( exp.toString());
+			redirect(httpServletRequest, response, "/error_.xhtml", true);
+			return;
+			
 		} catch (InvalidCipherTextIOException exp) { // should happen as now we have a JSF exception handler
 			logger.info("Could not decrypt downloaded file", exp.toString());
 			// try to redirect
-			redirect(httpServletRequest, response, "/mgt/ndex.xhtml?Error=" + exp.getMessage(), true);
+			redirect(httpServletRequest, response, "/mgt/index.xhtml?Error=" + exp.getMessage(), true);
 			return;
 		} catch (Exception exp) {
 			logger.warn("Web Filter Failed", exp);
@@ -326,7 +381,6 @@ public abstract class DcemFilter implements Filter {
 
 	boolean containsAuthenticationCode(HttpServletRequest httpRequest) {
 		Map<String, String[]> httpParameters = httpRequest.getParameterMap();
-
 		boolean isPostRequest = httpRequest.getMethod().equalsIgnoreCase("POST");
 		boolean containsErrorData = httpParameters.containsKey("error");
 		boolean containIdToken = httpParameters.containsKey("id_token");

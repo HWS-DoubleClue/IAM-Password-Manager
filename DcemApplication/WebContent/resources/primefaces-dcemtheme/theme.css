@@ -55,7 +55,7 @@
 	--side-bar-info-bottom-background-color: #2b2b2b;
 	--inputfield-background-color: #333333;
 	--inputfield-text-color: #ffffff;
-	--table-head-background-color: #303030;
+	--table-head-background-color: #505050;
 	--state-default-text-color: #fcfcfc;
 	--state-active-text-color: #bbbbbb;
 	--state-hover-background-color: #1f1f1f;
@@ -2886,3 +2886,21 @@ body .ui-tabs .ui-tabs-navscroller .ui-tabs-navscroller-btn.ui-state-hover {
 	background: rgba(0, 0, 0, 0);
 	color: #333
 }
+
+.ui-progressbar.ui-widget-content {
+    background-color: var(--table-head-background-color);
+    background-image:none;
+}
+
+.ui-progressbar-value {
+    background-color: var(--button-hover-background-color);
+    background-image:none;
+}
+
+.ui-progressbar-label {
+   color: var(--button-hover-text-color);
+    background-image:none;
+}
+
+
+

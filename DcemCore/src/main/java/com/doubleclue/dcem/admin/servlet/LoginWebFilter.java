@@ -81,7 +81,6 @@ public class LoginWebFilter extends DcemFilter {
 			return;
 		}
 		((HttpServletResponse) response).addHeader("Strict-Transport-Security" ,"max-age=7776000");
-	//	response  setHeader("Strict-Transport-Security" ,"max-age=7776000" );
 		super.doFilter(request, response, chain);
 	}
 	

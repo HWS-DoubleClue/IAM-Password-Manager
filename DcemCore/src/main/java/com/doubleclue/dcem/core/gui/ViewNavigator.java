@@ -15,6 +15,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,6 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SessionScoped
 public class ViewNavigator implements Serializable {
 
+	
 	public static Logger logger = LogManager.getLogger(ViewNavigator.class);
 
 	final String COLUMN_TOGGLER = "CT-";
@@ -73,6 +75,14 @@ public class ViewNavigator implements Serializable {
 	public void init() {
 		activeModule = applicationBean.getDefaultModule();
 		activeView = activeModule.getDefaultView();
+	}
+	
+	public void preRenderView() {
+		HttpServletRequest  httpServletRequest =  (HttpServletRequest) JsfUtils.getExternalContext().getRequest();
+		String gotoView = httpServletRequest.getParameter(DcemConstants.GOTO_VIEW);
+		if (gotoView != null) {
+			setActiveView(gotoView);
+		}
 	}
 
 	/**
@@ -336,7 +346,9 @@ public class ViewNavigator implements Serializable {
 					if (subject.isHiddenMenu() == true) {
 						continue;
 					}
-
+//					if (subject.getName().contains("DmStorage")) {
+//						System.out.println("ViewNavigator.getMenuModel()");
+//					}
 					if (viewRights == false && operatorSessionBean.isPermission(subject.getDcemActions()) == false) {
 						if (subject.forceView(operatorSessionBean.getDcemUser()) == false) {
 							continue; // ignore if role has Actions for this subject

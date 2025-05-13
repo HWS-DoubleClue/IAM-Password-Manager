@@ -48,10 +48,8 @@ import com.doubleclue.dcem.core.exceptions.DcemException;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
-import com.doubleclue.dcem.core.gui.ViewNavigator;
 import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.weld.CdiUtils;
-import com.doubleclue.utils.StringUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -63,9 +61,6 @@ public class OperatorSessionBean implements Serializable {
 
 	@Inject
 	DomainLogic domainLogic;
-
-	@Inject
-	ViewNavigator viewNavigator;
 
 	@Inject
 	DcemApplicationBean applicationBean;
@@ -99,6 +94,8 @@ public class OperatorSessionBean implements Serializable {
 	byte[] image = null;
 
 	TimeZone myTimeZone;
+
+	boolean appSession;
 
 	/**
 	 * 
@@ -158,7 +155,7 @@ public class OperatorSessionBean implements Serializable {
 		}
 		DcemAction dcemActionSubjectManager = new DcemAction(dcemAction.getModuleId(), dcemAction.getSubject(), DcemConstants.ACTION_MANAGE);
 		DcemAction dcemActionModuleManager = new DcemAction(dcemAction.getModuleId(), DcemConstants.EMPTY_SUBJECT_NAME, DcemConstants.ACTION_MANAGE);
-		return  (haveAction.contains(dcemAction) || haveAction.contains(dcemActionSubjectManager) || haveAction.contains(dcemActionModuleManager));
+		return (haveAction.contains(dcemAction) || haveAction.contains(dcemActionSubjectManager) || haveAction.contains(dcemActionModuleManager));
 	}
 
 	public DcemAction getPermission(DcemAction dcemAction) {
@@ -478,9 +475,9 @@ public class OperatorSessionBean implements Serializable {
 		return dcemUser;
 	}
 
-	public String toString () {
-		if (dcemUser == null) { 
-			return"USER IS NULL";
+	public String toString() {
+		if (dcemUser == null) {
+			return "USER IS NULL";
 		} else {
 			return dcemUser.getAccountName() + " LoggedIn: " + loggedIn;
 		}
@@ -492,5 +489,13 @@ public class OperatorSessionBean implements Serializable {
 
 	public void setMyTimeZone(TimeZone myTimeZone) {
 		this.myTimeZone = myTimeZone;
+	}
+
+	public boolean isAppSession() {
+		return appSession;
+	}
+
+	public void setAppSession(boolean appSession) {
+		this.appSession = appSession;
 	}
 }

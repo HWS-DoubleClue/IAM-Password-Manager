@@ -7,6 +7,10 @@
 
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<f:metadata>
+		<f:viewAction action="#{viewNavigator.preRenderView}" />
+	</f:metadata>
 	<title>#{adminModule.title}</title>
 	<h:outputStylesheet library="webjars" name="font-awesome/6.5.1/css/all-jsf.css" />
 	<f:facet name="first">
@@ -18,10 +22,11 @@
 	<script defer="defer" type="text/javascript" src="#{resource['js/javaScriptDCEM.js']}"></script>
 	<link id="favicon" rel="icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
 	<link rel="shortcut icon" href="#{request.contextPath}/resources/images/favicon.png" type="image/x-icon" />
+	<h:outputStylesheet library="webjars" name="primeflex/4.0.0/primeflex.min.css" />
 	<meta name="robots" content="noindex" />
 	<style>
 #helpBtn>.fa-book {
-	font-size: 1.9em;
+	font-size: 1.8em;
 	width: 1.6em;
 	height: 1.2em;
 	color: #0e4f77;
@@ -59,7 +64,7 @@
 		</div>
 
 		<div id="contentPart">
-			<div style="margin-left: 1.2em; margin-right: 1.2em; margin-bottom: 1.2em;">
+			<div style="margin-left: 0.5em; margin-right: 0.5em; margin-bottom: 1.0em;">
 				<h:panelGroup id="viewPart" style="">
 					<h:form>
 						<div style="margin-bottom: 0.5em; margin-top: 0.5em">
@@ -72,7 +77,7 @@
 							<p:tooltip for="copyLinkBtn" value="#{CoreMsg['copyUrlLinkTip']}" showEffect="clip" hideEffect="fold">
 
 							</p:tooltip>
-							<p:link style="float: right; margin-right: 1em" href="#{autoView.helpResource}" target="_blank" id="helpBtn" rendered="#{autoView.helpResource != null}">
+							<p:link style="float: right; margin-right: 1em" href="#{autoView.helpResource}" target="_blank" id="helpBtn" rendered="#{autoView.helpResource != null and operatorSession.appSession eq false}">
 								<i class="fa fa-book" style="font-size: 1.2em;" />
 							</p:link>
 							<p:tooltip for="helpBtn" value="#{CoreMsg['readUserManual']}" showEffect="clip" hideEffect="fold" />

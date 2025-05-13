@@ -47,7 +47,8 @@ public class FingerprintLogic {
 			em.persist(userFingerprintEntity);
 		} else {   // update
 			existingUserFingerprintEntity.setTimestamp(userFingerprintEntity.getTimestamp());
-			userFingerprintEntity.setFingerprint(existingUserFingerprintEntity.getFingerprint());
+			existingUserFingerprintEntity.setFingerprint(userFingerprintEntity.getFingerprint());
+			em.flush();
 		}
 	}
 	

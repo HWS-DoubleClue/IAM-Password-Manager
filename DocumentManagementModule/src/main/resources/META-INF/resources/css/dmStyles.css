@@ -69,9 +69,9 @@
 
 .breadCrumbStyle {
 	width: 50%;
-	font-size: 1.2em ! important;
+	font-size: 1.0em ! important;
 	color: gray;
-	height: 1.2em;
+	height: 1.0em;
 	padding: 0px ! important;
 }
 
@@ -91,8 +91,8 @@
 
 .columnToggler {
 	text-align: right;
-	margin-top: -2.5em;
-	margin-bottom: 0.5em;
+	margin-top: -2.0em;
+	margin-bottom: 0.0em;
 }
 
 .dialogButtonsDiv {
@@ -147,13 +147,13 @@
 	flex: 0 0 auto;
 	display: flex;
 	flex-direction: column;
-	align-items: left;
+/* 	align-items: left; */
 	vertical-align: middle;
 	cursor: pointer;
 	background-color: #e0e0e0 !important;
 	border-radius: 5px !important;
-	width: calc(100% - 1em);
-	margin: 1em;
+/* 	width: calc(100% - 1em); */
+	margin: 0.5em;
 }
 
 .smallComponentName {
@@ -174,27 +174,13 @@
 .smallComponentImage {
 	height: 15em;
 	width: 15em;
-	margin-top: 0.2em;
+	margin-top: 0.1em;
 }
+
 
 .contentComponentImage {
 	height: 15em;
 	width: 15em;
-}
-
-.progress-bar-container {
-	width: 100%;
-	height: 0.8em;
-	background-color: #e0e0e0;
-	border-radius: 10px;
-	overflow: hidden;
-	position: relative;
-}
-
-.progress-bar {
-	height: 100%;
-	background-color: var(--header-link-text-color);;
-	border-radius: 10px;
 }
 
 .dragOverlay {

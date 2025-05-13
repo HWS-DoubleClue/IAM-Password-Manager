@@ -288,4 +288,9 @@ public class AsModuleApiImpl implements AsModuleApi {
 	public String requestActivationCode(DcemUser user) {
 		return  activationLogic.requestActivationCode(user);
 	}
+
+	@Override
+	public boolean verifyFingerprint(Integer userId, Integer id, String fingerprint) {
+		return fingerprintLogic.verifyFingerprint(userId, id, fingerprint);
+	}
 }

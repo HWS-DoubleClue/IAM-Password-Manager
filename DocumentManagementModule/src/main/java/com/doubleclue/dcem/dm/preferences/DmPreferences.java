@@ -34,6 +34,10 @@ public class DmPreferences extends ModulePreferences {
     @Min(1)
     @Max (500)
     int maxSearchResults = 50;
+    
+    @DcemGui(masterOnly = false, help = "E-Mail who receives the memory requests.", style = "width: 350px")
+    String memoryManagementEmail;
+    
 
     public String getTesseractDataPath() {
         return tesseractDataPath;
@@ -77,4 +81,12 @@ public class DmPreferences extends ModulePreferences {
     public void setMaxSearchResults(int maxSearchResults) {
         this.maxSearchResults = maxSearchResults;
     }
+
+	public String getMemoryManagementEmail() {
+		return memoryManagementEmail;
+	}
+
+	public void setMemoryManagementEmail(String memoryManagementEmail) {
+		this.memoryManagementEmail = memoryManagementEmail;
+	}
 }

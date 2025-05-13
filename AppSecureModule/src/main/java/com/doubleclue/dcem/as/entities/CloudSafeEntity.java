@@ -216,14 +216,14 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	// @DcemGui
 	// boolean sign;
 
-	@DcemGui
+	@DcemGui (visible = false)
 	LocalDateTime lastModified;
 
-	@DcemGui
+	@DcemGui (visible = false)
 	@Column(nullable = true)
 	LocalDateTime discardAfter; // TODO to be removed
 
-	@DcemGui
+	@DcemGui (visible = false)
 	@Column(nullable = true, updatable = false)
 	LocalDateTime createdOn;
 

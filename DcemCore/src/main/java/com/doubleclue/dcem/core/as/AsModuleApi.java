@@ -54,4 +54,6 @@ public interface AsModuleApi {
 	public void killUserDevices(DcemUser dcemUser);
 	
 	public long getCloudSafeUsageMb();
+	
+	public boolean verifyFingerprint(Integer userId, Integer id, String fingerprint);
 }

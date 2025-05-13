@@ -73,8 +73,8 @@
 
 				<p:ajax event="rowSelect" update="autoForm:myContext" />
 				<p:columns id="columns" value="#{autoView.visibleVariables}" var="item" columnIndexVar="colIndex" filterBy="#{item.id}"
-					 style="#{item.columnStyle}" visible="#{item.visible}" field="#{item.id}" sortable="#{item.variableType != 'IMAGE'}" >
-					<f:facet name="header">
+					 style="#{item.columnStyle}" visible="#{item.visible}" field="#{item.id}" sortable="#{item.variableType != 'IMAGE'}" responsivePriority="#{item.dcemGui.responsivePriority()}"  >
+					<f:facet name="header" >
 						<p:outputLabel value="#{item.displayName}" rendered="#{item.variableType ne 'IMAGE'}" />
 						<p:outputLabel value="#{CoreMsg['profilePhoto']}" rendered="#{item.variableType eq 'IMAGE'}" style="display: none" />
 						<h:panelGroup rendered="#{viewNavigator.predefinedFilterId != 0}">

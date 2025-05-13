@@ -41,7 +41,6 @@
 </style>
 
 	<f:view locale="#{operatorSession.locale}">
-		<!-- <f:event type="preRenderView" listener="#{dmDocumentView.preRenderView}" /> -->
 		<h:form id="documentForm" enctype="multipart/form-data" >
 			<div id="dragOverlay" class="dragOverlay">
 				<h:outputText value="#{DmMsg['documentView.dragFilesHere']}" styleClass="dragoOverlayText" />
@@ -55,11 +54,11 @@
 			<dc:dmDocumentTopPartComponent selectManyValue="#{dmDocumentView.selectedFilterTags}" selectItemsValue="#{dmDocumentView.filterTags}"
 				searchTerm="#{dmDocumentView.searchTerm}" searchAction="#{dmDocumentView.actionSearch}" displayListAction="#{dmDocumentView.setDisplayMode('LIST')}"
 				displayTileAction="#{dmDocumentView.setDisplayMode('TILE')}" displayContentAction="#{dmDocumentView.setDisplayMode('CONTENT')}"
-				usagePercentage="#{dmDocumentView.usagePercentage}" formattedUsage="#{dmDocumentView.formattedUsage}" formattedLimit="#{dmDocumentView.formattedLimit}"
-				buttonXhtml="dmDocumentViewButtons.xhtml" />
+			 /> 
 
 			<p:breadCrumb id="documentBreadCrumbId" rendered="#{dmDocumentView.searchResultMode eq false}" class="breadCrumbStyle" homeDisplay="icon"
 				homeIcon="fa fa-home" model="#{dmDocumentView.breadCrumbModel}" />
+				
 			<h:panelGroup rendered="#{dmDocumentView.searchResultMode eq true}">
 				<p:outputLabel id="resultText" value="#{DmMsg['documentView.searchResults']}" style="font-size: x-large" />
 				<p:commandLink id="searchClearLink" action="#{dmDocumentView.actionClearSearch}" style="margin-left: 0" update="@form">
@@ -68,7 +67,7 @@
 				</p:commandLink>
 			</h:panelGroup>
 
-			<p:contextMenu id="nodeContextMenu" widgetVar="nodeContextMenu" for="documentView">
+			<p:contextMenu id="nodeContextMenu" widgetVar="nodeContextMenu" for="documentView" style="width: 16em">
 				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles}" icon="fa fa-cloud-download" />
 				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument()}" icon="fa fa-pencil" />
 				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
@@ -80,7 +79,7 @@
 				<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
 					disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
 			</p:contextMenu>
-
+<p></p>
 			<p:panel id="documentView">
 				<div style="width: 100%">
 					<h:panelGroup rendered="#{dmDocumentView.displayMode == 'LIST'}">
@@ -207,7 +206,7 @@
 			</p:dialog>
 		</h:form>
 
-		<h:form id="processFolderForm">
+	 	<h:form id="processFolderForm">
 			<p:dialog id="processFolderDialog" widgetVar="processFolderDialog" modal="true" draggable="true" resizable="false" style="border:none;">
 				<p:ajax event="open" update="processFolderForm:addFolderInput" />
 
