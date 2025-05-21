@@ -67,7 +67,7 @@
 				</p:commandLink>
 			</h:panelGroup>
 
-			<p:contextMenu id="nodeContextMenu" widgetVar="nodeContextMenu" for="documentView" style="width: 16em">
+			<p:contextMenu id="nodeContextMenu" widgetVar="nodeContextMenu" for="documentView" style="width: 20em">
 				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles}" icon="fa fa-cloud-download" />
 				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument()}" icon="fa fa-pencil" />
 				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"

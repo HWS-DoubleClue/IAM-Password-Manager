@@ -15,7 +15,7 @@
 				<h:outputText id="deleteBtn" class="fa fa-solid fa-file-circle-xmark iconsButtons"></h:outputText>
 				<p:tooltip for="deleteBtn" value="#{DmMsg['documentView.button.delete']}" position="bottom" />
 			</p:commandLink>
-			<p:spacer width="2em" />
+			<p:spacer width="0.5em" />
 			<p:commandLink action="#{dmRecycleBinView.actionOpenRecoverDialog()}" immediate="true" styleClass="toolBarButtons">
 				<h:outputText id="recoverBtn" class="fa fa-rotate-left iconsButtons" />
 				<p:tooltip for="recoverBtn" value="#{DmMsg['documentView.button.recover']}" position="bottom" />
