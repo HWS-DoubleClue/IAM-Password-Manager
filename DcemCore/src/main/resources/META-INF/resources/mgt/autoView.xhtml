@@ -12,7 +12,7 @@
 			<c:forEach items="#{viewNavigator.viewActions}" var="autoAction">
 				<p:commandLink rendered="#{autoAction.link}" ajax="#{autoAction.rawAction.ajax}" action="#{viewNavigator.setActiveDialog(autoAction)}">
 					<i class="#{viewNavigator.getActionIcon(autoAction)}" />
-					<p:outputLabel value=" #{autoAction.actionText}" style="font-weight: bold" />
+					<p:outputLabel  value=" #{autoAction.actionText}" style="margin-left: 0.2em; cursor: pointer;text-decoration: underline; " />
 				</p:commandLink>
 				<p:commandButton value="#{autoAction.actionText}" rendered="#{autoAction.link eq false and autoAction.export eq false}"
 					action="#{viewNavigator.setActiveDialog(autoAction)}" icon="#{viewNavigator.getActionIcon(autoAction)}" ajax="#{autoAction.rawAction.ajax}">

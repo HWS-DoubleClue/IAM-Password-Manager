@@ -299,6 +299,12 @@ public final class DcemConstants {
 	public static final String VERIFICATION_SERVLET_NAME = "verificationServlet";
 	public static final String VERIFICATION_SERVLET_FILTER = "/mgt/verificationServlet/*";
 	public static final String VERIFICATION_SERVLET_PATH = "verificationServlet";
+	
+	public static final String DM_DOWNLOAD_SERVLET_NAME = "dmDownloadServlet";
+	public static final String DM_DOWNLOAD_SERVLET_FILTER = "/mgt/dmDownloadServlet/*";
+	public static final String DM_DOWNLOAD_SERVLET_PATH = "dmDownloadServlet";
+	public static final String DM_DOWNLOAD_SERVLET_CLASS = "com.doubleclue.dcem.dm.logic.DmDownloadServlet";
+	
 	public static final String DCDB_URL_PROTOCOL = "dcdb";
 	public static final String EMAIL_LICENCE_WARNING_SUBJECT_BUNDLE_KEY = "system.EmailLicenceWarningSubject";
 	public static final String EMAIL_PASSWORD_RESET_SUBJECT_BUNDLE_KEY = "system.EmailForgotPasswordSubject";

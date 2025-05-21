@@ -40,7 +40,7 @@
 							</p:messages>
 							<br />
 							<h:outputLabel value="#{AdminMsg['label.selectUser']}" class="dialogTitle" />
-							<p:separator />
+							<p:divider />
 							<p:dataTable id="accountsTable" value="#{oauthLoginView.getUserAccounts()}" var="account" styleClass="borderless" emptyMessage="#{CoreMsg['emptyTable']}">
 								<p:column style="padding: 0.8em;">
 									<p:commandLink class="textLeft" action="#{oauthLoginView.actionSelectUserAccount}" style="cursor: pointer;font-size: 1.1em" process="@form">

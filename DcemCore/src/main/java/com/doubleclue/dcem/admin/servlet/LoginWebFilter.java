@@ -37,6 +37,7 @@ public class LoginWebFilter extends DcemFilter {
 	private static final String PRE_LOGIN_URL = DcemConstants.WEB_MGT_CONTEXT + "/preLogin_.xhtml";
 	private static final String LOGIN_URL = DcemConstants.WEB_MGT_CONTEXT + "/login.xhtml";
 	private static final String VERIFICATION_SERVLET_URL = DcemConstants.WEB_MGT_CONTEXT + "/" + DcemConstants.VERIFICATION_SERVLET_PATH;
+	private static final String DM_DOWNLOAD_SERVLET_URL = DcemConstants.WEB_MGT_CONTEXT + "/" + DcemConstants.DM_DOWNLOAD_SERVLET_PATH;
 
 	// private static final Logger logger = LogManager.getLogger(LoginWebFilter.class);
 
@@ -65,6 +66,7 @@ public class LoginWebFilter extends DcemFilter {
 		webName = DcemConstants.WEB_MGT_CONTEXT;
 		allowedPaths.add(LOGIN_URL);
 		allowedPaths.add(VERIFICATION_SERVLET_URL);
+	//	allowedPaths.add(DM_DOWNLOAD_SERVLET_URL);
 		redirectionPage = PRE_LOGIN_URL;
 		welcomePage = DcemConstants.WELCOME_INDEX_PAGE;
 	}

@@ -4,7 +4,7 @@
 
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:dc="http://xmlns.jcp.org/jsf/composite/components" >
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:dc="http://xmlns.jcp.org/jsf/composite/components">
 
 	<style>
 .ui-datatable .ui-selection-column .ui-chkbox-all {
@@ -41,7 +41,7 @@
 </style>
 
 	<f:view locale="#{operatorSession.locale}">
-		<h:form id="documentForm" enctype="multipart/form-data" >
+		<h:form id="documentForm" enctype="multipart/form-data">
 			<div id="dragOverlay" class="dragOverlay">
 				<h:outputText value="#{DmMsg['documentView.dragFilesHere']}" styleClass="dragoOverlayText" />
 			</div>
@@ -53,12 +53,11 @@
 
 			<dc:dmDocumentTopPartComponent selectManyValue="#{dmDocumentView.selectedFilterTags}" selectItemsValue="#{dmDocumentView.filterTags}"
 				searchTerm="#{dmDocumentView.searchTerm}" searchAction="#{dmDocumentView.actionSearch}" displayListAction="#{dmDocumentView.setDisplayMode('LIST')}"
-				displayTileAction="#{dmDocumentView.setDisplayMode('TILE')}" displayContentAction="#{dmDocumentView.setDisplayMode('CONTENT')}"
-			 /> 
+				displayTileAction="#{dmDocumentView.setDisplayMode('TILE')}" displayContentAction="#{dmDocumentView.setDisplayMode('CONTENT')}" />
 
 			<p:breadCrumb id="documentBreadCrumbId" rendered="#{dmDocumentView.searchResultMode eq false}" class="breadCrumbStyle" homeDisplay="icon"
 				homeIcon="fa fa-home" model="#{dmDocumentView.breadCrumbModel}" />
-				
+
 			<h:panelGroup rendered="#{dmDocumentView.searchResultMode eq true}">
 				<p:outputLabel id="resultText" value="#{DmMsg['documentView.searchResults']}" style="font-size: x-large" />
 				<p:commandLink id="searchClearLink" action="#{dmDocumentView.actionClearSearch}" style="margin-left: 0" update="@form">
@@ -72,6 +71,8 @@
 				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument()}" icon="fa fa-pencil" />
 				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
 					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['Document.button.workflow']}" action="#{dmDocumentView.openWorkflow()}" icon="fa fa-cubes"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
 				<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
 					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
 				<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
@@ -79,7 +80,7 @@
 				<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
 					disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
 			</p:contextMenu>
-<p></p>
+			<p></p>
 			<p:panel id="documentView">
 				<div style="width: 100%">
 					<h:panelGroup rendered="#{dmDocumentView.displayMode == 'LIST'}">
@@ -94,13 +95,13 @@
 				</div>
 			</p:panel>
 
-			<p:fileUpload id="filesUpload" widgetVar="dragDropUpload" dropZone="@form" dragDropSupport="true" multiple="true" skinSimple="true"
-				style="display: none" auto="true" listener="#{dmUploader.uploadFileListener}" oncomplete="openDialog2()" >
+			<p:fileUpload id="filesUpload" widgetVar="dragDropUpload" dropZone="@form" dragDropSupport="true" multiple="true" skinSimple="true" style="display: none"
+				auto="true" listener="#{dmUploader.uploadFileListener}" oncomplete="openDialog2()">
 				<p:validateFile></p:validateFile>
 			</p:fileUpload>
 			<p:remoteCommand name="openDialog2" action="#{dmUploader.onUploadComplete}" ignoreAutoUpdate="false" />
 
-			
+
 		</h:form>
 
 
@@ -206,7 +207,7 @@
 			</p:dialog>
 		</h:form>
 
-	 	<h:form id="processFolderForm">
+		<h:form id="processFolderForm">
 			<p:dialog id="processFolderDialog" widgetVar="processFolderDialog" modal="true" draggable="true" resizable="false" style="border:none;">
 				<p:ajax event="open" update="processFolderForm:addFolderInput" />
 

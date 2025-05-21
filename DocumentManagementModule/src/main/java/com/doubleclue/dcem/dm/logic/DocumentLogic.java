@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
@@ -44,7 +45,7 @@ import com.doubleclue.dcem.core.utils.typedetector.FileUploadDetector;
 import com.doubleclue.utils.KaraUtils;
 
 @ApplicationScoped
-@Named ("documentLogic")
+@Named("documentLogic")
 public class DocumentLogic implements DmModuleApi {
 
 	@Inject
@@ -264,11 +265,11 @@ public class DocumentLogic implements DmModuleApi {
 	}
 
 	@DcemTransactional
-	public CloudSafeEntity saveDocument(CloudSafeEntity cloudSafeEntity, byte[] thumbnail, File fileContent, String ocrText, List<CloudSafeTagEntity> toBeAddedTags,
-			DcemUser modifiedBy, boolean overwrite) throws Exception {
+	public CloudSafeEntity saveDocument(CloudSafeEntity cloudSafeEntity, byte[] thumbnail, File fileContent, String ocrText,
+			List<CloudSafeTagEntity> toBeAddedTags, DcemUser modifiedBy, boolean overwrite) throws Exception {
 		if (ocrText != null) {
 			cloudSafeEntity.setTextExtract(ocrText.substring(0, Math.min(ocrText.length(), DmConstants.MAX_TEXT_EXTRACT)));
-		} 
+		}
 		if (thumbnail != null) {
 			if (cloudSafeEntity.getThumbnailEntity() == null) {
 				CloudSafeThumbnailEntity thumbnailEntity = new CloudSafeThumbnailEntity(thumbnail);
@@ -372,7 +373,7 @@ public class DocumentLogic implements DmModuleApi {
 		}
 		return thumbnail;
 	}
-	
+
 	@DcemTransactional
 	public CloudSafeEntity saveNewDocument(UploadDocument uploadDocument, DcemUser dcemUser, Map<String, CloudSafeEntity> folderCache) throws Exception {
 		CloudSafeEntity cloudSafeEntity;
@@ -467,9 +468,37 @@ public class DocumentLogic implements DmModuleApi {
 			}
 		}
 	}
-	
-		
-	
+
+	public void convertDocumentToPdfStream(String documentId, OutputStream outputStream) throws Exception {
+		CloudSafeEntity cloudSafeEntity = cloudSafeLogic.getCloudSafe(Integer.getInteger(documentId));
+		InputStream inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, null, null, null);
+		switch (cloudSafeEntity.getDcemMediaType()) {
+		case ODT:
+			// contentFile = File.createTempFile(DmConstants.DOUBLE_CLUE_DM, DmConstants.PDF_EXTENSION);
+			pdfManagement.streamConvertOdtToPDF(inputStream, outputStream);
+			break;
+		case WORD:
+			pdfManagement.streamConvertWordToPDF(inputStream, outputStream);
+			break;
+		case XLSX:
+			pdfManagement.streamConvertExcelToPdf(inputStream, outputStream);
+			break;
+		case JPEG:
+		case PNG:
+		case GIF:
+		case SVG:
+		case PDF:
+			KaraUtils.copyStream(inputStream, outputStream);
+			break;
+		case MAIL:
+		//TODO 	List<DcemUploadFile> listFiles = MailUtils.processReceivedMail(originalFile, resourceBundle);
+			// TODO contentFile = emailToPDF(resourceBundle, listFiles);
+			break;
+		default:
+			KaraUtils.copyStream(inputStream, outputStream);
+			break;
+		}
+	}
 
 	static private CloudSafeEntity createNewCloudSafeEntity(CloudSafeEntity folder, DcemUser dcemUser) throws Exception {
 		CloudSafeEntity cloudSafeEntity = new CloudSafeEntity();

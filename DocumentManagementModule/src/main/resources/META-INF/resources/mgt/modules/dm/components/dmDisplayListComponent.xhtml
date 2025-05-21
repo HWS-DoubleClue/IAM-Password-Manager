@@ -107,8 +107,13 @@
 			<p:menu overlay="true" trigger="documentTable:overlayMenu" my="left top" at="left bottom" style="width: 15em">
 				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles (document)}" icon="fa fa-cloud-download" />
 				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument(document)}" icon="fa fa-pencil" />
+				<p:menuitem value="display"  icon="fa fa-file" onclick="dmScript.showDocument('#{document.id}')"
+								 
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				
 				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
 					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+					
 				<p:menuitem value="#{DmMsg['Document.button.workflow']}" action="#{dmDocumentView.openWorkflow(document)}" icon="fa fa-cubes"
 					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
 

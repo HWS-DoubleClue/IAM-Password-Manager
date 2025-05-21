@@ -1977,10 +1977,6 @@ body .ui-input-icon-right>.ui-inputfield {
 	background-position: 0;
 }
 
-.ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
-	cursor: default;
-}
-
 .ui-autocomplete-input.ui-autocomplete-dd-input {
 	border-radius: 3px;
 }
@@ -2550,6 +2546,167 @@ body .ui-paginator .ui-paginator-current, body .ui-paginator .ui-paginator-rpp-o
 }
 
 /*    TABS                             */
+body .ui-tabmenu {
+	padding: 0;
+	position: static
+}
+
+body .ui-tabmenu .ui-tabmenu-nav {
+	margin: -0.5rem 0 0 0;
+	padding: .5rem 0 0 0;
+	background: #fff;
+	display: -ms-flexbox;
+	display: flex;
+	-ms-flex-wrap: nowrap;
+	flex-wrap: nowrap;
+	position: relative;
+	overflow-x: auto
+}
+
+body .ui-tabmenu .ui-tabmenu-nav:before {
+	position: absolute;
+	border-bottom: 2px solid #dee2e6;
+	left: 0;
+	bottom: 0;
+	width: 100%
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem {
+	list-style: none;
+	padding: 0;
+	white-space: nowrap;
+	display: inline-block;
+	vertical-align: top;
+	float: none;
+	background: #fff;
+	color: #6c757d;
+	top: 0;
+	margin: 0;
+	border-bottom: 2px solid #dee2e6;
+	cursor: pointer;
+	display: -ms-flexbox;
+	display: flex;
+	-ms-flex-align: center;
+	align-items: center;
+	transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s, opacity .2s;
+	flex-shrink: 0
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem a {
+	color: #6c757d;
+	padding: 1rem;
+	font-weight: 700;
+	display: block;
+	line-height: 1;
+	outline: 0 none
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem a .ui-icon {
+	margin-right: .5rem
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem.ui-state-hover {
+	background: #fff;
+	border-color: #adb5bd
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem.ui-state-hover a {
+	color: #6c757d
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem.ui-state-hover a .ui-icon {
+	color: #6c757d
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem.ui-state-active {
+	background: #fff;
+	border-color: #2196f3
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem.ui-state-active a {
+	color: #2196f3
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem.ui-state-active a .ui-icon {
+	color: #2196f3
+}
+
+body .ui-tabmenu .ui-tabmenu-nav .ui-tabmenuitem.ui-menuitem-outline {
+	outline: 0 none;
+	outline-offset: 0;
+	box-shadow: 0 0 0 .2rem rgb(166.2, 213, 250.2)
+}
+
+body .ui-tabmenu.ui-tabs-bottom .ui-tabmenu-nav:before {
+	border-bottom: 0 none;
+	border-top: 2px solid #dee2e6;
+	bottom: auto;
+	top: 0
+}
+
+body .ui-tabmenu.ui-tabs-bottom .ui-tabmenu-nav .ui-tabmenuitem {
+	border-bottom: 0 none;
+	border-top: 2px solid #dee2e6
+}
+
+body .ui-tabmenu.ui-tabs-bottom .ui-tabmenu-nav .ui-tabmenuitem.ui-state-hover {
+	border-color: #adb5bd
+}
+
+body .ui-tabmenu.ui-tabs-bottom .ui-tabmenu-nav .ui-tabmenuitem.ui-state-active {
+	border-color: #2196f3
+}
+
+body .ui-tabmenu.ui-tabs-left .ui-tabmenu-nav {
+	flex-direction: column
+}
+
+body .ui-tabmenu.ui-tabs-left .ui-tabmenu-nav:before {
+	border-bottom: 0 none;
+	border-right: 2px solid #dee2e6;
+	left: auto;
+	right: 0;
+	width: auto;
+	height: 100%
+}
+
+body .ui-tabmenu.ui-tabs-left .ui-tabmenu-nav .ui-tabmenuitem {
+	border-bottom: 0 none;
+	border-right: 2px solid #dee2e6
+}
+
+body .ui-tabmenu.ui-tabs-left .ui-tabmenu-nav .ui-tabmenuitem.ui-state-hover {
+	border-color: #adb5bd
+}
+
+body .ui-tabmenu.ui-tabs-left .ui-tabmenu-nav .ui-tabmenuitem.ui-state-active {
+	border-color: #2196f3
+}
+
+body .ui-tabmenu.ui-tabs-right .ui-tabmenu-nav {
+	flex-direction: column
+}
+
+body .ui-tabmenu.ui-tabs-right .ui-tabmenu-nav:before {
+	border-bottom: 0 none;
+	border-left: 2px solid #dee2e6;
+	width: auto;
+	height: 100%
+}
+
+body .ui-tabmenu.ui-tabs-right .ui-tabmenu-nav .ui-tabmenuitem {
+	border-bottom: 0 none;
+	border-left: 2px solid #dee2e6
+}
+
+body .ui-tabmenu.ui-tabs-right .ui-tabmenu-nav .ui-tabmenuitem.ui-state-hover {
+	border-color: #adb5bd
+}
+
+body .ui-tabmenu.ui-tabs-right .ui-tabmenu-nav .ui-tabmenuitem.ui-state-active {
+	border-color: #2196f3
+}
+
 body .ui-tabs {
 	padding: 0;
 	position: static
@@ -2888,19 +3045,16 @@ body .ui-tabs .ui-tabs-navscroller .ui-tabs-navscroller-btn.ui-state-hover {
 }
 
 .ui-progressbar.ui-widget-content {
-    background-color: var(--table-head-background-color);
-    background-image:none;
+	background-color: var(--table-head-background-color);
+	background-image: none;
 }
 
 .ui-progressbar-value {
-    background-color: var(--button-hover-background-color);
-    background-image:none;
+	background-color: var(--button-hover-background-color);
+	background-image: none;
 }
 
 .ui-progressbar-label {
-   color: var(--button-hover-text-color);
-    background-image:none;
+	color: var(--button-hover-text-color);
+	background-image: none;
 }
-
-
-

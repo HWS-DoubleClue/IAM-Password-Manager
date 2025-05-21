@@ -26,6 +26,7 @@ public class DmConstants {
 	public static final String WORKFLOW_INFORMATION = "workflowInformation";
 	public static final String WORKFLOW_TRIGGER = "workflowTrigger";
 	public static final String WORKFLOW_USER = "user";
+	public static final String ACTION_DOCUMENTS = "documents";
 	public static Dimension THUMBNAIL_DIMENSION = new Dimension(240, 240);
 
 	

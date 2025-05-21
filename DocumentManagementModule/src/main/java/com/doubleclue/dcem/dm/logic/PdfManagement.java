@@ -296,21 +296,36 @@ public class PdfManagement {
 		doc.close();
 	}
 	
-	public void convertOdtToPDF(File odtFile, File pdfFile) throws Exception {
-		InputStream inputStream = new FileInputStream(odtFile);
+	public void streamConvertWordToPDF(InputStream inputStream, OutputStream outputStream) throws Exception {
+		XWPFDocument document = new XWPFDocument(inputStream);
+		PdfOptions options = PdfOptions.create();
+		PdfConverter.getInstance().convert(document, outputStream, options);
+	}
+	
+	public void streamConvertOdtToPDF(InputStream  inputStream, OutputStream outputStream) throws Exception {
 		OdfTextDocument odfDocument = OdfTextDocument.loadDocument(inputStream);
 		fr.opensagres.odfdom.converter.pdf.PdfOptions options = fr.opensagres.odfdom.converter.pdf.PdfOptions.create();
-		OutputStream out = new FileOutputStream(pdfFile);
-		fr.opensagres.odfdom.converter.pdf.PdfConverter.getInstance().convert(odfDocument, out, options);
-		out.close();
+		fr.opensagres.odfdom.converter.pdf.PdfConverter.getInstance().convert(odfDocument, outputStream, options);
+		outputStream.close();
 		inputStream.close();
+		return;
+	}
+	
+	public void convertOdtToPDF(File odtFile, File pdfFile) throws Exception {
+		streamConvertOdtToPDF( new FileInputStream(odtFile), new FileOutputStream(pdfFile));
+		return;
 	}
 
 	public void convertExcelToPdf(File excelFile, File pdfFile) throws Exception {
+		streamConvertExcelToPdf(new FileInputStream(excelFile), new FileOutputStream(pdfFile));
+		return;
+	}		
+		
+	public void streamConvertExcelToPdf(InputStream inputStream, OutputStream outputStream) throws Exception {	
 		com.lowagie.text.Document document = new com.lowagie.text.Document();
-		PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
 		document.open();
-		Workbook workbook = new XSSFWorkbook(excelFile);
+		PdfWriter.getInstance(document, outputStream);
+		Workbook workbook = new XSSFWorkbook(inputStream);
 		Sheet sheet = workbook.getSheetAt(0);
 		Iterator<Row> rowIterator = sheet.iterator();
 		int columnNo = 0;

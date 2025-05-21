@@ -987,6 +987,19 @@ public class DmDocumentView extends DcemView {
 			JsfUtils.addErrorMessage(e.toString());
 		}
 	}
+	
+	public void openWorkflow() {
+		CloudSafeEntity cloudSafeEntity;
+		if (selectedCloudSafeFiles != null && selectedCloudSafeFiles.size() == 1) {
+			cloudSafeEntity = cloudSafeLogic.getCloudSafe(selectedCloudSafeFiles.get(0).getId()); // refresh Entity
+			cloudSafeEntity.setWriteAccess(selectedCloudSafeFiles.get(0).isWriteAccess());
+
+		} else {
+			JsfUtils.addWarnMessage(resourceBundle.getString("documentView.message.selectOnlyOneFile"));
+			return;
+		}
+		openWorkflow(cloudSafeEntity);		
+	}
 
 	public void openWorkflow(CloudSafeEntity cloudSafeEntity) {
 		workflowView.editWorkflows(cloudSafeEntity);

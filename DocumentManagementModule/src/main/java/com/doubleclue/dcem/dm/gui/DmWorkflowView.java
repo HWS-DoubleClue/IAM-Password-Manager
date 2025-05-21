@@ -19,9 +19,12 @@ import com.doubleclue.dcem.core.DcemConstants;
 import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
+import com.doubleclue.dcem.core.gui.ViewLink;
 import com.doubleclue.dcem.dm.entities.DmWorkflowEntity;
 import com.doubleclue.dcem.dm.entities.DmWorkflowEntity_;
+import com.doubleclue.dcem.dm.logic.DmConstants;
 import com.doubleclue.dcem.dm.logic.DocumentManagementModule;
+import com.doubleclue.dcem.dm.subjects.DmDocumentSubject;
 import com.doubleclue.dcem.dm.subjects.DmWorkflowSubject;
 
 @SuppressWarnings("serial")
@@ -31,6 +34,9 @@ public class DmWorkflowView extends DcemView {
 
 	@Inject
 	private DmWorkflowSubject dmWorkflowEntitySubject;
+	
+	@Inject 
+	DmDocumentSubject dmDocumentSubject;
 
 	@Inject
 	private DmWorkflowDialog dmWorkflowEntityDialog;  // small letters
@@ -50,10 +56,13 @@ public class DmWorkflowView extends DcemView {
 		addAutoViewAction(DcemConstants.ACTION_ADD, resourceBundle, dmWorkflowEntityDialog, "/modules/dm/workflowDialog.xhtml");
 		addAutoViewAction(DcemConstants.ACTION_EDIT, resourceBundle, dmWorkflowEntityDialog, "/modules/dm/workflowDialog.xhtml");
 		addAutoViewAction(DcemConstants.ACTION_DELETE, resourceBundle, dmWorkflowEntityDialog, DcemConstants.AUTO_CONFIRM_DIALOG_PATH);	
+		ViewLink viewLink = new ViewLink(dmDocumentSubject, null, null);
+	  	addAutoViewAction(DmConstants.ACTION_DOCUMENTS, resourceBundle, null, null, viewLink);	
 		this.setTopComposition("/mgt/modules/dm/workflowTitle.xhtml");
 	}
 	
-		/*
+		
+	/*
 	* This method is called when the view is displayed or reloaded
 	*
 	*/

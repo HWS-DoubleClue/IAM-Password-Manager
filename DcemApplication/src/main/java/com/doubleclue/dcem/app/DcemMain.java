@@ -468,6 +468,11 @@ public class DcemMain {
 					case MANAGEMENT:
 						addServlet(standardContext, DcemConstants.VERIFICATION_SERVLET_NAME, DcemConstants.VERIFICATION_SERVLET_CLASS,
 								DcemConstants.VERIFICATION_SERVLET_FILTER);
+						
+						addServlet(standardContext, DcemConstants.DM_DOWNLOAD_SERVLET_NAME, DcemConstants.DM_DOWNLOAD_SERVLET_CLASS,
+								DcemConstants.DM_DOWNLOAD_SERVLET_FILTER);
+						
+						
 		//				addServlet(standardContext, DcemConstants.WEBDAV_SERVLET_NAME, DcemConstants.WEBDAV_SERVLET_CLASS, DcemConstants.WEBDAV_SERVLET_PATH);
 						addServlet(standardContext, DcemConstants.TEST_SP_SERVLET_NAME, DcemConstants.TEST_SP_SERVLET_CLASS,
 								DcemConstants.TEST_SP_SERVLET_PATH);
