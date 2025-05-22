@@ -75,6 +75,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 		@NamedQuery(name = CloudSafeEntity.DELETE_CLOUD_SAFE_BY_ID, query = "DELETE FROM CloudSafeEntity c WHERE c.id = ?1"),
 		@NamedQuery(name = CloudSafeEntity.DELETE_CLOUD_SAFE_BY_OWNER_GROUP, query = "DELETE FROM CloudSafeEntity c WHERE c.group.id = ?1"),
 		@NamedQuery(name = CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, query = "SELECT NEW com.doubleclue.dcem.as.logic.CloudSafeDto(c.id, c.isFolder) FROM CloudSafeEntity c WHERE c.parent.id=?1 AND c.user=?2"),
+		@NamedQuery(name = CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_CHILDREN, query = "SELECT NEW com.doubleclue.dcem.as.logic.CloudSafeDto(c.id, c.isFolder) FROM CloudSafeEntity c WHERE c.parent.id=?1"),
+
 		@NamedQuery(name = CloudSafeEntity.SET_FOLDER_NAME, query = "UPDATE CloudSafeEntity c SET c.name = ?1 WHERE c.id = ?2"),
 		@NamedQuery(name = CloudSafeEntity.MOVE_ENTRY, query = "UPDATE CloudSafeEntity c SET c.options = ?3 , c.parent.id = ?1 WHERE c.id = ?2"),
 		@NamedQuery(name = CloudSafeEntity.UPDATE_ENTRIES_TO_ROOT, query = "UPDATE CloudSafeEntity c SET c.parent = ?1 WHERE c.parent IS NULL"),
@@ -113,6 +115,7 @@ public class CloudSafeEntity extends EntityInterface implements Cloneable {
 	public static final String DELETE_CLOUD_SAFE_BY_ID = "CloudSafeEntity.deleteCloudSafeById";
 	public static final String DELETE_CLOUD_SAFE_BY_OWNER_GROUP = "CloudSafeEntity.deleteCloudSafeByGroupOwnerId";
 	public static final String SELECT_CLOUD_SAFE_FOLDER_STRUCTURE = "CloudSafeEntity.selectCloudSafeFolderStructure";
+	public static final String SELECT_CLOUD_SAFE_FOLDER_CHILDREN = "CloudSafeEntity.selectCloudSafeFolderChildren";
 	public static final String SET_FOLDER_NAME = "CloudSafeEntity.setFolderName";
 	public static final String MOVE_ENTRY = "CloudSafeEntity.moveEntry";
 	public static final String GET_CLOUDSAFE_BY_ID = "CloudSafeEntity.getParentById";

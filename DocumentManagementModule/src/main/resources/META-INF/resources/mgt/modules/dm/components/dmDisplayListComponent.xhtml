@@ -2,7 +2,7 @@
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
 
 	<div class="columnToggler" rendered="#{operatorSession.appSession eq false}">
-		<p:commandButton id="toggler" style="height: 1.8em" value="#{DmMsg['documentView.columns']}" icon="pi pi-align-justify" rendered="#{operatorSession.appSession eq false}" />
+		<p:commandButton id="toggler" value="#{DmMsg['documentView.columns']}" icon="pi pi-align-justify" rendered="#{operatorSession.appSession eq false}" />
 		<p:columnToggler datasource="documentTable" trigger="toggler" rendered="#{operatorSession.appSession eq false}">
 			<p:ajax event="toggle" listener="#{dmDocumentView.onColumnToggle}" />
 		</p:columnToggler>
@@ -60,7 +60,7 @@
 			<h:panelGroup rendered="#{document.owner.value == '3'}">
 				<h:outputText class="fa-solid fa-people-group" />
 			</h:panelGroup>
-			<h:outputText value="#{dmDocumentView.getOwnerName (document)}" />
+			<h:outputText style="margin-left: 0.5em" value="#{dmDocumentView.getOwnerName (document)}" />
 		</p:column>
 
 		<p:column id="mediaType" headerText="#{DmMsg['documentView.columnTitle.mediaType']}" sortBy="#{document.dcemMediaType}" filterBy="#{document.dcemMediaType}"

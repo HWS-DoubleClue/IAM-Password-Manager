@@ -40,7 +40,7 @@ import com.doubleclue.dcem.core.gui.DcemGui;
 		@NamedQuery(name = CloudSafeShareEntity.GET_SHARE_ACCESS, query = "SELECT cloudShare FROM CloudSafeShareEntity cloudShare WHERE cloudShare.cloudSafe=?1"),
 		@NamedQuery(name = CloudSafeShareEntity.GET_SHARE_DISCARDED, query = "SELECT cloudShare FROM CloudSafeShareEntity cloudShare WHERE cloudShare.cloudSafe.discardAfter<?1"),
 		@NamedQuery(name = CloudSafeShareEntity.GET_SHARE_USER, query = "SELECT cloudShare FROM CloudSafeShareEntity cloudShare WHERE cloudShare.cloudSafe.user=?1 OR cloudShare.user=?2"),
-		@NamedQuery(name = CloudSafeShareEntity.DELETE_SHARE_BY_CLOUD_DATA, query = "DELETE FROM CloudSafeShareEntity cloudShare WHERE cloudShare.cloudSafe=?1"),
+		@NamedQuery(name = CloudSafeShareEntity.DELETE_SHARE_BY_CLOUD_DATA, query = "DELETE FROM CloudSafeShareEntity cloudShare WHERE cloudShare.cloudSafe.id=?1"),
 //		@NamedQuery(name = CloudSafeShareEntity.GET_SHARED_FILE_KEYS, query = "SELECT cloudShare "
 //				// "SELECT DISTINCT CONCAT(cloudSafe.user.loginId, '@', cloudSafe.name), cloudSafe.owner "
 //				+ "FROM CloudSafeShareEntity cloudShare LEFT JOIN cloudShare.cloudSafe cloudSafe "

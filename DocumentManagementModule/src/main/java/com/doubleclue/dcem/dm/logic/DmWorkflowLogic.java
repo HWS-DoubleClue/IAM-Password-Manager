@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +21,7 @@ import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.admin.logic.ReportAction;
 import com.doubleclue.dcem.as.entities.CloudSafeEntity;
+import com.doubleclue.dcem.as.entities.CloudSafeThumbnailEntity;
 import com.doubleclue.dcem.as.logic.CloudSafeDto;
 import com.doubleclue.dcem.as.logic.CloudSafeLogic;
 import com.doubleclue.dcem.core.DcemConstants;
@@ -73,6 +75,13 @@ public class DmWorkflowLogic {
 			em.merge(dmWorkflowEntity);
 		}
 		auditingLogic.addAudit(dcemAction, dmWorkflowEntity.toString());
+	}
+	
+	@DcemTransactional
+	public int deleteWorkflowForDocument (int id) throws DcemException {
+		Query query = em.createNamedQuery(DmWorkflowEntity.DELETE_FOR_DOCUMENT);
+		query.setParameter(1, id);
+		return query.executeUpdate();
 	}
 
 	public List<DmWorkflowEntity> getWorkflows(CloudSafeEntity cloudSafeEntity, WorkflowTrigger trigger) {

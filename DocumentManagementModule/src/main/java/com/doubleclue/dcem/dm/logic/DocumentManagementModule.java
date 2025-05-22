@@ -77,7 +77,7 @@ public class DocumentManagementModule extends DcemModule {
 	
 	@Override
 	public void runNightlyTask() {
-		System.out.println("DocumentManagementModule.runNightlyTask()");
+//		System.out.println("DocumentManagementModule.runNightlyTask()");
 		workflowLogic.nightlyTask();
 	}
 

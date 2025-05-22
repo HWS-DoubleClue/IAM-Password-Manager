@@ -48,6 +48,7 @@ import com.doubleclue.comm.thrift.SdkCloudSafeKey;
 import com.doubleclue.dcem.admin.logic.AlertSeverity;
 import com.doubleclue.dcem.admin.logic.DcemReportingLogic;
 import com.doubleclue.dcem.admin.logic.ReportAction;
+import com.doubleclue.dcem.as.dm.DmModuleApi;
 import com.doubleclue.dcem.as.entities.CloudSafeEntity;
 import com.doubleclue.dcem.as.entities.CloudSafeEntity_;
 import com.doubleclue.dcem.as.entities.CloudSafeLimitEntity;
@@ -84,6 +85,7 @@ import com.doubleclue.dcem.core.logic.JpaLogic;
 import com.doubleclue.dcem.core.logic.UserLogic;
 import com.doubleclue.dcem.core.utils.DcemUtils;
 import com.doubleclue.dcem.core.utils.SecureServerUtils;
+import com.doubleclue.dcem.core.weld.CdiUtils;
 import com.doubleclue.dcem.subjects.AsCloudSafeSubject;
 import com.doubleclue.utils.KaraUtils;
 import com.doubleclue.utils.RandomUtils;
@@ -729,7 +731,7 @@ public class CloudSafeLogic {
 			em.remove(entity);
 		}
 	}
-
+			
 	/**
 	 * This will NOT delete the contents
 	 * 
@@ -737,17 +739,29 @@ public class CloudSafeLogic {
 	 * @throws DcemException
 	 */
 	private void deleteCloudSafeFile(int id) throws DcemException {
-		Query query = em.createNamedQuery(CloudSafeEntity.DELETE_CLOUD_SAFE_BY_ID);
+		try {
+			DmModuleApi dmModuleApi = (DmModuleApi) CdiUtils.getReference(AsConstants.DM_MODULE_API_IMPL_BEAN);
+			dmModuleApi.deleteWorkflowForDocument(id);
+		} catch (Exception e) {
+			logger.info(e);
+		}		
+		deleteCloudSafeThumbnail (id);
+		Query query = em.createNamedQuery(CloudSafeShareEntity.DELETE_SHARE_BY_CLOUD_DATA);
+		query.setParameter(1, id);
+		query.executeUpdate();
+		query = em.createNamedQuery(CloudSafeEntity.DELETE_CLOUD_SAFE_BY_ID);
 		query.setParameter(1, id);
 		query.executeUpdate();
 	}
+	
+	
 
 	private void deleteCloudSafeThumbnail(int id) throws DcemException {
 		Query query = em.createNamedQuery(CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_ID);
 		query.setParameter(1, id);
 		query.executeUpdate();
 	}
-
+	
 	public void deleteCloudSafeFileByOwnerGroup(DcemGroup ownerGroup) throws DcemException {
 		Query query = em.createNamedQuery(CloudSafeEntity.DELETE_CLOUD_SAFE_BY_OWNER_GROUP);
 		query.setParameter(1, ownerGroup.getId());
@@ -1218,7 +1232,7 @@ public class CloudSafeLogic {
 
 	/**
 	 * @param cloudSafeEntity
-	 * @return the realy DB deleted files
+	 * @return the realy DB trashed files
 	 * @throws DcemException
 	 */
 	@DcemTransactional
@@ -1248,10 +1262,10 @@ public class CloudSafeLogic {
 		if (cloudSafeEntity.isFolder()) {
 			return deleteCloudSafeFolder(cloudSafeEntity);
 		} else {
-			CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
-			if (thumbnailEntity != null) {
-				deleteCloudSafeThumbnail((int) thumbnailEntity.getId());
-			}
+//			CloudSafeThumbnailEntity thumbnailEntity = cloudSafeEntity.getThumbnailEntity();
+//			if (thumbnailEntity != null) {
+//				deleteCloudSafeThumbnail((int) thumbnailEntity.getId());
+//			}
 			deleteCloudSafeFile(cloudSafeEntity.getId());
 			CloudSafeLimitEntity cloudSafeLimitEntity = getCloudSafeLimitEntity(cloudSafeEntity.getUser().getId());
 			cloudSafeLimitEntity.setUsed(cloudSafeLimitEntity.getUsed() - cloudSafeEntity.getLength());
@@ -1799,18 +1813,17 @@ public class CloudSafeLogic {
 
 	private List<CloudSafeDto> deleteSubdirectories(CloudSafeDto parentFolder, List<CloudSafeDto> cloudSafeToDeleteList, DcemUser dcemUser)
 			throws DcemException {
-		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_STRUCTURE, CloudSafeDto.class);
+		TypedQuery<CloudSafeDto> query = em.createNamedQuery(CloudSafeEntity.SELECT_CLOUD_SAFE_FOLDER_CHILDREN, CloudSafeDto.class);
 		query.setParameter(1, parentFolder.getId());
-		query.setParameter(2, dcemUser);
 		List<CloudSafeDto> children = query.getResultList();
 		cloudSafeToDeleteList.addAll(children);
 		for (CloudSafeDto cloudSafeDto : children) {
 			if (cloudSafeDto.isFolder()) {
 				deleteSubdirectories(cloudSafeDto, cloudSafeToDeleteList, dcemUser);
 			}
-			Query thumbnailQuery = em.createNamedQuery(CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_CLOUD_SAFE_ID);
-			thumbnailQuery.setParameter(1, cloudSafeDto.getId());
-			thumbnailQuery.executeUpdate();
+//			Query thumbnailQuery = em.createNamedQuery(CloudSafeThumbnailEntity.DELETE_CLOUD_SAFE_THUMBNAIL_BY_CLOUD_SAFE_ID);
+//			thumbnailQuery.setParameter(1, cloudSafeDto.getId());
+//			thumbnailQuery.executeUpdate();
 			deleteCloudSafeFile(cloudSafeDto.getId());
 		}
 		return cloudSafeToDeleteList;

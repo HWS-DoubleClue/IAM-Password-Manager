@@ -109,10 +109,10 @@
 				</h:panelGroup>
 			</p:scrollPanel>
 
-			<p:dialog widgetVar="propertiesDialog" modal="true" dynamic="true" width="30em"  position="top" my="top"  >
+			<p:dialog widgetVar="propertiesDialog" modal="true" dynamic="true" width="30em" position="top" my="top">
 				<p:commandButton icon="pi pi-check" value="#{DmMsg['Document.button.close']}" onclick="PF('propertiesDialog').hide();" />
-				<p:scrollPanel mode="native" style="height: 30em;"  >
-					<p:tabView style="margin-top: 0.4em; widht: 20em" id="tabView" scrollable="true" >
+				<p:scrollPanel mode="native" style="height: 30em;">
+					<p:tabView style="margin-top: 0.4em; widht: 20em" id="tabView" scrollable="true">
 						<p:tab>
 							<f:facet name="title">
 								<p:outputLabel value="#{DmMsg['editDocument.info']}" />

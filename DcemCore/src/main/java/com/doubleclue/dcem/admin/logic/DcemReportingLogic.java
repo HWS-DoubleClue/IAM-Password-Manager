@@ -33,6 +33,7 @@ import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.gui.SupportedLanguage;
 import com.doubleclue.dcem.core.jpa.DcemTransactional;
+import com.doubleclue.dcem.core.jpa.TenantIdResolver;
 import com.doubleclue.dcem.core.logic.AuthMethodsActivityDto;
 import com.doubleclue.dcem.core.logic.DbResourceBundle;
 import com.doubleclue.dcem.core.logic.GroupLogic;
@@ -193,7 +194,6 @@ public class DcemReportingLogic {
 		alertMessage.setSeverity(severity);
 		alertMessage.setErrorCode(errorCode.toString());
 		alertMessage.setLocalDateTime(LocalDateTime.now());
-
 		if ((checkExists && welcomeViewAlertExists(alertMessage)) == false) {
 			addWelcomeViewAlert(category, alertMessage);
 		}

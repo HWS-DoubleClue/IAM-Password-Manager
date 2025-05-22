@@ -9,9 +9,9 @@ import com.doubleclue.dcem.core.SubjectAbs;
 import com.doubleclue.dcem.core.logic.ActionSelection;
 import com.doubleclue.dcem.core.logic.ActionType;
 import com.doubleclue.dcem.core.logic.RawAction;
+import com.doubleclue.dcem.dm.entities.DmWorkflowEntity;
 import com.doubleclue.dcem.dm.logic.DmConstants;
 import com.doubleclue.dcem.dm.logic.DocumentManagementModule;
-import com.doubleclue.dcem.dm.entities.DmWorkflowEntity;
 
 @SuppressWarnings("serial")
 @ApplicationScoped

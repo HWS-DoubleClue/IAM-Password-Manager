@@ -492,7 +492,13 @@ public class AsModule extends DcemModule {
 				}
 			}
 		} catch (Exception exp) {
-			reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.NIGHTLY_TASK, exp.toString(), AlertSeverity.ERROR, true);
+			logger.error("AsModule Nichtly Task failed", exp);
+			taskExecutor.execute(new com.doubleclue.dcem.core.tasks.CoreTask(this.getClass().getSimpleName(), TenantIdResolver.getCurrentTenant()) {
+				@Override
+				public void runTask() {
+					reportingLogic.addWelcomeViewAlert(DcemConstants.ALERT_CATEGORY_DCEM, DcemErrorCodes.NIGHTLY_TASK, exp.toString(), AlertSeverity.ERROR, false);
+				}
+			});
 		}
 	}
 

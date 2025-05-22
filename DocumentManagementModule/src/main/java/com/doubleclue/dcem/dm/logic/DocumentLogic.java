@@ -509,4 +509,9 @@ public class DocumentLogic implements DmModuleApi {
 		return cloudSafeEntity;
 	}
 
+	@Override
+	public int deleteWorkflowForDocument(int id) throws Exception {
+		return workflowLogic.deleteWorkflowForDocument(id);
+	}
+
 }

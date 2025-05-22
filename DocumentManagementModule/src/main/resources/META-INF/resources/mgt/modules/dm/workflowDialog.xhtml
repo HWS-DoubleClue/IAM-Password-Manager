@@ -56,22 +56,17 @@
 						<f:selectItems value="#{dmWorkflowDialog.daysOfMonth}" />
 					</p:selectOneMenu>
 
-					<h:panelGroup rendered="#{dmWorkflowDialog.renderYearly}">
-					<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.month']} "/>
-					
-						<p:selectOneMenu value="#{dmWorkflowDialog.workflowEntity.month}">
+					<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.month']} " rendered="#{dmWorkflowDialog.renderYearly}"/>
+					<p:selectOneMenu value="#{dmWorkflowDialog.workflowEntity.month}" rendered="#{dmWorkflowDialog.renderYearly}">
 							<f:selectItems value="#{dmWorkflowDialog.months}" />
 							<p:ajax event="change" update="daysOfMonth" />
-						</p:selectOneMenu>
-					</h:panelGroup>
+					</p:selectOneMenu>
 
-					<h:panelGroup rendered="#{dmWorkflowDialog.renderYearly}">
-					<p:outputLabel for="@next" style="margin-left: 2rem" value="#{DmMsg['dmWorkflowView.dayOfMonth']} " />
-						<p:selectOneMenu id="daysOfMonthYear" value="#{dmWorkflowDialog.workflowEntity.day}">
+					<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.dayOfMonth']} " rendered="#{dmWorkflowDialog.renderYearly}"/>
+						<p:selectOneMenu id="daysOfMonthYear" value="#{dmWorkflowDialog.workflowEntity.day}" rendered="#{dmWorkflowDialog.renderYearly}">
 							<f:selectItems value="#{dmWorkflowDialog.daysOfMonth}" />
 						</p:selectOneMenu>
-					</h:panelGroup>
-
+						
 					<p:outputLabel for="@next" value="#{DmMsg['dmWorkflowView.date']}" rendered="#{dmWorkflowDialog.renderOnDate}" />
 					<p:datePicker id="date" value="#{dmWorkflowDialog.workflowEntity.localDate}" locale="#{operatorSession.locale}" rendered="#{dmWorkflowDialog.renderOnDate}"
 						pattern="#{operatorSession.dateTimePattern}" showTime="false" yearNavigator="true" />

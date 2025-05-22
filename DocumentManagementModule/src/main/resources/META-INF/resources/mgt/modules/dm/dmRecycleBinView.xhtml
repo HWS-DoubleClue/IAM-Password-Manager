@@ -15,7 +15,7 @@
 				<h:outputText id="deleteBtn" class="fa fa-solid fa-file-circle-xmark iconsButtons"></h:outputText>
 				<p:tooltip for="deleteBtn" value="#{DmMsg['documentView.button.delete']}" position="bottom" />
 			</p:commandLink>
-			<p:spacer width="2em" />
+			<p:spacer width="0.5em" />
 			<p:commandLink action="#{dmRecycleBinView.actionOpenRecoverDialog()}" immediate="true" styleClass="toolBarButtons">
 				<h:outputText id="recoverBtn" class="fa fa-rotate-left iconsButtons" />
 				<p:tooltip for="recoverBtn" value="#{DmMsg['documentView.button.recover']}" position="bottom" />
@@ -30,7 +30,7 @@
 
 				<p:column id="fileName" headerText="#{DmMsg['documentView.columnTitle.filename']}" sortBy="#{document.name}" filterBy="#{document.name}"
 					filterMatchMode="contains">
-					<p:graphicImage styleClass="viewFileImage" library="pictures" name="icons/16x16/#{dmDocumentView.getFileIcon(document)}" />
+					<p:graphicImage styleClass="viewFileImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
 					<p:outputLabel value="#{document.name}" id="documentName" style="margin-left: 0.2em" />
 				</p:column>
 

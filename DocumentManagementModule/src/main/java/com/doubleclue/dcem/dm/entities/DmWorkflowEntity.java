@@ -39,6 +39,7 @@ import com.doubleclue.dcem.dm.logic.WorkflowTrigger;
 // @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 
 @NamedQueries({
+		@NamedQuery(name = DmWorkflowEntity.DELETE_FOR_DOCUMENT, query = "DELETE from DmWorkflowEntity wf WHERE wf.cloudSafeEntity.id = ?1"),
 		@NamedQuery(name = DmWorkflowEntity.GET_DOCUMENT_TRIGGER_LIST, query = "SELECT wf from DmWorkflowEntity wf WHERE (wf.cloudSafeEntity = ?1) AND workflowTrigger = ?2"),
 		@NamedQuery(name = DmWorkflowEntity.GET_TIME_TRIGGER_LIST, query = "SELECT wf from DmWorkflowEntity wf WHERE"
 				+ " (wf.workflowTrigger = com.doubleclue.dcem.dm.logic.WorkflowTrigger.OnDate AND wf.localDate = CURRENT_DATE) OR "
@@ -50,6 +51,7 @@ public class DmWorkflowEntity extends EntityInterface implements Cloneable {
 
 	public final static String GET_DOCUMENT_TRIGGER_LIST = "DmWorkflowEntity.docTriggerList";
 	public final static String GET_TIME_TRIGGER_LIST = "DmWorkflowEntity.triggerList";
+	public final static String DELETE_FOR_DOCUMENT = "DmWorkflowEntity.deleteForDocument";
 
 	@Id
 	@Column(name = "dc_id")
