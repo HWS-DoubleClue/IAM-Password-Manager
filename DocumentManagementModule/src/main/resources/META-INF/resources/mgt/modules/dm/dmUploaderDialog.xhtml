@@ -23,7 +23,7 @@
 				styleClass="uploaderTable">
 				<p:column>
 					<h:panelGroup>
-						<p:graphicImage styleClass="viewFolderImage" library="pictures" name="icons/16x16/#{document.dcemMediaType.iconName}" />
+						<p:graphicImage styleClass="viewFolderImage" library="pictures" name="#{document.dcemMediaType.iconName}" />
 						<h:outputText value="#{document.pathName}" class="documentName" style="margin-left: 0.5em" />
 					</h:panelGroup>
 				</p:column>

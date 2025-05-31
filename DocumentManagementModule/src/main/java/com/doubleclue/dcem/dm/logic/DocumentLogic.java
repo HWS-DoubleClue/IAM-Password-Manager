@@ -470,7 +470,7 @@ public class DocumentLogic implements DmModuleApi {
 	}
 
 	public void convertDocumentToPdfStream(String documentId, OutputStream outputStream) throws Exception {
-		CloudSafeEntity cloudSafeEntity = cloudSafeLogic.getCloudSafe(Integer.getInteger(documentId));
+		CloudSafeEntity cloudSafeEntity = cloudSafeLogic.getCloudSafe(Integer.parseInt(documentId));
 		InputStream inputStream = cloudSafeLogic.getCloudSafeContentAsStream(cloudSafeEntity, null, null, null);
 		switch (cloudSafeEntity.getDcemMediaType()) {
 		case ODT:

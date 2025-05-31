@@ -14,65 +14,10 @@
 	</cc:interface>
 
 	<cc:implementation>
-		<div  style="display: flex; justify-content: space-between; align-items: center; position: relative; flex-wrap: wrap;">
-			<p:commandLink onclick="PF('addDialog').show();" styleClass="toolBarButtons" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}">
-				<h:outputText id="createBtn" class="fa-solid fa-file-circle-plus"></h:outputText>
-				<p:tooltip for="createBtn" value="#{DmMsg['documentView.button.create']}" position="bottom" />
-			</p:commandLink>
-			<h:panelGroup style="position: relative; display: inline-block; cursor: pointer;" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}">
-				<h:outputText class="fa fa-cloud-upload toolBarButtons" />
-
-				<p:fileUpload id="uploadBtn" skinSimple="true" auto="true" process="@this" title="" multiple="true" mode="advanced" label=""
-					style="position: absolute; top: 0; left: 0; opacity: 0;" listener="#{dmUploader.uploadFileListener}" oncomplete="openDialog()" />
-				<p:remoteCommand name="openDialog" action="#{dmUploader.onUploadComplete}" ignoreAutoUpdate="false" />
-				<p:tooltip for="uploadBtn" value="#{DmMsg['documentView.button.upload']}" position="bottom" />
-				<p:growl id="msgs" showDetail="true" keepAlive="true" />
-			</h:panelGroup>
-			<!-- <p:commandLink action="#{dmDocumentView.onDownloadFiles}" immediate="true" style="margin-left: 0em" styleClass="toolBarButtons">
-				<h:outputText id="downloadBtn" class="fa fa-cloud-download" />
-				<p:tooltip for="downloadBtn" value="#{DmMsg['documentView.button.download']}" position="bottom" />
-			</p:commandLink> -->
-			<!-- <p:commandLink action="#{dmDocumentView.openEditDocument()}" immediate="true" styleClass="toolBarButtons">
-				<h:outputText id="renameBtn" class="fa fa-pencil iconsButtons"></h:outputText>
-				<p:tooltip for="renameBtn" value="#{DmMsg['Document.button.edit']}" position="bottom" />
-			</p:commandLink> -->
-			<!-- <p:commandLink onclick="PF('confirmDlg').show();" immediate="true" styleClass="toolBarButtons" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}">
-				<h:outputText id="deleteBtn" class="fa fa-trash iconsButtons"></h:outputText>
-				<p:tooltip for="deleteBtn" value="#{DmMsg['documentView.button.moveToTrash']}" position="bottom" />
-			</p:commandLink> -->
-			<p:commandLink action="#{dmDocumentView.onAddFolder}" immediate="true" styleClass="toolBarButtons"
-				rendered="#{dmDocumentView.isShareDocumentsMode() eq false}">
-				<h:outputText id="addFolder" class="fa fa-folder-plus iconsButtons"></h:outputText>
-				<p:tooltip for="addFolder" value="#{DmMsg['documentView.button.addFolder']}" position="bottom" />
-			</p:commandLink>
-			<p:commandLink onclick="PF('addDocumentByMailDlg').show();" immediate="true" styleClass="toolBarButtons"
-				rendered="#{dmDocumentView.isShareDocumentsMode() eq false}">
-				<h:outputText id="addDocumentByMail" class="fa fa-envelope iconsButtons"></h:outputText>
-				<p:tooltip for="addDocumentByMail" value="#{DmMsg['documentView.button.addDocumentByMail']}" position="bottom" />
-			</p:commandLink>
-			<!-- <p:commandLink action="#{dmDocumentView.openWorkflow()}" immediate="true" styleClass="toolBarButtons">
-				<h:outputText id="workflowBtn" class="fa fa-cubes iconsButtons"></h:outputText>
-				<p:tooltip for="workflowBtn" value="#{DmMsg['Document.button.workflow']}" position="bottom" />
-			</p:commandLink> -->
-			<p:spacer width="1em"></p:spacer>
-			<p:commandLink action="#{cc.attrs.displayListAction}" styleClass="toolBarButtons" update="@form">
-					<h:outputText id="displayList" class="fa fa-list" />
-					<p:tooltip for="displayList" value="#{DmMsg['documentView.button.details']}" position="bottom" />
-				</p:commandLink>
-
-				<p:commandLink action="#{cc.attrs.displayTileAction}" styleClass="toolBarButtons" update="@form">
-					<h:outputText id="displayTile" class="fa fa-th-large" />
-					<p:tooltip for="displayTile" value="#{DmMsg['documentView.button.tile']}" position="bottom" />
-				</p:commandLink>
-
-				<p:commandLink action="#{cc.attrs.displayContentAction}" styleClass="toolBarButtons" update="@form" rendered="#{operatorSession.appSession eq false}">
-					<h:outputText id="displayContent" class="fa fa-server" />
-					<p:tooltip for="displayContent" value="#{DmMsg['documentView.button.content']}" position="bottom" />
-				</p:commandLink>
-
+		<div style="display: flex; justify-content: space-between; align-items: center; position: relative; ">
 			<p:defaultCommand target="searchAction" />
-			<h:panelGroup id="searchDiv" style="flex-grow: 1; ">
-				<p:commandButton id="settings" icon="fa fa-filter" style="margin-right: 0.4em" onclick="PF('overlayPanel').show()" />
+			<h:panelGroup id="searchDiv" style="flex-grow: 1;">
+				<p:commandButton id="settings" icon="fa fa-filter" style="margin-right: 0.2em" onclick="PF('overlayPanel').show()" />
 				<p:tooltip for="settings" value="#{DmMsg['documentView.Filter']}" position="bottom" />
 				<p:overlayPanel for="settings" dismissable="true" showCloseIcon="true" widgetVar="overlayPanel" dynamic="false">
 					<p:selectManyMenu id="filterSelection" widgetVar="selectManyFilter" value="#{cc.attrs.selectManyValue}" var="selectedTag" filter="true"
@@ -83,16 +28,77 @@
 						</p:column>
 					</p:selectManyMenu>
 				</p:overlayPanel>
-				<p:inputText id="searchText" size="20" value="#{cc.attrs.searchTerm}" />
-				<p:commandButton id="searchAction" action="#{cc.attrs.searchAction}" icon="fa fa-magnifying-glass" style="margin-left: 0.5em" update="@form" />
+				<p:inputText id="searchText" style="width: 8em" value="#{cc.attrs.searchTerm}" />
+				<p:commandButton id="searchAction" action="#{cc.attrs.searchAction}" icon="fa fa-magnifying-glass" style="margin-left: 0.2em" update="@form" />
 				<p:tooltip for="searchAction" value="#{DmMsg['documentView.search']}" position="bottom" widgetVar="searchField" />
 			</h:panelGroup>
+			<p:spacer width="1em" />
+			<p:commandLink action="#{cc.attrs.displayListAction}" styleClass="toolBarButtons" update="@form">
+				<h:outputText id="displayList" class="fa fa-list" />
+				<p:tooltip for="displayList" value="#{DmMsg['documentView.button.details']}" position="bottom" />
+			</p:commandLink>
 
-			<div style="margin-right: 5px; ">
-				
-			</div>
+			<p:commandLink action="#{cc.attrs.displayTileAction}" styleClass="toolBarButtons" update="@form">
+				<h:outputText id="displayTile" class="fa fa-th-large" />
+				<p:tooltip for="displayTile" value="#{DmMsg['documentView.button.tile']}" position="bottom" />
+			</p:commandLink>
 
-			
+			<p:commandLink action="#{cc.attrs.displayContentAction}" styleClass="toolBarButtons" update="@form" rendered="#{operatorSession.appSession eq false}">
+				<h:outputText id="displayContent" class="fa fa-server" />
+				<p:tooltip for="displayContent" value="#{DmMsg['documentView.button.content']}" position="bottom" />
+			</p:commandLink>
+
+			<h:panelGroup style="position: relative; display: inline-block; cursor: pointer; margin-left: 0.2em" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}">
+				<h:outputText class="fa fa-cloud-upload toolBarButtons" />
+				<p:fileUpload id="uploadBtn" skinSimple="true" auto="true" process="@this" title="" multiple="true" mode="advanced" label=""
+					style="position: absolute; top: 0; left: 0; opacity: 0;" listener="#{dmUploader.uploadFileListener}" oncomplete="openDialog()" />
+				<p:remoteCommand name="openDialog" action="#{dmUploader.onUploadComplete}" ignoreAutoUpdate="false" />
+				<p:tooltip for="uploadBtn" value="#{DmMsg['documentView.button.upload']}" position="bottom" />
+				<p:growl id="msgs" showDetail="true" keepAlive="true" />
+			</h:panelGroup>
+
+			<h:panelGroup style="margin-left: 1em" rendered="#{operatorSession.appSession eq false}">
+				<p:commandLink onclick="PF('addDialog').show();" styleClass="toolBarButtons" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}">
+					<h:outputText id="createBtn" class="fa-solid fa-file-circle-plus"></h:outputText>
+					<p:tooltip for="createBtn" value="#{DmMsg['documentView.button.create']}" position="bottom" />
+				</p:commandLink>
+
+				<p:commandLink action="#{dmDocumentView.onDownloadFiles}" immediate="true" style="margin-left: 0em" styleClass="toolBarButtons">
+					<h:outputText id="downloadBtn" class="fa fa-cloud-download" />
+					<p:tooltip for="downloadBtn" value="#{DmMsg['documentView.button.download']}" position="bottom" />
+				</p:commandLink>
+				<p:commandLink action="#{dmDocumentView.onAddFolder}" immediate="true" styleClass="toolBarButtons"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}">
+					<h:outputText id="addFolder" class="fa fa-folder-plus iconsButtons"></h:outputText>
+					<p:tooltip for="addFolder" value="#{DmMsg['documentView.button.addFolder']}" position="bottom" />
+				</p:commandLink>
+				<p:commandLink onclick="PF('addDocumentByMailDlg').show();" immediate="true" styleClass="toolBarButtons"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}">
+					<h:outputText id="addDocumentByMail" class="fa fa-envelope iconsButtons"></h:outputText>
+					<p:tooltip for="addDocumentByMail" value="#{DmMsg['documentView.button.addDocumentByMail']}" position="bottom" />
+				</p:commandLink>
+				<!-- <p:commandLink action="#{dmDocumentView.openWorkflow()}" immediate="true" styleClass="toolBarButtons">
+				<h:outputText id="workflowBtn" class="fa fa-cubes iconsButtons"></h:outputText>
+				<p:tooltip for="workflowBtn" value="#{DmMsg['Document.button.workflow']}" position="bottom" />
+			</p:commandLink> -->
+			</h:panelGroup>
+
+			<p:commandLink id="overlayTopMenu" style="margin-right: 0.2em; margin-left: 0.2em">
+				<h:outputText style="font-size: x-large" class="pi pi-ellipsis-v" />
+			</p:commandLink>
+			<p:menu overlay="true" trigger="overlayTopMenu" my="left top" at="left bottom" style="width: 15em">
+				<p:menuitem value="#{DmMsg['documentView.button.create']}" icon="fa fa-file-circle-plus" onclick="PF('addDialog').show();"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.addDocumentByMail']}" icon="fa fa-envelope" onclick="PF('addDocumentByMailDlg').show();"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+
+
+				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles (document)}" icon="fa fa-cloud-download" />
+
+				<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+
+			</p:menu>
 		</div>
 	</cc:implementation>
 </ui:composition>

@@ -114,6 +114,7 @@ public class DmNewDocumentView extends DcemView {
 
 	private DualListModel<CloudSafeTagEntity> tagDualList;
 	private List<CloudSafeEntity> cloudSafeEntityFiles;
+	boolean displayOnly;
 	private List<CloudSafeTagEntity> toBeAddedTags;
 
 	private byte[] thumbnail;
@@ -541,6 +542,7 @@ public class DmNewDocumentView extends DcemView {
 		createThumbnail = true;
 		this.dcemMediaType = mediaType_;
 		contentFile = originalFile = File.createTempFile(DmConstants.DOUBLE_CLUE_DM, "");
+		displayOnly = false;
 		if (dcemMediaType == DcemMediaType.PDF) {
 			pdfManagement.createEmptyPdfFile(contentFile);
 		}
@@ -559,6 +561,7 @@ public class DmNewDocumentView extends DcemView {
 		cloudSafeEntity.setCreatedOn(LocalDateTime.now());
 		ocrText = null;
 		thumbnail = null;
+		displayOnly = false;
 		tagDualList = new DualListModel<CloudSafeTagEntity>();
 	}
 
@@ -575,8 +578,9 @@ public class DmNewDocumentView extends DcemView {
 		}
 	}
 
-	public void editDocument(CloudSafeEntity cloudSafeEntity, List<CloudSafeEntity> cloudSafeEntityFiles) throws Exception {
+	public void editDocument(CloudSafeEntity cloudSafeEntity, List<CloudSafeEntity> cloudSafeEntityFiles, boolean displayOnly) throws Exception {
 		cacheVersion = null;
+		this.displayOnly = displayOnly;
 		this.cloudSafeEntity = cloudSafeEntity;
 		this.cloudSafeEntityFiles = cloudSafeEntityFiles;
 		if (cloudSafeEntity.isFolder()) {
@@ -586,7 +590,6 @@ public class DmNewDocumentView extends DcemView {
 			return;
 		}
 		dcemMediaType = cloudSafeEntity.getDcemMediaType();
-
 		tagDualList.setTarget(new ArrayList<CloudSafeTagEntity>(cloudSafeEntity.getTags()));
 		originalFile = documentLogic.getDocumentContent(cloudSafeEntity);
 		if (dcemMediaType == null) {
@@ -757,6 +760,10 @@ public class DmNewDocumentView extends DcemView {
 		toBeAddedTag = new CloudSafeTagEntity();
 		hideDialog("overlayTagPanelVar");
 	}
+	
+	public boolean isEnableOcrDisplay() {
+		return cloudSafeEntity.isFile();
+	}
 
 	public void actionLeftRight() {
 		viewColumns = 2;
@@ -879,5 +886,13 @@ public class DmNewDocumentView extends DcemView {
 
 	public void setSelectedVersion(DocumentVersion selectedVersion) {
 		this.selectedVersion = selectedVersion;
+	}
+
+	public boolean isDisplayOnly() {
+		return displayOnly || (cloudSafeEntity.isWriteAccess() == false);
+	}
+
+	public void setDisplayOnly(boolean displayOnly) {
+		this.displayOnly = displayOnly;
 	}
 }

@@ -33,18 +33,26 @@
 					<p:commandLink id="dynaButton" style="float: right;">
 						<h:outputText class="pi pi-ellipsis-v"  />
 					</p:commandLink>
-					<p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom" style="width: 15em">
-						<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles (document)}" icon="fa fa-cloud-download" />
-						<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument(document)}" icon="fa fa-pencil" />
-						<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
-							rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-						<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
-							rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-						<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
-							rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-						<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
-							disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-					</p:menu>
+					<p:menu overlay="true" trigger="documentTable:overlayMenu" my="left top" at="left bottom" style="width: 15em">
+				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles (document)}" icon="fa fa-cloud-download" />
+				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument(document)}" icon="fa fa-pencil"
+					rendered="#{operatorSession.appSession eq false}" />
+					
+				<p:menuitem value="#{DmMsg['Document.button.show']}" icon="pi pi-eye" action="#{dmDocumentView.showDocument(document)}" />
+
+				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+
+				<p:menuitem value="#{DmMsg['Document.button.workflow']}" action="#{dmDocumentView.openWorkflow(document)}" icon="fa fa-cubes"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+
+				<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
+					disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+			</p:menu>
 					<div style="margin-top: 4px; display: inline-block;" class="documentName">
 						<p:graphicImage styleClass="viewFileImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
 						<h:outputText style="margin-left: 2px" value="#{document.name}" />

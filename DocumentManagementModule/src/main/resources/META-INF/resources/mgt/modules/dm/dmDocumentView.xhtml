@@ -65,24 +65,7 @@
 					<p:tooltip for="clearSearch" value="#{DmMsg['documentView.button.clearSearch']}" position="bottom" />
 				</p:commandLink>
 			</h:panelGroup>
-
-			<p:contextMenu id="nodeContextMenu" widgetVar="nodeContextMenu" for="documentView" style="width: 20em">
-				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles}" icon="fa fa-cloud-download" />
-				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument()}" icon="fa fa-pencil" />
-				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
-					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-				<p:menuitem value="#{DmMsg['Document.button.workflow']}" action="#{dmDocumentView.openWorkflow()}" icon="fa fa-cubes"
-					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-				<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
-					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-				<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
-					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-				<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
-					disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-			</p:contextMenu>
-			<p></p>
 			<p:panel id="documentView">
-				<div style="width: 100%">
 					<h:panelGroup rendered="#{dmDocumentView.displayMode == 'LIST'}">
 						<ui:include src="/mgt/modules/dm/components/dmDisplayListComponent.xhtml" />
 					</h:panelGroup>
@@ -92,7 +75,6 @@
 					<h:panelGroup rendered="#{dmDocumentView.displayMode == 'CONTENT'}">
 						<ui:include src="/mgt/modules/dm/components/dmDisplayContentComponent.xhtml" />
 					</h:panelGroup>
-				</div>
 			</p:panel>
 
 			<p:fileUpload id="filesUpload" widgetVar="dragDropUpload" dropZone="@form" dragDropSupport="true" multiple="true" skinSimple="true" style="display: none"
@@ -110,7 +92,7 @@
 				<f:facet name="header">
 					<h:outputText style="vertical-align: middle;" class="dialogTitle" value="#{DmMsg['documentView.dialog.addFile.title']}" />
 				</f:facet>
-				<h:panelGrid columns="2" cellpadding="10" style="width: 50em" columnClasses="columWidth, columWidth">
+				<h:panelGrid columns="2" cellpadding="10" style="width: 50em" columnClasses="columWidth, columWidth" rendered="#{operatorSession.appSession eq false}">
 					<p:outputLabel value="#{DmMsg['documentView.dialog.addFile.createPdf']}" class="dialogTitle" style="font-weight:bold" />
 					<p:outputLabel value="#{DmMsg['documentView.dialog.addFile.createText']}" class="dialogTitle" style="font-weight:bold" />
 					<p:outputLabel value="#{DmMsg['documentView.dialog.addFile.createPdfExplanation']}" />
@@ -120,6 +102,9 @@
 					<p:commandButton value="#{DmMsg['documentView.dialog.addFile.button.createText']}" action="#{dmDocumentView.actionAddDocument('XHTML')}" immediate="true"
 						icon="fa fa-file" />
 				</h:panelGrid>
+				<p:commandButton value="#{DmMsg['documentView.dialog.addFile.button.createText']}" action="#{dmDocumentView.actionAddDocument('XHTML')}" immediate="true"
+						icon="fa fa-file" rendered="#{operatorSession.appSession eq true}" />
+				
 				<p:commandButton value="#{DmMsg['Document.button.close']}" onclick="PF('addDialog').hide();" style="float: right; margin-right: 1em; margin-bottom: 1em;"
 					immediate="true" icon="fa fa-close" />
 			</p:dialog>

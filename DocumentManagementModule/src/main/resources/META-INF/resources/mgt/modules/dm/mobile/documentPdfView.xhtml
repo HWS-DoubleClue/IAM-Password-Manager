@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:dc="http://java.sun.com/jsf/composite/dcemComponents">
+	<f:metadata>
+		<f:event type="preRenderView" listener="#{dmNewDocumentView.preRenderView}" />
+	</f:metadata>
+	<f:view locale="#{operatorSession.locale}">
+		<h:form id="documentForm" enctype="multipart/form-data">
+
+
+			<p:scrollPanel mode="native" styleClass="align-items-center justify-content-center" style="height: 40em;border: 1px; border-style: solid; border-color: grey">
+				<p:panel style="border: 1px; border-style: solid; border-color: grey">
+					<p:graphicImage height="32" width="32" library="pictures" name="#{dmNewDocumentView.dcemMediaType.iconResourcePath}" style="vertical-align: middle;" />
+					<p:outputLabel id="nameOutput" value="#{dmNewDocumentView.cloudSafeEntity.name}"
+						style="max-width:25em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; margin-left: 0.5em; font-weight: bold; font-size: large" />
+					<p:panel style="float: right">
+						<p:commandLink onclick="PF('propertiesDialog').show();" immediate="true" styleClass="normalToolBarButtons">
+							<h:outputText id="actionUpDown" class="fa fa-gears" />
+							<p:tooltip for="actionUpDown" value="#{DmMsg['documentView.properties']}" position="bottom" />
+						</p:commandLink>
+
+						<p:commandButton value="#{DmMsg['Document.button.save']}" icon="fa fa-floppy-disk" action="#{dmNewDocumentView.actionSave}" update="documentForm"
+							rendered="#{dmNewDocumentView.cloudSafeEntity.writeAccess eq true}" />
+						<p:outputLabel rendered="#{dmNewDocumentView.cloudSafeEntity.writeAccess eq false}" value="#{DmMsg['message.writeProtected']}"
+							style="color: orange; font-weight: bold" />
+
+						<p:commandLink action="#{dmNewDocumentView.actionToDocuments}" immediate="true" styleClass="normalToolBarButtons">
+							<h:outputText id="actionToDocuments" class="fa fa-file-lines" />
+							<p:tooltip for="actionToDocuments" value="#{DmMsg['documentView.ToDocuments']}" position="bottom" />
+						</p:commandLink>
+
+						<!-- 	<p:commandLink action="#{dmNewDocumentView.actionUpDown}" immediate="true" styleClass="normalToolBarButtons" update="panelTable"
+									rendered="#{dmNewDocumentView.viewColumns eq 2}">
+									<h:outputText id="actionUpDown" class="fa fa-up-down" />
+									<p:tooltip for="actionUpDown" value="#{DmMsg['documentView.upDown']}" position="bottom" />
+								</p:commandLink>
+
+								<p:commandLink id="actionLeftRight" action="#{dmNewDocumentView.actionLeftRight}" immediate="true" styleClass="normalToolBarButtons" update="panelTable"
+									rendered="#{dmNewDocumentView.viewColumns eq 1}">
+									<h:outputText  class="fa fa-left-right" />
+									<p:tooltip for="actionLeftRight" value="#{DmMsg['documentView.leftRight']}" position="top" />
+								</p:commandLink> -->
+
+
+						<!-- 	<p:commandButton value="" icon="fa fa-up-down" style="margin-left: 0.5em;" rendered="#{dmNewDocumentView.viewColumns eq 2}"
+								action="#{dmNewDocumentView.actionUpDown}" immediate="true" update="panelTable" />
+							<p:commandButton value="" icon="fa fa-left-right" style="margin-left: 0.5em;" rendered="#{dmNewDocumentView.viewColumns eq 1}"
+								action="#{dmNewDocumentView.actionLeftRight}" immediate="true" update="panelTable" /> -->
+					</p:panel>
+				</p:panel>
+
+				<h:panelGroup id="pdfPanelView" rendered="#{dmNewDocumentView.pdfViewer == true}" class="card">
+					<h:panelGroup rendered="#{dmNewDocumentView.dcemMediaType == 'PDF'}">
+						<p:fileUpload id="fileUpload" label="#{DmMsg['Document.button.upload']}" ajax="true" auto="true" value="#{dmNewDocumentView.uploadedFilePage}"
+							mode="simple" skinSimple="true" listener="#{dmNewDocumentView.uploadPageListener}" process="@this" style="margin-left: 0.5em"
+							accept=".gif,.jpg,.jpeg,.png,.pdf" update="@form deletePageForm">
+						</p:fileUpload>
+
+						<p:commandButton action="#{dmNewDocumentView.actionStartCamera}" value="#{DmMsg['editDocument.button.photoDoc']}" icon="fa fa-camera"
+							style="margin-right:1em; margin-top: 0.5em; margin-bottom: 0.5em;" immediate="true">
+							<p:ajax event="dialogReturn" update="documentForm deletePageForm" />
+						</p:commandButton>
+
+						<p:commandButton value="#{DmMsg['editDocument.button.deletePages']}" onclick="PF('deletePageDialog').show();" icon="fa fa-trash" style="margin-top: 0.5em"
+							immediate="true" />
+
+					</h:panelGroup>
+					<p:media id="pdfView" value="#{dmNewDocumentView.streamedContent}" player="pdf" cache="false" height="100%" width="100%">
+						<f:param name="id" value="#{dmNewDocumentVie.generateRandomIdForNotCaching()}" />
+					</p:media>
+
+				</h:panelGroup>
+				<h:panelGroup id="textView" rendered="#{dmNewDocumentView.dcemMediaType == 'TEXT'}">
+					<p:commandButton action="#{dmNewDocumentView.actionConvertRichText}" value="#{DmMsg['Document.convertRichText']}" icon="fa fa-newspaper"
+						style="margin-right:1em; margin-top: 0.5em;" immediate="true" update="@form" />
+					<p:commandButton action="#{dmNewDocumentView.convertPdf}" value="#{DmMsg['Document.convertPdf']}" icon="fa fa-file-pdf"
+						style="margin-right:1em; margin-top: 0.5em;" immediate="true" />
+					<p:inputTextarea id="textAreaView" style="width: 98%; height: 100%" value="#{dmNewDocumentView.stringContent}" autoResize="false" />
+				</h:panelGroup>
+				<p:panel id="editorPanelView" rendered="#{dmNewDocumentView.dcemMediaType == 'XHTML'}">
+					<p:textEditor id="editorView" value="#{dmNewDocumentView.stringContent}" autoResize="true" style="width: 55em; height: 40em" />
+				</p:panel>
+				<p:panel id="imagePanelView" rendered="#{dmNewDocumentView.imageViewer == true}">
+					<p:graphicImage id="imageView" cache="false" value="#{dmNewDocumentView.streamedContent}" stream="false" autoResize="true"
+						style="width: 55em; height: 40em" />
+				</p:panel>
+				<p:panel id="mp4View" rendered="#{dmNewDocumentView.dcemMediaType == 'MP4' or dmNewDocumentView.dcemMediaType == 'QT'}">
+					<p:video value="#{dmNewDocumentView.streamedContent}" player="mp4" controls="true" width="100%" height="100%" stream="false" cache="false"
+						onplay="console.log('MP4 Started Playing')" onpause="console.log('MP4 Stopped Playing')">
+        Your browser does not support the video element.
+        See: <h:outputLink value="https://www.w3schools.com/html/html5_video.asp">HTML5 Video</h:outputLink>
+					</p:video>
+				</p:panel>
+				<h:panelGroup id="folderView" rendered="#{dmNewDocumentView.dcemMediaType == 'Folder'}">
+					<p:dataTable value="#{dmNewDocumentView.folderDocuments}" var="document" selectionDisabled="true">
+						<p:column width="2em">
+							<p:graphicImage styleClass="viewFileImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
+						</p:column>
+						<p:column headerText="#{DmMsg['documentView.columnTitle.filename']}" sortBy="#{document.name}" filterBy="#{document.name}">
+							<h:outputText value="#{document.name}" />
+						</p:column>
+					</p:dataTable>
+				</h:panelGroup>
+			</p:scrollPanel>
+
+			<p:dialog widgetVar="propertiesDialog" modal="true" dynamic="true"  position="top" my="top">
+				<p:commandButton icon="pi pi-check" value="#{DmMsg['Document.button.close']}" onclick="PF('propertiesDialog').hide();" />
+				<p:scrollPanel mode="native" style="height: 30em;">
+					<p:tabView style="margin-top: 0.4em; widht: 20em" id="tabView" scrollable="true">
+						<p:tab>
+							<f:facet name="title">
+								<p:outputLabel value="#{DmMsg['editDocument.info']}" />
+							</f:facet>
+							<p:outputLabel for="@next" value="#{DmMsg['Document.name']}" />
+							<p:inputText id="name" value="#{dmNewDocumentView.cloudSafeEntity.name}" required="true" maxlength="255" size="50"
+								style="margin-left: 1em; margin-bottom: 2em" />
+							<br />
+							<p:outputLabel for="@next" value="#{DmMsg['editDocument.comment']}" />
+							<p:textEditor id="comment" value="#{dmNewDocumentView.cloudSafeEntity.info}" required="false" style="margin-top:0.5em;">
+								<f:facet name="toolbar">
+									<span class="ql-formats">
+										<button class="ql-bold"></button>
+										<button class="ql-italic"></button>
+										<button class="ql-underline"></button> <span class="ql-formats">
+											<button class="ql-header" value="1" />
+											<button class="ql-header" value="2" />
+									</span>
+									</span>
+									<span class="ql-formats"> <select class="ql-font"></select> <select class="ql-size"></select>
+									</span>
+								</f:facet>
+							</p:textEditor>
+							<p></p>
+							<p:panel id="preview" header="Preview" style="border: 1px; border-style: solid; width:260px; text-align:center; border-color: light-grey"
+								rendered="#{dmNewDocumentView.thumbnail != null}">
+								<p:graphicImage style="margin: 0 auto; width: 240px;" cache="false" value="#{dmNewDocumentView.streamedThumbnail}" stream="false" />
+							</p:panel>
+						</p:tab>
+
+						<p:tab title="#{DmMsg['Document.tags']}">
+							<h:panelGroup id="updatePickList">
+								<p:commandButton id="displayTags" value="#{DmMsg['Document.addTag']}" type="button" styleClass="tag-button" icon="fas fa-tags"
+									rendered="#{dmNewDocumentView.cloudSafeEntity.writeAccess eq true}" />
+								<p:overlayPanel for="displayTags" showCloseIcon="true" style="z-index: 1001;">
+									<p:pickList id="tagPickList" value="#{dmNewDocumentView.tagDualList}" var="tag" itemLabel="#{tag.name}" itemValue="#{tag}"
+										transferOnCheckboxClick="true" showCheckbox="true" showSourceFilter="true" showTargetFilter="true" responsive="true" filterMatchMode="contains"
+										escapeValue="false" converter="#{tagEntityConverter}">
+										<p:ajax event="transfer" update="listSelectedTags" />
+										<f:facet name="sourceCaption">#{DmMsg['editDocument.availableTags']}</f:facet>
+										<f:facet name="targetCaption">#{DmMsg['editDocument.selectedTags']}</f:facet>
+									</p:pickList>
+								</p:overlayPanel>
+								<p:spacer width="15" />
+								<p:commandButton id="addNewTag" type="button" value="#{DmMsg['editDocument.addNewTag']}" styleClass="tag-button" icon="fa fa-solid fa-plus"
+									rendered="#{dmNewDocumentView.cloudSafeEntity.writeAccess eq true}" />
+							</h:panelGroup>
+
+							<div>
+								<h:panelGroup id="listSelectedTags">
+									<div id="selected-tag-list" class="tag-list">
+										<h:outputText value=" #{DmMsg['Document.tags']}: "
+											rendered="#{not empty dmNewDocumentView.tagDualList.getTarget() or not empty dmNewDocumentView.toBeAddedTags}" />
+										<ui:repeat value="#{dmNewDocumentView.toBeAddedTags}" var="newTag">
+											<div style="color: #{newTag.foregroundColor}; background-color: #{newTag.color};" class="documentTag">
+												#{newTag.name}
+												<p:commandLink id="removeTag" style="margin-left: 0.2em; color: #{newTag.foregroundColor}; " immediate="true"
+													action="#{dmNewDocumentView.removeToBeAddedTag(newTag)}" update="documentForm:tabView:listSelectedTags overlayForm:new-tag-overlay-panel">
+													<i class="fa fa-regular fa-circle-xmark"></i>
+												</p:commandLink>
+											</div>
+										</ui:repeat>
+										<ui:repeat value="#{dmNewDocumentView.tagDualList.getTarget()}" var="tag">
+											<div style="color: #{tag.foregroundColor}; background-color: #{tag.color};" class="documentTag">#{tag.name}</div>
+										</ui:repeat>
+									</div>
+								</h:panelGroup>
+							</div>
+
+						</p:tab>
+
+						<p:tab title="#{DmMsg['editDocument.metadata']}">
+							<h:panelGrid columns="2" cellpadding="4">
+								<p:outputLabel value="#{DmMsg['editDocument.uploadDate']}" />
+								<p:outputLabel value="#{dmNewDocumentView.createdOnFormatted}" />
+
+								<p:outputLabel value="#{DmMsg['editDocument.lastUpdate']}" />
+								<p:outputLabel value="#{dmNewDocumentView.lastModifiedFormatted}" />
+
+								<p:outputLabel value="#{DmMsg['editDocument.id']}" />
+								<p:outputLabel value="#{dmNewDocumentView.cloudSafeEntity.id}" />
+
+								<p:outputLabel value="#{DmMsg['editDocument.fileFormat']}" />
+								<p:outputLabel value="#{dmNewDocumentView.dcemMediaType}" />
+
+								<p:outputLabel value="#{DmMsg['editDocument.fileSize']}" />
+								<p:outputLabel value="#{dmNewDocumentView.cloudSafeEntity.lengthKb}" />
+							</h:panelGrid>
+							<p />
+							<p:commandButton value="#{DmMsg['Document.ocrText']}" icon="fa fa-indent" action="#{dmNewDocumentView.actionShowOcr}" immediate="true"
+								update="ocrTextForm" rendered="#{dmNewDocumentView.enableOcrDisplay}" />
+						</p:tab>
+
+						<p:tab title="#{DmMsg['Document.versions']}">
+							<p:dataTable reflow="true" id="versionTable" var="version" value="#{dmNewDocumentView.versions}"
+								emptyMessage="#{DmMsg['documentView.message.emptyTable']}" selection="#{dmNewDocumentView.selectedVersion}" rowKey="#{version.versionId}">
+								<p:column selectionBox="true" style="width:16px;text-align:center" />
+
+								<p:column headerText="#{DmMsg['documentView.columnTitle.lastModified']}">
+									<h:outputLabel value="#{dmNewDocumentView.getVersionLastModified(version)}" converter="dcem.LocalDateTimeConverter" />
+								</p:column>
+								<p:column headerText="#{DmMsg['editDocument.fileSize']}">
+									<h:outputLabel value="#{version.lengthKb}" />
+								</p:column>
+								<p:column headerText="#{DmMsg['Document.latest']}">
+									<h:outputLabel value="#{version.latest}" />
+								</p:column>
+							</p:dataTable>
+							<p />
+							<p:commandButton icon="fa fa-recycle" value="#{DmMsg['Document.recoverVersion']}" actionListener="#{dmNewDocumentView.actionRecoverVersion}" />
+						</p:tab>
+
+						<p:tab title="#{DmMsg['editDocument.dialog.title.share']}" rendered="#{dmDocumentView.shareDocumentsMode eq false}">
+							<h:panelGroup rendered="#{dmNewDocumentView.newDocument == true}">
+								<h:outputText value="#{DmMsg['editDocument.shareNotAvailable']}" />
+							</h:panelGroup>
+							<p:messages id="shareTabMsg" layout="table" globalOnly="false" showSummary="true" closable="true" ajax="true">
+								<p:autoUpdate />
+							</p:messages>
+							<h:panelGroup rendered="#{dmNewDocumentView.newDocument == false}">
+								<p:commandButton value="#{DmMsg['Document.button.share']}" icon="fa fa-share-alt" action="#{dmDocumentShareDialog.actionOpenAddShareCloudSafe}"
+									style="margin-right:1em" immediate="true" />
+								<p:commandButton value="#{DmMsg['Document.button.edit']}" icon="fa fa-edit" action="#{dmDocumentShareDialog.actionOpenEditShareCloudSafe}"
+									style="margin-right:1em" immediate="true" />
+								<p:commandButton value="#{DmMsg['Document.button.delete']}" icon="fa fa-trash" action="#{dmDocumentShareDialog.actionDeleteShareCloudSafe}"
+									style="margin-right:1em" update="sharedUsersTable" immediate="true" />
+								<br></br>
+								<p></p>
+
+								<p:outputLabel value="#{DmMsg['Document.sharedWith']}" style="margin-top:2em" />
+								<p:dataTable reflow="true" id="sharedUsersTable" var="shareCloudSafe" value="#{dmDocumentShareDialog.shareCloudSafeUsersAccess}"
+									emptyMessage="#{DmMsg['documentView.message.emptyTable']}" selection="#{dmDocumentShareDialog.selectedShareCloudSafe}" rowKey="#{shareCloudSafe.id}">
+									<p:column selectionMode="single" />
+									<p:column headerText="#{DmMsg['Document.group']}">
+										<h:outputLabel value="#{shareCloudSafe.group.name}" />
+									</p:column>
+									<p:column headerText="#{DmMsg['Document.user']}">
+										<h:outputLabel value="#{shareCloudSafe.user.loginId}" />
+									</p:column>
+									<p:column headerText="#{DmMsg['Document.writeAccess']}">
+										<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{shareCloudSafe.writeAccess}" />
+										<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{shareCloudSafe.writeAccess == false}" />
+									</p:column>
+									<p:column headerText="#{DmMsg['Document.restrictDownload']}">
+										<h:outputLabel class="fa fa-check" style="color:#32CD32" rendered="#{shareCloudSafe.restrictDownload}" />
+										<h:outputLabel class="fa fa-times" style="color:#DC143C" rendered="#{shareCloudSafe.restrictDownload == false}" />
+									</p:column>
+								</p:dataTable>
+							</h:panelGroup>
+						</p:tab>
+
+						<p:tab title="#{DmMsg['Document.owner']}" rendered="#{dmDocumentView.shareDocumentsMode eq false}">
+							<h:panelGroup>
+								<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+									<p:outputLabel value="#{DmMsg['Document.owner']}: " />
+									<p:outputLabel value="#{dmNewDocumentView.cloudSafeEntity.ownerName}" />
+								</h:panelGrid>
+								<h:panelGrid columns="1" cellpadding="4" cellspacing="4">
+									<p:outputLabel for="groupName" value="#{DmMsg['documentView.label.defineOwner']}" style="margin-top:1em; background-color:#D3D3D3; width:35em" />
+								</h:panelGrid>
+							</h:panelGroup>
+
+							<h:panelGroup rendered="#{dmNewDocumentView.newDocument == true}">
+								<h:panelGrid columns="1" cellpadding="4" cellspacing="4">
+									<p:outputLabel for="groupName" value="#{DmMsg['documentView.groupOwnershipChangeNotAvailable']}" style="padding-top:1em" />
+								</h:panelGrid>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{dmNewDocumentView.newDocument == false}" id="groupOwnerChangeTab">
+								<h:panelGrid columns="2" cellpadding="4" cellspacing="4">
+									<p:outputLabel for="groupName" value="#{DmMsg['documentView.label.groupname']}" />
+									<p:autoComplete id="groupName" minQueryLength="1" value="#{dmNewDocumentView.ownerGroup}" size="20" scrollHeight="250"
+										completeMethod="#{dmDocumentShareDialog.completeGroup}" effect="fade" active="#{dmDocumentShareDialog.isEnableAutoComplete() == true}"
+										inputStyle="width: 25em" />
+								</h:panelGrid>
+								<br></br>
+								<p:messages id="groupOwnerTabMsg" layout="table" globalOnly="false" showSummary="true" closable="true" ajax="true">
+									<p:autoUpdate />
+								</p:messages>
+
+								<p:commandButton style="width: 10em" icon="fa fa-check" value="#{DmMsg['documentView.button.ok']}"
+									actionListener="#{dmNewDocumentView.actionChangeOwnerShip}" update="groupOwnerChangeTab" ignoreAutoUpdate="true" />
+							</h:panelGroup>
+						</p:tab>
+					</p:tabView>
+
+					<p:commandButton value="#{DmMsg['Document.button.close']}" onclick="PF('propertiesDialog').hide();" />
+				</p:scrollPanel>
+
+			</p:dialog>
+		</h:form>
+
+		<h:form id="deletePageForm">
+			<p:dialog widgetVar="deletePageDialog" modal="true">
+				<f:facet name="header">
+					<span id="customheader"> <h:outputLabel value="#{DmMsg['editDocument.title.deletePages']}" styleClass="dialogTitle" />
+					</span>
+				</f:facet>
+				<p:messages id="deletePageMessages" layout="table" globalOnly="false" showSummary="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+				<p:outputLabel value="#{DmMsg['editDocument.from']}" />
+				<p:spinner min="1" max="#{dmNewDocumentView.maxPages}" value="#{dmNewDocumentView.deletePageFrom}" size="4" />
+				<p:spacer width="20" />
+				<p:outputLabel value="#{DmMsg['editDocument.to']}" />
+				<p:spinner min="1" max="#{dmNewDocumentView.maxPages}" value="#{dmNewDocumentView.deletePageTo}" size="4" />
+
+				<p></p>
+				<p:commandButton value="#{DmMsg['Document.button.delete']}" action="#{dmNewDocumentView.actionDeletePage}" />
+				<p></p>
+			</p:dialog>
+
+		</h:form>
+
+		<h:form id="shareEditForm">
+			<p:dialog id="shareEditDlg" widgetVar="shareEditDlg" modal="true" resizable="false" focus="shareBtn" draggable="false">
+				<p:ajax event="open" update="shareEditDlgInputs" />
+
+				<p:messages id="shareEditDlgMessages" layout="table" globalOnly="false" showSummary="true" closable="true" ajax="true">
+					<p:autoUpdate />
+				</p:messages>
+
+				<h:panelGrid columns="2" cellpadding="4" cellspacing="4" id="shareEditDlgInputs">
+					<p:outputLabel for="shareWith" value="#{DmMsg['documentView.document.shareWith']}" />
+					<p:selectOneRadio id="shareWith" value="#{dmDocumentShareDialog.shareCloudSafeType}" unselectable="true"
+						disabled="#{dmDocumentShareDialog.editingShareCloudSafe}">
+						<p:ajax listener="#{dmDocumentShareDialog.onChangeShareCloudSafeType(dmDocumentShareDialog.shareCloudSafeType)}" update="shareEditDlgInputs" />
+						<f:selectItem itemLabel="#{DmMsg['documentView.document.sharingOptions.group']}" itemValue="g" />
+						<f:selectItem itemLabel="#{DmMsg['documentView.document.sharingOptions.user']}" itemValue="u" />
+					</p:selectOneRadio>
+					<p:outputLabel value="#{DmMsg['documentView.document.sharingOptions.name']}:" />
+					<h:panelGroup id="autoCompleteUser" rendered="#{dmDocumentShareDialog.shareCloudSafeType eq 'u'}">
+						<dc:autoCompleteUser id="autoUser" userValue="#{dmDocumentShareDialog.dcemUser}" required="true" />
+					</h:panelGroup>
+
+					<p:autoComplete id="autoCompleteGroup" minQueryLength="1" value="#{dmDocumentShareDialog.shareGroupName}" size="30" scrollHeight="250"
+						rendered="#{dmDocumentShareDialog.shareCloudSafeType eq 'g'}" disabled="#{dmDocumentShareDialog.editingShareCloudSafe}"
+						completeMethod="#{dmDocumentShareDialog.completeGroup}" effect="fade" active="#{dmDocumentShareDialog.isEnableAutoComplete() == true}" required="true" />
+
+					<p:outputLabel value="#{DmMsg['documentView.columnTitle.writeAccess']}:" />
+					<p:selectBooleanCheckbox value="#{dmDocumentShareDialog.shareCloudSafeWriteAccess}" />
+
+					<p:outputLabel value="#{DmMsg['documentView.document.restrictDownload']}:" />
+					<p:selectBooleanCheckbox value="#{dmDocumentShareDialog.shareCloudSafeRestrictDownload}" />
+				</h:panelGrid>
+
+				<div style="padding-bottom: 1em; padding-top: 1em">
+					<p:commandButton id="shareBtn" styleClass="okButton" icon="fa fa-check" value="#{DmMsg['documentView.button.share']}"
+						actionListener="#{dmDocumentShareDialog.actionAddEditShareCloudSafe}" ignoreAutoUpdate="true" update="documentForm" />
+
+					<p:commandButton value="#{DmMsg['Document.button.close']}" styleClass="closeDialog" onclick="PF('shareEditDlg').hide();"
+						style="float: right; margin-right: 1em;" immediate="true" icon="fa fa-close" />
+				</div>
+			</p:dialog>
+		</h:form>
+
+
+
+		<h:form id="overlayForm">
+			<p:overlayPanel id="new-tag-overlay-panel" for="documentForm:tabView:addNewTag" showCloseIcon="true" widgetVar="overlayTagPanelVar">
+				<h:panelGrid id="addNewTagGrid" columns="2" cellpadding="2" cellspacing="2">
+					<p:outputLabel for="tagname" value="#{DmMsg['newTag.tagname']}" />
+					<p:inputText id="tagname" value="#{dmNewDocumentView.toBeAddedTag.name}" required="true" maxlength="63" style="width: 18em;" />
+					<p:outputLabel for="colorpicker" value="#{DmMsg['newTag.color']}" />
+					<p:colorPicker id="colorpicker" value="#{dmNewDocumentView.toBeAddedTag.color}" selectInput="true" required="true" appendTo="@(body)" />
+				</h:panelGrid>
+				<p:commandButton id="okNewTag" styleClass="dialog-button" icon="fa fa-check" value="#{CoreMsg['ok']}" action="#{dmNewDocumentView.actionNewTag()}"
+					update="documentForm:tabView:listSelectedTags addNewTagGrid" process="@form">
+				</p:commandButton>
+			</p:overlayPanel>
+		</h:form>
+
+		<h:form id="ocrTextForm">
+			<p:dialog widgetVar="ocrTextDialog" modal="true">
+				<f:facet name="header">
+					<span id="customheader"> <h:outputLabel value="#{DmMsg['editDocument.title.ocrText']}" styleClass="dialogTitle" />
+					</span>
+				</f:facet>
+				<p:commandButton value="#{DmMsg['Document.button.close']}" onclick="PF('ocrTextDialog').hide();" />
+				<p></p>
+				<p:scrollPanel mode="native" style="width: 50em; height: 30em; border: 1px; border-style: solid ">
+					<h:outputText escape="false" value="#{dmNewDocumentView.getTextContent()}" />
+				</p:scrollPanel>
+				<p></p>
+			</p:dialog>
+
+		</h:form>
+
+
+	</f:view>
+	<script>
+		
+	</script>
+</ui:composition>

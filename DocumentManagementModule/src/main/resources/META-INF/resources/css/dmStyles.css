@@ -67,13 +67,7 @@
 	width: 8em;
 }
 
-.breadCrumbStyle {
-	width: 50%;
-	font-size: 1.0em ! important;
-	color: gray;
-	height: 1.0em;
-	padding: 0px ! important;
-}
+
 
 .viewSecondTitleLabel {
 	font-size: 1.2em !important;
@@ -91,8 +85,15 @@
 
 .columnToggler {
 	text-align: right;
-	margin-top: -2.0em;
+	margin-top: 0.0em;
 	margin-bottom: 0.0em;
+}
+.breadCrumbStyle {
+	width: 50%;
+	font-size: 1.4em ! important;
+	color: gray;
+	padding: 0px ! important;
+	
 }
 
 .dialogButtonsDiv {

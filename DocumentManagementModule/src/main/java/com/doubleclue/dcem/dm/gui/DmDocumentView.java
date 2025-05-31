@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UINamingContainer;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
@@ -55,6 +56,7 @@ import com.doubleclue.dcem.core.entities.DcemGroup;
 import com.doubleclue.dcem.core.entities.DcemUser;
 import com.doubleclue.dcem.core.exceptions.DcemErrorCodes;
 import com.doubleclue.dcem.core.exceptions.DcemException;
+import com.doubleclue.dcem.core.gui.DcemApplicationBean;
 import com.doubleclue.dcem.core.gui.DcemView;
 import com.doubleclue.dcem.core.gui.JsfUtils;
 import com.doubleclue.dcem.core.jersey.DcemApiException;
@@ -112,6 +114,9 @@ public class DmDocumentView extends DcemView {
 
 	@Inject
 	TaskExecutor taskExecutor;
+	
+	@Inject
+	DcemApplicationBean applicationBean;
 
 	private CloudSafeEntity cloudSafeRoot;
 	private CloudSafeEntity selectedFolder;
@@ -961,10 +966,39 @@ public class DmDocumentView extends DcemView {
 	public void openEditDocument(CloudSafeEntity cloudSafeEntity) {
 		selectedCloudSafeFiles.clear();
 		selectedCloudSafeFiles.add(cloudSafeEntity);
-		openEditDocument();
+		openDocument(false);
+	}
+	
+	public String downloadPdfUrl() {
+		try {
+			String url = applicationBean.getDcemManagementUrl(null);
+			if (selectedCloudSafeFiles.isEmpty()) {
+				return "/";
+			}
+			return url + "/dmDownloadServlet?id=" + selectedCloudSafeFiles.get(0).getId();
+		} catch (DcemException e) {
+			JsfUtils.addWarnMessage(resourceBundle.getString("documentView.message.selectOnlyOneFile"));
+			return null;
+		}
+	}
+	
+	public void showDocument(CloudSafeEntity cloudSafeEntity) {
+		selectedCloudSafeFiles.clear();
+		selectedCloudSafeFiles.add(cloudSafeEntity);
+		if (operatorSessionBean.isAppSession() == true && cloudSafeEntity.getDcemMediaType() == DcemMediaType.PDF) {
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			try {
+				ec.redirect(ec.getRequestContextPath() + "/mgt/modules/dm/mobile/pdfFrame.xhtml");
+			} catch (Exception e) {
+				JsfUtils.addWarnMessage(e.toString());
+				return;
+			}
+		}
+		openDocument(true);		
 	}
 
-	public void openEditDocument() {
+
+	private void openDocument(boolean displayOnly) {
 		CloudSafeEntity cloudSafeEntity;
 		if (selectedCloudSafeFiles != null && selectedCloudSafeFiles.size() == 1) {
 			cloudSafeEntity = cloudSafeLogic.getCloudSafe(selectedCloudSafeFiles.get(0).getId()); // refresh Entity
@@ -975,7 +1009,7 @@ public class DmDocumentView extends DcemView {
 			return;
 		}
 		try {
-			dmNewDocumentView.editDocument(cloudSafeEntity, cloudSafeEntityFiles);
+			dmNewDocumentView.editDocument(cloudSafeEntity, cloudSafeEntityFiles, displayOnly);
 			viewNavigator.setActiveView(DocumentManagementModule.MODULE_ID + DcemConstants.MODULE_VIEW_SPLITTER + dmNewDocumentView.getSubject().getViewName());
 		} catch (DcemException e) {
 			logger.error("", e);

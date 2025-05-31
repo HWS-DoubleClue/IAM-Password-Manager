@@ -1,21 +1,47 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui">
-
-	<div class="columnToggler" rendered="#{operatorSession.appSession eq false}">
-		<p:commandButton id="toggler" value="#{DmMsg['documentView.columns']}" icon="pi pi-align-justify" rendered="#{operatorSession.appSession eq false}" />
-		<p:columnToggler datasource="documentTable" trigger="toggler" rendered="#{operatorSession.appSession eq false}">
-			<p:ajax event="toggle" listener="#{dmDocumentView.onColumnToggle}" />
-		</p:columnToggler>
+ 
+	<div style="float: right; margin-top: -30px; display: inline-block;">
+		<p:commandButton id="toggler" type="button" value="#{CoreMsg['columns']}" icon="fa fa-th" rendered="#{operatorSession.appSession eq false}" />
 	</div>
-<p></p>
+	<p:columnToggler datasource="documentTable" trigger="toggler" rendered="#{operatorSession.appSession eq false}">
+		<p:ajax event="toggle" listener="#{dmDocumentView.onColumnToggle}" />
+	</p:columnToggler> 
+
 	<p:dataTable id="documentTable" var="document" value="#{dmDocumentView.currentFiles}" emptyMessage="#{DmMsg['documentView.message.emptyTable']}"
 		selection="#{dmDocumentView.selectedCloudSafeFiles}" rowKey="#{document.id}" selectionRowMode="none" sortMode="single" rows="20"
-		rowsPerPageTemplate="20,50,100,200" paginator="true" paginatorPosition="bottom" style="table-layout: fixed !Important"
+		rowsPerPageTemplate="20,50,100,200" paginator="true" paginatorPosition="bottom"
 		paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
 		<p:column selectionMode="multiple" toggleable="false" selectionBox="true">
 			<p:graphicImage styleClass="optionImage" title="#{DmMsg['documentView.discarded']}" library="pictures" name="dicards.png"
 				rendered="#{document.discardAfter != null }" />
+		</p:column>
+
+		<p:column headerText="" responsivePriority="1">
+			<p:commandLink id="overlayMenu" style="margin: 0.5em">
+				<h:outputText class="pi pi-ellipsis-v" />
+			</p:commandLink>
+			<p:menu overlay="true" trigger="documentTable:overlayMenu" my="left top" at="left bottom" style="width: 15em">
+				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles (document)}" icon="fa fa-cloud-download" />
+				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument(document)}" icon="fa fa-pencil"
+					rendered="#{operatorSession.appSession eq false}" />
+					
+				<p:menuitem value="#{DmMsg['Document.button.show']}" icon="pi pi-eye" action="#{dmDocumentView.showDocument(document)}" />
+
+				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+
+				<p:menuitem value="#{DmMsg['Document.button.workflow']}" action="#{dmDocumentView.openWorkflow(document)}" icon="fa fa-cubes"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+
+				<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
+					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+				<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
+					disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+			</p:menu>
 		</p:column>
 
 		<p:column id="fileName" headerText="#{DmMsg['documentView.columnTitle.filename']}" sortBy="#{document.name}" filterBy="#{document.name}"
@@ -100,31 +126,22 @@
 			<h:outputText value="#{document.id}" style="margin-right: 1em" />
 		</p:column>
 
-		<p:column headerText="Menu" responsivePriority="1">
-			<p:commandLink id="overlayMenu" style="margin: 0.5em">
-				<h:outputText class="pi pi-ellipsis-v" />
-			</p:commandLink>
-			<p:menu overlay="true" trigger="documentTable:overlayMenu" my="left top" at="left bottom" style="width: 15em">
-				<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles (document)}" icon="fa fa-cloud-download" />
-				<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument(document)}" icon="fa fa-pencil" />
-				<p:menuitem value="display"  icon="fa fa-file" onclick="dmScript.showDocument('#{document.id}')"
-								 
-					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-				
-				<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
-					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-					
-				<p:menuitem value="#{DmMsg['Document.button.workflow']}" action="#{dmDocumentView.openWorkflow(document)}" icon="fa fa-cubes"
-					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
 
-				<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
-					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-				<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
-					rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-				<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
-					disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
-			</p:menu>
-		</p:column>
 	</p:dataTable>
+
+	<!-- <p:contextMenu id="nodeContextMenu" widgetVar="nodeContextMenu" for="documentTable" style="width: 20em">
+		<p:menuitem value="#{DmMsg['documentView.button.download']}" action="#{dmDocumentView.onDownloadFiles}" icon="fa fa-cloud-download" />
+		<p:menuitem value="#{DmMsg['Document.button.edit']}" action="#{dmDocumentView.openEditDocument()}" icon="fa fa-pencil" />
+		<p:menuitem value="#{DmMsg['documentView.button.moveToTrash']}" onclick="PF('confirmDlg').show();" icon="fa fa-trash"
+			rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+		<p:menuitem value="#{DmMsg['Document.button.workflow']}" action="#{dmDocumentView.openWorkflow()}" icon="fa fa-cubes"
+			rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+		<p:menuitem value="#{DmMsg['documentView.button.addFolder']}" action="#{dmDocumentView.onAddFolder}" icon="fa fa-plus"
+			rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+		<p:menuitem value="#{DmMsg['documentView.button.cutFolder']}" action="#{dmDocumentView.cutSelectedFilesOrFolders}" icon="fa fa-scissors"
+			rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+		<p:menuitem value="#{DmMsg['documentView.button.pasteFolder']}" action="#{dmDocumentView.pasteSelectedFilesOrFolders}" icon="fa fa-clipboard"
+			disabled="#{dmDocumentView.pasteDisabled}" rendered="#{dmDocumentView.isShareDocumentsMode() eq false}" />
+	</p:contextMenu> -->
 
 </ui:composition>

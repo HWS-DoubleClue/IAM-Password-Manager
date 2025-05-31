@@ -15,25 +15,25 @@
 			<p:scrollPanel mode="native" styleClass="align-items-center justify-content-center" style="height: 40em;border: 1px; border-style: solid; border-color: grey">
 				<p:panel style="border: 1px; border-style: solid; border-color: grey">
 					<p:graphicImage height="32" width="32" library="pictures" name="#{dmNewDocumentView.dcemMediaType.iconResourcePath}" style="vertical-align: middle;" />
-					<p:outputLabel id="nameOutput" value="#{dmNewDocumentView.cloudSafeEntity.name}"
+					<p:outputLabel id="nameOutput" value="#{dmNewDocumentView.cloudSafeEntity.name}" rendered="#{dmNewDocumentView.displayOnly}"
 						style="max-width:25em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; margin-left: 0.5em; font-weight: bold; font-size: large" />
+					<p:inputText id="name" value="#{dmNewDocumentView.cloudSafeEntity.name}" required="true" maxlength="255" size="50"
+						rendered="#{dmNewDocumentView.displayOnly eq false}" style="margin-left: 1em;" />
 					<p:panel style="float: right">
-						<p:commandLink onclick="PF('propertiesDialog').show();" immediate="true" styleClass="normalToolBarButtons">
+						<p:commandLink action="#{dmNewDocumentView.actionSave}" update="documentForm" styleClass="normalToolBarButtons"
+							rendered="#{dmNewDocumentView.displayOnly eq false}">
+							<h:outputText id="saveDoc" class="fa fa-floppy-disk" />
+							<p:tooltip for="saveDoc" value="#{DmMsg['Document.button.save']}" position="bottom" />
+						</p:commandLink>
+						<p:commandLink onclick="PF('propertiesDialog').show();" immediate="true" styleClass="normalToolBarButtons" rendered="#{dmNewDocumentView.displayOnly eq false}">
 							<h:outputText id="actionUpDown" class="fa fa-gears" />
 							<p:tooltip for="actionUpDown" value="#{DmMsg['documentView.properties']}" position="bottom" />
 						</p:commandLink>
-
-						<p:commandButton value="#{DmMsg['Document.button.save']}" icon="fa fa-floppy-disk" action="#{dmNewDocumentView.actionSave}" update="documentForm"
-							rendered="#{dmNewDocumentView.cloudSafeEntity.writeAccess eq true}" />
-						<p:outputLabel rendered="#{dmNewDocumentView.cloudSafeEntity.writeAccess eq false}" value="#{DmMsg['message.writeProtected']}"
-							style="color: orange; font-weight: bold" />
 
 						<p:commandLink action="#{dmNewDocumentView.actionToDocuments}" immediate="true" styleClass="normalToolBarButtons">
 							<h:outputText id="actionToDocuments" class="fa fa-file-lines" />
 							<p:tooltip for="actionToDocuments" value="#{DmMsg['documentView.ToDocuments']}" position="bottom" />
 						</p:commandLink>
-
-
 
 						<!-- 	<p:commandLink action="#{dmNewDocumentView.actionUpDown}" immediate="true" styleClass="normalToolBarButtons" update="panelTable"
 									rendered="#{dmNewDocumentView.viewColumns eq 2}">
@@ -56,7 +56,7 @@
 				</p:panel>
 
 				<h:panelGroup id="pdfPanelView" rendered="#{dmNewDocumentView.pdfViewer == true}" class="card">
-					<h:panelGroup rendered="#{dmNewDocumentView.dcemMediaType == 'PDF'}">
+					<h:panelGroup rendered="#{dmNewDocumentView.dcemMediaType == 'PDF' and dmNewDocumentView.displayOnly eq false}">
 						<p:fileUpload id="fileUpload" label="#{DmMsg['Document.button.upload']}" ajax="true" auto="true" value="#{dmNewDocumentView.uploadedFilePage}"
 							mode="simple" skinSimple="true" listener="#{dmNewDocumentView.uploadPageListener}" process="@this" style="margin-left: 0.5em"
 							accept=".gif,.jpg,.jpeg,.png,.pdf" update="@form deletePageForm">
@@ -76,15 +76,17 @@
 					</p:media>
 
 				</h:panelGroup>
-				<h:panelGroup id="textView" rendered="#{dmNewDocumentView.dcemMediaType == 'TEXT'}">
-					<p:commandButton action="#{dmNewDocumentView.actionConvertRichText}" value="#{DmMsg['Document.convertRichText']}" icon="fa fa-newspaper"
-						style="margin-right:1em; margin-top: 0.5em;" immediate="true" update="@form" />
-					<p:commandButton action="#{dmNewDocumentView.convertPdf}" value="#{DmMsg['Document.convertPdf']}" icon="fa fa-file-pdf"
-						style="margin-right:1em; margin-top: 0.5em;" immediate="true" />
+				<h:panelGroup id="textView" rendered="#{dmNewDocumentView.dcemMediaType == 'TEXT' }">
+					<h:panelGroup rendered="#{dmNewDocumentView.displayOnly eq false}">
+						<p:commandButton action="#{dmNewDocumentView.actionConvertRichText}" value="#{DmMsg['Document.convertRichText']}" icon="fa fa-newspaper"
+							style="margin-right:1em; margin-top: 0.5em;" immediate="true" update="@form" />
+						<p:commandButton action="#{dmNewDocumentView.convertPdf}" value="#{DmMsg['Document.convertPdf']}" icon="fa fa-file-pdf"
+							style="margin-right:1em; margin-top: 0.5em;" immediate="true" />
+					</h:panelGroup>
 					<p:inputTextarea id="textAreaView" style="width: 98%; height: 100%" value="#{dmNewDocumentView.stringContent}" autoResize="false" />
 				</h:panelGroup>
 				<p:panel id="editorPanelView" rendered="#{dmNewDocumentView.dcemMediaType == 'XHTML'}">
-					<p:textEditor id="editorView" value="#{dmNewDocumentView.stringContent}" autoResize="true" style="width: 55em; height: 40em" />
+					<p:textEditor id="editorView" value="#{dmNewDocumentView.stringContent}" autoResize="true" style="width: 100%; height: 40em" />
 				</p:panel>
 				<p:panel id="imagePanelView" rendered="#{dmNewDocumentView.imageViewer == true}">
 					<p:graphicImage id="imageView" cache="false" value="#{dmNewDocumentView.streamedContent}" stream="false" autoResize="true"
@@ -100,7 +102,7 @@
 				<h:panelGroup id="folderView" rendered="#{dmNewDocumentView.dcemMediaType == 'Folder'}">
 					<p:dataTable value="#{dmNewDocumentView.folderDocuments}" var="document" selectionDisabled="true">
 						<p:column width="2em">
-							<p:graphicImage styleClass="viewFileImage" library="pictures" name="icons/16x16/#{dmDocumentView.getFileIcon(document)}" />
+							<p:graphicImage styleClass="viewFileImage" library="pictures" name="#{dmDocumentView.getFileIcon(document)}" />
 						</p:column>
 						<p:column headerText="#{DmMsg['documentView.columnTitle.filename']}" sortBy="#{document.name}" filterBy="#{document.name}">
 							<h:outputText value="#{document.name}" />
@@ -109,10 +111,10 @@
 				</h:panelGroup>
 			</p:scrollPanel>
 
-			<p:dialog widgetVar="propertiesDialog" modal="true" dynamic="true" width="30em" position="top" my="top">
+			<p:dialog widgetVar="propertiesDialog" modal="true" dynamic="true" position="top" my="top">
 				<p:commandButton icon="pi pi-check" value="#{DmMsg['Document.button.close']}" onclick="PF('propertiesDialog').hide();" />
-				<p:scrollPanel mode="native" style="height: 30em;">
-					<p:tabView style="margin-top: 0.4em; widht: 20em" id="tabView" scrollable="true">
+				<p:scrollPanel mode="native" style="height: 50em;">
+					<p:tabView style="margin-top: 0.4em; width: 50em" id="tabView" scrollable="true">
 						<p:tab>
 							<f:facet name="title">
 								<p:outputLabel value="#{DmMsg['editDocument.info']}" />
@@ -203,7 +205,7 @@
 							</h:panelGrid>
 							<p />
 							<p:commandButton value="#{DmMsg['Document.ocrText']}" icon="fa fa-indent" action="#{dmNewDocumentView.actionShowOcr}" immediate="true"
-								update="ocrTextForm" />
+								update="ocrTextForm" rendered="#{dmNewDocumentView.enableOcrDisplay}" />
 						</p:tab>
 
 						<p:tab title="#{DmMsg['Document.versions']}">

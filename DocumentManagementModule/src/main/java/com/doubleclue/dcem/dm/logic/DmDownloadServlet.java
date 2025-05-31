@@ -1,6 +1,7 @@
 package com.doubleclue.dcem.dm.logic;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -59,7 +60,7 @@ public class DmDownloadServlet extends HttpServlet {
 		if (logger.isTraceEnabled()) {
 			logger.trace("DCUP - Received Request via GET: " + request.getQueryString());
 		}
-		String documentId = request.getParameter("documentId");
+		String documentId = request.getParameter("id");
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		if (documentId == null) {
 			redirectToErrorPage(request, response, "", "No document id specified");
@@ -67,7 +68,10 @@ public class DmDownloadServlet extends HttpServlet {
 		}
 		try {
 			OutputStream outputStream = response.getOutputStream();
+		//	FileOutputStream fileOutputStream = new FileOutputStream("C:\\temp\\pdfviewer2.pdf");
 			documentLogic.convertDocumentToPdfStream(documentId, outputStream);
+			outputStream.flush();
+			outputStream.close();
 		} catch (Exception exp) {
 			logger.error(documentId, exp);
 			redirectToErrorPage(request, response, "Document Management", "Upps something get wrong. Cannot getDocuemnt");
@@ -88,6 +92,6 @@ public class DmDownloadServlet extends HttpServlet {
 		// forgotPasswordErrorView.setTitle(title);
 		// forgotPasswordErrorView.setMessage(errorMessage);
 		// forgotPasswordErrorView.setError(true);
-		response.sendRedirect(request.getContextPath() + DcemConstants.WEB_MGT_CONTEXT + "/error_.xhtml");
+ 		response.sendRedirect(request.getContextPath() + DcemConstants.WEB_MGT_CONTEXT + "/error_.xhtml");
 	}
 }
