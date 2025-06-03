@@ -2,7 +2,7 @@
 <!DOCTYPE xml>
 <persistence version="2.1"
 	xmlns="http://xmlns.jcp.org/xml/ns/persistence">
-	<persistence-unit name="saml" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="dcem.saml" transaction-type="RESOURCE_LOCAL">
 		<class>com.doubleclue.dcem.saml.entities.SamlSpMetadataEntity</class>
 	</persistence-unit>
 </persistence>

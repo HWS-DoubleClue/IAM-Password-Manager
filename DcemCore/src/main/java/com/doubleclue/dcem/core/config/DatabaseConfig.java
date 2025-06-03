@@ -34,7 +34,7 @@ public class DatabaseConfig implements Cloneable, Serializable {
 	private boolean databaseConfigured = false;
 
 	@NotNull(message = "{database.config.databaseType.notNull}")
-	private String databaseType = DatabaseTypes.DERBY.name();
+	private String databaseType = DatabaseTypes.POSTGRE.name();
 
 	@NotNull(message = "{database.config.databaseName.notNull}")
 	@Pattern(regexp = "[0-9a-zA-Z_]*", message = "{database.config.databaseName.invalid}")
@@ -50,7 +50,7 @@ public class DatabaseConfig implements Cloneable, Serializable {
 	private int port = DatabaseTypes.MARIADB.getDefaultPort();
 
 
-	private String jdbcUrl = DatabaseTypes.DERBY.getProtocol();
+	private String jdbcUrl = DatabaseTypes.POSTGRE.getProtocol();
 
 	@NotNull(message = "{database.config.adminName.notNull}")
 	private String adminName = DEFAULT_USER_NAME;

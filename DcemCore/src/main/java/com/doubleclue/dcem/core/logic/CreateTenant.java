@@ -261,7 +261,11 @@ public class CreateTenant {
 				if (module.isMasterOnly() && masterTenant == false && (module.getId() != SystemModule.MODULE_ID)) {
 					continue;
 				}
-				String fileName = "com/doubleclue/dcem/db/" + dbType.name() + "/dcem." + module.getId() + "Tables.sql";
+				String moduelId = module.getId();
+			 	if (moduelId == "ps") {
+			 		moduelId = "up";
+			 	}
+				String fileName = "com/doubleclue/dcem/db/" + dbType.name() + "/dcem." + moduelId + "Tables.sql";
 				URL url = null;
 				try {
 					url = classloader.getResource(fileName);

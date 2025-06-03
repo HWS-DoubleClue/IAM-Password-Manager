@@ -40,13 +40,13 @@
 
 						<p:outputLabel for="url" value="JDBC-URL " />
 						<h:panelGroup>
-							<p:inputText id="url" value="#{dbView.dbConfig.jdbcUrl}" size="100" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
+							<p:inputText id="url" value="#{dbView.dbConfig.jdbcUrl}" size="100" required="true" />
 							<p:commandButton id="urlBtn" value="Configure URL" style="width: 10em; color: white;" icon="fa fa-cog" immediate="true" onclick="PF('urlConfig').show();"
-								disabled="#{dbView.embedded}" />
+								/>
 						</h:panelGroup>
 
 						<p:outputLabel for="database" value="Database Name " />
-						<p:inputText id="database" value="#{dbView.dbConfig.databaseName}" required="true" disabled="#{dbView.embedded}" />
+						<p:inputText id="database" value="#{dbView.dbConfig.databaseName}" required="true"  />
 
 						<p:outputLabel for="schema" value="Schema Name " rendered="#{dbView.withSchema()}" />
 						<h:panelGroup rendered="#{dbView.withSchema()}">
@@ -56,11 +56,11 @@
 
 						<p:outputLabel for="admin" value="Administrator Name " />
 						<h:panelGroup>
-							<p:inputText id="admin" value="#{dbView.dbConfig.adminName}" required="true" title="Admin for DCEM database connections" disabled="#{dbView.embedded}" />
+							<p:inputText id="admin" value="#{dbView.dbConfig.adminName}" required="true" title="Admin for DCEM database connections"  />
 							<p:tooltip id="toolTipFocus" for="admin" showEvent="focus" hideEvent="blur" />
 						</h:panelGroup>
 						<p:outputLabel for="password" value="Administrator Password " />
-						<p:password id="password" title="Password will be encrypted and saved in configuration.xml file." disabled="#{dbView.embedded}"
+						<p:password id="password" title="Password will be encrypted and saved in configuration.xml file." 
 							value="#{dbView.dbConfig.adminPassword}" redisplay="true" toggleMask="true" autocomplete="false"
 							validatorMessage="Please enter a strong password with at least 4 digits.">
 							<f:validateLength minimum="4"></f:validateLength>
@@ -122,12 +122,12 @@
 					<h:panelGrid columns="2" cellspacing="4" cellpadding="4" rendered="#{createTablesView.tablesRequired}">
 						<p:outputLabel for="tableAdmin" value="Create-Tables Administrator Name: " />
 						<h:panelGroup>
-							<p:inputText id="tableAdmin" value="#{createTablesView.adminName}" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
+							<p:inputText id="tableAdmin" value="#{createTablesView.adminName}" required="true" />
 							<h:graphicImage id="tableAdminInfo" name="pictures/icons/16x16/icon_question.png" style="padding-left: 8px" />
 							<p:tooltip for="tableAdminInfo" position="top" value="DB Admin requires DB rights to create tables. This password will not be saved." />
 						</h:panelGroup>
 						<p:outputLabel for="tablePassword" value="Create-Tables Administrator Password: " />
-						<p:password id="tablePassword" value="#{createTablesView.adminPassword}" required="false" redisplay="true" disabled="#{dbView.embedded}"
+						<p:password id="tablePassword" value="#{createTablesView.adminPassword}" required="false" redisplay="true"
 							validatorMessage="Please enter a strong password with at least 4 digits." toggleMask="true">
 							<f:validateLength minimum="4"></f:validateLength>
 						</p:password>
@@ -177,12 +177,12 @@
 					<h:panelGrid columns="2" cellspacing="4" cellpadding="4">
 						<p:outputLabel for="migAdmin" value="Create-Tables Administrator Name: " />
 						<h:panelGroup>
-							<p:inputText id="migAdmin" value="#{migrationView.adminName}" required="#{dbView.embedded == false}" disabled="#{dbView.embedded}" />
+							<p:inputText id="migAdmin" value="#{migrationView.adminName}" required="true"  />
 							<h:graphicImage id="migAdminInfo" name="pictures/icons/16x16/icon_question.png" style="padding-left: 8px" />
 							<p:tooltip for="migAdminInfo" position="top" value="DB Admin requires DB rights to create tables. This password will not be saved." />
 						</h:panelGroup>
 						<p:outputLabel for="migPassword" value="Create-Tables Administrator Password: " />
-						<p:password id="migPassword" value="#{migrationView.adminPassword}" required="false" toggleMask="true" redisplay="true" disabled="#{dbView.embedded}" />
+						<p:password id="migPassword" value="#{migrationView.adminPassword}" required="false" toggleMask="true" redisplay="true"  />
 
 					</h:panelGrid>
 					<p />
@@ -271,7 +271,7 @@
 					<p:outputLabel class="viewTitle" value=" Please do a database backup before migration!" />
 				</f:facet>
 				<p />
-				<p:outputLabel value="Before migration you should do a database backup. If you use the 'Embedded Database', the backup will be done automatically." />
+				<p:outputLabel value="Before migration you should do a database backup." />
 				<p />
 				<p:commandButton id="migrateConfirmed" value="Yes, I did a database backup" style="width: 280px;" action="#{migrationView.actionMigrate}" ajax="true"
 					immediate="false" icon="fa fa-check" />
@@ -279,24 +279,7 @@
 				<p:commandButton id="cancelMigrate" value="Cancel" style="width: 8em;" onclick="PF('confirmBackup').hide();" icon="fa fa-close" />
 				<p />
 			</p:dialog>
-
-			<p:dialog widgetVar="embeddedDbMsg" modal="true">
-				<f:facet name="header">
-					<h:outputText class="fa fa-exclamation-triangle" style="vertical-align: middle; font-size: 1.8em; padding-right: 6px; color: #850000" />
-					<p:outputLabel class="viewTitle" value=" Embedded Database" />
-				</f:facet>
-				<p />
-				<ul style="list-style-type: square;">
-					<li><p:outputLabel value="The 'Embedded Database' does not support multiple nodes!" /></li>
-					<li><p:outputLabel value="Database is stored at: #{dbView.embeddedDir}." /></li>
-					<li><p:outputLabel value="To backup the database directory, you have to stop DCEM first and then copy the directory." /></li>
-				</ul>
-				<p />
-				<br />
-				<p:commandButton id="embeddedMsgOk" immediate="true" value="Close" style="width: 8em; color: white;" icon="fa fa-close"
-					onclick="PF('embeddedDbMsg').close();" ajax="true" />
-				<p />
-			</p:dialog>
+			
 		</h:form>
 		<h:form id="cloudSafeStorageForm">
 			<p:remoteCommand name="updateDialog" update="currentType" />

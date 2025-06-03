@@ -178,7 +178,7 @@ public class DbLogic {
 			return list;
 		}
 		try {
-			if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == false) {
+		//	if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == false) {
 				list.add("Connection successful");
 				Statement statement = conn.createStatement();
 				ResultSet rs = null;
@@ -210,7 +210,7 @@ public class DbLogic {
 				} else {
 					list.add("Database already exists.");
 				}
-			}
+	//		}
 
 			// check if "dbversion" table is there
 			if (isTablesAvailable(conn, databaseConfig)) {
@@ -224,9 +224,9 @@ public class DbLogic {
 				}
 
 				try {
-					if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == false) {
+			//		if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == false) {
 						conn.createStatement().execute(databaseType.getSchemaSwitch() + databaseConfig.getDatabaseName());
-					}
+			//		}
 					DbEncryption.createDbCiphers(databaseConfig);
 					JdbcUtils.verifyDbKey(conn, databaseConfig);
 				} catch (DcemException e) {
@@ -559,9 +559,9 @@ public class DbLogic {
 	private boolean isTablesAvailable(Connection conn, DatabaseConfig databaseConfig) throws SQLException {
 		String[] types = { "TABLE", "VIEW" };
 		String tables = "core_%";
-		if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == true) {
-			tables = "CORE_%";
-		}
+//		if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == true) {
+//			tables = "CORE_%";
+//		}
 		ResultSet rsTables;
 		DatabaseTypes dbType = DatabaseTypes.valueOf(databaseConfig.getDatabaseType());
 		if (dbType == DatabaseTypes.POSTGRE) {

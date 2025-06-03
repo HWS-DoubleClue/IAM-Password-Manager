@@ -37,17 +37,17 @@ public enum DatabaseTypes {
 			"select 1",
 			"CREATE DATABASE {{db.name}} collate Latin1_General_CI_AS;\nALTER DATABASE {{db.name}} SET READ_COMMITTED_SNAPSHOT ON;",
 			"\\"),
-	DERBY(
-			1527,
-			"Embedded-Database",
-			"jdbc:derby",
-			"org.apache.derby.jdbc.EmbeddedDriver",
-			"org.hibernate.dialect.DerbyTenSevenDialect",
-			true,
-			null,
-			"select 1",
-			"CREATE DATABASE {{db.name}};",
-			"\\\\"),
+//	DERBY(
+//			1527,
+//			"Embedded-Database",
+//			"jdbc:derby",
+//			"org.apache.derby.jdbc.EmbeddedDriver",
+//			"org.hibernate.dialect.DerbyTenSevenDialect",
+//			true,
+//			null,
+//			"select 1",
+//			"CREATE DATABASE {{db.name}};",
+//			"\\\\"),
 	POSTGRE(
 			5432,
 			"PostgreSQL",
@@ -59,19 +59,19 @@ public enum DatabaseTypes {
 			"select 1",
 			"CREATE SCHEMA {{db.name}}",
 			"\\\\"
-			), 
-
-	ORACLE(
-			1521,
-			"Oracle DB Server",
-			"jdbc:oracle:thin",
-			"oracle.jdbc.driver.OracleDriver",
-			"org.hibernate.dialect.Oracle12cDialect",
-			false,
-			"ALTER SESSION SET CURRENT_SCHEMA = ",
-			"select 1 from sys.dual",
-			"CREATE USER {{db.name}} IDENTIFIED BY {{db.namepwd}};",
-			"\\\\"
+//			), 
+//
+//	ORACLE(
+//			1521,
+//			"Oracle DB Server",
+//			"jdbc:oracle:thin",
+//			"oracle.jdbc.driver.OracleDriver",
+//			"org.hibernate.dialect.Oracle12cDialect",
+//			false,
+//			"ALTER SESSION SET CURRENT_SCHEMA = ",
+//			"select 1 from sys.dual",
+//			"CREATE USER {{db.name}} IDENTIFIED BY {{db.namepwd}};",
+//			"\\\\"
 			);
 	
 	private int defaultPort;

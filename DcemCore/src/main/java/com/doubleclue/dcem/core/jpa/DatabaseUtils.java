@@ -52,11 +52,11 @@ public class DatabaseUtils {
 		case MSSQL:
 			dbUrl = dbType.getProtocol() + "://" + databaseConfig.getIpAddress() + ":" + databaseConfig.getPort();
 			break;
-		case DERBY: 
+//		case DERBY: 
 //			// jdbc:derby:DatabaseName
 //			dbUrl = dbType.getProtocol() + "://" + databaseConfig.getIpAddress() + ":" + databaseConfig.getPort() +  ";";
-			dbUrl = dbType.getProtocol() + ":" + DatabaseConfig.DEFAULT_DATABASE_NAME  + ";collation=TERRITORY_BASED:PRIMARY"; 
-			break;
+//			dbUrl = dbType.getProtocol() + ":" + DatabaseConfig.DEFAULT_DATABASE_NAME  + ";collation=TERRITORY_BASED:PRIMARY"; 
+//			break;
 //		case ORACLE:
 //			dbUrl = dbType.getProtocol() + ":@" + databaseConfig.getIpAddress() + ":" + databaseConfig.getPort();
 //			break;

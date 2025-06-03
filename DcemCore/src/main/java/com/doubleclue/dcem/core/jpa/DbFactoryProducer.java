@@ -102,10 +102,10 @@ public class DbFactoryProducer {
 
 		if (databaseConfig != null && databaseConfig.isDatabaseConfigured()) {
 			dbType = DatabaseTypes.valueOf(databaseConfig.getDatabaseType());
-			if (dbType != DatabaseTypes.DERBY) {
+//			if (dbType != DatabaseTypes.DERBY) {
 				settings.put("javax.persistence.jdbc.user", databaseConfig.getAdminName());
 				settings.put("javax.persistence.jdbc.password", databaseConfig.getAdminPassword());
-			}
+//			}
 			UrlDriverName urlDriverName = DatabaseUtils.getUrlAndDriverName(databaseConfig);
 			settings.put("javax.persistence.jdbc.driver", urlDriverName.driverName);
 			if (dbType == DatabaseTypes.MSSQL) {
@@ -114,14 +114,14 @@ public class DbFactoryProducer {
 				settings.put(HIBERNATE_C3P0_MAX_STATEMENTS, Integer.toString(dbPoolConfig.getMaxStatements()));
 			}
 			settings.put("javax.persistence.jdbc.url", urlDriverName.url);
-			if (dbType != DatabaseTypes.DERBY) {
+//			if (dbType != DatabaseTypes.DERBY) {
 				String schemaName = databaseConfig.getSchemaName().trim();
 				if (dbType == DatabaseTypes.MSSQL && schemaName.length() > 0) {
 					settings.put(Environment.DEFAULT_SCHEMA, databaseConfig.getDatabaseName() + "." + schemaName);
 				} else {
 					settings.put(Environment.DEFAULT_SCHEMA, databaseConfig.getDatabaseName());
 				}
-			}
+//			}
 			
 			/**
 			 * hibernate settings
@@ -216,12 +216,12 @@ public class DbFactoryProducer {
 			dbSettings.put(org.hibernate.jpa.AvailableSettings.LOADED_CLASSES, entitties);
 			PersistenceProvider provider = new HibernatePersistenceProvider();
 			// emfMaster = provider.createEntityManagerFactory(PU_NAME, dbSettings);
-			if (dbType != DatabaseTypes.DERBY) {
+//			if (dbType != DatabaseTypes.DERBY) {
 				dbSettings.remove(Environment.DEFAULT_SCHEMA);
 				dbSettings.put(Environment.MULTI_TENANT, MultiTenancyStrategy.SCHEMA.name());
 				dbSettings.put(Environment.MULTI_TENANT_CONNECTION_PROVIDER, MultiTenantConnectionProviderImpl.class.getName());
 				dbSettings.put(Environment.MULTI_TENANT_IDENTIFIER_RESOLVER, TenantIdResolver.class.getName());
-			}
+//			}
 			emf = provider.createEntityManagerFactory(PU_NAME, dbSettings);
 			logger.info("EntityManagerFactory for tenant created");
 			return emf;

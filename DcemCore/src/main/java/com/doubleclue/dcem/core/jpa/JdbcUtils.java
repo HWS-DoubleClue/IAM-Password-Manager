@@ -51,10 +51,10 @@ public class JdbcUtils {
 
 	public static Connection getJdbcConnectionWithSchema(DatabaseConfig databaseConfig, String adminName, String adminPassword) throws Exception {
 		Connection conn = getJdbcConnection(databaseConfig, adminName, adminPassword);
-		if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == false) {
+//		if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == false) {
 			DatabaseTypes databaseType = DatabaseTypes.valueOf(databaseConfig.getDatabaseType());
 			conn.createStatement().execute(databaseType.getSchemaSwitch() + databaseConfig.getDatabaseName());
-		}
+//		}
 		return conn;
 	}
 
@@ -62,26 +62,26 @@ public class JdbcUtils {
 		Connection conn = null;
 		UrlDriverName urlDriverName = DatabaseUtils.getUrlAndDriverName(databaseConfig);
 		while (true) {
-			if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name())) {
-				Properties prop = System.getProperties();
-				try {
-					File file = LocalPaths.getDerbyDirectory();
-					prop.setProperty("derby.system.home", file.getAbsolutePath());
-					File fileSchema = new File(file, DatabaseConfig.DEFAULT_DATABASE_NAME);
-					if (fileSchema.exists() == false) {
-						urlDriverName.url += ";create=true";
-					}
-
-				} catch (DcemException exp) {
-					logger.error(exp);
-				}
-				try {
-					conn = DriverManager.getConnection(urlDriverName.url);
-				} catch (Exception e) {
-					logger.error("JDBC Connection failed URL : " + urlDriverName.url, e);
-					throw e;
-				}
-			} else {
+//			if (databaseConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name())) {
+//				Properties prop = System.getProperties();
+//				try {
+//					File file = LocalPaths.getDerbyDirectory();
+//					prop.setProperty("derby.system.home", file.getAbsolutePath());
+//					File fileSchema = new File(file, DatabaseConfig.DEFAULT_DATABASE_NAME);
+//					if (fileSchema.exists() == false) {
+//						urlDriverName.url += ";create=true";
+//					}
+//
+//				} catch (DcemException exp) {
+//					logger.error(exp);
+//				}
+//				try {
+//					conn = DriverManager.getConnection(urlDriverName.url);
+//				} catch (Exception e) {
+//					logger.error("JDBC Connection failed URL : " + urlDriverName.url, e);
+//					throw e;
+//				}
+//			} else {
 				if (adminName == null) {
 					adminName = databaseConfig.getAdminName();
 					adminPassword = databaseConfig.getAdminPassword();
@@ -92,7 +92,7 @@ public class JdbcUtils {
 					logger.error("JDBC Connection failed URL : " + urlDriverName.url, e);
 					throw e;
 				}
-			}
+		//	}
 			break;
 		}
 		return conn;
@@ -104,27 +104,27 @@ public class JdbcUtils {
 		UrlDriverName urlDriverName = DatabaseUtils.getUrlAndDriverName(databaseConfig);
 		while (true) {
 			try {
-				if (databaseType == DatabaseTypes.DERBY) {
-					Properties prop = System.getProperties();
-					try {
-						File file = LocalPaths.getDerbyDirectory();
-						prop.setProperty("derby.system.home", file.getAbsolutePath());
-						File fileSchema = new File(file, DatabaseConfig.DEFAULT_DATABASE_NAME);
-						if (fileSchema.exists() == false) {
-							urlDriverName.url += ";create=true";
-						}
-
-					} catch (DcemException exp) {
-						logger.error(exp);
-					}
-					conn = DriverManager.getConnection(urlDriverName.url);
-				} else {
+//				if (databaseType == DatabaseTypes.DERBY) {
+//					Properties prop = System.getProperties();
+//					try {
+//						File file = LocalPaths.getDerbyDirectory();
+//						prop.setProperty("derby.system.home", file.getAbsolutePath());
+//						File fileSchema = new File(file, DatabaseConfig.DEFAULT_DATABASE_NAME);
+//						if (fileSchema.exists() == false) {
+//							urlDriverName.url += ";create=true";
+//						}
+//
+//					} catch (DcemException exp) {
+//						logger.error(exp);
+//					}
+//					conn = DriverManager.getConnection(urlDriverName.url);
+//				} else {
 					if (adminName == null) {
 						adminName = databaseConfig.getAdminName();
 						adminPassword = databaseConfig.getAdminPassword();
 					}
 					conn = DriverManager.getConnection(urlDriverName.url, adminName, adminPassword);
-				}
+//				}
 				if (databaseType.getSchemaSwitch() != null) {
 					conn.createStatement().execute(databaseType.getSchemaSwitch() + databaseConfig.getDatabaseName());
 				}

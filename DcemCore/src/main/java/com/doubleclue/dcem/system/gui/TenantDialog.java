@@ -81,7 +81,7 @@ public class TenantDialog extends DcemDialog {
 	private String superAdminPhone;
 	private String superAdminEmail;
 	private SendByEnum superAdminSendBy = SendByEnum.EMAIL;
-	private boolean embeddedDb = LocalConfigProvider.getLocalConfig().getDatabase().getDatabaseType().equals(DatabaseTypes.DERBY.name());
+//	private boolean embeddedDb = LocalConfigProvider.getLocalConfig().getDatabase().getDatabaseType().equals(DatabaseTypes.DERBY.name());
 	private boolean actionSuccessful = false;
 	private boolean createActivationCode = false;
 	private boolean sendPasswordBySms = false;
@@ -277,13 +277,13 @@ public class TenantDialog extends DcemDialog {
 		this.superAdminSendBy = superAdminSendBy;
 	}
 
-	public boolean isEmbeddedDb() {
-		return embeddedDb;
-	}
-
-	public void setEmbeddedDb(boolean embeddedDb) {
-		this.embeddedDb = embeddedDb;
-	}
+//	public boolean isEmbeddedDb() {
+//		return embeddedDb;
+//	}
+//
+//	public void setEmbeddedDb(boolean embeddedDb) {
+//		this.embeddedDb = embeddedDb;
+//	}
 
 	public boolean isActionSuccessful() {
 		return actionSuccessful;

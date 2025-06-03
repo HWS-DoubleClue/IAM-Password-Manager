@@ -226,12 +226,12 @@ public class SystemModule extends DcemModule {
 				throw new DcemException(DcemErrorCodes.SMS_INVALID_CONFIGURATION, "Please enter an SMS originator name");
 			}
 		}
-		if (preferences.getPathEmbeddedDatabaseBackup() != null && preferences.getPathEmbeddedDatabaseBackup().isEmpty() == false) {
-			File file = new File(preferences.getPathEmbeddedDatabaseBackup());
-			if (file.exists() == false) {
-				throw new DcemException(DcemErrorCodes.INVALID_PATH_EMBEDDED_DATABASE_BACKUP, "Please enter an existing path for 'PathEmbddedDatabaseBackup'");
-			}
-		}
+//		if (preferences.getPathEmbeddedDatabaseBackup() != null && preferences.getPathEmbeddedDatabaseBackup().isEmpty() == false) {
+//			File file = new File(preferences.getPathEmbeddedDatabaseBackup());
+//			if (file.exists() == false) {
+//				throw new DcemException(DcemErrorCodes.INVALID_PATH_EMBEDDED_DATABASE_BACKUP, "Please enter an existing path for 'PathEmbddedDatabaseBackup'");
+//			}
+//		}
 		if (preferences.specialProperties != null && preferences.specialProperties.trim().isEmpty() == false) {
 			try {
 				JsonConverter.getAsMap(preferences.specialProperties);
@@ -502,18 +502,18 @@ public class SystemModule extends DcemModule {
 			logger.error("Error updating licence and records Module:" + MODULE_ID, e);
 		}
 		DbFactoryProducer.getInstance();
-		if ((DbFactoryProducer.getDbType() == DatabaseTypes.DERBY) && (getPreferences().isRunEmbeddedDatabaseBackup() == true)
-				&& (getPreferences().getPathEmbeddedDatabaseBackup().isEmpty() == false)) {
-			DatabaseConfig databaseConfig = LocalConfigProvider.getLocalConfig().getDatabase();
-			long executionTime;
-			try {
-				executionTime = JdbcUtils.backUpEmbeddedDatabase(databaseConfig, getPreferences().getPathEmbeddedDatabaseBackup());
-				logger.info("Embedded-Databse was backup at: " + getPreferences().getPathEmbeddedDatabaseBackup());
-				addCounter("EmbeddedDatabaseBackup", executionTime);
-			} catch (Exception e) {
-				logger.error("ERROR: Couldn't  run backup for embedded database!", e);
-			}
-		}
+//		if ((DbFactoryProducer.getDbType() == DatabaseTypes.DERBY) && (getPreferences().isRunEmbeddedDatabaseBackup() == true)
+//				&& (getPreferences().getPathEmbeddedDatabaseBackup().isEmpty() == false)) {
+//			DatabaseConfig databaseConfig = LocalConfigProvider.getLocalConfig().getDatabase();
+//			long executionTime;
+//			try {
+//				executionTime = JdbcUtils.backUpEmbeddedDatabase(databaseConfig, getPreferences().getPathEmbeddedDatabaseBackup());
+//				logger.info("Embedded-Databse was backup at: " + getPreferences().getPathEmbeddedDatabaseBackup());
+//				addCounter("EmbeddedDatabaseBackup", executionTime);
+//			} catch (Exception e) {
+//				logger.error("ERROR: Couldn't  run backup for embedded database!", e);
+//			}
+//		}
 	}
 
 	public int getDbVersion() {

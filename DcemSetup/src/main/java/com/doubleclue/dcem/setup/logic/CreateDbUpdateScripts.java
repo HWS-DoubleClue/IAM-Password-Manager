@@ -102,10 +102,10 @@ public class CreateDbUpdateScripts {
 			default:
 				break;
 			}
-			if (dbType != DatabaseTypes.DERBY) {
+//			if (dbType != DatabaseTypes.DERBY) {
 				settings.put("hibernate.connection.username", databaseConfig.getAdminName());
 				settings.put("hibernate.connection.password", databaseConfig.getAdminPassword());
-			}
+//			}
 			// settings.put
 			MetadataSources metadata = new MetadataSources(new StandardServiceRegistryBuilder().applySettings(settings).build());
 			Document persistenceDocument = null;

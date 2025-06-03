@@ -128,6 +128,9 @@ public class CreateTables {
 				} else {
 					systemModule = false;
 				}
+//				if (moduleName.equals("dcem.saml")) {
+//					System.out.println("CreateTables.main()");
+//				}
 				System.out.println("CreateTables.main() moduelName: " + moduleName);
 				for (int i = 0; i < result.getLength(); i++) {
 					String className = result.item(i).getNodeValue();

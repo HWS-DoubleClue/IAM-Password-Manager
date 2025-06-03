@@ -45,6 +45,11 @@ public class MyDevicesModule extends DcemModule {
 	public DcemView getDefaultView() {
 		return null;
 	}
+	
+	@Override
+	public boolean isHasDbTables() {
+		return false;
+	}
 
 	
 	public ModulePreferences getDefaultPreferences() {

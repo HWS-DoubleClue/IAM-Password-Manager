@@ -145,12 +145,12 @@ public class SystemPreferences extends ModulePreferences {
 	@DcemGui()
 	boolean xssProtectionEnabled = true;	
 
-	@DcemGui(separator = "Embedded Database", help = "If you use the Embedded Database, this will do a backup of the Embedded Database on every 'Nightly task'. During the backup process,"
-			+ " writing into the database will be blocked!")
-	boolean runEmbeddedDatabaseBackup;
-
-	@DcemGui(style = "width: 400px", help = "This is the absolute directory path for the Embedded Database backup.")
-	String pathEmbeddedDatabaseBackup;
+//	@DcemGui(separator = "Embedded Database", help = "If you use the Embedded Database, this will do a backup of the Embedded Database on every 'Nightly task'. During the backup process,"
+//			+ " writing into the database will be blocked!")
+//	boolean runEmbeddedDatabaseBackup;
+//
+//	@DcemGui(style = "width: 400px", help = "This is the absolute directory path for the Embedded Database backup.")
+//	String pathEmbeddedDatabaseBackup;
 
 	@DcemGui(separator = "Other", help = "Nightly tasks refers to scheduled automatic maintenance services performed on a daily base. Normally, these tasks will run at night but you can choose any hour of day by defining it in this field.",
 			// choose = "#{systemPreferences.timeOptions}")
@@ -300,14 +300,6 @@ public class SystemPreferences extends ModulePreferences {
 		this.maxMonitoringRecords = maxMonitoringRecords;
 	}
 
-	public String getPathEmbeddedDatabaseBackup() {
-		return pathEmbeddedDatabaseBackup;
-	}
-
-	public void setPathEmbddedDatabaseBackup(String pathEmbddedDatabaseBackup) {
-		this.pathEmbeddedDatabaseBackup = pathEmbddedDatabaseBackup;
-	}
-
 	public String getSpecialProperties() {
 		return specialProperties;
 	}
@@ -316,18 +308,7 @@ public class SystemPreferences extends ModulePreferences {
 		this.specialProperties = specialProperties;
 	}
 
-	public boolean isRunEmbeddedDatabaseBackup() {
-		return runEmbeddedDatabaseBackup;
-	}
-
-	public void setRunEmbeddedDatabaseBackup(boolean runEmbeddedDatabaseBackup) {
-		this.runEmbeddedDatabaseBackup = runEmbeddedDatabaseBackup;
-	}
-
-	public void setPathEmbeddedDatabaseBackup(String pathEmbeddedDatabaseBackup) {
-		this.pathEmbeddedDatabaseBackup = pathEmbeddedDatabaseBackup;
-	}
-
+	
 	public String getCaptchaPrivateKey() {
 		return captchaPrivateKey;
 	}

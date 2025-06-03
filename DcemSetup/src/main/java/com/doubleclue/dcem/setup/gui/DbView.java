@@ -83,9 +83,9 @@ public class DbView extends DcemView {
 			testDbConnection(config.getNodeName(), nodeName);
 			config.setNodeName(nodeName);
 			LocalConfigProvider.writeConfig(config);
-			if ((dbState == DbState.OK || dbState == DbState.Create_Tables_Required) && dbConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == true) {
-				PrimeFaces.current().executeScript("PF('embeddedDbMsg').show();");
-			}
+//			if ((dbState == DbState.OK || dbState == DbState.Create_Tables_Required) && dbConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()) == true) {
+//				PrimeFaces.current().executeScript("PF('embeddedDbMsg').show();");
+//			}
 		} catch (Exception exp) {
 			logger.warn(exp.getMessage(), exp);
 			JsfUtils.addErrorMessage(exp.getMessage());
@@ -130,9 +130,9 @@ public class DbView extends DcemView {
 	public List<SelectItem> getDatabaseTypes() {
 		List<SelectItem> selectItems = new LinkedList<SelectItem>();
 		for (DatabaseTypes dbType : DatabaseTypes.values()) {
-			if (/* dbType == DatabaseTypes.DERBY || */ dbType == DatabaseTypes.ORACLE) {
-				continue;
-			}
+//			if (/* dbType == DatabaseTypes.DERBY || */ dbType == DatabaseTypes.ORACLE) {
+//				continue;
+//			}
 			selectItems.add(new SelectItem(dbType.name(), dbType.getDisplayName()));
 		}
 		return selectItems;
@@ -158,9 +158,9 @@ public class DbView extends DcemView {
 		return dbConfig.getDatabaseType().equals(DatabaseTypes.MSSQL.name());
 	}
 
-	public boolean isEmbedded() {
-		return (dbConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()));
-	}
+//	public boolean isEmbedded() {
+//		return (dbConfig.getDatabaseType().equals(DatabaseTypes.DERBY.name()));
+//	}
 
 	public void setDbConfig(DatabaseConfig dbConfig) {
 		this.dbConfig = dbConfig;
