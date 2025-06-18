@@ -75,8 +75,8 @@
 								<p>#{PsMsg['appHub.noItemsInGroup']}</p>
 							</p:outputPanel>
 							<p:dataView id="availableApplications" var="currentEntry" value="#{psFileView.getGroupEntries(group)}" layout="grid" flex="true"
-								styleClass="myApplicationGrid" emptyMessage="" gridRowStyleClass="p-sm-4 p-md-2 p-xl-1">
-								<p:dataViewGridItem>
+								styleClass="myApplicationGrid" emptyMessage=""  gridRowStyleClass="p-sm-4 p-md-2 p-xl-1">
+								<p:dataViewGridItem >
 									<p:contextMenu for="entryPanel">
 										<p:menuitem value="#{PsMsg['editEntry']}" action="#{psFileView.onEditEntry(currentEntry, group)}" update="" icon="fa fa-pencil" />
 										<p:menuitem value="#{PsMsg['trashEntry']}" action="#{psFileView.actionDeleteEntry(currentEntry)}" icon="fa fa-trash"

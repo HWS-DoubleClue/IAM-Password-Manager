@@ -227,6 +227,8 @@
 .ui-dataview.myApplicationGrid .ui-dataview-row {
 	display: flex;
 	flex-wrap: wrap;
+	border: thin;
+	background-color: lightgrey
 }
 
 .applicationButtonClose {
