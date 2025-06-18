@@ -74,6 +74,7 @@
 							<p:outputPanel rendered="#{psFileView.getGroupEntries(group).size() == 0}" style="text-align: center;">
 								<p>#{PsMsg['appHub.noItemsInGroup']}</p>
 							</p:outputPanel>
+							<br />
 							<p:dataView id="availableApplications" var="currentEntry" value="#{psFileView.getGroupEntries(group)}" layout="grid" flex="true"
 								styleClass="myApplicationGrid" emptyMessage=""  gridRowStyleClass="p-sm-4 p-md-2 p-xl-1">
 								<p:dataViewGridItem >

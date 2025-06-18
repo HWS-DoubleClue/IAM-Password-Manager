@@ -447,9 +447,10 @@ public class PsFileView extends DcemView {
 
 	public List<Group> getKeepassGroups() {
 		// Organise groups to set recycle bin at the bottom
-		
+		if (keePassFile == null) {
+			return new ArrayList<Group>(1);
+		}
 		Group recycleBin = getRycleBinGroup();
-
 		List<Group> keePassGroups = keePassFile.getGroups();
 		List<Group> groups = new ArrayList<Group>(keePassFile.getGroups().size());
 		List<Group> emptyGroups = new ArrayList<Group>(keePassFile.getGroups().size());
@@ -477,6 +478,9 @@ public class PsFileView extends DcemView {
 	}
 
 	public Group getRycleBinGroup() {
+		if (keePassFile == null ) {
+			return null;
+		}
 		UUID uuidBin = keePassFile.getMeta().getRecycleBinUuid();
 		if (uuidBin != null) {
 			return keePassFile.getGroupByUUID(uuidBin);
