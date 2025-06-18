@@ -12,7 +12,7 @@
 		<h:form id="documentForm" enctype="multipart/form-data">
 
 
-			<p:scrollPanel mode="native" styleClass="align-items-center justify-content-center" style="height: 40em;border: 1px; border-style: solid; border-color: grey">
+			<p:scrollPanel mode="native" styleClass="align-items-center justify-content-center" style="height: 85vh;border: 1px; border-style: solid; border-color: grey">
 				<p:panel style="border: 1px; border-style: solid; border-color: grey">
 					<p:graphicImage height="32" width="32" library="pictures" name="#{dmNewDocumentView.dcemMediaType.iconResourcePath}" style="vertical-align: middle;" />
 					<p:outputLabel id="nameOutput" value="#{dmNewDocumentView.cloudSafeEntity.name}" rendered="#{dmNewDocumentView.displayOnly}"
@@ -55,7 +55,7 @@
 					</p:panel>
 				</p:panel>
 
-				<h:panelGroup id="pdfPanelView" rendered="#{dmNewDocumentView.pdfViewer == true}" class="card">
+				<h:panelGroup id="pdfPanelView" rendered="#{dmNewDocumentView.pdfViewer == true}" height="100%">
 					<h:panelGroup rendered="#{dmNewDocumentView.dcemMediaType == 'PDF' and dmNewDocumentView.displayOnly eq false}">
 						<p:fileUpload id="fileUpload" label="#{DmMsg['Document.button.upload']}" ajax="true" auto="true" value="#{dmNewDocumentView.uploadedFilePage}"
 							mode="simple" skinSimple="true" listener="#{dmNewDocumentView.uploadPageListener}" process="@this" style="margin-left: 0.5em"
