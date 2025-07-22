@@ -14,18 +14,16 @@ DoubleClue is an Identity & Access Management (IAM) Software which facilitates t
 ## Installation and Download
 
 DoubleClue can be installed on premisses (Windows or Linux 64Bit Systems). 
-Alternatively you can start immediate using DoubleClue cloud.
-To start testing the cloud version go to: 
+Alternatively you can install DoubleClue cloud.
 
-#### Try the DoubleClue Cloud Version at
+#### Try the DoubleClue Cloud Version at  
 
-https://www.doubleclue.online/dcem/createTenant/index.xhtml
+** DoubleClue online Cloud ist not available anymore **
+
 
 #### Download OnPremisses Version
 
-Latest Release:
-Windows: https://doubleclue.com/files/DCEM.zip
-Linux: https://doubleclue.com/files/DCEM_Linux.tar.gz
+Please ask support@doubleclue.com
 
 For on premises installation please follow the link: <a href="https://doubleclue.com/wp-content/uploads/Quick_Installation_Guide_EN.pdf">Installation Guide</a>
 
