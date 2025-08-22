@@ -60,7 +60,7 @@
 		<jspapi.version>2.2.1-b03</jspapi.version>
 		<thrift.version>0.13.0</thrift.version>
 		<jersey.version>2.41</jersey.version>
-		<tomcat.version>9.0.86</tomcat.version>
+		<tomcat.version>9.0.108</tomcat.version>
 		<jackson.version>2.17.2</jackson.version>
 		<swagger-core-version>2.0.0</swagger-core-version>
 		<junit.jupiter.version>5.10.1</junit.jupiter.version>
