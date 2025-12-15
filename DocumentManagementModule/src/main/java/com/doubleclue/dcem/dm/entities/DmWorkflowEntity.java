@@ -68,7 +68,7 @@ public class DmWorkflowEntity extends EntityInterface implements Cloneable {
 	private String name;
 
 	@DcemGui(name = "user", subClass = "displayName")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne (fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false, foreignKey = @ForeignKey(name = "FK_DM_WORKFLOW_USER"), insertable = true, updatable = true)
 	private DcemUser user;
 
